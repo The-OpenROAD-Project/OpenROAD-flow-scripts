@@ -94,7 +94,7 @@ flow_write_sdc 5_route.sdc
 flow_source density_fill.tcl
 flow_write_db 6_1_fill.odb
 flow_write_sdc 6_1_fill.sdc
-flow_write_sdc 6_final.sdc
 flow_source final_connect.tcl
 flow_write_db 6_final.odb
+flow_write_sdc 6_final.sdc
 flow_source final_outputs.tcl

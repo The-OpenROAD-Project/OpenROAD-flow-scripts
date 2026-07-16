@@ -6,7 +6,6 @@ exclude = [
     "flow/designs/asap7/cva6/constraint.sdc",
     "tools/OpenROAD",
     "tools/yosys",
-    "tools/yosys-slang",
 ]
 
 ignore = [

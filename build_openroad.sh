@@ -32,8 +32,7 @@ PROC=-1
 WITH_VERIFIC=0
 VERIFIC_SRC=""
 VERIFIC_COMPONENTS='database util containers pct hier_tree verilog'
-VERIFIC_ARGS=" VERIFIC_COMPONENTS='${VERIFIC_COMPONENTS}'"
-VERIFIC_ARGS+=" ENABLE_VERIFIC=1 ENABLE_VERIFIC_VHDL=0 VERIFIC_DIR=verific"
+VERIFIC_ARGS=" -DYOSYS_VERIFIC_DIR=\"${DIR}/tools/yosys/verific\""
 
 function usage() {
         cat << EOF
@@ -207,7 +206,7 @@ fi
 echo "[INFO FLW-0028] Compiling with ${PROC} threads."
 
 # Only add install prefix variables after parsing arguments.
-YOSYS_ARGS+=" PREFIX=${INSTALL_PATH}/yosys"
+YOSYS_ARGS+=" -DCMAKE_INSTALL_PREFIX=\"${INSTALL_PATH}/yosys\""
 OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD"
 if [ -n "$CMAKE_INSTALL_RPATH" ]; then
         OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_RPATH=${CMAKE_INSTALL_RPATH}"
@@ -364,11 +363,11 @@ __local_build()
         fi
 
         echo "[INFO FLW-0017] Compiling Yosys."
-        eval ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
-
-        echo "[INFO FLW-0030] Compiling yosys-slang."
-        # CMAKE_FLAGS added to work around yosys-slang#141 (unable to build outside of git checkout)
-        ${NICE} make install -C tools/yosys-slang -j "${PROC}" YOSYS_PREFIX="${INSTALL_PATH}/yosys/bin/" CMAKE_FLAGS="-DYOSYS_SLANG_REVISION=unknown -DSLANG_REVISION=unknown"
+        eval ${NICE} cmake -B tools/yosys/build tools/yosys \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DYOSYS_SKIP_ABC_SUBMODULE_CHECK=ON \
+                ${YOSYS_ARGS}
+        ${NICE} cmake --build tools/yosys/build --target install -j "${PROC}"
 
         echo "[INFO FLW-0031] Compiling kepler-formal"
         ${NICE} cmake -B tools/kepler-formal/build tools/kepler-formal \

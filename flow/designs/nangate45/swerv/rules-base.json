@@ -1,11 +1,11 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "f629e4aa498e447379b68ffc9cdb766011e285b4",
+        "value": "e2c069ad7c28c0205bd4e27a5a849b2e13ba44a8",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "506af1f9684109c71fdfad3ca8b29cc6d34b36ed",
+        "value": "9f0b525f1144a50a190aa651c0745d81ebad0cb2",
         "compare": "==",
         "level": "warning"
     },
@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 177447,
+        "value": 177308,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 98028,
+        "value": 97710,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,11 +30,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 8524,
+        "value": 8496,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 8524,
+        "value": 8496,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -42,7 +42,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -319.0,
+        "value": -351.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -351.0,
+        "value": -417.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -90,11 +90,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.627,
+        "value": -0.713,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -352.0,
+        "value": -452.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 183342,
+        "value": 182894,
         "compare": "<="
     }
 }
