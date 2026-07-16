@@ -31,24 +31,32 @@ SYN_TEST_DESIGNS = {
     "ethmac": "ethmac",
     "ethmac_lvt": "ethmac",
     "mock-cpu": "mock_cpu",
-    "swerv_wrapper": "swerv_wrapper",  # large; SRAM macros
-    "cva6": "cva6",  # large; slang include dirs/defines
     "gcd-ccs": "gcd",  # CCS liberty
     "aes-block": "aes_cipher_top",  # hierarchical BLOCKS
-    "riscv32i-mock-sram": "riscv_top",  # hierarchical BLOCKS (fakeram)
 }
 
-# Designs whose OpenROAD-SYN run does not terminate in reasonable time.
-# Deliberately excluded from syn_test and the QoR graph so the
-# aggregators stay runnable; their manual per-design targets remain
-# available to reproduce the problem, e.g.
+# Designs whose OpenROAD-SYN run is too slow (or does not terminate) for
+# the aggregators. Their generated per-design targets stay tags=["manual"]
+# like all syn targets, but they are deliberately left out of syn_test and
+# the QoR graph so those remain runnable; reproduce individually, e.g.
 #   bazelisk build //flow/designs/asap7/ibex:ibex_core_syn_synth
 #
 # - ibex: sv_elaborate/synthesize/repair_design complete in seconds, but
 #   report_metrics ("Report metrics stage 1, synth...") spins in STA for
 #   hours (observed >2h on 48 threads with no progress).
-SYN_RUNAWAY_DESIGNS = {
+# - cva6: synthesize itself takes ~73s, but repair_design -pre_placement
+#   was still running after 10+ minutes when the status sweep was cut
+#   off; not yet characterized to completion.
+# - swerv_wrapper: largest design in the suite; not yet run to
+#   completion under OpenROAD-SYN in this environment.
+# - riscv32i-mock-sram: hierarchical BLOCKS (fakeram) — the syn variant
+#   first needs the block's full PnR flow for its abstract; not yet run
+#   to completion.
+SYN_SLOW_DESIGNS = {
+    "cva6": "cva6",
     "ibex": "ibex_core",
+    "riscv32i-mock-sram": "riscv_top",
+    "swerv_wrapper": "swerv_wrapper",
 }
 
 # Explicitly listed manual tests DO run through a test_suite (the manual

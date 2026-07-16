@@ -112,6 +112,9 @@ def _syn_status_targets(
             deps = macros,
             stage_data = stage_data,
             tags = ["manual"],
+            # Consumed by the platform-level aggregation package (e.g.
+            # //flow/designs/asap7:syn_qor_png).
+            visibility = ["//visibility:public"],
         )
 
 def design(config = "config.mk", user_arguments = [], user_sources = [], local_arguments = []):
