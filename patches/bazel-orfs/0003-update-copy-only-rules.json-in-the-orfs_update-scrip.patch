@@ -2,12 +2,16 @@ From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
 Date: Thu, 16 Jul 2026 16:35:57 +0200
 Subject: [PATCH 3/4] update: copy only rules.json in the orfs_update script
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 The update_rules stage's DefaultInfo carries update_rules.args.mk next
 to rules.json, so the generated cp had two sources and a file target:
 'cp: target ...rules-base.json: Not a directory'. Filter to rules.json.
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
 ---
  private/flow.bzl | 9 ++++++++-
  1 file changed, 8 insertions(+), 1 deletion(-)

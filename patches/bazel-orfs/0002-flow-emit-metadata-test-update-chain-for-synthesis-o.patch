@@ -3,6 +3,9 @@ From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
 Date: Thu, 16 Jul 2026 16:16:38 +0200
 Subject: [PATCH 2/4] flow: emit metadata/test/update chain for synthesis-only
  flows
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 When last_stage="synth", orfs_flow() now emits the same
 generate_metadata -> test -> update_rules -> update target chain as the
@@ -12,6 +15,7 @@ synthesis-only QoR gates such as rules-syn.json for the OpenROAD-SYN
 status suite.
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
 ---
  private/flow.bzl | 45 +++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 45 insertions(+)

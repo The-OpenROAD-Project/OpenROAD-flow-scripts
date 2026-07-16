@@ -15,6 +15,7 @@ plus best-effort QoR reporting) — without orfs_design knowing their
 policy.
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
 ---
  private/orfs_design.bzl | 26 +++++++++++++++++++++++++-
  1 file changed, 25 insertions(+), 1 deletion(-)

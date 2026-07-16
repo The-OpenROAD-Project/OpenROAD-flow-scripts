@@ -3,6 +3,9 @@ From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
 Date: Thu, 16 Jul 2026 16:14:51 +0200
 Subject: [PATCH 1/4] synth: support OpenROAD-SYN engine (SYNTH_USE_SYN=1) and
  declare 1_synth.json
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 SYNTH_USE_SYN=1 in the merged arguments switches the synthesis stage from
 the yosys flow to OpenROAD's built-in synthesizer: a single do-1_synth
@@ -20,6 +23,7 @@ orfs_test: honor the existing cmd attr instead of hardcoding
 metadata-check.
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
 ---
  private/rules.bzl | 176 ++++++++++++++++++++++++++++++++++------------
  1 file changed, 131 insertions(+), 45 deletions(-)
