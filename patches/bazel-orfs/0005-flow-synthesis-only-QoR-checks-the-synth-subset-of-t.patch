@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Thu, 16 Jul 2026 19:38:13 +0200
+Subject: [PATCH 5/5] flow: synthesis-only QoR checks the synth subset of the
+ full-flow rules
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The synthesis-only chain's test now runs make metadata-check-synth so a
+design's regular rules file (e.g. rules-base.json) can gate the synth
+variant directly — only the synthesis-stage subset of the rules is
+checked, and no per-variant rules file needs to be committed. The
+<name>_update target is no longer emitted for synthesis-only flows: it
+would overwrite the design's full-flow rules with synthesis-only rules.
+The update_rules stage target remains as the generated synthesis QoR
+snapshot for aggregating consumers.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
+---
+ private/flow.bzl | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/private/flow.bzl b/private/flow.bzl
+index c071af8..41cc7ed 100644
+--- a/private/flow.bzl
++++ b/private/flow.bzl
+@@ -837,12 +837,20 @@ def _orfs_pass(
+                 **_strip_tool_kwargs(**update_kwargs)
+             )
+     elif steps[-1].stage == "synth" and start_stage <= 1 and not mock_area:
+-        # Synthesis-only flow (last_stage = "synth"): emit the same
+-        # metadata → test → update_rules → update chain as the full flow,
+-        # fed straight from the synth stage. genMetrics.py tolerates a
+-        # synthesis-only tree (no 2_floorplan.sdc, no stage 2..6 logs).
+-        # Gated on RULES_JSON like the full-flow test: without rules
+-        # there is nothing for metadata-check to check.
++        # Synthesis-only flow (last_stage = "synth"): emit a metadata →
++        # test → update_rules chain fed straight from the synth stage.
++        # genMetrics.py tolerates a synthesis-only tree (no
++        # 2_floorplan.sdc, no stage 2..6 logs). Gated on RULES_JSON like
++        # the full-flow test; the RULES_JSON is typically the design's
++        # full-flow rules file, so the test runs make metadata-check-synth,
++        # which checks only the synthesis-stage subset of the rules.
++        #
++        # Unlike the full flow there is deliberately no <name>_update
++        # target: it would overwrite the design's full-flow rules file
++        # with synthesis-only rules. The update_rules stage target still
++        # exists — its generated rules.json is the synthesis QoR snapshot
++        # consumers can aggregate (e.g. plots) without checking rules
++        # files into git.
+         test_args = get_stage_args(
+             TEST_STAGE_IMPL.stage,
+             stage_arguments,
+@@ -865,19 +873,11 @@ def _orfs_pass(
+                 TEST_STAGE_IMPL,
+                 GENERATE_METADATA_STAGE_IMPL,
+                 kwargs = kwargs | {"tags": []} | test_kwargs,
++                more_kwargs = {"cmd": "metadata-check-synth"},
+             )
+-            rules_name = do_step(
++            do_step(
+                 UPDATE_RULES_IMPL,
+                 GENERATE_METADATA_STAGE_IMPL,
+                 kwargs = kwargs,
+                 more_kwargs = kwargs,
+             )
+-            update_kwargs = dict(kwargs)
+-            update_kwargs.pop("substeps", None)
+-            update_kwargs.pop("lint", None)
+-            orfs_update(
+-                name = _step_name(name, variant, "update"),
+-                rules_json = sources["RULES_JSON"][0],
+-                logs = [rules_name],
+-                **_strip_tool_kwargs(**update_kwargs)
+-            )

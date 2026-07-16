@@ -119,6 +119,7 @@ git_override(
         "//patches/bazel-orfs:0002-flow-emit-metadata-test-update-chain-for-synthesis-o.patch",
         "//patches/bazel-orfs:0003-update-copy-only-rules.json-in-the-orfs_update-scrip.patch",
         "//patches/bazel-orfs:0004-design-caller-extension-hook-for-per-design-status-t.patch",
+        "//patches/bazel-orfs:0005-flow-synthesis-only-QoR-checks-the-synth-subset-of-t.patch",
     ],
     remote = BAZEL_ORFS_REMOTE,
 )

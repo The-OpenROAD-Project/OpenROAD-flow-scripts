@@ -4,10 +4,12 @@
 metadata: finish metadata-generate metadata-check
 
 # Synthesis-only metadata: generate and check QoR after just the synth
-# stage, without running the full flow. Used with FLOW_VARIANT=syn to
-# gate OpenROAD-SYN synthesis results against rules-syn.json.
+# stage, without running the full flow. The synthesis-stage subset of
+# the design's regular rules file gates the run, so no per-variant
+# rules file needs to be committed.
 .PHONY: metadata-synth
-metadata-synth: synth metadata-generate metadata-check
+metadata-synth: export RULES_JSON = $(DESIGN_DIR)/rules-base.json
+metadata-synth: synth metadata-generate metadata-check-synth
 
 .PHONY: metadata-generate
 metadata-generate:
@@ -29,6 +31,16 @@ metadata-check:
 	$(PYTHON_EXE) $(UTILS_DIR)/checkMetadata.py \
 	    -m $(REPORTS_DIR)/metadata.json \
 	    -r $(RULES_JSON) 2>&1 \
+	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
+
+# Check only the synthesis-stage subset of RULES_JSON, so a
+# synthesis-only run can be gated by the design's full-flow rules file.
+.PHONY: metadata-check-synth
+metadata-check-synth:
+	$(PYTHON_EXE) $(UTILS_DIR)/checkMetadata.py \
+	    -m $(REPORTS_DIR)/metadata.json \
+	    -r $(RULES_JSON) \
+	    --only-prefix synth__ constraints__ 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
 
 .PHONY: clean_metadata

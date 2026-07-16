@@ -73,22 +73,24 @@ def _syn_status_targets(
 
     - a synthesis-only variant "syn" flow with SYNTH_USE_SYN=1 forced,
       regardless of the config.mk default: <name>_syn_synth plus — when
-      the package has a rules-syn.json — the <name>_syn_test QoR gate
-      and <name>_syn_update rules regenerator.
+      the design has a rules-base.json — the <name>_syn_test QoR gate
+      (checking the synthesis-stage subset of rules-base.json, so no
+      per-variant rules file is committed) and <name>_syn_update_rules,
+      whose generated rules.json is the synthesis QoR snapshot that
+      aggregating plots consume.
     - a best-effort <name>_syn_qor / <name>_yosys_qor pair whose
       qor.json outputs feed the syn-vs-yosys QoR comparison graph.
     """
     qor_sources = {k: v for k, v in sources.items() if k != "RULES_JSON"}
-    syn_sources = dict(qor_sources)
-    if native.glob(["rules-syn.json"], allow_empty = True):
-        syn_sources["RULES_JSON"] = [":rules-syn.json"]
     orfs_flow(
         name = name,
         verilog_files = verilog_files,
         pdk = "//flow:" + platform,
         arguments = arguments | {"SYNTH_USE_SYN": "1"},
         user_arguments = user_arguments,
-        sources = syn_sources,
+        # sources carries the auto-detected rules-base.json as RULES_JSON;
+        # the syn variant's test checks its synthesis-stage subset.
+        sources = sources,
         user_sources = user_sources,
         macros = macros,
         stage_data = stage_data,
@@ -96,6 +98,9 @@ def _syn_status_targets(
         last_stage = "synth",
         tags = ["manual"],
         test_kwargs = {"tags": ["manual"]},
+        # The platform-level aggregation package consumes the
+        # update_rules stage's generated rules.json.
+        visibility = ["//visibility:public"],
     )
     for qor_variant, qor_use_syn in [("syn_qor", True), ("yosys_qor", False)]:
         orfs_qor(

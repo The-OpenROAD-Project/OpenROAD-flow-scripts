@@ -2,17 +2,19 @@
 #
 # Every asap7 design gets manual <name>_syn_* targets from the config.mk
 # DSL (see flow/designs/design.bzl): a synthesis-only variant "syn" flow
-# with SYNTH_USE_SYN=1 forced, a rules-syn.json QoR gate, and a
-# best-effort <name>_syn_qor / <name>_yosys_qor pair for the comparison
-# graph. This package aggregates them:
+# with SYNTH_USE_SYN=1 forced, a QoR gate checking the synthesis-stage
+# subset of the design's rules-base.json (no per-variant rules files in
+# git), and a best-effort <name>_syn_qor / <name>_yosys_qor pair for the
+# comparison graph. This package aggregates them:
 #
 #   bazelisk test //flow/designs/asap7:syn_test
 #   bazelisk build //flow/designs/asap7:syn_qor_png
 #
 # The suite deliberately includes designs that fail OpenROAD-SYN today —
-# it is a status report, not a green-only gate. Failing designs keep a
-# stub rules-syn.json (fails honestly at the synth stage); passing
-# designs get real rules via bazelisk run <pkg>:<name>_syn_update.
+# it is a status report, not a green-only gate. A design can fail by not
+# synthesizing at all, or by missing the rules-base.json gates that its
+# regular flow meets (e.g. aes-block's SYN area blows past the yosys
+# reference).
 
 # Design directory -> DESIGN_NAME (bazel target prefix), ordered
 # fastest-first so --keep_going runs surface quick failures early.
@@ -59,6 +61,41 @@ SYN_SLOW_DESIGNS = {
     "swerv_wrapper": "swerv_wrapper",
 }
 
+# Designs whose OpenROAD-SYN synthesis fails today. They stay in
+# syn_test (failing honestly) and in the QoR graph (best-effort FAIL
+# columns), but the clock-period plot depends on each design's generated
+# synthesis rules snapshot, which these cannot produce.
+# - mock-alu: SDC references yosys-style register names (*io_out_REG*)
+#   absent from the SYN netlist.
+# - riscv32i: slang rejects procedural assignment to nets (dmem.v).
+# - mock-cpu: slang rejects endianness-mismatched part-select
+#   (wptr_full.v).
+SYN_FAILING_DESIGNS = [
+    "mock-alu",
+    "mock-cpu",
+    "riscv32i",
+]
+
+# Generated synthesis QoR snapshots (rules.json from the syn variant's
+# update_rules stage) for designs whose OpenROAD-SYN synthesis passes.
+# These are bazel outputs, not checked-in files: the syn variant's QoR
+# gate checks the synthesis subset of rules-base.json instead, so no
+# rules-syn.json files live in git.
+[
+    filegroup(
+        name = "{pkg}_syn_rules".format(pkg = pkg),
+        srcs = [
+            "//flow/designs/asap7/{pkg}:{name}_syn_update_rules".format(
+                name = name,
+                pkg = pkg,
+            ),
+        ],
+        output_group = "rules.json",
+    )
+    for pkg, name in SYN_TEST_DESIGNS.items()
+    if pkg not in SYN_FAILING_DESIGNS
+]
+
 # Explicitly listed manual tests DO run through a test_suite (the manual
 # tag only exempts them from wildcard expansion); the suite itself is
 # manual so `bazelisk test //flow/...` does not pull them in either.
@@ -84,30 +121,32 @@ test_suite(
 #   cp -f bazel-bin/flow/designs/asap7/openroad-syn-{qor,runtime}.png \
 #       flow/docs/images/
 # Effective clock period (target - gated worst slack) across stages,
-# one series per design, OpenROAD-SYN synthesis point overlaid. Consumes
-# only the checked-in rules-*.json files — no flow runs. Same refresh
-# pattern as syn_qor_png, into flow/docs/images/openroad-syn-clock-period.png.
+# one series per design, OpenROAD-SYN synthesis point overlaid. The base
+# series comes from the checked-in rules-base.json; the SYN point comes
+# from the generated synthesis rules snapshot (the syn variant's
+# update_rules output), so building this runs synthesis for the passing
+# designs. Same refresh pattern as syn_qor_png, into
+# flow/docs/images/openroad-syn-clock-period.png.
 genrule(
     name = "clock_period_png",
     srcs = [
-        "//flow/designs/asap7/{pkg}:rules-{kind}.json".format(
-            kind = kind,
-            pkg = pkg,
-        )
+        "//flow/designs/asap7/{pkg}:rules-base.json".format(pkg = pkg)
         for pkg in SYN_TEST_DESIGNS
-        for kind in [
-            "base",
-            "syn",
-        ]
+        if pkg not in SYN_FAILING_DESIGNS
+    ] + [
+        ":{pkg}_syn_rules".format(pkg = pkg)
+        for pkg in SYN_TEST_DESIGNS
+        if pkg not in SYN_FAILING_DESIGNS
     ],
     outs = ["openroad-syn-clock-period.png"],
     cmd = "$(location //flow/util:plotClockPeriod) --output $@ " + " ".join([
         ("--design {pkg} " +
          "--rules-base $(location //flow/designs/asap7/{pkg}:rules-base.json) " +
-         "--rules-syn $(location //flow/designs/asap7/{pkg}:rules-syn.json)").format(
+         "--rules-syn $(location :{pkg}_syn_rules)").format(
             pkg = pkg,
         )
         for pkg in SYN_TEST_DESIGNS
+        if pkg not in SYN_FAILING_DESIGNS
     ]),
     tags = ["manual"],
     tools = ["//flow/util:plotClockPeriod"],

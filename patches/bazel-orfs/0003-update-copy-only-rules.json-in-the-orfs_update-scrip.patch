@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
 Date: Thu, 16 Jul 2026 16:35:57 +0200
-Subject: [PATCH 3/4] update: copy only rules.json in the orfs_update script
+Subject: [PATCH 3/5] update: copy only rules.json in the orfs_update script
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
