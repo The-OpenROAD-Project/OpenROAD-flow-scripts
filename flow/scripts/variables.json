@@ -585,15 +585,6 @@
       "grt"
     ]
   },
-  "MAX_REPAIR_TIMING_ITER": {
-    "description": "Maximum number of iterations for repair setup and repair hold.\n",
-    "stages": [
-      "cts",
-      "floorplan",
-      "grt",
-      "place"
-    ]
-  },
   "MAX_ROUTING_LAYER": {
     "description": "The highest metal layer name to be used in routing.\n",
     "stages": [
