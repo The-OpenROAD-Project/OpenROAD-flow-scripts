@@ -1,6 +1,8 @@
 """BUILD boilerplate for flow/designs/."""
 
+load("@bazel-orfs//:openroad.bzl", "orfs_flow")
 load("@orfs_designs//:designs.bzl", "orfs_design")
+load("//flow/designs:qor.bzl", "orfs_qor")
 
 # Per filegroup target: extensions included in the filegroup.
 # bazel-orfs's config_mk_parser produces these target names from
@@ -17,7 +19,9 @@ _GROUPS = {
 # cross-package references resolve. Kept tight on purpose: globbing "*"
 # silently exposes LICENSE/.gitignore/etc. as the public API surface.
 # gds/gds.gz are inputs in hierarchical flows via ADDITIONAL_GDS.
-_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib", "gds", "gds.gz"]
+# json covers rules-*.json so QoR reporting targets (e.g.
+# //flow/designs/asap7:clock_period_png) can consume them per file.
+_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib", "gds", "gds.gz", "json"]
 
 _EXPORTS_SENTINEL = "_orfs_design_exports_sentinel"
 
@@ -51,6 +55,65 @@ def _export_design_files():
         visibility = ["//visibility:private"],
     )
 
+def _syn_status_targets(
+        name,
+        platform,
+        verilog_files,
+        arguments,
+        user_arguments,
+        sources,
+        user_sources,
+        macros,
+        stage_data,
+        tags):  # buildifier: disable=unused-variable
+    """OpenROAD-SYN status targets for one design (orfs_design extra hook).
+
+    Emits, always tagged "manual" (even for CI designs, so only explicit
+    invocations such as //flow/designs/asap7:syn_test run them):
+
+    - a synthesis-only variant "syn" flow with SYNTH_USE_SYN=1 forced,
+      regardless of the config.mk default: <name>_syn_synth plus — when
+      the package has a rules-syn.json — the <name>_syn_test QoR gate
+      and <name>_syn_update rules regenerator.
+    - a best-effort <name>_syn_qor / <name>_yosys_qor pair whose
+      qor.json outputs feed the syn-vs-yosys QoR comparison graph.
+    """
+    syn_sources = {k: v for k, v in sources.items() if k != "RULES_JSON"}
+    if native.glob(["rules-syn.json"], allow_empty = True):
+        syn_sources["RULES_JSON"] = [":rules-syn.json"]
+    orfs_flow(
+        name = name,
+        verilog_files = verilog_files,
+        pdk = "//flow:" + platform,
+        arguments = arguments | {"SYNTH_USE_SYN": "1"},
+        user_arguments = user_arguments,
+        sources = syn_sources,
+        user_sources = user_sources,
+        macros = macros,
+        stage_data = stage_data,
+        variant = "syn",
+        last_stage = "synth",
+        tags = ["manual"],
+        test_kwargs = {"tags": ["manual"]},
+    )
+    for qor_variant, qor_use_syn in [("syn_qor", True), ("yosys_qor", False)]:
+        orfs_qor(
+            name = "%s_%s" % (name, qor_variant),
+            use_syn = qor_use_syn,
+            module_top = name,
+            variant = qor_variant,
+            verilog_files = verilog_files,
+            pdk = "//flow:" + platform,
+            # user_arguments are dropped by the synth-stage argument
+            # filter; designs whose synthesis depends on user .tcl hooks
+            # may fail their best-effort QoR run and render as FAILED.
+            arguments = arguments,
+            sources = {k: v for k, v in sources.items() if k != "RULES_JSON"},
+            deps = macros,
+            stage_data = stage_data,
+            tags = ["manual"],
+        )
+
 def design(config = "config.mk", user_arguments = [], user_sources = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.
 
@@ -75,6 +138,7 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         user_sources = user_sources,
         local_arguments = local_arguments,
         blender = True,
+        extra = _syn_status_targets,
     )
 
 def files(group, extra_srcs = None):
