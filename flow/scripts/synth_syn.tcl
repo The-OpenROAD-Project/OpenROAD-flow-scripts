@@ -75,3 +75,17 @@ orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # out by OpenSTA that has no dependencies. Sole writer of
 # 1_synth.sdc.
 orfs_write_sdc $::env(RESULTS_DIR)/1_synth.sdc
+
+# Gate-level netlist for LEC (kepler-formal compares it against the input
+# RTL) and any other netlist consumer. The Bazel synthesis action declares
+# this file as an output, so it must be written unconditionally.
+source $::env(SCRIPTS_DIR)/lec_check.tcl
+write_lec_verilog 1_synth.v
+
+# Pre- vs post-synthesis LEC. Explicit opt-in via SYNTH_LEC_CHECK=1 —
+# unlike the CTS-stage LEC it does not auto-enable when kepler-formal is
+# installed, because the RTL side depends on kepler's experimental
+# SystemVerilog frontend.
+if { [synth_lec_check_enabled] } {
+  run_synth_lec_test
+}

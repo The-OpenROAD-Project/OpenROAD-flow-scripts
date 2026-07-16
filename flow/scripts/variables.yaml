@@ -1579,12 +1579,24 @@ LEC_CHECK:
   default: 0
   stages:
     - cts
+SYNTH_LEC_CHECK:
+  description: >
+    Run a formal equivalence check between the input RTL and the
+    OpenROAD-SYN synthesis netlist (1_synth.v). The RTL side goes through
+    kepler-formal's experimental SystemVerilog frontend, which does not
+    yet support all RTL constructs, so this is a separate opt-in from
+    LEC_CHECK (which auto-enables when kepler-formal is installed and
+    compares gate-level netlists only). Requires KEPLER_FORMAL_EXE.
+  default: 0
+  stages:
+    - synth
 LEC_AUX_VERILOG_FILES:
   description: >
     Additional Verilog files (e.g. blackbox stubs) to include in LEC
     equivalence checks. Appended to the generated Verilog netlist before
     running the formal equivalence check.
   stages:
+    - synth
     - cts
 REMOVE_CELLS_FOR_LEC:
   description: >
