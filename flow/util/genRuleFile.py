@@ -119,6 +119,11 @@ def gen_rule_file(
             "round_value": True,
             "compare": "==",
         },
+        "constraints__clocks__period": {
+            "mode": "direct",
+            "round_value": False,
+            "compare": "==",
+        },
         # place
         "placeopt__design__instance__area": {
             "mode": "padding",

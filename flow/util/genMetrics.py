@@ -270,6 +270,17 @@ def extract_metrics(
     clk_list = read_sdc(sdc_file)
     metrics_dict["constraints__clocks__count"] = len(clk_list)
     metrics_dict["constraints__clocks__details"] = clk_list
+    # Scalar clock period (min across clocks) so rule files can carry it:
+    # checkMetadata.py cannot compare the details list, and QoR plots need
+    # the period to turn per-stage worst slack into an effective period.
+    periods = []
+    for clk in clk_list:
+        try:
+            periods.append(float(clk.split()[-1]))
+        except (ValueError, IndexError):
+            pass
+    if periods:
+        metrics_dict["constraints__clocks__period"] = min(periods)
 
     # Floorplan
     # =========================================================================
