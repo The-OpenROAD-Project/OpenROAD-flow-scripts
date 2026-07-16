@@ -229,6 +229,9 @@ if {
 
 # Technology mapping of latches
 if { [env_var_exists_and_non_empty LATCH_MAP_FILE] } {
+  # Legalize async set/reset latches into the latches this map file provides
+  # (soft-logic emulation); the trailing selection keeps dfflegalize off FFs.
+  dfflegalize {*}[get_dfflegalize_args $::env(LATCH_MAP_FILE)] {t:$_DLATCH_*}
   techmap -map $::env(LATCH_MAP_FILE)
 }
 

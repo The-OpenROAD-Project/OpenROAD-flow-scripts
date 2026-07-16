@@ -43,8 +43,7 @@ proc read_design_sources { } {
   }
 
   if { [env_var_equals SYNTH_HDL_FRONTEND slang] } {
-    plugin -i $::env(SLANG_PLUGIN_PATH)
-
+    # read_slang is built into Yosys (>=0.67); no plugin load needed.
     set slang_args [list \
       -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions --top $::env(DESIGN_NAME) \
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]

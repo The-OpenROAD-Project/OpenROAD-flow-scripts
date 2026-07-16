@@ -1228,13 +1228,6 @@
       "grt"
     ]
   },
-  "SLANG_PLUGIN_PATH": {
-    "default": "slang",
-    "description": "Path to the slang plugin for Yosys. This can be a full path to a custom-built plugin (e.g. for Bazel builds) or just the plugin name.\n",
-    "stages": [
-      "synth"
-    ]
-  },
   "SLEW_MARGIN": {
     "description": "Specifies a slew margin when fixing max slew violations. This option allows you to overfix.\n",
     "tunable": 1
