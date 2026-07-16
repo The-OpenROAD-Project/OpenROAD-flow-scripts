@@ -1,16 +1,16 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "68ba4d0498b5f5509620f1587c58f834db0e2ba5",
+        "value": "N/A",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "1dad51c25993385e0c22055e59b392b87bf78f13",
+        "value": "N/A",
         "compare": "==",
         "level": "warning"
     },
     "synth__design__instance__area__stdcell": {
-        "value": 52700.0,
+        "value": 16800.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -22,7 +22,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 155203,
+        "value": 141318,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,11 +30,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 13496,
+        "value": 12288,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 13496,
+        "value": 12288,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -54,7 +54,7 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 116,
+        "value": 101,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -86,23 +86,23 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 116,
+        "value": 101,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -318.0,
+        "value": -80.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -46800.0,
+        "value": -320.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -88.9,
+        "value": -80.0,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -338.0,
+        "value": -320.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
