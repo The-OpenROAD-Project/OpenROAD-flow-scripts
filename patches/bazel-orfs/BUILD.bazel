@@ -1,0 +1,9 @@
+"""OpenROAD-SYN support carried as git_override patches on bazel-orfs.
+
+Applied on top of the pinned BAZEL_ORFS_COMMIT (see MODULE.bazel). To be
+upstreamed to The-OpenROAD-Project/bazel-orfs once the OpenROAD-SYN
+status-suite churn settles; regenerate with git format-patch from a
+branch based on the pinned commit.
+"""
+
+exports_files(glob(["*.patch"]))

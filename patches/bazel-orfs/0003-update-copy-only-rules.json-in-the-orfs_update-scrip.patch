@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Thu, 16 Jul 2026 16:35:57 +0200
+Subject: [PATCH 3/4] update: copy only rules.json in the orfs_update script
+
+The update_rules stage's DefaultInfo carries update_rules.args.mk next
+to rules.json, so the generated cp had two sources and a file target:
+'cp: target ...rules-base.json: Not a directory'. Filter to rules.json.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ private/flow.bzl | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/private/flow.bzl b/private/flow.bzl
+index 0cedbe0..c071af8 100644
+--- a/private/flow.bzl
++++ b/private/flow.bzl
+@@ -406,7 +406,14 @@ logs="{logs}"
+ cp $logs $BUILD_WORKSPACE_DIRECTORY/$rules_json
+ """.format(
+             rules_json = ctx.file.rules_json.path,
+-            logs = " ".join([log.short_path for log in ctx.files.logs]),
++            # The update_rules stage's DefaultInfo carries rules.json plus
++            # bookkeeping files (update_rules.args.mk); only rules.json may
++            # be copied — cp with several sources needs a directory target.
++            logs = " ".join([
++                log.short_path
++                for log in ctx.files.logs
++                if log.basename == "rules.json"
++            ]),
+         ),
+     )
+ 

@@ -1,0 +1,71 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Thu, 16 Jul 2026 16:16:38 +0200
+Subject: [PATCH 2/4] flow: emit metadata/test/update chain for synthesis-only
+ flows
+
+When last_stage="synth", orfs_flow() now emits the same
+generate_metadata -> test -> update_rules -> update target chain as the
+full flow, fed directly from the synth stage and gated on RULES_JSON.
+With FLOW_VARIANT-scoped rules (rules-<variant>.json) this enables
+synthesis-only QoR gates such as rules-syn.json for the OpenROAD-SYN
+status suite.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ private/flow.bzl | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/private/flow.bzl b/private/flow.bzl
+index aa8f3e3..0cedbe0 100644
+--- a/private/flow.bzl
++++ b/private/flow.bzl
+@@ -829,3 +829,48 @@ def _orfs_pass(
+                 logs = [rules_name],
+                 **_strip_tool_kwargs(**update_kwargs)
+             )
++    elif steps[-1].stage == "synth" and start_stage <= 1 and not mock_area:
++        # Synthesis-only flow (last_stage = "synth"): emit the same
++        # metadata → test → update_rules → update chain as the full flow,
++        # fed straight from the synth stage. genMetrics.py tolerates a
++        # synthesis-only tree (no 2_floorplan.sdc, no stage 2..6 logs).
++        # Gated on RULES_JSON like the full-flow test: without rules
++        # there is nothing for metadata-check to check.
++        test_args = get_stage_args(
++            TEST_STAGE_IMPL.stage,
++            stage_arguments,
++            arguments,
++            sources,
++        )
++        if "RULES_JSON" in test_args:
++            do_step(
++                GENERATE_METADATA_STAGE_IMPL,
++                steps[-1],
++                data = [
++                    # Stage synth's logs (1_synth.log, 1_synth.json) via
++                    # data_runfiles; source_inputs deliberately omits
++                    # LoggingInfo.logs, and genMetrics.py reads both.
++                    _step_name(name, variant, "synth"),
++                ],
++                kwargs = kwargs,
++            )
++            do_step(
++                TEST_STAGE_IMPL,
++                GENERATE_METADATA_STAGE_IMPL,
++                kwargs = kwargs | {"tags": []} | test_kwargs,
++            )
++            rules_name = do_step(
++                UPDATE_RULES_IMPL,
++                GENERATE_METADATA_STAGE_IMPL,
++                kwargs = kwargs,
++                more_kwargs = kwargs,
++            )
++            update_kwargs = dict(kwargs)
++            update_kwargs.pop("substeps", None)
++            update_kwargs.pop("lint", None)
++            orfs_update(
++                name = _step_name(name, variant, "update"),
++                rules_json = sources["RULES_JSON"][0],
++                logs = [rules_name],
++                **_strip_tool_kwargs(**update_kwargs)
++            )

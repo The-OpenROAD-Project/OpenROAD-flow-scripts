@@ -1,0 +1,302 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Thu, 16 Jul 2026 16:14:51 +0200
+Subject: [PATCH 1/4] synth: support OpenROAD-SYN engine (SYNTH_USE_SYN=1) and
+ declare 1_synth.json
+
+SYNTH_USE_SYN=1 in the merged arguments switches the synthesis stage from
+the yosys flow to OpenROAD's built-in synthesizer: a single do-1_synth
+action (synth_syn.tcl) consuming the staged Verilog sources directly.
+Yosys canonicalization outputs are stubbed (lint-mode precedent) so the
+provider tail is engine-agnostic. Parallel/hierarchical yosys synthesis
+vars are ignored in SYN mode, matching the Makefile.
+
+Also declare logs/1_synth.json (written by flow.sh's openroad -metrics)
+in both engine modes and surface it via LoggingInfo.jsons: without it,
+generate_metadata never saw any synth__* metrics and metadata-check
+failed on rules-base.json's synth rules.
+
+orfs_test: honor the existing cmd attr instead of hardcoding
+metadata-check.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ private/rules.bzl | 176 ++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 131 insertions(+), 45 deletions(-)
+
+diff --git a/private/rules.bzl b/private/rules.bzl
+index 2c77c53..00925d4 100644
+--- a/private/rules.bzl
++++ b/private/rules.bzl
+@@ -573,8 +573,9 @@ if [ ! -e external ]; then
+     # Needed as of Bazel >= 8
+     ln -sf $(realpath $(pwd)/..) external
+ fi
+-{make} --file {makefile} {moreargs} metadata-check
++{make} --file {makefile} {moreargs} {cmd}
+ """.format(
++                cmd = ctx.attr.cmd,
+                 make = ctx.executable._make.short_path,
+                 makefile = ctx.file._makefile.path,
+                 moreargs = environment_string(
+@@ -744,9 +745,14 @@ orfs_run_executable = rule(
+ 
+ CANON_OUTPUT = "1_1_yosys_canonicalize.rtlil"
+ SYNTH_OUTPUTS = ["1_2_yosys.v", "1_2_yosys.sdc", "1_synth.sdc", "mem.json"]
++
++# Outputs of the OpenROAD-SYN synthesis flow (SYNTH_USE_SYN=1). synth_syn.tcl
++# always writes the ODB, the canonicalized SDC and a gate-level Verilog
++# netlist (LEC input); none of the yosys-flow files exist in this mode.
++SYN_OUTPUTS = ["1_synth.odb", "1_synth.sdc", "1_synth.v"]
+ SYNTH_REPORTS = ["synth_stat.txt", "synth_mocked_memories.txt"]
+ 
+-def _yosys_parallel_synth(ctx, config, canon_output, synth_outputs, synth_logs, synth_reports, num_partitions, save_odb, all_arguments = {}):
++def _yosys_parallel_synth(ctx, config, canon_output, synth_outputs, synth_logs, synth_jsons, synth_reports, num_partitions, save_odb, all_arguments = {}):
+     """Parallel synthesis: keep → kept-json → N partitions → merge.
+ 
+     Yosys is not deterministic when using host threads, so SYNTH_NUM_PARTITIONS
+@@ -1101,7 +1107,12 @@ def _yosys_parallel_synth(ctx, config, canon_output, synth_outputs, synth_logs,
+     if save_odb:
+         odb_commands = [_make_cmd(ctx)] + generation_commands(
+             [synth_outputs["1_synth.odb"]],
+-        )
++        ) + [
++            # flow.sh writes logs/1_synth.json during do-1_synth; guarantee a
++            # parseable declared output either way (genMetrics json.load()s it).
++            "[ -s {p} ] || echo '{{}}' > {p}".format(p = f.path)
++            for f in synth_jsons
++        ]
+         ctx.actions.run_shell(
+             arguments = [
+                 "--file",
+@@ -1123,7 +1134,7 @@ def _yosys_parallel_synth(ctx, config, canon_output, synth_outputs, synth_logs,
+                     deps_inputs(ctx),
+                 ],
+             ),
+-            outputs = [synth_outputs["1_synth.odb"], synth_outputs["1_synth.sdc"]],
++            outputs = [synth_outputs["1_synth.odb"], synth_outputs["1_synth.sdc"]] + synth_jsons,
+             tools = yosys_and_flow_tools,
+         )
+ 
+@@ -1152,41 +1163,55 @@ def _yosys_impl(ctx):
+         ),
+     )
+ 
++    # Engine selection: SYNTH_USE_SYN=1 in the merged arguments switches the
++    # synthesis stage from the yosys flow to OpenROAD's built-in synthesizer
++    # (the Makefile's synth_syn path). Analysis-time only: the value must
++    # come through arguments/stage_arguments, not extra_arguments .json files.
++    use_syn = all_arguments.get("SYNTH_USE_SYN") == "1"
++
+     canon_logs = declare_artifacts(ctx, "logs", ["1_1_yosys_canonicalize.log"])
+ 
+     canon_output = declare_artifact(ctx, "results", CANON_OUTPUT)
+ 
+-    # SYNTH_NETLIST_FILES will not create an .rtlil file or reports, so we need
+-    # an empty placeholder in that case.
+-    commands = [_make_cmd(ctx)] + generation_commands(
+-        canon_logs + [canon_output],
+-    )
++    if use_syn:
++        # OpenROAD-SYN has no yosys canonicalization; stub its outputs
++        # (lint-mode precedent) so the provider/deploy tail below is
++        # identical in both engine modes. genMetrics.py treats the empty
++        # RTLIL like a missing file when hashing.
++        for f in canon_logs + [canon_output]:
++            ctx.actions.write(output = f, content = "")
++    else:
++        # SYNTH_NETLIST_FILES will not create an .rtlil file or reports, so we need
++        # an empty placeholder in that case.
++        commands = [_make_cmd(ctx)] + generation_commands(
++            canon_logs + [canon_output],
++        )
+ 
+-    ctx.actions.run_shell(
+-        arguments = [
+-            "--file",
+-            ctx.file._makefile_yosys.path,
+-            "yosys-dependencies",
+-            "do-yosys-canonicalize",
+-        ],
+-        command = EXPAND_VERILOG_DIRS + " && ".join(commands),
+-        env = config_overrides(
+-            ctx,
+-            verilog_arguments(ctx.files.verilog_files) |
+-            yosys_environment(ctx) |
+-            config_environment(config),
+-        ),
+-        inputs = depset(
+-            [config] + ctx.files.verilog_files + ctx.files.extra_configs,
+-            transitive = [
+-                data_inputs(ctx),
+-                pdk_inputs(ctx),
+-                deps_inputs(ctx),
++        ctx.actions.run_shell(
++            arguments = [
++                "--file",
++                ctx.file._makefile_yosys.path,
++                "yosys-dependencies",
++                "do-yosys-canonicalize",
+             ],
+-        ),
+-        outputs = [canon_output] + canon_logs,
+-        tools = yosys_inputs(ctx),
+-    )
++            command = EXPAND_VERILOG_DIRS + " && ".join(commands),
++            env = config_overrides(
++                ctx,
++                verilog_arguments(ctx.files.verilog_files) |
++                yosys_environment(ctx) |
++                config_environment(config),
++            ),
++            inputs = depset(
++                [config] + ctx.files.verilog_files + ctx.files.extra_configs,
++                transitive = [
++                    data_inputs(ctx),
++                    pdk_inputs(ctx),
++                    deps_inputs(ctx),
++                ],
++            ),
++            outputs = [canon_output] + canon_logs,
++            tools = yosys_inputs(ctx),
++        )
+ 
+     num_partitions = int(all_arguments.get("SYNTH_NUM_PARTITIONS", "0"))
+     if num_partitions == 0 and all_arguments.get("SYNTH_KEEP_MODULES"):
+@@ -1194,31 +1219,92 @@ def _yosys_impl(ctx):
+         # when NUM_CPUS-based auto-detection hasn't run (direct orfs_synth call).
+         kept_count = len(all_arguments["SYNTH_KEEP_MODULES"].split(" "))
+         num_partitions = max(1, kept_count)
++    if use_syn:
++        # Parallel/hierarchical synthesis is a yosys-flow concept; the
++        # Makefile's SYNTH_USE_SYN path ignores SYNTH_KEEP_MODULES and
++        # SYNTH_NUM_PARTITIONS (e.g. asap7/swerv_wrapper carries both
++        # with SYNTH_USE_SYN=1), so never take the partitioned branch.
++        num_partitions = 0
+ 
+     save_odb = ctx.attr.save_odb
+-
+-    synth_logs = declare_artifacts(ctx, "logs", ["1_2_yosys.log", "1_2_yosys_metrics.log"] + (["1_synth.log"] if save_odb else []))
+-
+-    synth_outputs = {}
+-    for output in SYNTH_OUTPUTS + (["1_synth.odb"] if save_odb else []):
+-        synth_outputs[output] = declare_artifact(ctx, "results", output)
++    if use_syn and not save_odb:
++        fail("SYNTH_USE_SYN=1 always writes 1_synth.odb; save_odb=False is " +
++             "not supported in " + str(ctx.label))
++
++    # logs/1_synth.json: metrics that flow.sh's `openroad -metrics` writes
++    # during do-1_synth. Declared so generate_metadata (which merges
++    # logs/1_*.json via genMetrics.py) sees the synth__* metrics.
++    if use_syn:
++        synth_logs = declare_artifacts(ctx, "logs", ["1_synth.log"])
++        synth_jsons = declare_artifacts(ctx, "logs", ["1_synth.json"])
++        synth_outputs = {o: declare_artifact(ctx, "results", o) for o in SYN_OUTPUTS}
++    else:
++        synth_logs = declare_artifacts(ctx, "logs", ["1_2_yosys.log", "1_2_yosys_metrics.log"] + (["1_synth.log"] if save_odb else []))
++        synth_jsons = declare_artifacts(ctx, "logs", ["1_synth.json"] if save_odb else [])
++        synth_outputs = {}
++        for output in SYNTH_OUTPUTS + (["1_synth.odb"] if save_odb else []):
++            synth_outputs[output] = declare_artifact(ctx, "results", output)
+ 
+     synth_reports = declare_artifacts(ctx, "reports", SYNTH_REPORTS)
+ 
+     variables = declare_artifact(ctx, "results", "1_synth.vars")
+ 
++    # Ensure declared metrics .json outputs exist and are parseable even if
++    # make did not write them; genMetrics.py json.load()s every 1_*.json, so
++    # the fallback must be "{}" rather than a touched empty file.
++    json_fallback = [
++        "[ -s {p} ] || echo '{{}}' > {p}".format(p = f.path)
++        for f in synth_jsons
++    ]
++
+     if ctx.attr.lint:
+         # Lint mode: only canonicalization runs; stub remaining synth outputs.
+         for f in synth_outputs.values() + synth_logs + synth_reports + [variables]:
+             ctx.actions.write(output = f, content = "")
++        for f in synth_jsons:
++            ctx.actions.write(output = f, content = "{}")
++    elif use_syn:
++        # OpenROAD-SYN synthesis: one openroad invocation (synth_syn.tcl via
++        # do-1_synth) consumes the staged Verilog sources directly, so
++        # VERILOG_FILES is set from ctx.files.verilog_files exactly like the
++        # yosys canonicalize action does. Uses the full flow makefile
++        # filegroup (synth_syn.tcl sources load.tcl etc.), no yosys tools.
++        commands = [_make_cmd(ctx)] + generation_commands(
++            synth_logs + synth_reports,
++        ) + json_fallback
++        ctx.actions.run_shell(
++            arguments = [
++                "--file",
++                ctx.file._makefile.path,
++                "do-1_synth",
++            ],
++            command = EXPAND_VERILOG_DIRS + " && ".join(commands),
++            env = config_overrides(
++                ctx,
++                verilog_arguments(ctx.files.verilog_files) |
++                flow_environment(ctx) |
++                config_environment(config),
++            ),
++            inputs = depset(
++                [config] + ctx.files.verilog_files + ctx.files.extra_configs,
++                transitive = [
++                    data_inputs(ctx),
++                    pdk_inputs(ctx),
++                    deps_inputs(ctx),
++                ],
++            ),
++            outputs = synth_outputs.values() + synth_logs + synth_jsons + synth_reports,
++            tools = flow_inputs(ctx),
++            progress_message = "OpenROAD-SYN synthesis for %s" % module_top(ctx),
++        )
+     elif num_partitions > 0:
+-        _yosys_parallel_synth(ctx, config, canon_output, synth_outputs, synth_logs, synth_reports, num_partitions, save_odb, all_arguments)
++        _yosys_parallel_synth(ctx, config, canon_output, synth_outputs, synth_logs, synth_jsons, synth_reports, num_partitions, save_odb, all_arguments)
+     else:
+         # SYNTH_NETLIST_FILES will not create an .rtlil file or reports, so we need
+         # an empty placeholder in that case.
+         commands = [_make_cmd(ctx)] + generation_commands(
+             synth_logs + synth_outputs.values() + synth_reports,
+-        )
++        ) + json_fallback
+         ctx.actions.run_shell(
+             arguments = [
+                 "--file",
+@@ -1242,7 +1328,7 @@ def _yosys_impl(ctx):
+                     deps_inputs(ctx),
+                 ],
+             ),
+-            outputs = synth_outputs.values() + synth_logs + synth_reports,
++            outputs = synth_outputs.values() + synth_logs + synth_jsons + synth_reports,
+             tools = depset(transitive = [yosys_inputs(ctx), flow_inputs(ctx)]),
+         )
+ 
+@@ -1324,7 +1410,7 @@ def _yosys_impl(ctx):
+         exe,
+         config = config_short,
+         make = make,
+-        genfiles = [config_short] + outputs + canon_logs + synth_logs,
++        genfiles = [config_short] + outputs + canon_logs + synth_logs + synth_jsons,
+     )
+ 
+     # Collect all files needed for deployment (tools, PDK, stage inputs).
+@@ -1364,7 +1450,7 @@ def _yosys_impl(ctx):
+         name = ctx.attr.name + "_deps",
+     )
+ 
+-    _runfiles_files = [config_short, make] + outputs + canon_logs + synth_logs + ctx.files.extra_configs
++    _runfiles_files = [config_short, make] + outputs + canon_logs + synth_logs + synth_jsons + ctx.files.extra_configs
+     _runfiles_common = depset(
+         transitive = [
+             deps_inputs(ctx),
+@@ -1444,7 +1530,7 @@ def _yosys_impl(ctx):
+             logs = depset(canon_logs + synth_logs),
+             reports = depset(synth_reports),
+             drcs = depset([]),
+-            jsons = depset([]),
++            jsons = depset(synth_jsons),
+         ),
+     ]
+ 

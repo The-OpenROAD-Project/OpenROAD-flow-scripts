@@ -106,9 +106,20 @@ BAZEL_ORFS_COMMIT = "6ebadeb4be5c9ada103081c9a5e668c014126616"
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
+#
+# The patches carry OpenROAD-SYN support (SYNTH_USE_SYN engine selection,
+# synthesis-only metadata/test chain, orfs_design extension hook) until
+# they are upstreamed; see patches/bazel-orfs/BUILD.bazel.
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        "//patches/bazel-orfs:0001-synth-support-OpenROAD-SYN-engine-SYNTH_USE_SYN-1-an.patch",
+        "//patches/bazel-orfs:0002-flow-emit-metadata-test-update-chain-for-synthesis-o.patch",
+        "//patches/bazel-orfs:0003-update-copy-only-rules.json-in-the-orfs_update-scrip.patch",
+        "//patches/bazel-orfs:0004-design-caller-extension-hook-for-per-design-status-t.patch",
+    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 
