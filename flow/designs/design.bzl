@@ -78,7 +78,8 @@ def _syn_status_targets(
     - a best-effort <name>_syn_qor / <name>_yosys_qor pair whose
       qor.json outputs feed the syn-vs-yosys QoR comparison graph.
     """
-    syn_sources = {k: v for k, v in sources.items() if k != "RULES_JSON"}
+    qor_sources = {k: v for k, v in sources.items() if k != "RULES_JSON"}
+    syn_sources = dict(qor_sources)
     if native.glob(["rules-syn.json"], allow_empty = True):
         syn_sources["RULES_JSON"] = [":rules-syn.json"]
     orfs_flow(
@@ -108,7 +109,7 @@ def _syn_status_targets(
             # filter; designs whose synthesis depends on user .tcl hooks
             # may fail their best-effort QoR run and render as FAILED.
             arguments = arguments,
-            sources = {k: v for k, v in sources.items() if k != "RULES_JSON"},
+            sources = qor_sources,
             deps = macros,
             stage_data = stage_data,
             tags = ["manual"],
