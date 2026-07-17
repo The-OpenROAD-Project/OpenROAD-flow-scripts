@@ -72,7 +72,7 @@ def failing_rules(test_dir):
     if not log_file.is_file():
         return []
     fields = []
-    for line in log_file.read_text(errors="replace").splitlines():
+    for line in log_file.read_text(encoding="utf-8", errors="replace").splitlines():
         match = FAIL_RULE_RE.match(line)
         if match:
             fields.append(match.group(1))

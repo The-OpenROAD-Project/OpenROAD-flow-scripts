@@ -6,10 +6,15 @@ metadata: finish metadata-generate metadata-check
 # Synthesis-only metadata: generate and check QoR after just the synth
 # stage, without running the full flow. The synthesis-stage subset of
 # the design's regular rules file gates the run, so no per-variant
-# rules file needs to be committed.
+# rules file needs to be committed. Sequential sub-makes rather than
+# prerequisites: each step consumes the previous one's outputs, which
+# plain prerequisites would race under make -j.
 .PHONY: metadata-synth
 metadata-synth: export RULES_JSON = $(DESIGN_DIR)/rules-base.json
-metadata-synth: synth metadata-generate metadata-check-synth
+metadata-synth:
+	$(MAKE) synth
+	$(MAKE) metadata-generate
+	$(MAKE) metadata-check-synth
 
 .PHONY: metadata-generate
 metadata-generate:
