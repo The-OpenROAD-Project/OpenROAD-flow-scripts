@@ -3,13 +3,13 @@ load("@orfs_designs//:designs.bzl", "DESIGNS")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//flow/designs:design.bzl", "design")
 
-# SYNTH_USE_SYN is make-only for now: bazel-orfs's synth stage always
-# runs the yosys flow and neither stages the Verilog sources nor sets
-# VERILOG_FILES for the OpenROAD synthesis step, so the built-in
-# synthesizer opt-in must not reach the bazel arguments.
+# gcd's regular flow follows config.mk onto OpenROAD-SYN
+# (SYNTH_USE_SYN=1). The single-process comparison below deliberately
+# exercises the yosys netlist path (single_flow.tcl seeds from
+# 1_2_yosys.v), so it consumes the forced-yosys gcd_yosys_* variant the
+# config.mk DSL emits for every design (see flow/designs/design.bzl).
 design(
     config = "config.mk",
-    local_arguments = ["SYNTH_USE_SYN"],
 )
 
 # Stage-boundary .odb/.sdc stems shared by the normal per-stage flow
@@ -56,7 +56,7 @@ SINGLE_FLOW_EXTRA_OUTS = [
 # this package.
 orfs_run(
     name = "gcd_single_flow",
-    src = ":gcd_synth",
+    src = ":gcd_yosys_synth",
     outs = [
         "results/asap7/gcd/single/{}.{}".format(stem, ext)
         for stem in SINGLE_FLOW_STAGES.values()
@@ -79,11 +79,13 @@ orfs_run(
     variant = "single",
 )
 
-# Normal-flow stage outputs, one filegroup per compared file.
+# Normal-flow stage outputs, one filegroup per compared file. Taken from
+# the yosys-engine variant above so both sides of the byte-compare start
+# from the same yosys netlist.
 [
     filegroup(
         name = "gcd_base_{}_{}".format(stage, ext),
-        srcs = [":gcd_" + stage],
+        srcs = [":gcd_yosys_" + stage],
         output_group = "{}.{}".format(stem, ext),
     )
     for stage, stem in SINGLE_FLOW_STAGES.items()

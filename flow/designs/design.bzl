@@ -1,5 +1,6 @@
 """BUILD boilerplate for flow/designs/."""
 
+load("@bazel-orfs//:openroad.bzl", "orfs_flow")
 load("@orfs_designs//:designs.bzl", "orfs_design")
 
 # Per filegroup target: extensions included in the filegroup.
@@ -51,6 +52,65 @@ def _export_design_files():
         visibility = ["//visibility:private"],
     )
 
+def _engine_variant_targets(
+        name,
+        platform,
+        verilog_files,
+        arguments,
+        user_arguments,
+        sources,
+        user_sources,
+        macros,
+        stage_data,
+        tags):  # buildifier: disable=unused-variable
+    """Forced-engine flow variants for one design (orfs_design extra hook).
+
+    Emits, always tagged "manual" (even for CI designs, so only explicit
+    invocations such as //flow/designs/asap7:syn_test run them), two full
+    flows that pin the synthesis engine regardless of the config.mk
+    default:
+
+    - variant "syn": SYNTH_USE_SYN=1 (OpenROAD-SYN) — lets any design be
+      tested under OpenROAD-SYN before its config.mk officially switches.
+    - variant "yosys": SYNTH_USE_SYN=0 — keeps the yosys baseline
+      reproducible after a design officially switches (e.g. asap7/gcd).
+
+    When the design has a rules-base.json each variant gets the same QoR
+    gates as the regular flow, congruent with the Jenkins/dashboard
+    signal because they check the same rules file with the same script:
+
+    - <name>_<engine>_test: the full flow gated on all of rules-base.json
+      (the real, dashboard-equivalent gate).
+    - <name>_<engine>_synth_test: the fast tier — synthesis plus a check
+      of only the synth__/constraints__ subset of rules-base.json.
+      QoR-only (no LEC), but a minutes-scale iteration signal that shares
+      its synth action with the full-flow variant.
+
+    The generated <name>_<engine>_update targets must NOT be run: they
+    would overwrite the design's rules-base.json with the forced engine's
+    numbers.
+    """
+    for engine, use_syn in [("syn", "1"), ("yosys", "0")]:
+        orfs_flow(
+            name = name,
+            verilog_files = verilog_files,
+            pdk = "//flow:" + platform,
+            arguments = arguments | {"SYNTH_USE_SYN": use_syn},
+            user_arguments = user_arguments,
+            # sources carries the auto-detected rules-base.json as
+            # RULES_JSON, which gates the variant's tests.
+            sources = sources,
+            user_sources = user_sources,
+            macros = macros,
+            stage_data = stage_data,
+            variant = engine,
+            tags = ["manual"],
+            test_kwargs = {"tags": ["manual"]},
+            # Sibling packages consume stage outputs (e.g. asap7/gcd's
+            # single-process comparison seeds from the yosys netlist).
+            visibility = ["//visibility:public"],
+        )
+
 def design(config = "config.mk", user_arguments = [], user_sources = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.
 
@@ -75,6 +135,7 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         user_sources = user_sources,
         local_arguments = local_arguments,
         blender = True,
+        extra = _engine_variant_targets,
     )
 
 def files(group, extra_srcs = None):
