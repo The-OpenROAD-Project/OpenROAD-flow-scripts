@@ -57,11 +57,13 @@ def test_status(test_dir):
         return None
     try:
         root = ET.parse(xml_file).getroot()
-    except ET.ParseError:
+        failures = 0
+        for suite in root.iter("testsuite"):
+            failures += int(suite.get("failures") or 0) + int(suite.get("errors") or 0)
+    except (ET.ParseError, ValueError, TypeError):
+        # A corrupt test.xml is "no result", not a pass — swallowing the
+        # error inside the sum would render a green cell for it.
         return None
-    failures = 0
-    for suite in root.iter("testsuite"):
-        failures += int(suite.get("failures", 0)) + int(suite.get("errors", 0))
     return failures == 0, xml_file.stat().st_mtime
 
 
@@ -158,7 +160,7 @@ def main():
             if result and not result["passed"] and result["failing"]:
                 failing = result["failing"]
                 break
-        newest = max(result["mtime"] for result in results.values())
+        newest = max(r["mtime"] for r in results.values())
         row = [f"{platform}/{pkg}"] + cells + [format_rules(failing), age(newest)]
         print("| " + " | ".join(row) + " |")
     print()
