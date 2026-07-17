@@ -433,6 +433,14 @@
       "place"
     ]
   },
+  "GRT_SEED": {
+    "description": "Global route seed\n",
+    "stages": [
+      "grt"
+    ],
+    "tunable": 1,
+    "type": "int"
+  },
   "GUI_TIMING": {
     "default": 1,
     "description": "Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.\n"
