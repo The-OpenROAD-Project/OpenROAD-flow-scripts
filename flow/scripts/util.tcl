@@ -40,6 +40,9 @@ proc repair_timing_helper { args } {
   append_env_var additional_args SKIP_VT_SWAP -skip_vt_swap 0
   append_env_var additional_args SKIP_CRIT_VT_SWAP -skip_crit_vt_swap 0
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
+  # DO NOT MERGE: neighbor-check CI eval -- force the (off-by-default)
+  # neighbor feasibility check on for every repair_timing call.
+  lappend additional_args -neighbor_check
   lappend additional_args {*}$args -verbose
 
   log_cmd repair_timing {*}$additional_args
