@@ -145,6 +145,19 @@ python3 flow/scripts/memories/gen_memories.py \
   --verilog flow/designs/src/tinyRocket/freechips.rocketchip.system.TinyConfig.v
 ```
 
+## Consuming from bazel-orfs
+
+Everything downstream keys off generated files, so a build system can
+declare them as ordinary stage outputs and transitive dependencies. In
+bazel-orfs each stage runs in a sandbox where only declared outputs
+survive, so it additionally needs to declare `memories.json` plus the
+`memories/` directory (a directory artifact — the per-memory file
+names are only known at run time) as canonicalize outputs and stage
+them into every downstream stage's sandbox. The bazel-orfs change that
+does this is carried alongside this feature as
+`flow/scripts/memories/bazel-orfs-auto-memories.patch`, to be
+upstreamed to bazel-orfs once the feature lands here.
+
 ## Variables
 
 - [AUTO_MEMORIES](FlowVariables.md#AUTO_MEMORIES)
