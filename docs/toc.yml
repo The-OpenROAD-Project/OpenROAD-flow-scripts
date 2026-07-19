@@ -19,6 +19,8 @@ entries:
     title: Build Using WSL
   - file: user/FlowVariables.md
     title: Flow Variables
+  - file: user/AutoMemories.md
+    title: Generated Memory Macros (AUTO_MEMORIES)
   - file: contrib/Metrics.md
     title: Metrics
   - file: user/InstructionsForAutoTuner.md

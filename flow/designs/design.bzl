@@ -17,7 +17,7 @@ _GROUPS = {
 # cross-package references resolve. Kept tight on purpose: globbing "*"
 # silently exposes LICENSE/.gitignore/etc. as the public API surface.
 # gds/gds.gz are inputs in hierarchical flows via ADDITIONAL_GDS.
-_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib", "gds", "gds.gz"]
+_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib", "gds", "gds.gz", "memories"]
 
 _EXPORTS_SENTINEL = "_orfs_design_exports_sentinel"
 

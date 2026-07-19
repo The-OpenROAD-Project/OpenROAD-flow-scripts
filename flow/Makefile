@@ -261,6 +261,28 @@ $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
+# AUTO_MEMORIES: detect memories in the RTL pre-synthesis and generate
+# .lib/.lef macro views for them. Experimental; see
+# docs/user/AutoMemories.md.
+ifeq ($(AUTO_MEMORIES),1)
+.PHONY: do-auto-memories
+do-auto-memories:
+	mkdir -p $(RESULTS_DIR)
+	$(PYTHON_EXE) $(SCRIPTS_DIR)/memories/gen_memories.py \
+	  --platform $(PLATFORM) \
+	  --out-dir $(RESULTS_DIR)/memories \
+	  --json $(RESULTS_DIR)/memories.json \
+	  $(foreach file,$(VERILOG_FILES),--verilog $(file)) \
+	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file))
+
+$(RESULTS_DIR)/memories.json: $(VERILOG_FILES) $(ADDITIONAL_MEMORIES) \
+    $(wildcard $(SCRIPTS_DIR)/memories/*.py)
+	$(UNSET_AND_MAKE) do-auto-memories
+
+yosys-dependencies: $(RESULTS_DIR)/memories.json
+$(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
+endif
+
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
 	$(SCRIPTS_DIR)/synth.sh $(SYNTH_SCRIPT) $(LOG_DIR)/1_2_yosys.log
@@ -278,6 +300,7 @@ $(RESULTS_DIR)/1_2_yosys.v $(RESULTS_DIR)/1_2_yosys.sdc: $(RESULTS_DIR)/1_1_yosy
 .PHONY: clean_synth
 clean_synth:
 	rm -f $(RESULTS_DIR)/1_* $(RESULTS_DIR)/mem*.json
+	rm -rf $(RESULTS_DIR)/memories
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STATS)
