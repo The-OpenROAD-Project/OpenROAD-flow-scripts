@@ -1569,7 +1569,7 @@ LEC_CHECK:
     Perform formal equivalence checks between before and after netlists.
     This checks CTS repair timing and the initial synthesis netlist against
     the final netlist. If this fails, report an issue to OpenROAD.
-  default: 0
+  default: $(if $(wildcard $(KEPLER_FORMAL_EXE)),1,0)
   stages:
     - synth
     - cts
