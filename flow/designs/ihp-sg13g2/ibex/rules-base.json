@@ -1,16 +1,16 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "baa8886b2d156c1dff12efae38c38956730bb00a",
+        "value": "7e0e947fe405a8b4b43d458779a4b8d41eed0966",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "c7cf43cf1bf4c698e7c304853e39fc9cb4f2e3c4",
+        "value": "2a5bd97b5c1aa4c429ae57086edb721a29d0c0d2",
         "compare": "==",
         "level": "warning"
     },
     "synth__design__instance__area__stdcell": {
-        "value": 278000.0,
+        "value": 273000.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 306794,
+        "value": 298992,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 20278,
+        "value": 20217,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,11 +30,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1763,
+        "value": 1758,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1763,
+        "value": 1758,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 1017602,
+        "value": 1012494,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -1.6,
+        "value": -5.34,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 327350,
+        "value": 320304,
         "compare": "<="
     }
 }

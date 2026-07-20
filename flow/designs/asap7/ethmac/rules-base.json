@@ -1,16 +1,16 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "80bd19c2d0b116a1d88f0f84cbfe00da3a31d68c",
+        "value": "7acd8f58cb4522b4111742580e4e5e656473ba7d",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "ef3244761c23b0d7c0d2ee7eaf97545ad0b74921",
+        "value": "cb3ea9e02e4231a1646261bbc4f6cba6dd58b568",
         "compare": "==",
         "level": "warning"
     },
     "synth__design__instance__area__stdcell": {
-        "value": 8510.0,
+        "value": 8420.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 8783,
+        "value": 8704,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 68712,
+        "value": 68710,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -38,11 +38,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -88.6,
+        "value": -105.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -1270.0,
+        "value": -1480.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -1790.0,
+        "value": -2020.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 244604,
+        "value": 240797,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -1400.0,
+        "value": -1500.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 9440,
+        "value": 9362,
         "compare": "<="
     }
 }

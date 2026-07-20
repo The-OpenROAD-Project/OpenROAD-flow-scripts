@@ -66,3 +66,5 @@ export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
 export MACRO_PLACE_HALO = 7 7
+
+export OPT_POST_GRT_WNS = 0

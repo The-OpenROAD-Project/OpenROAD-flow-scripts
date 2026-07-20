@@ -156,9 +156,11 @@ configuration file.
 | <a name="GDS_FILES"></a>GDS_FILES| Path to platform GDS files.| |
 | <a name="GENERATE_ARTIFACTS_ON_FAILURE"></a>GENERATE_ARTIFACTS_ON_FAILURE| For instance Bazel needs artifacts (.odb and .rpt files) on a failure to allow the user to save hours on re-running the failed step locally, but when working with a Makefile flow, it is more natural to fail the step and leave the user to manually inspect the logs and artifacts directly via the file system. Set to 1 to change the behavior to generate artifacts upon failure to e.g. do a global route. The exit code will still be non-zero on all other failures that aren't covered by the "useful to inspect the artifacts on failure" use-case. Example: just like detailed routing, a global route that fails with congestion, is not a build failure(as in exit code non-zero), it is a successful(as in zero exit code) global route that produce reports detailing the problem. Detailed route will not proceed, if there is global routing congestion This allows build systems, such as bazel, to create artifacts for global and detailed route, even if the operation had problems, without having know about the semantics between global and detailed route. Considering that global and detailed route can run for a long time and use a lot of memory, this allows inspecting results on a laptop for a build that ran on a server.| 0|
 | <a name="GLOBAL_PLACEMENT_ARGS"></a>GLOBAL_PLACEMENT_ARGS| Use additional tuning parameters during global placement other than default args defined in global_place.tcl.| |
-| <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Replaces default arguments for global route.| -congestion_iterations 30 -congestion_report_iter_step 5 -verbose|
+| <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Replaces default arguments for global route. The -congestion_iterations default is set by the flow (30 for FastRoute, 10 for CUGR); add -congestion_iterations here to override it.| -congestion_report_iter_step 5 -verbose|
+| <a name="GLOBAL_ROUTE_USE_CUGR"></a>GLOBAL_ROUTE_USE_CUGR| Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.| 0|
 | <a name="GND_NETS_VOLTAGES"></a>GND_NETS_VOLTAGES| Used for IR Drop calculation.| |
 | <a name="GPL_KEEP_OVERFLOW"></a>GPL_KEEP_OVERFLOW| Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.| |
+| <a name="GPL_RANDOM_SEED"></a>GPL_RANDOM_SEED| Specifies a random seed for global placement.  Useful for perturbation studies.| |
 | <a name="GPL_ROUTABILITY_DRIVEN"></a>GPL_ROUTABILITY_DRIVEN| Specifies whether the placer should use routability driven placement.| 1|
 | <a name="GPL_TIMING_DRIVEN"></a>GPL_TIMING_DRIVEN| Specifies whether the placer should use timing driven placement.| 1|
 | <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.| 1|
@@ -187,7 +189,6 @@ configuration file.
 | <a name="MAX_PLACE_STEP_COEF"></a>MAX_PLACE_STEP_COEF| Sets the maximum phi coefficient (pcof_max / µ_k Upper Bound) for global placement optimization. This parameter controls the step size upper bound in the RePlAce Nesterov optimization algorithm. Higher values allow more aggressive optimization but may risk divergence. Valid range: 1.00-1.20| 1.05|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_DRT"></a>MAX_REPAIR_ANTENNAS_ITER_DRT| Defines the maximum number of iterations post-detailed routing repair antennas will run.| 5|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_GRT"></a>MAX_REPAIR_ANTENNAS_ITER_GRT| Defines the maximum number of iterations post global routing repair antennas will run.| 5|
-| <a name="MAX_REPAIR_TIMING_ITER"></a>MAX_REPAIR_TIMING_ITER| Maximum number of iterations for repair setup and repair hold.| |
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| |
 | <a name="MIN_CLK_ROUTING_LAYER"></a>MIN_CLK_ROUTING_LAYER| The lowest metal layer name to be used for clock-net routing in global routing. Used in flow/platforms/*/fastroute.tcl as the lower bound of `set_routing_layers -clock`. Typically higher than MIN_ROUTING_LAYER so clock nets prefer the upper, lower-RC layers. No `stages:` list because floorplan.tcl also `source`s the platform fastroute.tcl.| |
@@ -195,6 +196,7 @@ configuration file.
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| |
 | <a name="NUM_CORES"></a>NUM_CORES| Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers of cores in system as determined by system specific code in Makefile, `nproc` is tried first. OpenROAD does not limit itself to this number of cores across OpenROAD running instances, which can lead to overprovisioning in contexts such as bazel-orfs where there could be many routing, or place jobs running at the same time.| |
 | <a name="OPENROAD_HIERARCHICAL"></a>OPENROAD_HIERARCHICAL| Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.| 0|
+| <a name="OPT_POST_GRT_WNS"></a>OPT_POST_GRT_WNS| Optimize WNS after global routing by additional repair_timing that uses VT swap and wire rerouting only to minimize placement and routing disturbance| 1|
 | <a name="OR_K"></a>OR_K| Passed as -or_k to detailed routing.| |
 | <a name="OR_SEED"></a>OR_SEED| Passed as -or_seed to detailed routing.| |
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.| |
@@ -287,7 +289,6 @@ configuration file.
 | <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT| Skip repair_tie_fanout at floorplan step.| 0|
 | <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.| 0|
 | <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP| Do not perform VT swap to improve QoR (default: do VT swap).| |
-| <a name="SLANG_PLUGIN_PATH"></a>SLANG_PLUGIN_PATH| Path to the slang plugin for Yosys. This can be a full path to a custom-built plugin (e.g. for Bazel builds) or just the plugin name.| slang|
 | <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.| |
 | <a name="SWAP_ARITH_OPERATORS"></a>SWAP_ARITH_OPERATORS| Improve timing QoR by swapping ALU and MULT arithmetic operators.| |
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| |
@@ -324,7 +325,6 @@ configuration file.
 | <a name="TNS_END_PERCENT"></a>TNS_END_PERCENT| Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.| 100|
 | <a name="UNSET_ABC9_BOX_CELLS"></a>UNSET_ABC9_BOX_CELLS| List of cells to unset the abc9_box attribute on| |
 | <a name="USE_FILL"></a>USE_FILL| Whether to perform metal density filling.| 0|
-| <a name="USE_NEGOTIATION"></a>USE_NEGOTIATION| Enable using negotiation legalizer for detailed placement.| 0|
 | <a name="VERILOG_DEFINES"></a>VERILOG_DEFINES| Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`| |
 | <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog/SystemVerilog files providing a description of modules.| |
 | <a name="VERILOG_INCLUDE_DIRS"></a>VERILOG_INCLUDE_DIRS| Specifies the include directories for the Verilog input files.| |
@@ -354,7 +354,6 @@ configuration file.
 - [SDC_GUT](#SDC_GUT)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
-- [SLANG_PLUGIN_PATH](#SLANG_PLUGIN_PATH)
 - [SYNTH_ARGS](#SYNTH_ARGS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
 - [SYNTH_CANONICALIZE_TCL](#SYNTH_CANONICALIZE_TCL)
@@ -410,7 +409,6 @@ configuration file.
 - [MACRO_WRAPPERS](#MACRO_WRAPPERS)
 - [MAKE_TRACKS](#MAKE_TRACKS)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
-- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PDN_TCL](#PDN_TCL)
@@ -475,13 +473,13 @@ configuration file.
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GPL_KEEP_OVERFLOW](#GPL_KEEP_OVERFLOW)
+- [GPL_RANDOM_SEED](#GPL_RANDOM_SEED)
 - [GPL_ROUTABILITY_DRIVEN](#GPL_ROUTABILITY_DRIVEN)
 - [GPL_TIMING_DRIVEN](#GPL_TIMING_DRIVEN)
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_PLACE_STEP_COEF](#MAX_PLACE_STEP_COEF)
-- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_PLACE_STEP_COEF](#MIN_PLACE_STEP_COEF)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
@@ -518,7 +516,6 @@ configuration file.
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
-- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [PRE_CTS_TCL](#PRE_CTS_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
@@ -540,11 +537,12 @@ configuration file.
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
+- [GLOBAL_ROUTE_USE_CUGR](#GLOBAL_ROUTE_USE_CUGR)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [MAX_REPAIR_ANTENNAS_ITER_GRT](#MAX_REPAIR_ANTENNAS_ITER_GRT)
-- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
+- [OPT_POST_GRT_WNS](#OPT_POST_GRT_WNS)
 - [POST_GLOBAL_ROUTE_TCL](#POST_GLOBAL_ROUTE_TCL)
 - [PRE_GLOBAL_ROUTE_TCL](#PRE_GLOBAL_ROUTE_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
@@ -672,5 +670,4 @@ configuration file.
 - [TAP_CELL_NAME](#TAP_CELL_NAME)
 - [TECH_LEF](#TECH_LEF)
 - [USE_FILL](#USE_FILL)
-- [USE_NEGOTIATION](#USE_NEGOTIATION)
 

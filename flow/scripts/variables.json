@@ -388,8 +388,15 @@
     ]
   },
   "GLOBAL_ROUTE_ARGS": {
-    "default": "-congestion_iterations 30 -congestion_report_iter_step 5 -verbose",
-    "description": "Replaces default arguments for global route.\n",
+    "default": "-congestion_report_iter_step 5 -verbose",
+    "description": "Replaces default arguments for global route. The -congestion_iterations default is set by the flow (30 for FastRoute, 10 for CUGR); add -congestion_iterations here to override it.\n",
+    "stages": [
+      "grt"
+    ]
+  },
+  "GLOBAL_ROUTE_USE_CUGR": {
+    "default": 0,
+    "description": "Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.\n",
     "stages": [
       "grt"
     ]
@@ -402,6 +409,12 @@
   },
   "GPL_KEEP_OVERFLOW": {
     "description": "Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "GPL_RANDOM_SEED": {
+    "description": "Specifies a random seed for global placement.  Useful for perturbation studies.\n",
     "stages": [
       "place"
     ]
@@ -576,15 +589,6 @@
       "grt"
     ]
   },
-  "MAX_REPAIR_TIMING_ITER": {
-    "description": "Maximum number of iterations for repair setup and repair hold.\n",
-    "stages": [
-      "cts",
-      "floorplan",
-      "grt",
-      "place"
-    ]
-  },
   "MAX_ROUTING_LAYER": {
     "description": "The highest metal layer name to be used in routing.\n",
     "stages": [
@@ -634,6 +638,13 @@
     "description": "Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.\n",
     "stages": [
       "All stages"
+    ]
+  },
+  "OPT_POST_GRT_WNS": {
+    "default": 1,
+    "description": "Optimize WNS after global routing by additional repair_timing that uses VT swap and wire rerouting only to minimize placement and routing disturbance\n",
+    "stages": [
+      "grt"
     ]
   },
   "OR_K": {
@@ -1220,13 +1231,6 @@
       "grt"
     ]
   },
-  "SLANG_PLUGIN_PATH": {
-    "default": "slang",
-    "description": "Path to the slang plugin for Yosys. This can be a full path to a custom-built plugin (e.g. for Bazel builds) or just the plugin name.\n",
-    "stages": [
-      "synth"
-    ]
-  },
   "SLEW_MARGIN": {
     "description": "Specifies a slew margin when fixing max slew violations. This option allows you to overfix.\n",
     "tunable": 1
@@ -1451,10 +1455,6 @@
   "USE_FILL": {
     "default": 0,
     "description": "Whether to perform metal density filling.\n"
-  },
-  "USE_NEGOTIATION": {
-    "default": 0,
-    "description": "Enable using negotiation legalizer for detailed placement.\n"
   },
   "VERILOG_DEFINES": {
     "description": "Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`\n",

@@ -31,6 +31,8 @@ export LIB_FILES ?= $(TYP_LIB_FILES)
 export GDS_FILES ?= $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
                     $(ADDITIONAL_GDS)
 
+export PLATFORM_TCL ?= $(PLATFORM_DIR)/suppress_message.tcl
+
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
@@ -137,6 +139,8 @@ export MAX_ROUTING_LAYER    ?= Metal5
 #export VIA_IN_PIN_MIN_LAYER ?= Metal1
 #export VIA_IN_PIN_MAX_LAYER ?= Metal1
 #export DISABLE_VIA_GEN      ?= 1
+
+export OPT_POST_GRT_WNS     ?= 0
 
 # Define fastRoute tcl
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl

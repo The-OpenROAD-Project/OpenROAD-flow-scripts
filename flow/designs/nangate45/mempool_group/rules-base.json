@@ -10,7 +10,7 @@
         "level": "warning"
     },
     "synth__design__instance__area__stdcell": {
-        "value": 424000.0,
+        "value": 304000.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -22,7 +22,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 188318,
+        "value": 188286,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -12100.0,
+        "value": -12200.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -13600.0,
+        "value": -11900.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -102,11 +102,11 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -1.35,
+        "value": -1.7,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 453719,
+        "value": 453619,
         "compare": "<="
     }
 }

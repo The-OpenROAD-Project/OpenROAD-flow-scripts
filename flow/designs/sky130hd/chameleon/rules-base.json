@@ -1,16 +1,16 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "b6bf0909a62e102500620465b2a9efd9af557361",
+        "value": "a279612250a1367c37ea08f7b0bb8a08ae725da3",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "a71dbebf64948174d0130be63caf9e9734dfd859",
+        "value": "edd4949a57adadaae7b7d99d440f03eae351e498",
         "compare": "==",
         "level": "warning"
     },
     "synth__design__instance__area__stdcell": {
-        "value": 27900.0,
+        "value": 27800.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 6516521,
+        "value": 6516233,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 59473,
+        "value": 59466,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,19 +30,19 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 5172,
+        "value": 5171,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 5172,
+        "value": 5171,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.321,
+        "value": -2.14,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -5.4,
+        "value": -10.7,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -54,15 +54,15 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 209,
+        "value": 100,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.356,
+        "value": -1.88,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -6.6,
+        "value": -7.91,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 846125,
+        "value": 725303,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -90,11 +90,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.28,
+        "value": -1.77,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -2.59,
+        "value": -5.15,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

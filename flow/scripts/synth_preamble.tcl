@@ -14,7 +14,6 @@ if { [env_var_exists_and_non_empty SYNTH_NETLIST_FILES] } {
     # keep things simple we just use the creation date
     log_cmd exec cat {*}$::env(SYNTH_NETLIST_FILES) > $::env(RESULTS_DIR)/1_2_yosys.v
   }
-  log_cmd exec cp -p $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
   if { [env_var_exists_and_non_empty CACHED_REPORTS] } {
     log_cmd exec cp -p {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
   }
@@ -44,8 +43,7 @@ proc read_design_sources { } {
   }
 
   if { [env_var_equals SYNTH_HDL_FRONTEND slang] } {
-    plugin -i $::env(SLANG_PLUGIN_PATH)
-
+    # read_slang is built into Yosys (>=0.67); no plugin load needed.
     set slang_args [list \
       -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions --top $::env(DESIGN_NAME) \
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]

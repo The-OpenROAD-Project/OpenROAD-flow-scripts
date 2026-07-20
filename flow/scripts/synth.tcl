@@ -229,6 +229,9 @@ if {
 
 # Technology mapping of latches
 if { [env_var_exists_and_non_empty LATCH_MAP_FILE] } {
+  # Legalize async set/reset latches into the latches this map file provides
+  # (soft-logic emulation); the trailing selection keeps dfflegalize off FFs.
+  dfflegalize {*}[get_dfflegalize_args $::env(LATCH_MAP_FILE)] {t:$_DLATCH_*}
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
@@ -299,7 +302,3 @@ if {
 
 # Write synthesized design
 write_verilog -nohex -nodec $::env(RESULTS_DIR)/1_2_yosys.v
-# One day a more sophisticated synthesis will write out a modified
-# .sdc file after synthesis. For now, just copy the input .sdc file,
-# making synthesis more consistent with other stages.
-log_cmd exec cp $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc

@@ -252,13 +252,6 @@ SYNTH_HDL_FRONTEND:
     command.
   stages:
     - synth
-SLANG_PLUGIN_PATH:
-  description: >
-    Path to the slang plugin for Yosys. This can be a full path to a
-    custom-built plugin (e.g. for Bazel builds) or just the plugin name.
-  default: slang
-  stages:
-    - synth
 SYNTH_SLANG_ARGS:
   description: >
     Additional arguments passed to the slang frontend during synthesis.
@@ -639,10 +632,11 @@ DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
-USE_NEGOTIATION:
+GPL_RANDOM_SEED:
   description: |
-    Enable using negotiation legalizer for detailed placement.
-  default: 0
+    Specifies a random seed for global placement.  Useful for perturbation studies.
+  stages:
+    - place
 GPL_TIMING_DRIVEN:
   description: |
     Specifies whether the placer should use timing driven placement.
@@ -1318,10 +1312,20 @@ PRE_GLOBAL_ROUTE_TCL:
     - grt
 GLOBAL_ROUTE_ARGS:
   description: >
-    Replaces default arguments for global route.
+    Replaces default arguments for global route. The -congestion_iterations
+    default is set by the flow (30 for FastRoute, 10 for CUGR); add
+    -congestion_iterations here to override it.
   stages:
     - grt
-  default: -congestion_iterations 30 -congestion_report_iter_step 5 -verbose
+  default: -congestion_report_iter_step 5 -verbose
+GLOBAL_ROUTE_USE_CUGR:
+  description: >
+    Passed as -use_cugr to global_route. Uses CUGR as the global routing
+    solver instead of the default FastRoute solver. NOTE: CUGR is not ready
+    for production.
+  stages:
+    - grt
+  default: 0
 ENABLE_RESISTANCE_AWARE:
   description: >
     Passed as -resistance_aware to global_route.
@@ -1534,14 +1538,6 @@ OPENROAD_HIERARCHICAL:
   default: 0
   stages:
     - All stages
-MAX_REPAIR_TIMING_ITER:
-  description: >
-    Maximum number of iterations for repair setup and repair hold.
-  stages:
-    - cts
-    - floorplan
-    - grt
-    - place
 NUM_CORES:
   description: >
     Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers
@@ -1620,3 +1616,10 @@ CDL_FILE:
     for generating Circuit Description Language output.
   stages:
     - final
+OPT_POST_GRT_WNS:
+  default: 1
+  description: >
+    Optimize WNS after global routing by additional repair_timing that uses
+    VT swap and wire rerouting only to minimize placement and routing disturbance
+  stages:
+    - grt

@@ -1,16 +1,16 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "3a1bcb01d4fa53b30f75de87a60c6f75047794ed",
+        "value": "7417d2b6f1fd4d9bbbbb6f3759a57cf97c302ea2",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "fce601b688cf5ea819f8cc4879b50bf5be92267f",
+        "value": "5a4e41ffb93af8ed8b1d6d7d17e7cbe8a4def146",
         "compare": "==",
         "level": "warning"
     },
     "synth__design__instance__area__stdcell": {
-        "value": 241575.35,
+        "value": 60900.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -2.3,
+        "value": -5.17,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

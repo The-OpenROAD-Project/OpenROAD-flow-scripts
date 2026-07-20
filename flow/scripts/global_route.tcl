@@ -11,10 +11,18 @@ proc global_route_helper { } {
   set res_aware ""
   append_env_var res_aware ENABLE_RESISTANCE_AWARE -resistance_aware 0
 
-  proc do_global_route { res_aware } {
+  set use_cugr ""
+  append_env_var use_cugr GLOBAL_ROUTE_USE_CUGR -use_cugr 0
+
+  proc do_global_route { res_aware use_cugr } {
+    # CUGR runs a full 3D maze pass per iteration; use a tighter default.
+    set cong_iters "-congestion_iterations 30"
+    if { $use_cugr ne "" } {
+      set cong_iters "-congestion_iterations 10"
+    }
     set all_args [concat [list \
       -congestion_report_file $::global_route_congestion_report] \
-      $::env(GLOBAL_ROUTE_ARGS) {*}$res_aware]
+      $cong_iters $::env(GLOBAL_ROUTE_ARGS) {*}$res_aware {*}$use_cugr]
 
     log_cmd global_route {*}$all_args
   }
@@ -25,7 +33,7 @@ proc global_route_helper { } {
 
   log_cmd pin_access {*}$additional_args
 
-  set result [catch { do_global_route $res_aware } errMsg]
+  set result [catch { do_global_route $res_aware $use_cugr } errMsg]
 
   if { $result != 0 } {
     if { !$::env(GENERATE_ARTIFACTS_ON_FAILURE) } {
@@ -61,10 +69,8 @@ proc global_route_helper { } {
 
     # Running DPL to fix overlapped instances
     # Run to get modified net by DPL
-    set dpl_args {}
-    append_env_var dpl_args USE_NEGOTIATION -use_negotiation 0
     log_cmd global_route -start_incremental
-    log_cmd detailed_placement {*}$dpl_args
+    log_cmd detailed_placement
     # Route only the modified net by DPL
     log_cmd global_route -end_incremental {*}$res_aware \
       -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
@@ -79,22 +85,39 @@ proc global_route_helper { } {
       report_metrics 5 "global route post repair timing"
     }
 
-    # Running DPL to fix overlapped instances
-    # Run to get modified net by DPL
     log_cmd global_route -start_incremental
-    log_cmd detailed_placement {*}$dpl_args
-    check_placement -verbose
+    log_cmd detailed_placement
+    log_cmd check_placement -verbose
     # Route only the modified net by DPL
     log_cmd global_route -end_incremental {*}$res_aware \
       -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+
+    log_cmd estimate_parasitics -global_routing
+
+    if { $::env(OPT_POST_GRT_WNS) } {
+      set repair_timing_args \
+        [list -setup -sequence "vt_swap reroute" -skip_last_gasp -repair_tns 0 -verbose]
+      if { [env_var_exists_and_non_empty MATCH_CELL_FOOTPRINT] } {
+        lappend repair_timing_args -match_cell_footprint
+      }
+      if { $::env(SETUP_SLACK_MARGIN) != 0 } {
+        lappend repair_timing_args -setup_margin $::env(SETUP_SLACK_MARGIN)
+      }
+      log_cmd repair_timing {*}$repair_timing_args
+
+      if { $::env(DETAILED_METRICS) } {
+        report_metrics 5 "global route post repair timing_opt_wns"
+      }
+    }
   }
 
-
-  log_cmd global_route -start_incremental
-  recover_power_helper
-  # Route the modified nets by rsz journal restore
-  log_cmd global_route -end_incremental {*}$res_aware \
-    -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  if { !$::env(OPT_POST_GRT_WNS) } {
+    log_cmd global_route -start_incremental
+    recover_power_helper
+    # Route the modified nets by rsz journal restore
+    log_cmd global_route -end_incremental {*}$res_aware \
+      -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  }
 
   if {
     !$::env(SKIP_ANTENNA_REPAIR) &&
