@@ -21,7 +21,7 @@ jobs:
           docs/user/FlowVariables.md
           yamlfix.toml
           .github/requirements/requirements_lock.txt
-    - uses: actions/setup-python@v6
+    - uses: actions/setup-python@v7
       with:
         python-version: "3.10"
     - name: Install dependencies
