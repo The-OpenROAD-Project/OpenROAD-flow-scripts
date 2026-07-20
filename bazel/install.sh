@@ -2,7 +2,7 @@
 set -e
 
 # ORFS developer install script
-# Builds and installs OpenROAD, Yosys, and yosys-slang to tools/install/
+# Builds and installs OpenROAD and Yosys to tools/install/
 # where flow/Makefile expects them.
 #
 # Uses stamp files for fast no-op re-runs (seconds when nothing changed).
@@ -80,7 +80,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # --- Check submodules are initialized ---
-for sub in tools/OpenROAD tools/yosys tools/yosys-slang; do
+for sub in tools/OpenROAD tools/yosys; do
     if [[ ! -d "${WORKSPACE}/${sub}" ]] || [[ -z "$(ls -A "${WORKSPACE}/${sub}" 2>/dev/null)" ]]; then
         echo "ERROR: ${sub} not initialized."
         echo "Run: git submodule update --init --recursive"
@@ -105,35 +105,17 @@ if [[ -f "${YOSYS_STAMP}" ]] && [[ "$(cat "${YOSYS_STAMP}")" == "${YOSYS_COMMIT}
     echo "=== Yosys already up to date (${YOSYS_COMMIT:0:12}) ==="
 else
     echo "=== Building Yosys ==="
+    # Yosys 0.67+ builds with CMake (no Makefile); mirrors build_openroad.sh.
     (
         cd "${WORKSPACE}/tools/yosys"
-        make -j "${NUM_THREADS}" PREFIX="${YOSYS_INSTALL}" ABC_ARCHFLAGS=-Wno-register
-        make install PREFIX="${YOSYS_INSTALL}"
+        cmake -B build . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DYOSYS_SKIP_ABC_SUBMODULE_CHECK=ON \
+            -DCMAKE_INSTALL_PREFIX="${YOSYS_INSTALL}"
+        cmake --build build --target install -j "${NUM_THREADS}"
     )
     echo "${YOSYS_COMMIT}" > "${YOSYS_STAMP}"
     echo "Yosys installed to ${YOSYS_INSTALL}/bin/yosys"
-fi
-
-# --- yosys-slang ---
-SLANG_STAMP="${YOSYS_INSTALL}/.slang_commit"
-SLANG_COMMIT="$(git -C "${WORKSPACE}/tools/yosys-slang" rev-parse HEAD)"
-
-if [[ -f "${SLANG_STAMP}" ]] && [[ "$(cat "${SLANG_STAMP}")" == "${SLANG_COMMIT}" ]]; then
-    echo "=== yosys-slang already up to date (${SLANG_COMMIT:0:12}) ==="
-else
-    echo "=== Building yosys-slang ==="
-    (
-        cd "${WORKSPACE}/tools/yosys-slang"
-        cmake -S . -B build \
-            -DYOSYS_CONFIG="${YOSYS_INSTALL}/bin/yosys-config" \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DYOSYS_SLANG_REVISION=unknown \
-            -DSLANG_REVISION=unknown
-        cmake --build build -j "${NUM_THREADS}"
-        cmake --install build --prefix "${YOSYS_INSTALL}"
-    )
-    echo "${SLANG_COMMIT}" > "${SLANG_STAMP}"
-    echo "yosys-slang installed to ${YOSYS_INSTALL}/share/yosys/plugins/"
 fi
 
 echo ""

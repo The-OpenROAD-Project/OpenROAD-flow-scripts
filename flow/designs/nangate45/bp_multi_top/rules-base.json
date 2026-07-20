@@ -1,16 +1,16 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "55a5212c345ad6c1a829a6c7bcc9c0f1fbba2e0c",
+        "value": "abc0a22a3338cb13c9495c49a862a73caf1bec5d",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "782af267c077f3c19466cec267afa50f06769f37",
+        "value": "a8a859e57218f4f6ddf5282ca1ced2333e414dbd",
         "compare": "==",
         "level": "warning"
     },
     "synth__design__instance__area__stdcell": {
-        "value": 568000.0,
+        "value": 182000.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 3608728,
+        "value": 4231362,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {

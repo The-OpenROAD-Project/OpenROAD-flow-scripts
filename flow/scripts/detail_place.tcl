@@ -43,3 +43,4 @@ report_metrics 3 "detailed place" true false
 source_step_tcl POST DETAIL_PLACE
 
 orfs_write_db $::env(RESULTS_DIR)/3_5_place_dp.odb
+orfs_write_sdc $::env(RESULTS_DIR)/3_place.sdc

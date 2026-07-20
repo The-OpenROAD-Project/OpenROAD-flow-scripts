@@ -252,13 +252,6 @@ SYNTH_HDL_FRONTEND:
     command.
   stages:
     - synth
-SLANG_PLUGIN_PATH:
-  description: >
-    Path to the slang plugin for Yosys. This can be a full path to a
-    custom-built plugin (e.g. for Bazel builds) or just the plugin name.
-  default: slang
-  stages:
-    - synth
 SYNTH_SLANG_ARGS:
   description: >
     Additional arguments passed to the slang frontend during synthesis.
@@ -1545,14 +1538,6 @@ OPENROAD_HIERARCHICAL:
   default: 0
   stages:
     - All stages
-MAX_REPAIR_TIMING_ITER:
-  description: >
-    Maximum number of iterations for repair setup and repair hold.
-  stages:
-    - cts
-    - floorplan
-    - grt
-    - place
 NUM_CORES:
   description: >
     Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers
