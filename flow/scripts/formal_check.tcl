@@ -1,9 +1,18 @@
+proc check_kepler_formal { } {
+  if {
+    ![info exists ::env(KEPLER_FORMAL_EXE)]
+    || ![file executable $::env(KEPLER_FORMAL_EXE)]
+  } {
+    error "Kepler Formal not found. Install Kepler Formal or set KEPLER_FORMAL_EXE."
+  }
+}
+
 proc lec_check_enabled { } {
-  return [expr {
-    [env_var_equals LEC_CHECK 1]
-    && [info exists ::env(KEPLER_FORMAL_EXE)]
-    && [file executable $::env(KEPLER_FORMAL_EXE)]
-  }]
+  if { ![env_var_equals LEC_CHECK 1] } {
+    return 0
+  }
+  check_kepler_formal
+  return 1
 }
 
 proc write_lec_verilog { filename } {
@@ -70,6 +79,7 @@ proc formal_check_label { step } {
 }
 
 proc run_lec_test { step file1 file2 } {
+  check_kepler_formal
   write_lec_script $step $file1 $file2
   # tclint-disable-next-line command-args
   eval exec $::env(KEPLER_FORMAL_EXE) --config $::env(OBJECTS_DIR)/${step}_lec_test.yml
@@ -88,6 +98,7 @@ proc run_lec_test { step file1 file2 } {
 }
 
 proc run_sec_test { step file1 file2 } {
+  check_kepler_formal
   write_sec_script $step $file1 $file2
   # tclint-disable-next-line command-args
   eval exec $::env(KEPLER_FORMAL_EXE) --config $::env(OBJECTS_DIR)/${step}_sec_test.yml

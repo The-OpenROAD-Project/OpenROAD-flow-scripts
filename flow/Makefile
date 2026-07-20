@@ -369,7 +369,7 @@ $(eval $(call OPEN_GUI_SHORTCUT,$(1),$(1).odb))
 endif
 
 .PHONY: do-$(1)
-do-$(1): $(OBJECTS_DIR)/copyright.txt
+do-$(1): $(DO_STEP_DEPS_$(1)) $(OBJECTS_DIR)/copyright.txt
 	$(SCRIPTS_DIR)/flow.sh $(1) $(3)
 endef
 
@@ -417,8 +417,20 @@ ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
 FORMAL_CHECK_DEPS += $(RESULTS_DIR)/1_synth_lec.v
 endif
 
+.PHONY: check-kepler-formal
+check-kepler-formal:
+	@if [ ! -x "$(KEPLER_FORMAL_EXE)" ]; then \
+		echo "Error: Kepler Formal not found. Install Kepler Formal or set KEPLER_FORMAL_EXE."; \
+		echo "Hint: Kepler Formal is needed when LEC_CHECK=1 or SEC_CHECK=1."; \
+		exit 1; \
+	fi
+
 $(RESULTS_DIR)/1_synth_lec.v: $(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc
 	$(UNSET_AND_MAKE) do-1_synth
+
+ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
+$(RESULTS_DIR)/1_synth_lec.v: | check-kepler-formal
+endif
 
 $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(LIB_FILES) $(IO_CONSTRAINTS),floorplan))
 
@@ -516,7 +528,15 @@ cts: $(RESULTS_DIR)/4_cts.odb \
 
 # Run TritonCTS
 # ------------------------------------------------------------------------------
+ifeq ($(LEC_CHECK),1)
+DO_STEP_DEPS_4_1_cts += check-kepler-formal
+endif
+
 $(eval $(call do-step,4_1_cts,$(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc,cts))
+
+ifeq ($(LEC_CHECK),1)
+$(RESULTS_DIR)/4_1_cts.odb: | check-kepler-formal
+endif
 
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 
@@ -624,7 +644,15 @@ $(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
 $(eval $(call do-copy,6_final,5_route.sdc,,.sdc))
 
+ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
+DO_STEP_DEPS_6_report += check-kepler-formal
+endif
+
 $(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc $(FORMAL_CHECK_DEPS),final_report,.log,$(LOG_DIR)))
+
+ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
+$(LOG_DIR)/6_report.log: | check-kepler-formal
+endif
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
