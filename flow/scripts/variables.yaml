@@ -1610,3 +1610,10 @@ OPT_POST_GRT_WNS:
     VT swap and wire rerouting only to minimize placement and routing disturbance
   stages:
     - grt
+GRT_SEED:
+  description: >
+    Global route seed
+  stages:
+    - grt
+  tunable: 1
+  type: int
