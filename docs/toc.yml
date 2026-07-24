@@ -17,6 +17,8 @@ entries:
     title: Build Locally
   - file: user/BuildWithWSL.md
     title: Build Using WSL
+  - file: user/WindowsDocker.md
+    title: Build on Windows using Docker
   - file: user/FlowVariables.md
     title: Flow Variables
   - file: contrib/Metrics.md
