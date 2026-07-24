@@ -1566,18 +1566,31 @@ WRITE_ODB_AND_SDC_EACH_STAGE:
   default: 1
 LEC_CHECK:
   description: >
-    Perform a formal equivalence check between before and after netlists.
-    If this fails, report an issue to OpenROAD.
+    Perform formal equivalence checks between before and after netlists.
+    This checks CTS repair timing and the initial synthesis netlist against
+    the final netlist. If this fails, report an issue to OpenROAD.
+  default: $(if $(wildcard $(KEPLER_FORMAL_EXE)),1,0)
+  stages:
+    - synth
+    - cts
+    - final
+SEC_CHECK:
+  description: >
+    Perform a sequential equivalence check between the initial synthesis
+    netlist and final netlist with the Kepler Formal PDR engine. If this
+    fails, report an issue to OpenROAD.
   default: 0
   stages:
-    - cts
+    - synth
+    - final
 LEC_AUX_VERILOG_FILES:
   description: >
-    Additional Verilog files (e.g. blackbox stubs) to include in LEC
-    equivalence checks. Appended to the generated Verilog netlist before
-    running the formal equivalence check.
+    Additional Verilog files (e.g. blackbox stubs) to include in generated
+    netlists for formal equivalence checks.
   stages:
+    - synth
     - cts
+    - final
 REMOVE_CELLS_FOR_LEC:
   description: >
     String patterns directly passed to write_verilog -remove_cells <> for

@@ -1,5 +1,6 @@
 utl::set_metrics_stage "synth__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
+source $::env(SCRIPTS_DIR)/formal_check.tcl
 erase_non_stage_variables synth
 
 source_env_var_if_exists PLATFORM_TCL
@@ -75,3 +76,6 @@ orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # out by OpenSTA that has no dependencies. Sole writer of
 # 1_synth.sdc.
 orfs_write_sdc $::env(RESULTS_DIR)/1_synth.sdc
+if { $::env(LEC_CHECK) || $::env(SEC_CHECK) } {
+  write_lec_verilog 1_synth_lec.v
+}
