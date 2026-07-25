@@ -1,10 +1,23 @@
 # Delete routing obstructions for final DEF
+source $::env(SCRIPTS_DIR)/formal_check.tcl
 source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
 
 write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v \
   -remove_cells [find_physical_only_masters]
+
+if { $::env(LEC_CHECK) || $::env(SEC_CHECK) } {
+  write_lec_verilog 6_final_lec.v
+}
+
+if { $::env(LEC_CHECK) } {
+  run_lec_test 6_final 1_synth_lec.v 6_final_lec.v
+}
+
+if { $::env(SEC_CHECK) } {
+  run_sec_test 6_final 1_synth_lec.v 6_final_lec.v
+}
 
 # Run extraction and STA
 if {
