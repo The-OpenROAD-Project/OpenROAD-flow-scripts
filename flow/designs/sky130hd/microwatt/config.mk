@@ -21,7 +21,7 @@ export SYNTH_HIERARCHICAL = 1
 
 export PLACE_DENSITY = 0.3
 
-export MACRO_PLACE_HALO = 60 60
+export MACRO_PLACE_HALO = 50 50
 
 # CTS tuning
 export CTS_BUF_DISTANCE = 600

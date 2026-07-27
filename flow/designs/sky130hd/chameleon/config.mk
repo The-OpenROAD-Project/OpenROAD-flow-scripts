@@ -48,3 +48,5 @@ export ADDITIONAL_LEFS  = $(DESIGN_DIR)/lef/apb_sys_0.lef \
 export FP_PDN_RAIL_WIDTH  = 0.48
 export FP_PDN_RAIL_OFFSET = 0
 export TNS_END_PERCENT    = 100
+
+export MACRO_PLACE_HALO = 35 35
