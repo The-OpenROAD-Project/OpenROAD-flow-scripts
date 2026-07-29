@@ -23,7 +23,13 @@ exports_files(
 # instead of vendoring its own (drifting) copy at the bazel-orfs repo
 # root. See bazel-orfs `private/rules.bzl`.
 exports_files(
-    ["scripts/synth.tcl"],
+    [
+        "scripts/synth.tcl",
+        # Expose variables.yaml as an addressable source label so the
+        # orfs-vars MCP server (//tools/orfs_mcp) can data-dep the ORFS
+        # variable catalogue pinned to this commit.
+        "scripts/variables.yaml",
+    ],
     visibility = ["//visibility:public"],
 )
 
