@@ -39,3 +39,6 @@ endif
 
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
+
+# Temporarily disable LEC until RAM issue can be resolved with KF
+export LEC_CHECK = 0
