@@ -28,12 +28,11 @@ proc write_nets_rc_csv { filename grt_var rcx_var } {
   set tech [ord::get_db_tech]
   set stream [open $filename "w"]
 
-  puts -nonewline $stream "# stack:"
+  # First, write a header naming the data and listing the layer stack.
+  puts -nonewline $stream "# Net RC:"
   foreach layer [$tech getLayers] {
-    set routing [expr [$layer getRoutingLevel] != 0]
-    set is_routing([$layer getNumber]) $routing
     puts -nonewline $stream " [$layer getName]"
-    if { $routing } {
+    if { [$layer getRoutingLevel] != 0 } {
       puts -nonewline $stream "(routing)"
     } else {
       # insert via resistance information
@@ -43,44 +42,28 @@ proc write_nets_rc_csv { filename grt_var rcx_var } {
       }
     }
   }
+
   puts $stream ""
 
-  set use_drt_data [env_var_exists_and_non_empty CORRELATE_DRT_WIRELENGTH]
-
+  # Then, write the parasitics data of each net.
   foreach net [get_nets *] {
     set db_net [sta::sta_to_db_net $net]
     set type [$db_net getSigType]
-    if {
-      ([string equal $type "CLOCK"] || [string equal $type "SIGNAL"]) &&
-      (!$use_drt_data || [$db_net getWire] ne "NULL")
-    } {
-      set net_name [get_full_name $net]
-      lassign $grt_net_name_to_rc($net_name) grt_net_res grt_net_cap
-      lassign $rcx_net_name_to_rc($net_name) rcx_net_res rcx_net_cap
-      set net_type [expr { [string equal $type "CLOCK"] ? "clock" : "signal" }]
-      puts -nonewline $stream "$net_name,$net_type,"
-      puts -nonewline $stream [concat \
-        [format "%.3e" $grt_net_res] "," [format "%.3e" $grt_net_cap] "," \
-        [format "%.3e" $rcx_net_res] "," [format "%.3e" $rcx_net_cap]]
 
-      if { $use_drt_data } {
-        set layer_lengths [drt::route_layer_lengths [$db_net getWire]]
-      } else {
-        set layer_lengths [grt::route_layer_lengths $db_net]
-      }
-
-      for { set layer 0 } { $layer < [$tech getLayerCount] } { incr layer } {
-        set length [lindex $layer_lengths $layer]
-        if { $is_routing($layer) } {
-          puts -nonewline $stream ",[ord::dbu_to_microns $length]"
-        } else {
-          puts -nonewline $stream ",$length"
-        }
-      }
-
-      puts $stream ""
+    if { !([string equal $type "CLOCK"] || [string equal $type "SIGNAL"]) } {
+      continue
     }
+
+    set net_name [get_full_name $net]
+    set net_type [expr { $type eq "CLOCK" ? "clock" : "signal" }]
+
+    lassign $grt_net_name_to_rc($net_name) grt_net_res grt_net_cap
+    lassign $rcx_net_name_to_rc($net_name) rcx_net_res rcx_net_cap
+
+    puts $stream [format "%s,%s,%.3e,%.3e,%.3e,%.3e" \
+      $net_name $net_type $grt_net_res $grt_net_cap $rcx_net_res $rcx_net_cap]
   }
+
   close $stream
 }
 
@@ -147,8 +130,9 @@ proc write_segments_rc_csv { filename net_to_segments_var } {
 
   set stream [open $filename "w"]
 
-  # First, write a header listing the routing layers in stack order.
-  puts -nonewline $stream "# routing layers:"
+  # First, write a header naming the data and listing the routing layers in
+  # stack order.
+  puts -nonewline $stream "# Segment RC:"
   foreach layer [[ord::get_db_tech] getLayers] {
     if { [$layer getRoutingLevel] != 0 } {
       puts -nonewline $stream " [$layer getName]"

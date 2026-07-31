@@ -36,7 +36,7 @@ print_wire_rc(layer_models, layer_net_type_length, res_scale, cap_scale)
 
 # The plots come after the commands so that a plot with no data does not
 # withhold them.
-if args.nets_rc_file:
+if args.plot_cap or args.plot_res:
     nets = read_nets_rc(args.nets_rc_file)
 
     if args.plot_cap:

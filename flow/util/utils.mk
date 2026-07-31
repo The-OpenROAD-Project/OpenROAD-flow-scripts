@@ -91,12 +91,13 @@ $(RESULTS_DIR)/6_nets_rc.csv $(RESULTS_DIR)/6_segments_rc.csv &:
 	$(RUN_CMD) --log $(LOG_DIR)/6_write_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_rc.tcl
 
 .PHONY: correlate_rc
-correlate_rc: $(RESULTS_DIR)/6_nets_rc.csv $(RESULTS_DIR)/6_segments_rc.csv
+correlate_rc: $(RESULTS_DIR)/6_segments_rc.csv
 	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
-	    -nets_rc_file $(RESULTS_DIR)/6_nets_rc.csv \
 	    -segments_rc_file $(RESULTS_DIR)/6_segments_rc.csv
 
 # TODO Make always wants to redo designs with this rule, regardless of which variations are tried.
+#	$(MAKE) DESIGN_CONFIG=$$config write_rc; \
+#$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_rc; )
 .PHONY: correlate_platform_rc
 correlate_platform_rc:
 	for config in designs/$(PLATFORM)/*/config.mk; do \
@@ -106,7 +107,6 @@ correlate_platform_rc:
 	    results/$(PLATFORM)/$$design/base/6_segments_rc.csv; \
 	done
 	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
-	    -nets_rc_file $$(find results/$(PLATFORM)/*/base -name 6_nets_rc.csv) \
 	    -segments_rc_file $$(find results/$(PLATFORM)/*/base -name 6_segments_rc.csv)
 
 # Run test using gnu parallel

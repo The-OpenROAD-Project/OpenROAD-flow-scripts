@@ -6,9 +6,12 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
-# Auxiliary variables to catch swapped input .csv files.
-SEGMENTS_COLUMNS = 6
-NETS_MIN_COLUMNS = 7
+# The header of each .csv names its data and lists the layer stack it was
+# written for, so it catches both swapped and mismatched input files.
+NETS_HEADER = "# Net RC: "
+SEGMENTS_HEADER = "# Segment RC: "
+
+ROW_COLUMNS = 6
 
 # The .csv data comes from ODB which stores capacitance in fF.
 CAP_FF_TO_F = 1e-15
@@ -88,19 +91,31 @@ def resolve_units(args):
 
 def read_nets_rc(file_names):
     nets = []
+    header_line = None
 
     for file_name in file_names:
         print(f"Reading {file_name}.")
         with open(file_name) as file:
             for line in file:
+                if line.startswith(NETS_HEADER):
+                    if header_line is not None and header_line != line:
+                        print("Layer stack inconsistent.", file=stderr)
+                        exit(1)
+                    header_line = line
+                    continue
+
                 line = line.strip()
 
                 if not line or line.startswith("#"):
                     continue
 
+                if header_line is None:
+                    print("No net RC header found in the data.", file=stderr)
+                    exit(1)
+
                 tokens = line.split(",")
 
-                if len(tokens) < NETS_MIN_COLUMNS:
+                if len(tokens) != ROW_COLUMNS:
                     print(f"Malformed net RC line: {line}", file=stderr)
                     exit(1)
 
@@ -140,21 +155,20 @@ def read_segments_rc(file_names):
     )
     layer_net_type_length = defaultdict(lambda: defaultdict(float))
     routing_layers = []
-    routing_layers_line = None
+    header_line = None
 
     for file_name in file_names:
         print(f"Reading {file_name}.")
         with open(file_name) as file:
             for line in file:
-                if line.startswith("# routing layers: "):
-                    if routing_layers_line is None:
-                        routing_layers = (
-                            line.removeprefix("# routing layers: ").strip().split(" ")
-                        )
-                        routing_layers_line = line
-                    elif routing_layers_line != line:
+                if line.startswith(SEGMENTS_HEADER):
+                    if header_line is not None and header_line != line:
                         print("Layer stack inconsistent.", file=stderr)
                         exit(1)
+                    header_line = line
+                    routing_layers = (
+                        line.removeprefix(SEGMENTS_HEADER).strip().split(" ")
+                    )
                     continue
 
                 line = line.strip()
@@ -162,9 +176,13 @@ def read_segments_rc(file_names):
                 if not line or line.startswith("#"):
                     continue
 
+                if header_line is None:
+                    print("No segment RC header found in the data.", file=stderr)
+                    exit(1)
+
                 tokens = line.split(",")
 
-                if len(tokens) != SEGMENTS_COLUMNS:
+                if len(tokens) != ROW_COLUMNS:
                     print(f"Malformed segment RC line: {line}", file=stderr)
                     exit(1)
 
@@ -177,10 +195,6 @@ def read_segments_rc(file_names):
                 layer_segments[layer]["capacitances"].append(float(tokens[5]))
                 layer_net_type_length[layer][net_type] += length
 
-    if not routing_layers:
-        print("No routing layers header found in the segment RC data.", file=stderr)
-        exit(1)
-
     if not layer_segments:
         print("No segment RC data found.", file=stderr)
         exit(1)
@@ -192,7 +206,8 @@ def read_segments_rc(file_names):
             for value in segments[key]
             if value == 0.0
         )
-        print(f"Found {count} segments with zero {name}.")
+        if count > 0:
+            print(f"Found {count} segments with zero {name}.")
 
     return routing_layers, layer_segments, layer_net_type_length
 

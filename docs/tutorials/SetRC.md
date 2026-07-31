@@ -38,6 +38,9 @@ directory. For example, ./results/asap7/ibex/base/6_segments_rc.csv and
 RC values, while the nets data is used to plot the difference between the
 global route estimates and the extracted parasitics.
 
+Note that the CSV files are not regenerated on their own after the design is
+run again, so delete them to write the RC data of the new run.
+
 ```
 % make DESIGN_CONFIG=./designs/asap7/ibex/config.mk correlate_rc
 ```
