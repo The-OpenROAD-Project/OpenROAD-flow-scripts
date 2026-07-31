@@ -3,20 +3,22 @@
 # Script for generating and comparing per-layer parasitics values.
 # These values are used by set_layer_rc and will be the base
 # values for the parasitics estimations across the flow.
+#
+# Both input files are written by "make write_rc": the set_layer_rc and
+# set_wire_rc values are fitted from the segments data, while the plots
+# compare the GRT estimates against the RCX values of the nets.
 
-import os
 from sys import exit, stderr
 from collections import defaultdict
 
-import traceback
-import collections
 import argparse
-import re
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
-LAYER_HEADER_RE = re.compile("^([^\\(]+)\\(([^\\)]+)\\)$")
+# Auxiliary variables to catch swapped input .csv files.
+SEGMENTS_COLUMNS = 6
+NETS_MIN_COLUMNS = 7
 
 # Helper functions
 # =============================================================================
@@ -64,19 +66,177 @@ def parse_args():
         help="Plot grt/rcx resistance differences",
     )
     parser.add_argument(
-        "--mode",
+        "-nets_rc_file",
         required=False,
-        choices=["net", "segment"],
-        default="net",
-        help="Input mode: 'net' for net-level RC (make write_net_rc), 'segment' for segment-level RC (make write_segment_rc)",
+        nargs="+",
+        default=[],
+        metavar="FILE",
+        help="Net RC csv file(s) written by make write_rc, required for the plots",
     )
     parser.add_argument(
-        "rc_file", nargs="+", help="rc csv file written by make compare_rc"
+        "-segments_rc_file",
+        required=True,
+        nargs="+",
+        metavar="FILE",
+        help="Segment RC csv file(s) written by make write_rc, used to fit the layer RC values",
     )
     args = parser.parse_args()
 
+    if (args.plot_cap or args.plot_res) and not args.nets_rc_file:
+        parser.error("-nets_rc_file is required to plot the grt/rcx differences")
+
     return args
 
+
+# Parser Helpers
+# =============================================================================
+
+
+def read_nets_rc(file_names):
+    nets = []
+
+    for file_name in file_names:
+        print(f"Reading {file_name}.")
+        with open(file_name) as file:
+            for line in file:
+                line = line.strip()
+
+                if not line or line.startswith("#"):
+                    continue
+
+                tokens = line.split(",")
+
+                if len(tokens) < NETS_MIN_COLUMNS:
+                    print(f"Malformed net RC line: {line}", file=stderr)
+                    exit(1)
+
+                nets.append(
+                    {
+                        "file_name": file_name,
+                        "name": tokens[0],
+                        "type": tokens[1],
+                        "grt_res": float(tokens[2]),
+                        "grt_cap": float(tokens[3]),
+                        "rcx_res": float(tokens[4]),
+                        "rcx_cap": float(tokens[5]),
+                    }
+                )
+
+    if not nets:
+        print("No net RC data found.", file=stderr)
+        exit(1)
+
+    return nets
+
+
+def read_segments_rc(file_names):
+    layer_segments = defaultdict(
+        lambda: {"lengths": [], "resistances": [], "capacitances": []}
+    )
+    layer_net_type_length = defaultdict(lambda: defaultdict(float))
+    routing_layers = []
+    routing_layers_line = None
+
+    for file_name in file_names:
+        print(f"Reading {file_name}.")
+        with open(file_name) as file:
+            for line in file:
+                if line.startswith("# routing layers: "):
+                    if routing_layers_line is None:
+                        routing_layers = (
+                            line.removeprefix("# routing layers: ").strip().split(" ")
+                        )
+                        routing_layers_line = line
+                    elif routing_layers_line != line:
+                        print("Layer stack inconsistent.", file=stderr)
+                        exit(1)
+                    continue
+
+                line = line.strip()
+
+                if not line or line.startswith("#"):
+                    continue
+
+                tokens = line.split(",")
+
+                if len(tokens) != SEGMENTS_COLUMNS:
+                    print(f"Malformed segment RC line: {line}", file=stderr)
+                    exit(1)
+
+                net_type = tokens[1]
+                layer = tokens[2]
+                length = float(tokens[3])
+
+                layer_segments[layer]["lengths"].append(length)
+                layer_segments[layer]["resistances"].append(float(tokens[4]))
+                layer_segments[layer]["capacitances"].append(float(tokens[5]))
+                layer_net_type_length[layer][net_type] += length
+
+    if not routing_layers:
+        print("No routing layers header found in the segment RC data.", file=stderr)
+        exit(1)
+
+    if not layer_segments:
+        print("No segment RC data found.", file=stderr)
+        exit(1)
+
+    return routing_layers, layer_segments, layer_net_type_length
+
+
+# Plot Helpers
+# =============================================================================
+
+
+def plot_grt_rcx_diff(nets, quantity, name, unit, scale, discrepancy_threshold):
+    differences = []
+    differences_percent = []
+
+    for net in nets:
+        grt_value = net[f"grt_{quantity}"]
+        rcx_value = net[f"rcx_{quantity}"]
+
+        if grt_value <= 0.0 or rcx_value <= 0.0:
+            continue
+
+        difference = grt_value - rcx_value
+
+        if abs(difference) > discrepancy_threshold:
+            print(f"Large discrepancy: {net['file_name']} {net['name']} {difference}")
+
+        differences.append(difference / scale)
+        differences_percent.append(difference / rcx_value * 100)
+
+    if not differences:
+        print(f"No net {name.lower()} data to plot.", file=stderr)
+        exit(1)
+
+    # Generate histograms
+    num_bins = 200
+    fig = plt.figure()
+    fig.suptitle(f"Difference between GRT est. and RCX {name}")
+    plt.subplot(2, 2, 1)
+    plt.hist(differences, num_bins, facecolor="blue", alpha=0.5)
+    plt.ylabel("# Nets")
+    plt.xlabel(
+        "{} ({})\n\nMean: {:.3f}{}\nStd. dev: {:.3f}{}".format(
+            name, unit, np.mean(differences), unit, np.std(differences), unit
+        )
+    )
+
+    plt.subplot(2, 2, 2)
+    plt.hist(
+        differences_percent, num_bins, range=(-1000, 1000), facecolor="blue", alpha=0.5
+    )
+    plt.ylabel("# Nets")
+    plt.xlabel(
+        "%\n\nMean: {:.3f}%\nStd. dev: {:.3f}%".format(
+            np.mean(differences_percent), np.std(differences_percent)
+        )
+    )
+    plt.show()
+
+
+################################################################
 
 args = parse_args()
 
@@ -89,7 +249,7 @@ if res_unit == "ohm":
 elif res_unit == "kohm":
     res_scale = 1e3
 else:
-    print("unknown resistance unit")
+    print("Unknown resistance unit.")
     exit(1)
 
 cap_unit = args.cap_unit
@@ -98,403 +258,132 @@ if cap_unit == "ff":
 elif cap_unit == "pf":
     cap_scale = 1e-12
 else:
-    print("unknown capacitance unit")
+    print("Unknown capacitance unit.")
     exit(1)
 
-
-def makeDict():
-    return collections.defaultdict(makeDict)
-
-
-data = makeDict()
-
-stack = []
-stack_line = None
-
-# For segment mode.
-layer_segments = defaultdict(
-    lambda: {"lengths": [], "resistances": [], "capacitances": []}
+routing_layers, layer_segments, layer_net_type_length = read_segments_rc(
+    args.segments_rc_file
 )
-layer_net_type_length = defaultdict(lambda: defaultdict(float))
-routing_layers = []
-routing_layers_line = None
 
-# indices of relevant layers (routable layers or via layers)
-active_layers = set()
+if args.nets_rc_file:
+    nets = read_nets_rc(args.nets_rc_file)
 
-# Parse the cap CSV file generated by compare_rc_script.tcl
-for rc_file in args.rc_file:
-    design = rc_file
-    print("reading", design)
-    with open(rc_file) as f:
-        nonGrtNets = 0
-        for line in f:
-            if line.startswith("# routing layers: "):
-                if routing_layers_line is not None and routing_layers_line != line:
-                    print(f"layer stack inconsistent", file=stderr)
-                    exit(1)
-                elif routing_layers_line is None:
-                    routing_layers = (
-                        line.removeprefix("# routing layers: ").strip().split(" ")
-                    )
-                    routing_layers_line = line
-                continue
+    if args.plot_cap:
+        plot_grt_rcx_diff(nets, "cap", "Capacitance", cap_unit, cap_scale, 1e-12)
 
-            if line.startswith("# stack: "):
-                if stack_line is not None and stack_line != line:
-                    print(f"layer stack inconsistent", file=stderr)
-                    exit(1)
-                elif stack_line is None:
-                    for layer in line.removeprefix("# stack: ").strip().split(" "):
-                        name = layer
-                        is_routing = False
-                        via_resist = 0.0
-                        if layer.endswith(")"):
-                            # layer name has extra data
-                            match = LAYER_HEADER_RE.match(layer)
-                            assert match
-                            name = match.group(1)
-                            if match.group(2) == "routing":
-                                is_routing = True
-                            else:
-                                via_resist = float(match.group(2))
-                        stack.append((name, is_routing, via_resist))
-                    stack_line = line
-                continue
-
-            tokens = line.strip().split(",")
-
-            if args.mode == "segment":
-                layer_segments[tokens[2]]["lengths"].append(float(tokens[3]))
-                layer_segments[tokens[2]]["resistances"].append(float(tokens[4]))
-                layer_segments[tokens[2]]["capacitances"].append(float(tokens[5]))
-                layer_net_type_length[tokens[2]][tokens[1]] += float(tokens[3])
-            else:
-                netName = tokens[0]
-
-                data[design][netName] = {
-                    "type": tokens[1],
-                    "grt_res": float(tokens[2]),
-                    "grt_cap": float(tokens[3]),
-                    "rcx_res": float(tokens[4]),
-                    "rcx_cap": float(tokens[5]),
-                }
-
-                layer_lengths = [float(tok) for tok in tokens[6:]]
-                for i, length in enumerate(layer_lengths):
-                    if length > 0:
-                        active_layers.add(i)
-
-                data[design][netName]["layer_lengths"] = layer_lengths
-                data[design][netName]["routable_layer_lengths"] = [
-                    length
-                    for i, length in enumerate(layer_lengths)
-                    # ignore non-routable layers
-                    if stack[i][1]
-                ]
-                data[design][netName]["wire_length"] = sum(
-                    length
-                    for i, length in enumerate(layer_lengths)
-                    # ignore non-routable layers
-                    if stack[i][1]
-                )
-                data[design][netName]["grt_via_res"] = sum(
-                    (length * stack[i][2])
-                    for i, length in enumerate(layer_lengths)
-                    if not stack[i][1]
-                )
+    if args.plot_res:
+        plot_grt_rcx_diff(nets, "res", "Resistance", res_unit, res_scale, 1e3)
 
 ################################################################
 
-if args.mode == "net" and args.plot_cap:
-    # Compare the GRT cap estimate vs. OpenRCX SPEF cap
+# Use linear regression to find the layer resistances and capacitances.
 
-    diff_x = []
-    diff_percent_x = []
-    for design in data:
-        for net in data[design]:
-            grt_cap = data[design][net]["grt_cap"]
-            rcx_cap = data[design][net]["rcx_cap"]
-            diff = grt_cap - rcx_cap
-            if abs(diff) > 1e-12:
-                print("large discrapancy:", design, net, diff)
-            if rcx_cap != 0.0:
-                normDiff = (diff / rcx_cap) * 100
-                diff_x.append(diff / cap_scale)
-                diff_percent_x.append(normDiff)
+print("\nUnits: resistance [{}/um], capacitance [{}/um]".format(res_unit, cap_unit))
 
-    # Generate histograms
-    num_bins = 200
-    fig = plt.figure()
-    fig.suptitle("Difference between GRT est. Cap and RCX Cap")
-    plt.subplot(2, 2, 1)
-    plt.hist(diff_x, num_bins, facecolor="blue", alpha=0.5)
-    plt.ylabel("# Nets")
-    plt.xlabel(
-        "Capacitance ({})\n\nMean: {:.3f}{}\nStd. dev: {:.3f}fF".format(
-            cap_unit, np.mean(diff_x), cap_unit, np.std(diff_x)
-        )
-    )
+# Note that the .csv data comes from ODB which stores capacitance in fF.
+cap_ff_to_f = 1e-15
 
-    plt.subplot(2, 2, 2)
-    plt.hist(diff_percent_x, num_bins, range={-1000, 1000}, facecolor="blue", alpha=0.5)
-    plt.ylabel("# Nets")
-    plt.xlabel(
-        "%\n\nMean: {:.3f}%\nStd. dev: {:.3f}%".format(
-            np.mean(diff_percent_x), np.std(diff_percent_x)
-        )
-    )
-    plt.show()
+layer_models = {}
+for layer_name in routing_layers:
+    # There may be routing layers with no segments, so we check if the
+    # layer exists in the dict.
+    if layer_name not in layer_segments:
+        continue
 
-################################################################
+    # sklearn requires the input to be 2D, so we reshape to add a dimension
+    # to the list.
+    lengths = np.array(layer_segments[layer_name]["lengths"]).reshape(-1, 1)
+    resistances = np.array(layer_segments[layer_name]["resistances"])
+    capacitances_ff = np.array(layer_segments[layer_name]["capacitances"])
 
-if args.mode == "net" and args.plot_res:
-    # Compare the GRT res estimate vs. OpenRCX SPEF res
-
-    diff_x = []
-    diff_percent_x = []
-    for design in data:
-        for net in data[design]:
-            grt_res = data[design][net]["grt_res"]
-            rcx_res = data[design][net]["rcx_res"]
-            if grt_res > 0 and rcx_res > 0:
-                diff = grt_res - rcx_res
-                if abs(diff) > 1e3:
-                    print("large discrapancy:", design, net, diff)
-                if rcx_res != 0.0:
-                    normDiff = (diff / rcx_res) * 100
-                    diff_x.append(diff / res_scale)
-                    diff_percent_x.append(normDiff)
-
-    # Generate histograms
-    num_bins = 200
-    fig = plt.figure()
-    fig.suptitle("Difference between GRT est. Res and RCX Res")
-    plt.subplot(2, 2, 1)
-    plt.hist(diff_x, num_bins, facecolor="blue", alpha=0.5)
-    plt.ylabel("# Nets")
-    plt.xlabel(
-        "Resistance ({})\n\nMean: {:.3f}{}\nStd. dev: {:.3f}fF".format(
-            res_unit, np.mean(diff_x), res_unit, np.std(diff_x)
-        )
-    )
-
-    plt.subplot(2, 2, 2)
-    plt.hist(diff_percent_x, num_bins, range={-1000, 1000}, facecolor="blue", alpha=0.5)
-    plt.ylabel("# Nets")
-    plt.xlabel(
-        "%\n\nMean: {:.3f}%\nStd. dev: {:.3f}%".format(
-            np.mean(diff_percent_x), np.std(diff_percent_x)
-        )
-    )
-    plt.show()
-
-################################################################
-
-if args.mode == "net":
-    # Use linear regression to find updated layer resistances.
-
-    x = []
-    y = []
-    for design in data:
-        for net in data[design]:
-            rcx_res = data[design][net]["rcx_res"]
-            if rcx_res > 0:
-                x.append(data[design][net]["routable_layer_lengths"])
-                y.append(rcx_res - data[design][net]["grt_via_res"])
-
-    x = np.array(x)
-    y = np.array(y)
-
-    res_model = LinearRegression(fit_intercept=False).fit(x, y)
-    r_sq = res_model.score(x, y)
-    print("# Resistance coefficient of determination: {:.4f}".format(r_sq))
-
-    ################################################################
-
-    # Use linear regression to find updated layer capacitances.
-
-    x = []
-    y = []
-    for design in data:
-        for net in data[design]:
-            x.append(data[design][net]["routable_layer_lengths"])
-            y.append(data[design][net]["rcx_cap"])
-
-    x = np.array(x)
-    y = np.array(y)
-
-    cap_model = LinearRegression(fit_intercept=False).fit(x, y)
-    r_sq = cap_model.score(x, y)
-    print("# Capacitance coefficient of determination: {:.4f}".format(r_sq))
-    print(
-        "# Updated layer resistance {}/um capacitance {}/um".format(res_unit, cap_unit)
-    )
-
-    routable_layers = [layer for layer in stack if layer[1]]
-    for i, layer in enumerate(routable_layers):
-        res_coeff = res_model.coef_[i]
-        cap_coeff = cap_model.coef_[i]
-        if res_coeff != 0.0 or cap_coeff != 0.0:
-            print(
-                "set_layer_rc -layer {} -resistance {:.5E} -capacitance {:.5E}".format(
-                    layer[0], res_coeff / res_scale, cap_coeff / cap_scale
-                )
-            )
-
-    ################################################################
-
-    def generic_rc_fit(type_sieve):
-        x = []
-        y = []
-        for design in data:
-            for net in data[design]:
-                net_type = data[design][net]["type"]
-                wire_res = data[design][net]["rcx_res"]
-                wire_length = data[design][net]["wire_length"]
-                if net_type in type_sieve and wire_res != 0.0:
-                    x.append([wire_length])
-                    y.append(wire_res)
-        x = np.array(x)
-        y = np.array(y)
-        wire_res_model = LinearRegression(fit_intercept=False).fit(x, y)
-        wire_res = wire_res_model.coef_[0]
-
-        x = []
-        y = []
-        for design in data:
-            for net in data[design]:
-                net_type = data[design][net]["type"]
-                if net_type in type_sieve:
-                    wire_length = data[design][net]["wire_length"]
-                    wire_cap = data[design][net]["rcx_cap"]
-                    x.append([wire_length])
-                    y.append(wire_cap)
-        x = np.array(x)
-        y = np.array(y)
-        wire_cap_model = LinearRegression(fit_intercept=False).fit(x, y)
-        wire_cap = wire_cap_model.coef_[0]
-
-        return "-resistance {:.5E} -capacitance {:.5E}".format(
-            wire_res / res_scale, wire_cap / cap_scale
-        )
-
-    print("# Combined fit:")
-    print("set_wire_rc " + generic_rc_fit(["signal", "clock"]))
-
-    print("# Split signal/clock fit:")
-    print("set_wire_rc -signal " + generic_rc_fit(["signal"]))
-    print("set_wire_rc -clock " + generic_rc_fit(["clock"]))
-
-################################################################
-
-if args.mode == "segment":
-    print("\nUnits: resistance [{}/um], capacitance [{}/um]".format(res_unit, cap_unit))
-
-    # Note that the .csv data comes from ODB which stores capacitance in fF.
-    cap_ff_to_f = 1e-15
-
-    layer_models = {}
-    for layer_name in routing_layers:
-        # There may be routing layers with no segments, so we check if the
-        # layer exists in the dict.
-        if layer_name not in layer_segments:
-            continue
-
-        # sklearn requires the input to be 2D, so we reshape to add a dimension
-        # to the list.
-        lengths = np.array(layer_segments[layer_name]["lengths"]).reshape(-1, 1)
-        resistances = np.array(layer_segments[layer_name]["resistances"])
-        capacitances_ff = np.array(layer_segments[layer_name]["capacitances"])
-
-        res_model = LinearRegression(fit_intercept=False).fit(lengths, resistances)
-        cap_model = LinearRegression(fit_intercept=False).fit(lengths, capacitances_ff)
-        layer_models[layer_name] = (
-            res_model,
-            cap_model,
-            lengths,
-            resistances,
-            capacitances_ff,
-        )
-
-    # Print R² table
-    print("{:<13s} | {:>8s} | {:>8s}".format("\nLayer", "Res R²", "Cap R²"))
-    print("-" * 34)
-    for layer_name, (
+    res_model = LinearRegression(fit_intercept=False).fit(lengths, resistances)
+    cap_model = LinearRegression(fit_intercept=False).fit(lengths, capacitances_ff)
+    layer_models[layer_name] = (
         res_model,
         cap_model,
         lengths,
         resistances,
         capacitances_ff,
-    ) in layer_models.items():
-        r_sq_res = compute_through_origin_fit_score(res_model, lengths, resistances)
-        r_sq_cap = compute_through_origin_fit_score(cap_model, lengths, capacitances_ff)
-        print("{:<12s} | {:>8s} | {:>8s}".format(layer_name, r_sq_res, r_sq_cap))
-    print("-" * 34)
-    print("")
-
-    for layer_name, (
-        res_model,
-        cap_model,
-        lengths,
-        resistances,
-        capacitances_ff,
-    ) in layer_models.items():
-        print(
-            "set_layer_rc -layer {} -resistance {:.5E} -capacitance {:.5E}".format(
-                layer_name,
-                res_model.coef_[0] / res_scale,
-                cap_model.coef_[0] * cap_ff_to_f / cap_scale,
-            )
-        )
-    print("")
-
-    def wire_rc_fit(target_net_type=None):
-        total_length = 0.0
-        total_resistance = 0.0
-        total_capacitance = 0.0
-
-        for layer_name, (res_model, cap_model, lengths, _, _) in layer_models.items():
-            if target_net_type is not None:
-                layer_length = sum(
-                    layer_net_type_length[layer_name][net_type]
-                    for net_type in target_net_type
-                )
-            else:
-                layer_length = float(lengths.sum())
-
-            total_resistance += res_model.coef_[0] * layer_length
-            total_capacitance += cap_model.coef_[0] * layer_length
-            total_length += layer_length
-
-        if total_length == 0.0:
-            return None
-
-        return (
-            total_resistance / total_length / res_scale,
-            total_capacitance / total_length * cap_ff_to_f / cap_scale,
-        )
-
-    resistance, capacitance = wire_rc_fit()
-
-    print(
-        "set_wire_rc -resistance {:.5E} -capacitance {:.5E}".format(
-            resistance, capacitance
-        )
     )
 
-    for net_type in ["signal", "clock"]:
-        result = wire_rc_fit([net_type])
+# Print R² table
+print("{:<13s} | {:>8s} | {:>8s}".format("\nLayer", "Res R²", "Cap R²"))
+print("-" * 34)
+for layer_name, (
+    res_model,
+    cap_model,
+    lengths,
+    resistances,
+    capacitances_ff,
+) in layer_models.items():
+    r_sq_res = compute_through_origin_fit_score(res_model, lengths, resistances)
+    r_sq_cap = compute_through_origin_fit_score(cap_model, lengths, capacitances_ff)
+    print("{:<12s} | {:>8s} | {:>8s}".format(layer_name, r_sq_res, r_sq_cap))
+print("-" * 34)
+print("")
 
-        if result is None:
-            print("[Warning] No {} nets were found.".format(net_type))
-            continue
-
-        resistance, capacitance = result
-
-        print(
-            "set_wire_rc -{} -resistance {:.5E} -capacitance {:.5E}".format(
-                net_type, resistance, capacitance
-            )
+for layer_name, (
+    res_model,
+    cap_model,
+    lengths,
+    resistances,
+    capacitances_ff,
+) in layer_models.items():
+    print(
+        "set_layer_rc -layer {} -resistance {:.5E} -capacitance {:.5E}".format(
+            layer_name,
+            res_model.coef_[0] / res_scale,
+            cap_model.coef_[0] * cap_ff_to_f / cap_scale,
         )
-    print("")
+    )
+print("")
+
+
+def wire_rc_fit(target_net_type=None):
+    total_length = 0.0
+    total_resistance = 0.0
+    total_capacitance = 0.0
+
+    for layer_name, (res_model, cap_model, lengths, _, _) in layer_models.items():
+        if target_net_type is not None:
+            layer_length = sum(
+                layer_net_type_length[layer_name][net_type]
+                for net_type in target_net_type
+            )
+        else:
+            layer_length = float(lengths.sum())
+
+        total_resistance += res_model.coef_[0] * layer_length
+        total_capacitance += cap_model.coef_[0] * layer_length
+        total_length += layer_length
+
+    if total_length == 0.0:
+        return None
+
+    return (
+        total_resistance / total_length / res_scale,
+        total_capacitance / total_length * cap_ff_to_f / cap_scale,
+    )
+
+
+resistance, capacitance = wire_rc_fit()
+
+print(
+    "set_wire_rc -resistance {:.5E} -capacitance {:.5E}".format(resistance, capacitance)
+)
+
+for net_type in ["signal", "clock"]:
+    result = wire_rc_fit([net_type])
+
+    if result is None:
+        print("[Warning] No {} nets were found.".format(net_type))
+        continue
+
+    resistance, capacitance = result
+
+    print(
+        "set_wire_rc -{} -resistance {:.5E} -capacitance {:.5E}".format(
+            net_type, resistance, capacitance
+        )
+    )
+print("")

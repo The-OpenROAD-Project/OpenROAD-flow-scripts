@@ -29,11 +29,14 @@ Unit RC values can be extracted by completing P&R flow for relevant designs in O
 ```
 % cd OpenROAD-flow-scripts/flow
 % make DESIGN_CONFIG=./designs/asap7/ibex/config.mk
-% make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_segment_rc
+% make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_rc
 ```
 
-This will generate a segment RC CSV file under results directory. For
-example, ./results/asap7/ibex/base/6_segment_rc.csv.
+This will generate a segment RC CSV file and a net RC CSV file under results
+directory. For example, ./results/asap7/ibex/base/6_segments_rc.csv and
+./results/asap7/ibex/base/6_nets_rc.csv. The segments data is used to fit the
+RC values, while the nets data is used to plot the difference between the
+global route estimates and the extracted parasitics.
 
 ```
 % make DESIGN_CONFIG=./designs/asap7/ibex/config.mk correlate_rc
@@ -60,12 +63,12 @@ Segment RC CSV files from multiple designs can be combined to produce one large 
 
 ```
 % make DESIGN_CONFIG=./designs/asap7/ibex/config.mk
-% make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_segment_rc
+% make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_rc
 % make DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
-% make DESIGN_CONFIG=./designs/asap7/jpeg/config.mk write_segment_rc
-% cat ./results/asap7/ibex/base/6_segment_rc.csv ./results/asap7/jpeg/base/6_segment_rc.csv > combined_segment_rc.csv
-% ./util/correlateRC.py --mode segment combined_segment_rc.csv
-reading combined_segment_rc.csv
+% make DESIGN_CONFIG=./designs/asap7/jpeg/config.mk write_rc
+% cat ./results/asap7/ibex/base/6_segments_rc.csv ./results/asap7/jpeg/base/6_segments_rc.csv > combined_segments_rc.csv
+% ./util/correlateRC.py -segments_rc_file combined_segments_rc.csv
+Reading combined_segments_rc.csv.
 
 Units: resistance [kohm/um], capacitance [pf/um]
 

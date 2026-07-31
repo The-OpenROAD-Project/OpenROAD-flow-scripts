@@ -84,33 +84,30 @@ update_metadata_autotuner:
 
 #-------------------------------------------------------------------------------
 
-.PHONY: write_net_rc
-write_net_rc: $(RESULTS_DIR)/6_net_rc.csv
+.PHONY: write_rc
+write_rc: $(RESULTS_DIR)/6_nets_rc.csv $(RESULTS_DIR)/6_segments_rc.csv
 
-#$(RESULTS_DIR)/6_net_rc.csv: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/6_final.spef
-$(RESULTS_DIR)/6_net_rc.csv:
-	$(RUN_CMD) --log $(LOG_DIR)/6_write_net_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_net_rc_script.tcl
-
-.PHONY: write_segment_rc
-write_segment_rc: $(RESULTS_DIR)/6_segment_rc.csv
-
-$(RESULTS_DIR)/6_segment_rc.csv:
-	$(RUN_CMD) --log $(LOG_DIR)/6_write_segment_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_segment_rc_script.tcl
+$(RESULTS_DIR)/6_nets_rc.csv $(RESULTS_DIR)/6_segments_rc.csv &:
+	$(RUN_CMD) --log $(LOG_DIR)/6_write_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_rc.tcl
 
 .PHONY: correlate_rc
-correlate_rc: $(RESULTS_DIR)/6_net_rc.csv
-	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py $(RESULTS_DIR)/6_net_rc.csv
+correlate_rc: $(RESULTS_DIR)/6_nets_rc.csv $(RESULTS_DIR)/6_segments_rc.csv
+	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
+	    -nets_rc_file $(RESULTS_DIR)/6_nets_rc.csv \
+	    -segments_rc_file $(RESULTS_DIR)/6_segments_rc.csv
 
 # TODO Make always wants to redo designs with this rule, regardless of which variations are tried.
-#	$(MAKE) DESIGN_CONFIG=$$config write_net_rc; \
-#$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_net_rc; )
 .PHONY: correlate_platform_rc
 correlate_platform_rc:
 	for config in designs/$(PLATFORM)/*/config.mk; do \
 	  design=$$(basename $$(dirname $$config)); \
-	  make DESIGN_CONFIG=./$$config results/$(PLATFORM)/$$design/base/6_net_rc.csv; \
+	  make DESIGN_CONFIG=./$$config \
+	    results/$(PLATFORM)/$$design/base/6_nets_rc.csv \
+	    results/$(PLATFORM)/$$design/base/6_segments_rc.csv; \
 	done
-	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py $$(find results/$(PLATFORM)/*/base -name 6_net_rc.csv)
+	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
+	    -nets_rc_file $$(find results/$(PLATFORM)/*/base -name 6_nets_rc.csv) \
+	    -segments_rc_file $$(find results/$(PLATFORM)/*/base -name 6_segments_rc.csv)
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
