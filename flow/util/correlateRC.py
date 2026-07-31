@@ -126,6 +126,17 @@ def read_nets_rc(file_names):
         print("No net RC data found.", file=stderr)
         exit(1)
 
+    for key, name in (
+        ("grt_res", "GRT resistance"),
+        ("grt_cap", "GRT capacitance"),
+        ("rcx_res", "RCX resistance"),
+        ("rcx_cap", "RCX capacitance"),
+    ):
+        count = sum(1 for net in nets if net[key] == 0.0)
+
+        if count > 0:
+            print(f"Found {count} nets with zero {name}.")
+
     return nets
 
 
@@ -179,6 +190,16 @@ def read_segments_rc(file_names):
     if not layer_segments:
         print("No segment RC data found.", file=stderr)
         exit(1)
+
+    for key, name in (("resistances", "resistance"), ("capacitances", "capacitance")):
+        count = sum(
+            1
+            for segments in layer_segments.values()
+            for value in segments[key]
+            if value == 0.0
+        )
+        if count > 0:
+            print(f"Found {count} segments with zero {name}.")
 
     return routing_layers, layer_segments, layer_net_type_length
 
@@ -264,15 +285,6 @@ else:
 routing_layers, layer_segments, layer_net_type_length = read_segments_rc(
     args.segments_rc_file
 )
-
-if args.nets_rc_file:
-    nets = read_nets_rc(args.nets_rc_file)
-
-    if args.plot_cap:
-        plot_grt_rcx_diff(nets, "cap", "Capacitance", cap_unit, cap_scale, 1e-12)
-
-    if args.plot_res:
-        plot_grt_rcx_diff(nets, "res", "Resistance", res_unit, res_scale, 1e3)
 
 ################################################################
 
@@ -387,3 +399,17 @@ for net_type in ["signal", "clock"]:
         )
     )
 print("")
+
+################################################################
+
+# The plots come after the commands so that a plot with no data does not
+# withhold them.
+
+if args.nets_rc_file:
+    nets = read_nets_rc(args.nets_rc_file)
+
+    if args.plot_cap:
+        plot_grt_rcx_diff(nets, "cap", "Capacitance", cap_unit, cap_scale, 1e-12)
+
+    if args.plot_res:
+        plot_grt_rcx_diff(nets, "res", "Resistance", res_unit, res_scale, 1e3)
