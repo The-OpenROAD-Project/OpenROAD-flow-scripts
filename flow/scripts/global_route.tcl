@@ -14,7 +14,15 @@ proc global_route_helper { } {
   set use_cugr ""
   append_env_var use_cugr GLOBAL_ROUTE_USE_CUGR -use_cugr 0
 
+  proc set_grt_seed { } {
+    set seed_arg [env_var_or_empty GRT_SEED]
+    if { $seed_arg ne "" } {
+      log_cmd set_global_routing_random -seed $seed_arg
+    }
+  }
+
   proc do_global_route { res_aware use_cugr } {
+    set_grt_seed
     # CUGR runs a full 3D maze pass per iteration; use a tighter default.
     set cong_iters "-congestion_iterations 30"
     if { $use_cugr ne "" } {
