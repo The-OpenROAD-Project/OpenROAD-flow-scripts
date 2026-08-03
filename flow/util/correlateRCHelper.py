@@ -96,6 +96,10 @@ def read_nets_rc(file_names):
 
     for file_name in file_names:
         print(f"Reading {file_name}.")
+        # Each file has to bring its own header, so that a file of another kind
+        # is not read against the header of the previous one.
+        file_header_line = None
+
         with open(file_name) as file:
             for line in file:
                 line = line.strip()
@@ -105,6 +109,7 @@ def read_nets_rc(file_names):
                         print("Layer stack inconsistent.", file=stderr)
                         exit(1)
                     header_line = line
+                    file_header_line = line
                     routing_layers = [
                         layer.removesuffix("(routing)")
                         for layer in line.removeprefix(NETS_HEADER).split()
@@ -115,8 +120,8 @@ def read_nets_rc(file_names):
                 if not line or line.startswith("#"):
                     continue
 
-                if header_line is None:
-                    print("No net RC header found in the data.", file=stderr)
+                if file_header_line is None:
+                    print(f"No net RC header found in {file_name}.", file=stderr)
                     exit(1)
 
                 tokens = line.split(",")
@@ -165,6 +170,10 @@ def read_segments_rc(file_names):
 
     for file_name in file_names:
         print(f"Reading {file_name}.")
+        # Each file has to bring its own header, so that a file of another kind
+        # is not read against the header of the previous one.
+        file_header_line = None
+
         with open(file_name) as file:
             for line in file:
                 line = line.strip()
@@ -174,14 +183,15 @@ def read_segments_rc(file_names):
                         print("Layer stack inconsistent.", file=stderr)
                         exit(1)
                     header_line = line
+                    file_header_line = line
                     routing_layers = line.removeprefix(SEGMENTS_HEADER).split()
                     continue
 
                 if not line or line.startswith("#"):
                     continue
 
-                if header_line is None:
-                    print("No segment RC header found in the data.", file=stderr)
+                if file_header_line is None:
+                    print(f"No segment RC header found in {file_name}.", file=stderr)
                     exit(1)
 
                 tokens = line.split(",")
