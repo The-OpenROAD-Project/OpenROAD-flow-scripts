@@ -101,7 +101,7 @@ bazel_dep(name = "bazel-orfs", version = "0.0.1")
 
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
-BAZEL_ORFS_COMMIT = "3342596c1f7017b9fda5b4a55a25a54ff2aaedf8"
+BAZEL_ORFS_COMMIT = "6ebadeb4be5c9ada103081c9a5e668c014126616"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
@@ -129,6 +129,17 @@ git_override(
     commit = "7753ea70431d85929292b90c33b32f6dbdb3b048",
     init_submodules = True,
     remote = "https://github.com/povik/yosys-slang.git",
+)
+
+bazel_dep(name = "fakeram", dev_dependency = True)
+git_override(
+    module_name = "fakeram",
+    commit = "6f62c655952b683cda679d80850cb557cc3c262e",
+    patch_strip = 1,
+    patches = [
+        "//patches/fakeram:0001-Add-ORFS-ASAP7-backend.patch",
+    ],
+    remote = "https://github.com/The-OpenROAD-Project/FakeRAM2.0.git",
 )
 
 # --- Extensions ---
