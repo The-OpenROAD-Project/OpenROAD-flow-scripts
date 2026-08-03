@@ -37,10 +37,16 @@ print_wire_rc(layer_models, layer_net_type_length, res_scale, cap_scale)
 # The plots come after the commands so that a plot with no data does not
 # withhold them.
 if args.plot_cap or args.plot_res:
-    nets = read_nets_rc(args.nets_rc_file)
+    nets, nets_routing_layers = read_nets_rc(args.nets_rc_file)
+
+    if nets_routing_layers != routing_layers:
+        print("[Warning] The nets and the segments data have different routing")
+        print("layers, are the files from different platforms?")
 
     if args.plot_cap:
         plot_grt_rcx_diff(nets, "cap", "Capacitance", cap_unit, cap_scale, 1e-12)
 
     if args.plot_res:
         plot_grt_rcx_diff(nets, "res", "Resistance", res_unit, res_scale, 1e3)
+elif args.nets_rc_file:
+    print("The nets RC data is only read to plot, so it was skipped.")

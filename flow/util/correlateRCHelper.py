@@ -74,7 +74,7 @@ def resolve_units(args):
     elif res_unit == "kohm":
         res_scale = 1e3
     else:
-        print("Unknown resistance unit.")
+        print("Unknown resistance unit.", file=stderr)
         exit(1)
 
     cap_unit = args.cap_unit
@@ -83,7 +83,7 @@ def resolve_units(args):
     elif cap_unit == "pf":
         cap_scale = 1e-12
     else:
-        print("Unknown capacitance unit.")
+        print("Unknown capacitance unit.", file=stderr)
         exit(1)
 
     return res_unit, res_scale, cap_unit, cap_scale
@@ -91,20 +91,26 @@ def resolve_units(args):
 
 def read_nets_rc(file_names):
     nets = []
+    routing_layers = []
     header_line = None
 
     for file_name in file_names:
         print(f"Reading {file_name}.")
         with open(file_name) as file:
             for line in file:
+                line = line.strip()
+
                 if line.startswith(NETS_HEADER):
                     if header_line is not None and header_line != line:
                         print("Layer stack inconsistent.", file=stderr)
                         exit(1)
                     header_line = line
+                    routing_layers = [
+                        layer.removesuffix("(routing)")
+                        for layer in line.removeprefix(NETS_HEADER).split()
+                        if layer.endswith("(routing)")
+                    ]
                     continue
-
-                line = line.strip()
 
                 if not line or line.startswith("#"):
                     continue
@@ -146,7 +152,7 @@ def read_nets_rc(file_names):
         if count > 0:
             print(f"Found {count} nets with zero {name}.")
 
-    return nets
+    return nets, routing_layers
 
 
 def read_segments_rc(file_names):
@@ -161,17 +167,15 @@ def read_segments_rc(file_names):
         print(f"Reading {file_name}.")
         with open(file_name) as file:
             for line in file:
+                line = line.strip()
+
                 if line.startswith(SEGMENTS_HEADER):
                     if header_line is not None and header_line != line:
                         print("Layer stack inconsistent.", file=stderr)
                         exit(1)
                     header_line = line
-                    routing_layers = (
-                        line.removeprefix(SEGMENTS_HEADER).strip().split(" ")
-                    )
+                    routing_layers = line.removeprefix(SEGMENTS_HEADER).split()
                     continue
-
-                line = line.strip()
 
                 if not line or line.startswith("#"):
                     continue
@@ -189,6 +193,10 @@ def read_segments_rc(file_names):
                 net_type = tokens[1]
                 layer = tokens[2]
                 length = float(tokens[3])
+
+                if layer not in routing_layers:
+                    print(f"Layer {layer} is not in the header.", file=stderr)
+                    exit(1)
 
                 layer_segments[layer]["lengths"].append(length)
                 layer_segments[layer]["resistances"].append(float(tokens[4]))
@@ -322,9 +330,13 @@ def print_layer_rc(layer_models, res_scale, cap_scale):
 
 
 def print_wire_rc(layer_models, layer_net_type_length, res_scale, cap_scale):
-    resistance, capacitance = wire_rc_fit(
-        layer_models, layer_net_type_length, res_scale, cap_scale
-    )
+    result = wire_rc_fit(layer_models, layer_net_type_length, res_scale, cap_scale)
+
+    if result is None:
+        print("[Warning] No layer was fitted.")
+        return
+
+    resistance, capacitance = result
 
     print(
         "set_wire_rc -resistance {:.5E} -capacitance {:.5E}".format(

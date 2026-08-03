@@ -4,7 +4,7 @@
 proc fetch_nets_rc { var_name } {
   upvar 1 $var_name var
 
-  foreach net [get_nets *] {
+  foreach net [get_nets -hierarchical *] {
     set net_name [get_full_name $net]
     set wire_res [net_wire_res $net]
     set wire_cap [net_wire_cap $net]
@@ -28,7 +28,8 @@ proc write_nets_rc_csv { filename grt_var rcx_var } {
   set tech [ord::get_db_tech]
   set stream [open $filename "w"]
 
-  # First, write a header naming the data and listing the layer stack.
+  # First, write a header naming the data and listing the layer stack, which
+  # is only read back as a fingerprint of the stack.
   puts -nonewline $stream "# Net RC:"
   foreach layer [$tech getLayers] {
     puts -nonewline $stream " [$layer getName]"
@@ -46,7 +47,7 @@ proc write_nets_rc_csv { filename grt_var rcx_var } {
   puts $stream ""
 
   # Then, write the parasitics data of each net.
-  foreach net [get_nets *] {
+  foreach net [get_nets -hierarchical *] {
     set db_net [sta::sta_to_db_net $net]
     set type [$db_net getSigType]
 
