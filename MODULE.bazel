@@ -131,6 +131,17 @@ git_override(
     remote = "https://github.com/povik/yosys-slang.git",
 )
 
+bazel_dep(name = "fakeram", dev_dependency = True)
+git_override(
+    module_name = "fakeram",
+    commit = "6f62c655952b683cda679d80850cb557cc3c262e",
+    patch_strip = 1,
+    patches = [
+        "//patches/fakeram:0001-Add-ORFS-ASAP7-backend.patch",
+    ],
+    remote = "https://github.com/The-OpenROAD-Project/FakeRAM2.0.git",
+)
+
 # --- Extensions ---
 
 register_toolchains(

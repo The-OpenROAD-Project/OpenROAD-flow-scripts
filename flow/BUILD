@@ -196,6 +196,7 @@ py_library(
         exclude = ["scripts/memories/*_test.py"],
     ),
     imports = ["scripts/memories"],
+    data = ["@fakeram//:all_files"],
 )
 
 # Test fixtures (Verilog snippets) live in detect_test.py and are
@@ -211,10 +212,7 @@ MEMORIES_TESTS = [
     "detect_test",
     "gen_memories_test",
     "idiomatic_test",
-    "lef_test",
-    "liberty_test",
     "schema_test",
-    "sram_area_model_test",
 ]
 
 [py_test(

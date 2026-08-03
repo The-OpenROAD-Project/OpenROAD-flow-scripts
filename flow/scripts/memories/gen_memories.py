@@ -24,11 +24,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import subprocess
+import os
+
 import detect  # noqa: E402
 import idiomatic  # noqa: E402
-import lef  # noqa: E402
-import liberty  # noqa: E402
-import pdk_asap7  # noqa: E402
 import schema  # noqa: E402
 
 
@@ -39,10 +39,8 @@ def run(
     out_dir: Path,
     json_path: Path,
 ) -> int:
-    try:
-        params = pdk_asap7.get_platform(platform)
-    except ValueError as e:
-        sys.stderr.write(f"gen_memories: {e}\n")
+    if platform != "asap7":
+        sys.stderr.write(f"gen_memories: unsupported platform {platform}\n")
         return 1
 
     try:
@@ -73,13 +71,17 @@ def run(
         sys.stderr.write(f"gen_memories: {e}\n")
         return 1
 
-    for mem in converted:
-        (out_dir / f"{mem.name}.lib").write_text(liberty.emit_lib(mem, params))
-        (out_dir / f"{mem.name}_pre_layout.lib").write_text(
-            liberty.emit_lib(mem, params, ck_insertion_ps=0.0)
-        )
-        (out_dir / f"{mem.name}.lef").write_text(lef.emit_lef(mem, params))
-    (out_dir / "blackboxes.txt").write_text("".join(f"{m.name}\n" for m in converted))
+    fakeram_run = os.environ.get("FAKERAM_RUN_PY")
+    if not fakeram_run:
+        sys.stderr.write("gen_memories: FAKERAM_RUN_PY environment variable is not set.\n")
+        return 1
+
+    subprocess.check_call([
+        sys.executable, fakeram_run,
+        "--orfs_asap7_backend",
+        "--output_dir", str(out_dir),
+        str(json_path)
+    ])
 
     for mem in sorted(memories, key=lambda m: m.name):
         verdict = "macro" if mem.idiomatic else "flops"

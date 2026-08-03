@@ -7,8 +7,21 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import os
+
 import gen_memories
 from detect_test import BUS_STYLE, NOT_A_MEMORY, RW_STYLE
+
+# Setup FAKERAM_RUN_PY using runfiles if available, otherwise assume a relative path
+if "TEST_WORKSPACE" in os.environ:
+    # Bazel test execution
+    runfiles_dir = Path(os.environ.get("RUNFILES_DIR", "."))
+    candidates = list(runfiles_dir.glob("**/fakeram*/run.py")) + list(runfiles_dir.glob("**/run.py"))
+    fakeram_run = candidates[0] if candidates else runfiles_dir / "fakeram" / "run.py"
+else:
+    fakeram_run = Path(__file__).resolve().parent.parent.parent.parent / "tools" / "FakeRAM2.0" / "run.py"
+
+os.environ["FAKERAM_RUN_PY"] = str(fakeram_run)
 
 FORCE_TAGS = """\
 {

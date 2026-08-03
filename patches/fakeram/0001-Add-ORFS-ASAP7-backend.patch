@@ -1,0 +1,1100 @@
+diff --git a/BUILD.bazel b/BUILD.bazel
+new file mode 100644
+index 0000000..16e9be4
+--- /dev/null
++++ b/BUILD.bazel
+@@ -0,0 +1,5 @@
++filegroup(
++    name = "all_files",
++    srcs = glob(["**/*"]),
++    visibility = ["//visibility:public"],
++)
+diff --git a/MODULE.bazel b/MODULE.bazel
+new file mode 100644
+index 0000000..f12bf1f
+--- /dev/null
++++ b/MODULE.bazel
+@@ -0,0 +1,4 @@
++module(
++    name = "fakeram",
++    version = "2.0.0",
++)
+diff --git a/orfs_asap7/__init__.py b/orfs_asap7/__init__.py
+new file mode 100644
+index 0000000..edcf578
+--- /dev/null
++++ b/orfs_asap7/__init__.py
+@@ -0,0 +1 @@
++# ORFS ASAP7 package
+diff --git a/orfs_asap7/generate.py b/orfs_asap7/generate.py
+new file mode 100644
+index 0000000..0fded7a
+--- /dev/null
++++ b/orfs_asap7/generate.py
+@@ -0,0 +1,40 @@
++import argparse
++import sys
++from pathlib import Path
++
++from . import lef
++from . import liberty
++from . import pdk_asap7
++from . import schema
++
++def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
++    try:
++        params = pdk_asap7.get_platform(platform)
++    except ValueError as e:
++        sys.stderr.write(f"FakeRAM2.0 orfs_asap7: {e}\n")
++        return 1
++
++    try:
++        memories = schema.load(json_path)
++    except schema.SchemaError as e:
++        sys.stderr.write(f"FakeRAM2.0 orfs_asap7: {e}\n")
++        return 1
++
++    out_dir.mkdir(parents=True, exist_ok=True)
++    converted = sorted((m for m in memories if m.idiomatic), key=lambda m: m.name)
++
++    try:
++        for mem in converted:
++            schema.validate_emittable(mem)
++    except schema.SchemaError as e:
++        sys.stderr.write(f"FakeRAM2.0 orfs_asap7: {e}\n")
++        return 1
++
++    for mem in converted:
++        (out_dir / f"{mem.name}.lib").write_text(liberty.emit_lib(mem, params))
++        (out_dir / f"{mem.name}_pre_layout.lib").write_text(
++            liberty.emit_lib(mem, params, ck_insertion_ps=0.0)
++        )
++        (out_dir / f"{mem.name}.lef").write_text(lef.emit_lef(mem, params))
++    (out_dir / "blackboxes.txt").write_text("".join(f"{m.name}\n" for m in converted))
++    return 0
+diff --git a/orfs_asap7/lef.py b/orfs_asap7/lef.py
+new file mode 100644
+index 0000000..2b9bf4c
+--- /dev/null
++++ b/orfs_asap7/lef.py
+@@ -0,0 +1,115 @@
++#!/usr/bin/env python3
++"""Emit an abstract LEF view for a memory macro.
++
++The shape follows the platform's fakeram abstracts: CLASS BLOCK with a
++FOREIGN reference, per-bit signal pin pads stacked along the left edge
++(SHAPE ABUTMENT, wrapping into further columns when one edge is not
++enough), interleaved horizontal power/ground straps the platform's PDN
++macro grid can connect to, and a full-footprint multi-layer OBS so the
++parent's router treats the macro as opaque. Geometry comes from the
++parametric area model, snapped to the manufacturing grid.
++"""
++
++from __future__ import annotations
++
++from . import liberty
++from . import schema
++from .pdk_asap7 import PdkParams
++
++
++def emit_lef(mem: schema.Memory, params: PdkParams) -> str:
++    name = mem.name
++    area = liberty.predict_area_um2(mem, params.tech_nm)
++    width, height = liberty.predict_dimensions_um(area)
++    grid = params.grid_um
++    width = max(round(width / grid) * grid, 1.0)
++    height = max(round(height / grid) * grid, 1.0)
++
++    lines: list[str] = []
++    a = lines.append
++    a("VERSION 5.8 ;")
++    a('BUSBITCHARS "[]" ;')
++    a('DIVIDERCHAR "/" ;')
++    a("UNITS")
++    a("    DATABASE MICRONS 1000 ;")
++    a("END UNITS")
++    a("")
++    a(f"MACRO {name}")
++    a(f"  FOREIGN {name} 0 0 ;")
++    a("  SYMMETRY X Y R90 ;")
++    a(f"  SIZE {width:.3f} BY {height:.3f} ;")
++    a("  CLASS BLOCK ;")
++
++    # Signal pins as small pads stacked along the left edge, like the
++    # fakeram abstracts. When one column fills up, continue in the next.
++    pad = params.pin_pad_um
++    pitch = params.pin_pitch_um
++    cursor_x = 0.0
++    cursor_y = pitch
++
++    def emit_pin(pin_name: str, direction: str) -> None:
++        nonlocal cursor_x, cursor_y
++        a(f"  PIN {pin_name}")
++        a(f"    DIRECTION {direction.upper()} ;")
++        a("    USE SIGNAL ;")
++        a("    SHAPE ABUTMENT ;")
++        a("    PORT")
++        a(f"      LAYER {params.pin_layer} ;")
++        a(
++            f"      RECT {cursor_x:.3f} {cursor_y:.3f} "
++            f"{cursor_x + pad:.3f} {cursor_y + pad:.3f} ;"
++        )
++        a("    END")
++        a(f"  END {pin_name}")
++        cursor_y += pitch
++        if cursor_y + pad > height:
++            cursor_y = pitch
++            cursor_x += pitch
++
++    for _port_id, pins in liberty.ordered_port_groups(mem):
++        for pin in pins:
++            if pin.width > 1:
++                for bit in range(pin.width):
++                    emit_pin(f"{pin.name}[{bit}]", pin.direction)
++            else:
++                emit_pin(pin.name, pin.direction)
++
++    # Interleaved horizontal power/ground straps, nearly full width,
++    # matching the fakeram abstracts (VSS at offset 0, VDD offset by
++    # half the per-net pitch). The platform PDN's macro grid connects
++    # to these.
++    strap_w = params.pg_strap_w_um
++    strap_pitch = params.pg_strap_pitch_um
++    margin = params.pg_margin_um
++    x0 = margin
++    x1 = max(width - margin, x0 + grid)
++
++    def emit_pg(pin_name: str, use: str, y_start: float) -> None:
++        a(f"  PIN {pin_name}")
++        a("    DIRECTION INOUT ;")
++        a(f"    USE {use} ;")
++        a("    PORT")
++        a(f"      LAYER {params.pg_layer} ;")
++        y = y_start
++        while y + strap_w <= height:
++            a(f"      RECT {x0:.3f} {y:.3f} {x1:.3f} {y + strap_w:.3f} ;")
++            y += strap_pitch
++        a("    END")
++        a(f"  END {pin_name}")
++
++    emit_pg("VDD", "POWER", params.pg_vdd_offset_um)
++    emit_pg("VSS", "GROUND", 0.0)
++
++    # Full-footprint obstruction so the parent's router treats the
++    # macro as opaque (pins and straps sit on top of it, as in the
++    # fakeram abstracts).
++    a("  OBS")
++    for layer in params.obs_device_layers + params.obs_metal_layers:
++        a(f"    LAYER {layer} ;")
++        a(f"    RECT 0 0 {width:.3f} {height:.3f} ;")
++    a("  END")
++    a(f"END {name}")
++    a("")
++    a("END LIBRARY")
++    a("")
++    return "\n".join(lines)
+diff --git a/orfs_asap7/liberty.py b/orfs_asap7/liberty.py
+new file mode 100644
+index 0000000..3d0aa5a
+--- /dev/null
++++ b/orfs_asap7/liberty.py
+@@ -0,0 +1,439 @@
++#!/usr/bin/env python3
++"""Emit a Liberty (.lib) view for a memory macro.
++
++The structural shape (bus() umbrellas WITH per-bit pin() siblings,
++quoted simple type names, per-port clock pins carrying
++min/max_clock_tree_path arcs) follows what OpenROAD's abstract writer
++produces for a hardened block. The per-bit pins are load-bearing: a
++bus() block without per-bit pin records makes yosys's bus elaboration
++silently drop bit connections at parent instances of the macro, leaving
++the synthesized parent with only scalar clk/en pins on every memory.
++
++internal_power() records use power_lut_template — OpenSTA's
++report_power -saif looks power templates up in the power-template
++registry, and a power table declared under lu_table_template is
++silently read as zero.
++
++Timing values come from simple parametric predictors (log2(rows) decode
++depth, √bits bit-line/sense scaling), conservative and monotonic. Two
++variants are emitted per memory: the regular .lib with a predicted
++clock-tree insertion delay, and a _pre_layout.lib with ideal clock
++(insertion = 0) for pre-CTS consumers.
++"""
++
++from __future__ import annotations
++
++import math
++import re
++
++from . import schema
++from . import sram_area_model
++from .pdk_asap7 import PdkParams
++
++_FUNCTION_ORDER = {
++    "addr": 0,
++    "en": 1,
++    "wmode": 2,
++    "mask": 3,
++    "data_in": 4,
++    "data_out": 5,
++    "clk": 6,
++}
++_SUBWORD_INDEX_RE = re.compile(r"_(\d+)$")
++
++
++def _subword_index(name: str) -> int:
++    m = _SUBWORD_INDEX_RE.search(name)
++    return int(m.group(1)) if m else -1
++
++
++def ordered_port_groups(mem: schema.Memory) -> list[tuple[str, list[schema.Pin]]]:
++    """Group pins by port id, in canonical order.
++
++    Ports are ordered R, W, RW by index; pins within a port follow the
++    firtool convention order (addr, en, wmode, mask, data, clk), with
++    subword-split pins ordered by their index.
++    """
++    groups: dict[str, list[schema.Pin]] = {}
++    for p in mem.pins:
++        groups.setdefault(p.port_id, []).append(p)
++
++    def port_key(port_id: str) -> tuple[int, int]:
++        if port_id.startswith("RW"):
++            return (2, int(port_id[2:]))
++        if port_id.startswith("R"):
++            return (0, int(port_id[1:]))
++        return (1, int(port_id[1:]))
++
++    out: list[tuple[str, list[schema.Pin]]] = []
++    for port_id in sorted(groups, key=port_key):
++        pins = sorted(
++            groups[port_id],
++            key=lambda p: (_FUNCTION_ORDER[p.function], _subword_index(p.name), p.name),
++        )
++        out.append((port_id, pins))
++    return out
++
++
++def _is_bus(pin: schema.Pin) -> bool:
++    return pin.width > 1 and pin.function in ("addr", "data_in", "data_out", "mask")
++
++
++# ---------------------------------------------------------------------------
++# Parametric predictors (picoseconds, µm², fJ, pW).
++# ---------------------------------------------------------------------------
++
++
++def _scale_tech(tech_nm: int) -> float:
++    return tech_nm / 7.0
++
++
++def predict_access_ps(rows: int, bits: int, ports_total: int, tech_nm: int) -> float:
++    s = _scale_tech(tech_nm)
++    rows_eff = max(rows, 2)
++    bits_eff = max(bits, 1)
++    # Decoder + bitline + sense amp scaling.
++    base = 80.0 * s
++    base += 8.0 * s * math.log2(rows_eff)
++    base += 3.0 * s * math.sqrt(bits_eff)
++    base += 2.0 * s * max(ports_total - 1, 0)
++    return base
++
++
++def predict_setup_ps(tech_nm: int) -> float:
++    return 12.0 * _scale_tech(tech_nm)
++
++
++def predict_hold_ps(tech_nm: int) -> float:
++    return 6.0 * _scale_tech(tech_nm)
++
++
++def predict_transition_ps(tech_nm: int) -> float:
++    return 7.0 * _scale_tech(tech_nm)
++
++
++def predict_clk_period_ps(
++    rows: int, bits: int, ports_total: int, tech_nm: int
++) -> float:
++    return max(
++        predict_access_ps(rows, bits, ports_total, tech_nm)
++        + predict_setup_ps(tech_nm)
++        + 30.0,
++        150.0 * _scale_tech(tech_nm),
++    )
++
++
++def predict_ck_insertion_ps(tech_nm: int) -> float:
++    return 80.0 * _scale_tech(tech_nm)
++
++
++def predict_area_um2(mem: schema.Memory, tech_nm: int) -> float:
++    return sram_area_model.sram_area_um2(
++        rows=max(mem.rows, 1),
++        cols=max(mem.bits, 1),
++        # An RW port counts as both a read and a write port for the
++        # multi-port factor.
++        read_ports=mem.read_ports + mem.rw_ports,
++        write_ports=mem.write_ports + mem.rw_ports,
++        tech_nm=tech_nm,
++        write_mask_lanes=mem.mask_lanes,
++    )
++
++
++def predict_dimensions_um(area_um2: float) -> tuple[float, float]:
++    return sram_area_model.sram_dimensions_um(area_um2, aspect_ratio=0.5)
++
++
++def predict_read_energy_fj(rows: int, bits: int, tech_nm: int) -> float:
++    s = _scale_tech(tech_nm)
++    return (1.5 + 0.25 * math.log2(max(rows, 2))) * max(bits, 1) * s
++
++
++def predict_write_energy_fj(rows: int, bits: int, tech_nm: int) -> float:
++    s = _scale_tech(tech_nm)
++    return (2.5 + 0.30 * math.log2(max(rows, 2))) * max(bits, 1) * s
++
++
++def predict_leakage_pw(rows: int, bits: int, ports_total: int, tech_nm: int) -> float:
++    s = _scale_tech(tech_nm)
++    rows_eff = max(rows, 2)
++    bits_eff = max(bits, 1)
++    # Leakage scales with bitcell count + sense amp count per port.
++    return (rows_eff * bits_eff * 0.05 + ports_total * bits_eff * 2.0) * s
++
++
++# ---------------------------------------------------------------------------
++# .lib emit
++# ---------------------------------------------------------------------------
++
++
++def emit_lib(
++    mem: schema.Memory, params: PdkParams, *, ck_insertion_ps: float | None = None
++) -> str:
++    """Return Liberty text for `mem`.
++
++    `ck_insertion_ps` overrides the predicted clock-tree insertion
++    delay. Pass 0.0 for the pre-layout (ideal-clock) variant; None for
++    the default prediction.
++    """
++    name = mem.name
++    tech_nm = params.tech_nm
++    ports_total = mem.total_ports()
++
++    access_ps = predict_access_ps(mem.rows, mem.bits, ports_total, tech_nm)
++    setup_ps = predict_setup_ps(tech_nm)
++    hold_ps = predict_hold_ps(tech_nm)
++    trans_ps = predict_transition_ps(tech_nm)
++    clk_period_ps = predict_clk_period_ps(mem.rows, mem.bits, ports_total, tech_nm)
++    ck_ins_ps = (
++        ck_insertion_ps
++        if ck_insertion_ps is not None
++        else predict_ck_insertion_ps(tech_nm)
++    )
++    area = predict_area_um2(mem, tech_nm)
++    leak_pw = predict_leakage_pw(mem.rows, mem.bits, ports_total, tech_nm)
++    read_e = predict_read_energy_fj(mem.rows, mem.bits, tech_nm)
++    write_e = predict_write_energy_fj(mem.rows, mem.bits, tech_nm)
++    avg_edge_e = (read_e + write_e) / 2.0
++    per_bit_e = max(read_e / max(mem.bits, 1), 0.5)
++
++    groups = ordered_port_groups(mem)
++
++    lines: list[str] = []
++    a = lines.append
++
++    a(f"library ({name}) {{")
++    a('  comment                        : "";')
++    a("  delay_model                    : table_lookup;")
++    a("  simulation                     : false;")
++    a("  capacitive_load_unit (1,fF);")
++    a("  leakage_power_unit             : 1pW;")
++    a('  current_unit                   : "1mA";')
++    a('  pulling_resistance_unit        : "1kohm";')
++    a('  time_unit                      : "1ps";')
++    a('  voltage_unit                   : "1v";')
++    a("  library_features(report_delay_calculation);")
++    a("")
++    a("  input_threshold_pct_rise : 50;")
++    a("  input_threshold_pct_fall : 50;")
++    a("  output_threshold_pct_rise : 50;")
++    a("  output_threshold_pct_fall : 50;")
++    a("  slew_lower_threshold_pct_rise : 10;")
++    a("  slew_lower_threshold_pct_fall : 10;")
++    a("  slew_upper_threshold_pct_rise : 90;")
++    a("  slew_upper_threshold_pct_fall : 90;")
++    a("  slew_derate_from_library : 1.0;")
++    a("")
++    a("")
++    a("  nom_process                    : 1.0;")
++    a("  nom_temperature                : 0.0;")
++    a(f"  nom_voltage                    : {params.nom_voltage};")
++    a("")
++    a(f"  default_cell_leakage_power : {leak_pw:.6g};")
++    a(f"  default_max_transition : {trans_ps * 4:.6g};")
++    a("")
++    a("  lu_table_template(template_1) {")
++    a("    variable_1 : total_output_net_capacitance;")
++    a('    index_1("1.0, 2.0");')
++    a("  }")
++    a("  lu_table_template(constraint_template) {")
++    a("    variable_1 : related_pin_transition;")
++    a("    variable_2 : constrained_pin_transition;")
++    a('    index_1("0.001, 0.1");')
++    a('    index_2("0.001, 0.1");')
++    a("  }")
++    a("  power_lut_template(power_template) {")
++    a("    variable_1 : input_transition_time;")
++    a('    index_1("0.001, 0.1");')
++    a("  }")
++
++    # type ("name") — quoted simple pin name, NOT scoped.
++    for _port_id, pins in groups:
++        for pin in pins:
++            if _is_bus(pin):
++                a(f'  type ("{pin.name}") {{')
++                a("    base_type : array;")
++                a("    data_type : bit;")
++                a(f"    bit_width : {pin.width};")
++                a(f"    bit_from : {pin.width - 1};")
++                a("    bit_to : 0;")
++                a("  }")
++
++    a(f'  cell ("{name}") {{')
++    a(f"    area : {area:.4f};")
++    a("    interface_timing : true;")
++    a("    memory() {")
++    a("      type : ram;")
++    a(f"      address_width : {max(mem.addr_w, 1)};")
++    a(f"      word_width : {max(mem.bits, 1)};")
++    a("    }")
++    # PG-as-input pins keep the parent's PDN checker quiet.
++    a('    pin ("VDD") {')
++    a("      direction : input;")
++    a("      capacitance : 0.0000;")
++    a("    }")
++    a('    pin ("VSS") {')
++    a("      direction : input;")
++    a("      capacitance : 0.0000;")
++    a("    }")
++
++    for _port_id, pins in groups:
++        clk_pins = [p for p in pins if p.function == "clk"]
++        clk_pn = clk_pins[0].name
++        a(f'    pin ("{clk_pn}") {{')
++        a("      direction : input;")
++        a("      clock : true;")
++        a("      capacitance : 2;")
++        a(f"      min_period : {clk_period_ps:.4f};")
++        a("      internal_power() {")
++        a('        when : "1";')
++        a("        rise_power(power_template) {")
++        a(f'          values ("{avg_edge_e:.4f}, {avg_edge_e:.4f}");')
++        a("        }")
++        a("        fall_power(power_template) {")
++        a(f'          values ("{avg_edge_e:.4f}, {avg_edge_e:.4f}");')
++        a("        }")
++        a("      }")
++        for ttype in ("min_clock_tree_path", "max_clock_tree_path"):
++            a("      timing() {")
++            a("        timing_sense : positive_unate;")
++            a(f"        timing_type : {ttype};")
++            a("        cell_rise(scalar) {")
++            a(f'          values("{ck_ins_ps:.4f}");')
++            a("        }")
++            a("        cell_fall(scalar) {")
++            a(f'          values("{ck_ins_ps:.4f}");')
++            a("        }")
++            a("      }")
++        a("    }")
++
++        for pin in pins:
++            if pin.function == "clk":
++                continue
++            if _is_bus(pin):
++                # Bus umbrella + per-bit pin records. The bus-close `}`
++                # lives at 4-space indent (sibling of the inner pins),
++                # matching OpenROAD's abstract-writer shape.
++                a(f'    bus ("{pin.name}") {{')
++                a(f"      bus_type : {pin.name};")
++                a(f"      direction : {pin.direction};")
++                a("      capacitance : 0.0000;")
++                for bit in range(pin.width - 1, -1, -1):
++                    bit_name = f"{pin.name}[{bit}]"
++                    if pin.direction == "output":
++                        a(f'    pin ("{bit_name}") {{')
++                        a("      direction : output;")
++                        a("      capacitance : 0.0000;")
++                        a("      timing() {")
++                        a(f'        related_pin : "{clk_pn}";')
++                        a("        timing_type : rising_edge;")
++                        a("        timing_sense : non_unate;")
++                        a("        cell_rise(scalar) {")
++                        a(f'          values("{access_ps:.4f}");')
++                        a("        }")
++                        a("        cell_fall(scalar) {")
++                        a(f'          values("{access_ps:.4f}");')
++                        a("        }")
++                        a("        rise_transition(scalar) {")
++                        a(f'          values("{trans_ps:.4f}");')
++                        a("        }")
++                        a("        fall_transition(scalar) {")
++                        a(f'          values("{trans_ps:.4f}");')
++                        a("        }")
++                        a("      }")
++                        a("    }")
++                    else:
++                        a(f'    pin ("{bit_name}") {{')
++                        a("      direction : input;")
++                        a("      capacitance : 1;")
++                        a("      timing() {")
++                        a(f'        related_pin : "{clk_pn}";')
++                        a("        timing_type : setup_rising;")
++                        a("        rise_constraint(scalar) {")
++                        a(f'          values("{setup_ps:.4f}");')
++                        a("        }")
++                        a("        fall_constraint(scalar) {")
++                        a(f'          values("{setup_ps:.4f}");')
++                        a("        }")
++                        a("      }")
++                        a("      timing() {")
++                        a(f'        related_pin : "{clk_pn}";')
++                        a("        timing_type : hold_rising;")
++                        a("        rise_constraint(scalar) {")
++                        a(f'          values("{hold_ps:.4f}");')
++                        a("        }")
++                        a("        fall_constraint(scalar) {")
++                        a(f'          values("{hold_ps:.4f}");')
++                        a("        }")
++                        a("      }")
++                        a("      internal_power() {")
++                        a(f'        related_pin : "{clk_pn}";')
++                        a('        when : "1";')
++                        a("        rise_power(power_template) {")
++                        a(f'          values ("{per_bit_e:.4f}, {per_bit_e:.4f}");')
++                        a("        }")
++                        a("        fall_power(power_template) {")
++                        a(f'          values ("{per_bit_e:.4f}, {per_bit_e:.4f}");')
++                        a("        }")
++                        a("      }")
++                        a("    }")
++                a("    }")  # close bus
++            else:
++                # Scalar pin (en, wmode, 1-bit mask lane, 1-bit data).
++                a(f'    pin ("{pin.name}") {{')
++                a(f"      direction : {pin.direction};")
++                a("      capacitance : 1;")
++                if pin.direction == "output":
++                    a("      timing() {")
++                    a(f'        related_pin : "{clk_pn}";')
++                    a("        timing_type : rising_edge;")
++                    a("        timing_sense : non_unate;")
++                    a("        cell_rise(scalar) {")
++                    a(f'          values("{access_ps:.4f}");')
++                    a("        }")
++                    a("        cell_fall(scalar) {")
++                    a(f'          values("{access_ps:.4f}");')
++                    a("        }")
++                    a("        rise_transition(scalar) {")
++                    a(f'          values("{trans_ps:.4f}");')
++                    a("        }")
++                    a("        fall_transition(scalar) {")
++                    a(f'          values("{trans_ps:.4f}");')
++                    a("        }")
++                    a("      }")
++                else:
++                    a("      timing() {")
++                    a(f'        related_pin : "{clk_pn}";')
++                    a("        timing_type : setup_rising;")
++                    a("        rise_constraint(scalar) {")
++                    a(f'          values("{setup_ps:.4f}");')
++                    a("        }")
++                    a("        fall_constraint(scalar) {")
++                    a(f'          values("{setup_ps:.4f}");')
++                    a("        }")
++                    a("      }")
++                    a("      timing() {")
++                    a(f'        related_pin : "{clk_pn}";')
++                    a("        timing_type : hold_rising;")
++                    a("        rise_constraint(scalar) {")
++                    a(f'          values("{hold_ps:.4f}");')
++                    a("        }")
++                    a("        fall_constraint(scalar) {")
++                    a(f'          values("{hold_ps:.4f}");')
++                    a("        }")
++                    a("      }")
++                    a("      internal_power() {")
++                    a(f'        related_pin : "{clk_pn}";')
++                    a('        when : "1";')
++                    a("        rise_power(power_template) {")
++                    a(f'          values ("{per_bit_e:.4f}, {per_bit_e:.4f}");')
++                    a("        }")
++                    a("        fall_power(power_template) {")
++                    a(f'          values ("{per_bit_e:.4f}, {per_bit_e:.4f}");')
++                    a("        }")
++                    a("      }")
++                a("    }")
++    a("  }")  # close cell
++    a("}")  # close library
++    a("")
++    return "\n".join(lines)
+diff --git a/orfs_asap7/pdk_asap7.py b/orfs_asap7/pdk_asap7.py
+new file mode 100644
+index 0000000..1fa1335
+--- /dev/null
++++ b/orfs_asap7/pdk_asap7.py
+@@ -0,0 +1,72 @@
++#!/usr/bin/env python3
++"""PDK parameters for generated memory macro .lib/.lef files.
++
++The emitters in liberty.py / lef.py are structured generally and take a
++PdkParams; this module holds what is platform-specific. Only asap7 is
++supported — its values match the conventions of the checked-in
++platforms/asap7 fakeram7_* artifacts (signal pins and power straps on
++M4, where the platform's PDN macro grid connects M4 to the M5 stripes).
++Supporting another PDK means adding a PdkParams for it here; a
++first-pass separation of general and asap7 concerns, generalization is
++future work.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++
++
++@dataclass(frozen=True)
++class PdkParams:
++    name: str
++    tech_nm: int
++    nom_voltage: float
++    # Layer signal/clock pins are drawn on, and the pin pad size /
++    # pitch along the macro edge.
++    pin_layer: str
++    pin_pad_um: float
++    pin_pitch_um: float
++    # Manufacturing-grid snap for the macro outline.
++    grid_um: float
++    # Horizontal power/ground straps: layer, width, per-net pitch, and
++    # the VDD offset relative to VSS (interleaved straps).
++    pg_layer: str
++    pg_strap_w_um: float
++    pg_strap_pitch_um: float
++    pg_vdd_offset_um: float
++    pg_margin_um: float
++    # Layers obstructed over the full macro footprint. Device-recognition
++    # layers go in their own tuple (empty for PDKs that do not define
++    # them — naming an unknown layer fails the parent's OpenDB LEF read).
++    obs_metal_layers: tuple[str, ...]
++    obs_device_layers: tuple[str, ...]
++
++
++ASAP7 = PdkParams(
++    name="asap7",
++    tech_nm=7,
++    nom_voltage=0.77,
++    pin_layer="M4",
++    pin_pad_um=0.024,
++    pin_pitch_um=0.048,
++    grid_um=0.024,
++    pg_layer="M4",
++    pg_strap_w_um=0.096,
++    pg_strap_pitch_um=0.768,
++    pg_vdd_offset_um=0.384,
++    pg_margin_um=0.048,
++    obs_metal_layers=("M1", "M2", "M3", "M4"),
++    obs_device_layers=(),
++)
++
++PLATFORMS = {p.name: p for p in (ASAP7,)}
++
++
++def get_platform(name: str) -> PdkParams:
++    try:
++        return PLATFORMS[name]
++    except KeyError:
++        raise ValueError(
++            f"AUTO_MEMORIES supports only {', '.join(sorted(PLATFORMS))}; "
++            f"got platform '{name}'"
++        ) from None
+diff --git a/orfs_asap7/schema.py b/orfs_asap7/schema.py
+new file mode 100644
+index 0000000..2316564
+--- /dev/null
++++ b/orfs_asap7/schema.py
+@@ -0,0 +1,196 @@
++#!/usr/bin/env python3
++"""The `.memories` file format: a JSON inventory of memory macros.
++
++One `.memories` file (and the flow-generated `memories.json`) describes
++memories at the module boundary: geometry, the full pin list with each
++pin's function, the behavioral model the RTL provides, and whether the
++memory is converted to a macro (`idiomatic`).
++
++The file-based handoff is deliberate: everything downstream — synthesis
++blackboxing, liberty/LEF consumption in later stages, build systems that
++declare flow artifacts as transitive dependencies — keys off these files
++rather than off in-process state.
++"""
++
++from __future__ import annotations
++
++import json
++from dataclasses import asdict, dataclass, field
++from pathlib import Path
++
++SCHEMA_VERSION = 1
++
++PIN_FUNCTIONS = ("addr", "en", "wmode", "mask", "data_in", "data_out", "clk")
++DIRECTIONS = ("input", "output")
++
++
++class SchemaError(ValueError):
++    pass
++
++
++@dataclass
++class Pin:
++    name: str
++    direction: str  # "input" / "output"
++    width: int
++    port_id: str  # "R0", "W1", "RW0", ...
++    function: str  # one of PIN_FUNCTIONS
++
++
++@dataclass
++class Memory:
++    name: str
++    rows: int = 0
++    bits: int = 0
++    addr_w: int = 0
++    read_ports: int = 0
++    write_ports: int = 0
++    rw_ports: int = 0
++    # Total width of the per-port write mask, 0 if unmasked. Subword-split
++    # mask pins (`W0_mask_0..3`) contribute one lane each.
++    mask_lanes: int = 0
++    pins: list[Pin] = field(default_factory=list)
++    # The module whose RTL body simulates this memory: {"file", "module"}.
++    behavioral_model: dict | None = None
++    # True when the memory is converted to a macro (.lib/.lef emitted and
++    # the module blackboxed); False leaves it to synthesize as flops.
++    idiomatic: bool = False
++    reason: str = ""
++
++    def total_ports(self) -> int:
++        return self.read_ports + self.write_ports + self.rw_ports
++
++    def to_dict(self) -> dict:
++        return asdict(self)
++
++
++def _pin_from_dict(d: dict) -> Pin:
++    try:
++        pin = Pin(
++            name=d["name"],
++            direction=d["direction"],
++            width=int(d["width"]),
++            port_id=d["port_id"],
++            function=d["function"],
++        )
++    except KeyError as e:
++        raise SchemaError(f"pin record missing field {e}") from e
++    if pin.direction not in DIRECTIONS:
++        raise SchemaError(f"pin {pin.name}: bad direction '{pin.direction}'")
++    if pin.function not in PIN_FUNCTIONS:
++        raise SchemaError(
++            f"pin {pin.name}: unknown function "
++            f"'{pin.function}' (expected one of "
++            f"{', '.join(PIN_FUNCTIONS)})"
++        )
++    if pin.width < 1:
++        raise SchemaError(f"pin {pin.name}: width must be >= 1")
++    if not pin.port_id:
++        raise SchemaError(f"pin {pin.name}: empty port_id")
++    return pin
++
++
++def memory_from_dict(d: dict) -> Memory:
++    if "name" not in d:
++        raise SchemaError("memory record missing 'name'")
++    mem = Memory(name=d["name"])
++    for key in (
++        "rows",
++        "bits",
++        "addr_w",
++        "read_ports",
++        "write_ports",
++        "rw_ports",
++        "mask_lanes",
++    ):
++        if key in d:
++            setattr(mem, key, int(d[key]))
++    if "pins" in d:
++        mem.pins = [_pin_from_dict(p) for p in d["pins"]]
++    if "behavioral_model" in d:
++        mem.behavioral_model = d["behavioral_model"]
++    if "idiomatic" in d:
++        mem.idiomatic = bool(d["idiomatic"])
++    if "reason" in d:
++        mem.reason = str(d["reason"])
++    return mem
++
++
++def load(path: Path) -> list[Memory]:
++    """Load a .memories / memories.json file."""
++    try:
++        doc = json.loads(path.read_text())
++    except json.JSONDecodeError as e:
++        raise SchemaError(f"{path}: not valid JSON: {e}") from e
++    if not isinstance(doc, dict) or "memories" not in doc:
++        raise SchemaError(f"{path}: expected an object with a 'memories' list")
++    version = doc.get("version", SCHEMA_VERSION)
++    if version != SCHEMA_VERSION:
++        raise SchemaError(f"{path}: unsupported schema version {version}")
++    return [memory_from_dict(m) for m in doc["memories"]]
++
++
++def dump(memories: list[Memory], path: Path, platform: str) -> None:
++    doc = {
++        "version": SCHEMA_VERSION,
++        "platform": platform,
++        "memories": [m.to_dict() for m in sorted(memories, key=lambda m: m.name)],
++    }
++    path.write_text(json.dumps(doc, indent=2) + "\n")
++
++
++def merge(detected: list[Memory], overrides: list[Memory]) -> list[Memory]:
++    """Merge user-supplied entries onto the detected set.
++
++    An override naming a detected memory replaces only the fields it
++    carries (geometry and pins are kept from detection unless the
++    override provides its own). An override naming an unknown memory is
++    taken whole — it must then carry pins and geometry itself to be
++    emittable.
++    """
++    by_name = {m.name: m for m in detected}
++    for o in overrides:
++        base = by_name.get(o.name)
++        if base is None:
++            by_name[o.name] = o
++            continue
++        if o.pins:
++            base.pins = o.pins
++        for key in (
++            "rows",
++            "bits",
++            "addr_w",
++            "read_ports",
++            "write_ports",
++            "rw_ports",
++            "mask_lanes",
++        ):
++            value = getattr(o, key)
++            if value:
++                setattr(base, key, value)
++        if o.behavioral_model is not None:
++            base.behavioral_model = o.behavioral_model
++        base.idiomatic = o.idiomatic
++        if o.reason:
++            base.reason = o.reason
++    return list(by_name.values())
++
++
++def validate_emittable(mem: Memory) -> None:
++    """Raise SchemaError unless `mem` carries enough to emit .lib/.lef."""
++    if not mem.pins:
++        raise SchemaError(f"memory {mem.name}: no pins")
++    if mem.rows < 1 or mem.bits < 1:
++        raise SchemaError(
++            f"memory {mem.name}: rows ({mem.rows}) and bits ({mem.bits}) "
++            f"must be >= 1"
++        )
++    port_ids = {p.port_id for p in mem.pins}
++    for port_id in port_ids:
++        functions = {p.function for p in mem.pins if p.port_id == port_id}
++        if "clk" not in functions:
++            raise SchemaError(f"memory {mem.name}: port {port_id} has no clk pin")
++        if "addr" not in functions:
++            raise SchemaError(f"memory {mem.name}: port {port_id} has no addr pin")
++        if not functions & {"data_in", "data_out"}:
++            raise SchemaError(f"memory {mem.name}: port {port_id} has no data pin")
+diff --git a/orfs_asap7/sram_area_model.py b/orfs_asap7/sram_area_model.py
+new file mode 100644
+index 0000000..dd79076
+--- /dev/null
++++ b/orfs_asap7/sram_area_model.py
+@@ -0,0 +1,136 @@
++#!/usr/bin/env python3
++"""Parametric 7 nm-class SRAM area/power model.
++
++Coefficients are anchored to published 7 nm SP-SRAM figures (Suzuki et
++al., ISSCC 2018, "A 6T-SRAM in 7 nm FinFET CMOS" — ~0.027 µm² per bit
++cell; published foundry SRAM IP figures for peripheral overhead). The
++model represents what a real 7 nm SRAM compiler would emit for a given
++(rows, cols, ports) spec.
++"""
++
++from __future__ import annotations
++
++import math
++
++# ASAP7 NAND2xp33_ASAP7_75t_R area — the smallest NAND2 in the ASAP7 RVT
++# library, the customary gate-equivalent unit for converting µm² to GE.
++NAND2_AREA_UM2 = 0.05832
++
++# Calibration coefficients. Tuned against published 7 nm SP-SRAM
++# references; ±10 % at the anchor and ±25 % over a 5–256 Kb sweep.
++_STORAGE_PER_BIT_UM2 = 0.030  # 7 nm-class 6T bit cell.
++_PERIMETER_COEFF = 5.0  # row decode + sense amps + write drivers.
++_CONTROL_FIXED_UM2 = 200.0  # control + redundancy floor for tiny memories.
++_PORT_FACTOR_READ = 0.25  # +25 % per extra read port.
++_PORT_FACTOR_WRITE = 0.35  # +35 % per extra write port.
++# Per-mask-lane bit-write-enable overhead. A masked-write SRAM gains a
++# column-group write-driver gate + the mask wire routed up each column
++# group; real 7 nm SP-SRAM compilers cost a per-lane write-mask option at
++# roughly one extra write-driver per lane. Modeled as a flat per-lane
++# peripheral adder so a wide masked macro is not scored identically to an
++# unmasked array of the same (rows, cols). Zero lanes (the default)
++# reproduces the unmasked model exactly.
++_WRITE_MASK_PER_LANE_UM2 = NAND2_AREA_UM2 * 4.0  # ~4 NAND2/lane.
++
++# Power-model anchors. Leakage is anchored at 85 °C because published
++# 7 nm SRAM IP standby numbers are typically datasheet-quoted at 85 °C,
++# not 25 °C.
++_LEAKAGE_PER_BIT_PW_85C = 100.0  # mid of published 7 nm range 50-200 pW.
++_LEAKAGE_SENSE_AMP_NW_PER_PORT = 5.0  # per-port sense-amp leakage adder.
++_DYNAMIC_FJ_PER_COL = 1.0  # ~1 fJ per accessed-row column at 0.7 V.
++_DYNAMIC_WL_FJ = 5.0  # word-line drive per access.
++
++
++def sram_area_um2(
++    rows: int,
++    cols: int,
++    read_ports: int = 1,
++    write_ports: int = 1,
++    tech_nm: int = 7,
++    write_mask_lanes: int = 0,
++) -> float:
++    """Estimate SP/MP-SRAM macro area in µm².
++
++    Storage scales linearly with bits and the multi-port factor.
++    Peripheral (decode + sense + write drivers) scales with √bits — real
++    SRAM compilers fold columns internally to keep the physical array
++    near-square, so the cost is perimeter-shaped regardless of the
++    logical (rows, cols) the caller asked for.
++
++    The coefficients are anchored at 7 nm. For other nodes the result is
++    multiplied by an ideal area-scale (tech_nm / 7)² — a first-order
++    estimate, NOT a re-fit against that node's SRAM IP (advanced-node
++    SRAM famously scales worse than ideal).
++    """
++    if rows < 1 or cols < 1:
++        raise ValueError(f"rows ({rows}) and cols ({cols}) must be >= 1")
++    if read_ports < 0 or write_ports < 0:
++        raise ValueError(
++            f"port counts must be >= 0; got "
++            f"read_ports={read_ports}, write_ports={write_ports}"
++        )
++    if tech_nm < 1:
++        raise ValueError(f"tech_nm ({tech_nm}) must be >= 1")
++    if write_mask_lanes < 0:
++        raise ValueError(f"write_mask_lanes ({write_mask_lanes}) must be >= 0")
++    bits = rows * cols
++    port_factor = (
++        1.0
++        + _PORT_FACTOR_READ * max(read_ports - 1, 0)
++        + _PORT_FACTOR_WRITE * max(write_ports - 1, 0)
++    )
++    storage = bits * _STORAGE_PER_BIT_UM2 * port_factor
++    perimeter = math.sqrt(bits)
++    peripheral = perimeter * _PERIMETER_COEFF * port_factor + _CONTROL_FIXED_UM2
++    # Per-write-port mask overhead: each write port carries
++    # `write_mask_lanes` bit-write-enable gates.
++    peripheral += write_mask_lanes * _WRITE_MASK_PER_LANE_UM2 * max(write_ports, 0)
++    node_area_scale = (tech_nm / 7.0) ** 2
++    return (storage + peripheral) * node_area_scale
++
++
++def sram_leakage_pw(rows: int, cols: int, ports: int = 1) -> float:
++    """Standby leakage at 85 °C TT for a 7 nm-class SRAM macro, in pW.
++
++    Per-bit leakage anchors at ~100 pW (mid of the published 7 nm IP
++    range of 50-200 pW at 85 °C). Sense-amp leakage adds ~5 nW per port.
++    """
++    if rows < 1 or cols < 1:
++        raise ValueError(f"rows ({rows}) and cols ({cols}) must be >= 1")
++    if ports < 1:
++        raise ValueError(f"ports ({ports}) must be >= 1")
++    bits = rows * cols
++    storage_pw = bits * _LEAKAGE_PER_BIT_PW_85C
++    sense_amp_pw = ports * _LEAKAGE_SENSE_AMP_NW_PER_PORT * 1000.0  # nW → pW
++    return storage_pw + sense_amp_pw
++
++
++def sram_dynamic_pj_per_access(rows: int, cols: int) -> float:
++    """Per-access switching energy at 0.7 V, in pJ.
++
++    One read or write activates a single row; all `cols` bit-line
++    columns toggle. Word-line drive adds a small fixed term. Port count
++    is deliberately not a parameter: each access costs one
++    row-activation regardless of how many ports the macro exposes — the
++    access *rate* is the caller's knob.
++    """
++    if rows < 1 or cols < 1:
++        raise ValueError(f"rows ({rows}) and cols ({cols}) must be >= 1")
++    bitline_fj = cols * _DYNAMIC_FJ_PER_COL
++    return (bitline_fj + _DYNAMIC_WL_FJ) / 1000.0  # fJ → pJ
++
++
++def sram_dimensions_um(
++    area_um2: float, aspect_ratio: float = 0.5
++) -> tuple[float, float]:
++    """Return (width, height) in µm given total area and aspect ratio.
++
++    ``aspect_ratio`` is height/width (0.5 → wider than tall).
++    """
++    if area_um2 <= 0:
++        raise ValueError(f"area_um2 must be positive; got {area_um2}")
++    if aspect_ratio <= 0:
++        raise ValueError(f"aspect_ratio must be positive; got {aspect_ratio}")
++    height = math.sqrt(area_um2 * aspect_ratio)
++    width = area_um2 / height
++    return width, height
+diff --git a/run.py b/run.py
+index f525c5f..06ae626 100755
+--- a/run.py
++++ b/run.py
+@@ -8,6 +8,7 @@ from utils.class_process import Process
+ from utils.memory_config import MemoryConfig
+ from utils.memory_factory import MemoryFactory
+ from utils.timing_data import TimingData
++from orfs_asap7.generate import run_orfs_asap7
+ 
+ 
+ def get_args() -> argparse.Namespace:
+@@ -28,10 +29,19 @@ def get_args() -> argparse.Namespace:
+         required=False,
+         default="results",
+     )
++    parser.add_argument(
++        "--orfs_asap7_backend",
++        action="store_true",
++        help="Use ORFS ASAP7 backend (expects JSON in memories.json format)",
++    )
+     return parser.parse_args()
+ 
+ 
+ def main(args: argparse.Namespace):
++    if args.orfs_asap7_backend:
++        from pathlib import Path
++        return run_orfs_asap7(platform="asap7", out_dir=Path(args.output_dir), json_path=Path(args.config))
++
+     json_data = RunUtils.get_config(args.config)
+     # Create a process object (shared by all srams)
+     process = Process(json_data)
+@@ -52,4 +62,4 @@ def main(args: argparse.Namespace):
+ ### Entry point
+ if __name__ == "__main__":
+     args = get_args()
+-    main(args)
++    sys.exit(main(args))
