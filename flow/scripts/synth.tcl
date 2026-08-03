@@ -76,8 +76,8 @@ if { [env_var_exists_and_non_empty SYNTH_KEEP_MODULES] } {
   foreach module $::env(SYNTH_KEEP_MODULES) {
     # Two patterns so both frontends work:
     #  - `$module` matches the bare name produced by verilog.
-    #  - `$module\$*` and `$module*` match `$`-suffixed canonical names
-    #    the slang frontend generates for parameterized instances
+    #  - `$module\$*` matches the `$`-suffixed canonical names the
+    #    slang frontend generates for parameterized instances
     #    (e.g. `\foo$1`); yosys's match_ids retries the pattern with
     #    the id's leading `\` stripped, so no `\`-prefix is needed
     #    here -- see tools/yosys/passes/cmds/select.cc match_ids().
@@ -87,7 +87,7 @@ if { [env_var_exists_and_non_empty SYNTH_KEEP_MODULES] } {
     # other pattern still applies -- no regression for non-slang.
     # `-module <name>` would error if the module doesn't exist, which
     # is why we use bare patterns instead.
-    select "$module" "$module\\\$*" "$module*"
+    select "$module" "$module\\\$*"
     setattr -mod -set keep_hierarchy 1
     select -clear
   }
