@@ -100,7 +100,7 @@ class Process:
         """
 
         column_mux_factor = self.column_mux_factor
-        (bitcell_width, bitcell_height) = self.get_bitcell_dimensions()
+        bitcell_width, bitcell_height = self.get_bitcell_dimensions()
 
         all_bitcell_height = bitcell_height * depth
         all_bitcell_width = bitcell_width * width_in_bits

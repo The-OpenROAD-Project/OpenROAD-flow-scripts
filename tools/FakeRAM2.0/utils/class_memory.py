@@ -39,7 +39,7 @@ class Memory(NamedObject):
         self.timing_data = timing_data
         self.physical = PhysicalData()
         if self.process.calc_dimensions():
-            (width_um, height_um) = self.process.get_macro_dimensions(
+            width_um, height_um = self.process.get_macro_dimensions(
                 self.width_in_bits, self.depth, self.num_banks, self.additional_height
             )
             self.physical.set_extents(width_um, height_um)
@@ -192,10 +192,7 @@ class Memory(NamedObject):
         if layer in self._obs_dict:
             self._obs_dict[layer]["rects"].append(rect)
         else:
-            self._obs_dict[layer] = {
-                "layer_attr": layer_attr,
-                "rects": [rect]
-            }
+            self._obs_dict[layer] = {"layer_attr": layer_attr, "rects": [rect]}
 
     def get_obstructions(self):
         """Returns the obs dict"""

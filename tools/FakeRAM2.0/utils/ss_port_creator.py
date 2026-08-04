@@ -34,7 +34,7 @@ class SSPortCreator:
                     port.add_rect(rect)
             else:
                 port.add_rect(rect_data)
-            (pin_type, direction) = self.get_direction(pin_name)
+            pin_type, direction = self.get_direction(pin_name)
             port.set_direction(direction)
             if pin_type in ["power", "ground"]:
                 self._mem.add_pg_port(port)

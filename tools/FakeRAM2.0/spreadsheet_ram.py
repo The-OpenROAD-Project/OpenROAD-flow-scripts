@@ -163,7 +163,7 @@ class SSRAMGenerator:
                     }
                     if pin_data["name"] not in macro_data["pin_data"]:
                         macro_data["pin_data"][pin_data["name"]] = pin_data
-                    else: # pragma: no cover
+                    else:  # pragma: no cover
                         raise Exception(
                             "{} had multiple pin shapes".format(pin_data["name"])
                         )
@@ -186,7 +186,6 @@ class SSRAMGenerator:
                         )
                     )
         return macro_data
-
 
     def get_size_keys(self):
         """Returns the keys that map to depth and width"""
@@ -212,7 +211,7 @@ class SSRAMGenerator:
         """
         macro_metrics = {}
         depth = width = None
-        (depth_key, width_key) = self.get_size_keys()
+        depth_key, width_key = self.get_size_keys()
         with open(file_name, "r", encoding="utf-8-sig") as csv_fh:
             reader = csv.DictReader(csv_fh)
             for row in reader:
@@ -236,10 +235,10 @@ class SSRAMGenerator:
     def set_logical_pins(self, mem, pin_org):
         """Sets the pins to be used for Verilog and Liberty output"""
 
-        for suffix,src in pin_org.get_rw_groups().items():
+        for suffix, src in pin_org.get_rw_groups().items():
             rw_port_group = RWPortGroup()
             rw_port_group.set_suffix(suffix)
-            for pin_type,port_data in src.items():
+            for pin_type, port_data in src.items():
                 pin_name = port_data["name"]
                 if pin_type == "clock":
                     rw_port_group.set_clock_name(pin_name)

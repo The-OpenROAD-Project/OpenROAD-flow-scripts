@@ -162,7 +162,9 @@ class LefExporter(Exporter):
                 port = mem.get_port(pin_name)
                 self.write_pin(fid, port)
             for bus_name, bus_data in rw_port_group.get_related_busses().items():
-                self.write_signal_bus(fid, bus_name, bus_data["lsb"], bus_data["msb"] + 1)
+                self.write_signal_bus(
+                    fid, bus_name, bus_data["lsb"], bus_data["msb"] + 1
+                )
             if rw_port_group.get_clock_name():
                 port = mem.get_port(rw_port_group.get_clock_name())
                 self.write_pin(fid, port)

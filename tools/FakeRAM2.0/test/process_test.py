@@ -149,7 +149,7 @@ class ProcessTest(unittest.TestCase):
         process = Process(process_data)
 
         self.assertTrue(process.has_defined_bitcell_size())
-        (bitcell_width, bitcell_height) = process.get_bitcell_dimensions()
+        bitcell_width, bitcell_height = process.get_bitcell_dimensions()
         self.assertEqual(bitcell_width, process_data["bitcell_width_um"])
         self.assertEqual(bitcell_height, process_data["bitcell_height_um"])
 

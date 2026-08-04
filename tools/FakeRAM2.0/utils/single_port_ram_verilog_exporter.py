@@ -28,7 +28,7 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         """Exports the verilog module to the output stream"""
 
         mem = self.get_memory()
-        (addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin) = self._get_names()
+        addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin = self._get_names()
         out_fh.write(f"module {mem.get_name()}\n")
         self.write_module_ports(out_fh)
         out_fh.write("   reg    [BITS-1:0]        mem [0:WORD_DEPTH-1];\n")
@@ -59,9 +59,7 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         out_fh.write("         end\n")
         out_fh.write(f"         else if ({we_pin})\n")
         out_fh.write("         begin\n")
-        out_fh.write(
-            f"            mem[{addr_bus}] <= {din_bus};\n"
-        )
+        out_fh.write(f"            mem[{addr_bus}] <= {din_bus};\n")
         out_fh.write("         end\n")
         out_fh.write("         // read\n")
         out_fh.write(f"         {dout_bus} <= mem[{addr_bus}];\n")
@@ -80,7 +78,7 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         """Writes the module port declarations"""
 
         mem = self.get_memory()
-        (addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin) = self._get_names()
+        addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin = self._get_names()
         out_fh.write("(\n")
         out_fh.write(f"   {dout_bus},\n")
         out_fh.write(f"   {addr_bus},\n")
@@ -105,7 +103,7 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
     def write_timing_check(self, out_fh):
         """Writes timing check placeholder data"""
 
-        (addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin) = self._get_names()
+        addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin = self._get_names()
         out_fh.write(
             "   // Timing check placeholders (will be replaced during SDF back-annotation)\n"
         )
@@ -140,7 +138,7 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         """Exports the SystemVerilog blackbox to the output stream"""
 
         mem = self.get_memory()
-        (addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin) = self._get_names()
+        addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin = self._get_names()
         addr_bus_msb = mem.get_addr_bus_msb()
         data_bus_msb = mem.get_data_bus_msb()
         self.export_bb_header(out_fh)

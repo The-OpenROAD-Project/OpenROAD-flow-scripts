@@ -43,7 +43,7 @@ class RunUtils:
     def write_memory(memory, output_dir):
         """Generates the output file names and then writes the files"""
 
-        (lib_file_name, lef_file_name, verilog_file_name, sv_blackbox_file_name) = (
+        lib_file_name, lef_file_name, verilog_file_name, sv_blackbox_file_name = (
             RunUtils.get_output_file_names(memory.get_name(), output_dir)
         )
         RunUtils.write_all(

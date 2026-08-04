@@ -34,7 +34,7 @@ class MacroDimTest(unittest.TestCase):
                 "depth": 2048,
                 "banks": num_banks,
             }
-            (width, height) = self._process.get_macro_dimensions(
+            width, height = self._process.get_macro_dimensions(
                 sram_data["width"], sram_data["depth"], sram_data["banks"], 0
             )
             exp_height = base_height / num_banks
@@ -59,7 +59,7 @@ class MacroDimTest(unittest.TestCase):
                 "banks": num_banks,
                 "additional_height": 10,
             }
-            (width, height) = self._process.get_macro_dimensions(
+            width, height = self._process.get_macro_dimensions(
                 sram_data["width"],
                 sram_data["depth"],
                 sram_data["banks"],
@@ -80,7 +80,7 @@ class MacroDimTest(unittest.TestCase):
             "banks": 8,
         }
         with self.assertRaises(Exception):
-            (width, height) = self._process.get_macro_dimensions(
+            width, height = self._process.get_macro_dimensions(
                 sram_data["width"], sram_data["depth"], sram_data["banks"], 0
             )
 
@@ -99,11 +99,11 @@ class MacroDimTest(unittest.TestCase):
         }
         exp_width = 4723.2
         exp_height = 140083.2
-        (width, height) = process.get_macro_dimensions(
+        width, height = process.get_macro_dimensions(
             sram_data["width"], sram_data["depth"], sram_data["banks"], 0
         )
         self.assertTrue(process.has_defined_bitcell_size())
-        (bitcell_width, bitcell_height) = process.get_bitcell_dimensions()
+        bitcell_width, bitcell_height = process.get_bitcell_dimensions()
         self.assertEqual(bitcell_width, process_data["bitcell_width_um"])
         self.assertEqual(bitcell_height, process_data["bitcell_height_um"])
         self.assertAlmostEqual(width, exp_width, delta=self._delta)

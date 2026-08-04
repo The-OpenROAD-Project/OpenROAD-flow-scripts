@@ -14,12 +14,10 @@ def get_args() -> argparse.Namespace:
     """
     Get command line arguments
     """
-    parser = argparse.ArgumentParser(
-        description="""
+    parser = argparse.ArgumentParser(description="""
     This project is designed to generate black-boxed SRAMs for use in CAD
     flows where either an SRAM generator is not available or doesn't
-    exist.  """
-    )
+    exist.  """)
     parser.add_argument("config", help="JSON configuration file")
     parser.add_argument(
         "--output_dir",
