@@ -159,6 +159,43 @@ class DetectTest(unittest.TestCase):
         text = BUS_STYLE.replace("[31:0]", "[WIDTH-1:0]")
         self.assertEqual(detect.scan_text(text), [])
 
+    def test_scan_yosys_json(self):
+        yosys_json = {
+            "modules": {
+                "\\sram_256x32": {
+                    "cells": {
+                        "\\$mem_0": {
+                            "type": "$mem_v2",
+                            "parameters": {
+                                "SIZE": "00000000000000000000000100000000",  # 256
+                                "WIDTH": "00000000000000000000000000100000",  # 32
+                                "RD_PORTS": 1,
+                                "WR_PORTS": 1,
+                            },
+                            "connections": {
+                                "RD_CLK": [10],
+                                "WR_CLK": [10],
+                                "RD_EN": [11],
+                                "WR_EN": [12, 13, 14, 15],  # 4 mask lanes
+                                "RD_ADDR": [16, 17, 18, 19, 20, 21, 22, 23],
+                                "WR_ADDR": [16, 17, 18, 19, 20, 21, 22, 23],
+                                "RD_DATA": list(range(24, 56)),
+                                "WR_DATA": list(range(56, 88)),
+                            },
+                        }
+                    }
+                }
+            }
+        }
+        mems = detect.scan_yosys_json(yosys_json)
+        self.assertEqual(len(mems), 1)
+        m = mems[0]
+        self.assertEqual(
+            (m.name, m.rows, m.bits, m.addr_w), ("sram_256x32", 256, 32, 8)
+        )
+        self.assertEqual((m.read_ports, m.write_ports, m.mask_lanes), (1, 1, 4))
+        self.assertIn("single-clock", m.reason)
+
 
 if __name__ == "__main__":
     unittest.main()

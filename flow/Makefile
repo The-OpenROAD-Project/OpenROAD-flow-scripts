@@ -265,17 +265,22 @@ yosys-dependencies: $(YOSYS_DEPENDENCIES)
 # .lib/.lef macro views for them. Experimental; see
 # docs/user/AutoMemories.md.
 ifeq ($(AUTO_MEMORIES),1)
+$(RESULTS_DIR)/memories_inferred.json: $(VERILOG_FILES) $(SCRIPTS_DIR)/memories/extract_memories.tcl
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR)
+	$(SCRIPTS_DIR)/synth.sh $(SCRIPTS_DIR)/memories/extract_memories.tcl $(LOG_DIR)/memories_extract.log
+
 .PHONY: do-auto-memories
-do-auto-memories:
+do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	mkdir -p $(RESULTS_DIR)
 	$(PYTHON_EXE) $(SCRIPTS_DIR)/memories/gen_memories.py \
 	  --platform $(PLATFORM) \
+	  --yosys-json $(RESULTS_DIR)/memories_inferred.json \
 	  --out-dir $(RESULTS_DIR)/memories \
 	  --json $(RESULTS_DIR)/memories.json \
 	  $(foreach file,$(VERILOG_FILES),--verilog $(file)) \
 	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file))
 
-$(RESULTS_DIR)/memories.json: $(VERILOG_FILES) $(ADDITIONAL_MEMORIES) \
+$(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \
     $(wildcard $(SCRIPTS_DIR)/memories/*.py)
 	$(UNSET_AND_MAKE) do-auto-memories
 
