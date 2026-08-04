@@ -178,4 +178,17 @@ filegroup(
     "nangate45",
     "sky130hd",
     "sky130hs",
-]]
+]
+
+# Shared linter targets from tools/OpenROAD
+alias(
+    name = "fix_lint",
+    actual = "//tools/OpenROAD:fix_lint",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "lint_test",
+    actual = "//tools/OpenROAD:lint_test",
+    visibility = ["//visibility:public"],
+)
