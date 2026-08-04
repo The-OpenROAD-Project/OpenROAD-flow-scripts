@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -7,10 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import os
-
 import gen_memories
-from detect_test import BUS_STYLE, NOT_A_MEMORY, RW_STYLE
 
 # Setup FAKERAM_RUN_PY using runfiles if available, otherwise assume a relative path
 if "TEST_WORKSPACE" in os.environ:
@@ -30,6 +28,57 @@ else:
 
 os.environ["FAKERAM_RUN_PY"] = str(fakeram_run)
 
+SAMPLE_YOSYS_NETLIST = {
+    "modules": {
+        "\\mem_128x32": {
+            "cells": {
+                "\\$mem_0": {
+                    "type": "$mem_v2",
+                    "parameters": {
+                        "SIZE": 128,
+                        "WIDTH": 32,
+                        "RD_PORTS": 1,
+                        "WR_PORTS": 1,
+                    },
+                    "connections": {
+                        "RD_CLK": [10],
+                        "WR_CLK": [10],
+                        "RD_EN": [11],
+                        "WR_EN": [12, 13, 14, 15],
+                        "RD_ADDR": list(range(16, 23)),
+                        "WR_ADDR": list(range(16, 23)),
+                        "RD_DATA": list(range(24, 56)),
+                        "WR_DATA": list(range(56, 88)),
+                    },
+                }
+            }
+        },
+        "\\cache_tags": {
+            "cells": {
+                "\\$mem_0": {
+                    "type": "$mem_v2",
+                    "parameters": {
+                        "SIZE": 4,
+                        "WIDTH": 25,
+                        "RD_PORTS": 1,
+                        "WR_PORTS": 1,
+                    },
+                    "connections": {
+                        "RD_CLK": [10],
+                        "WR_CLK": [10],
+                        "RD_EN": [11],
+                        "WR_EN": [12],
+                        "RD_ADDR": [13, 14],
+                        "WR_ADDR": [13, 14],
+                        "RD_DATA": list(range(15, 40)),
+                        "WR_DATA": list(range(40, 65)),
+                    },
+                }
+            }
+        },
+    }
+}
+
 FORCE_TAGS = """\
 {
   "version": 1,
@@ -47,8 +96,8 @@ FORCE_TAGS = """\
 class GenMemoriesTest(unittest.TestCase):
     def run_generator(self, memories_files=(), platform="asap7"):
         d = Path(self.tmp.name)
-        rtl = d / "design.v"
-        rtl.write_text(BUS_STYLE + NOT_A_MEMORY + RW_STYLE)
+        netlist_json = d / "memories_inferred.json"
+        netlist_json.write_text(json.dumps(SAMPLE_YOSYS_NETLIST))
         argv = [
             "--platform",
             platform,
@@ -56,8 +105,8 @@ class GenMemoriesTest(unittest.TestCase):
             str(d / "memories"),
             "--json",
             str(d / "memories.json"),
-            "--verilog",
-            str(rtl),
+            "--yosys-json",
+            str(netlist_json),
         ]
         for f in memories_files:
             argv += ["--memories", str(f)]
@@ -68,9 +117,6 @@ class GenMemoriesTest(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
 
     def test_flow_contract(self):
-        # Everything synthesis and later stages consume must be on disk:
-        # memories.json, per-macro .lib/_pre_layout.lib/.lef, and the
-        # blackbox name list — for converted memories only.
         code, d = self.run_generator()
         self.assertEqual(code, 0)
 
@@ -111,21 +157,6 @@ class GenMemoriesTest(unittest.TestCase):
         code, _d = self.run_generator(platform="nangate45")
         self.assertEqual(code, 1)
 
-    def test_missing_verilog_fails_cleanly(self):
-        with self.assertRaises(FileNotFoundError):
-            gen_memories.main(
-                [
-                    "--platform",
-                    "asap7",
-                    "--out-dir",
-                    str(Path(self.tmp.name) / "memories"),
-                    "--json",
-                    str(Path(self.tmp.name) / "memories.json"),
-                    "--verilog",
-                    str(Path(self.tmp.name) / "does-not-exist.v"),
-                ]
-            )
-
     def test_bad_memories_file_fails(self):
         bad = Path(self.tmp.name) / "bad.memories"
         bad.write_text("{not json")
@@ -134,8 +165,8 @@ class GenMemoriesTest(unittest.TestCase):
 
     def test_no_memories_still_writes_contract_files(self):
         d = Path(self.tmp.name)
-        rtl = d / "logic.v"
-        rtl.write_text(NOT_A_MEMORY)
+        empty_netlist = d / "empty.json"
+        empty_netlist.write_text(json.dumps({"modules": {}}))
         code = gen_memories.main(
             [
                 "--platform",
@@ -144,8 +175,8 @@ class GenMemoriesTest(unittest.TestCase):
                 str(d / "memories"),
                 "--json",
                 str(d / "memories.json"),
-                "--verilog",
-                str(rtl),
+                "--yosys-json",
+                str(empty_netlist),
             ]
         )
         self.assertEqual(code, 0)
