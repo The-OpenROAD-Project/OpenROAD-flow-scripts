@@ -264,7 +264,10 @@ yosys-dependencies: $(YOSYS_DEPENDENCIES)
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
 	$(SCRIPTS_DIR)/synth.sh $(SYNTH_SCRIPT) $(LOG_DIR)/1_2_yosys.log
-	cp $(SDC_FILE) $(RESULTS_DIR)/1_2_yosys.sdc
+
+$(RESULTS_DIR)/1_2_yosys.sdc: $(SDC_FILE)
+	cp $(SDC_FILE) $@
+	touch -r $(SDC_FILE) $@
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies
@@ -273,7 +276,7 @@ do-yosys-canonicalize: yosys-dependencies
 $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
-$(RESULTS_DIR)/1_2_yosys.v $(RESULTS_DIR)/1_2_yosys.sdc: $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
+$(RESULTS_DIR)/1_2_yosys.v: $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
 	$(UNSET_AND_MAKE) do-yosys
 .PHONY: clean_synth
 clean_synth:
