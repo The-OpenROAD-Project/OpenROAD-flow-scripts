@@ -51,6 +51,12 @@
   "ADDITIONAL_LIBS": {
     "description": "Hardened macro library files listed here. The library information is immutable and used throughout all stages. Not stored in the .odb file.\n"
   },
+  "ADDITIONAL_MEMORIES": {
+    "description": "Experimental. Space-separated list of user-supplied `.memories` files (the memories.json JSON schema) merged onto the set AUTO_MEMORIES detects \u2014 to force-convert a memory the idiomatic gate rejects, or to describe one the scanner cannot find. See docs/user/AutoMemories.md.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "ADDITIONAL_SITES": {
     "description": "Passed as -additional_sites to initialize_floorplan.\n",
     "stages": [
@@ -63,6 +69,10 @@
     "stages": [
       "All stages"
     ]
+  },
+  "AUTO_MEMORIES": {
+    "default": 0,
+    "description": "Experimental. When set to 1, memory-shaped modules in the RTL (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and \u2014 when idiomatic as an SRAM macro \u2014 given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.\n"
   },
   "BALANCE_ROWS": {
     "default": 0,
