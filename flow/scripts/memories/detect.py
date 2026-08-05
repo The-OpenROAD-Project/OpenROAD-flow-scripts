@@ -61,7 +61,7 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
 
             addr_w = (size - 1).bit_length() if size > 1 else 1
 
-            # Clock net tracking & single-clock verification across ports
+            # Clock net tracking & single-clock validation across ports
             rd_clks = conn.get("RD_CLK", [])
             wr_clks = conn.get("WR_CLK", [])
             all_clk_bits = [

@@ -131,7 +131,7 @@ proc read_design_sources { } {
       error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
     }
     if { [llength [auto_memories_blackboxes]] > 0 } {
-      error "AUTO_MEMORIES unsupported with HDL frontend \"verific\""
+      error "AUTO_MEMORIES unsupported with HDL frontend \"$::env(SYNTH_HDL_FRONTEND)\""
     }
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
     verilog_defaults -push

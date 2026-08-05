@@ -4,7 +4,7 @@
 
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
-# Read all RTL sources using active frontend (slang, verific, or yosys verilog)
+# Read all RTL sources using active frontend (all frontends)
 read_design_sources
 
 # Elaborate hierarchy
