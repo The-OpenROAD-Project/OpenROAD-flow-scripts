@@ -1599,6 +1599,12 @@ LEC_AUX_VERILOG_FILES:
     running the formal equivalence check.
   stages:
     - cts
+REMOVE_LIBS_FOR_LEC:
+  description: >
+    List of Liberty files to exclude from LEC. This is required for cases where
+    a Verilog black box needs to be used instead of a Liberty file.
+  stages:
+    - cts
 REMOVE_CELLS_FOR_LEC:
   description: >
     String patterns directly passed to write_verilog -remove_cells <> for
