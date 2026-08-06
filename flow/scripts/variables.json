@@ -936,6 +936,12 @@
     "description": "String patterns directly passed to write_verilog -remove_cells <> for lec checks.\n",
     "type": "string"
   },
+  "REMOVE_LIBS_FOR_LEC": {
+    "description": "List of Liberty files to exclude from LEC. This is required for cases where a Verilog black box needs to be used instead of a Liberty file.\n",
+    "stages": [
+      "cts"
+    ]
+  },
   "REPAIR_PDN_VIA_LAYER": {
     "description": "Remove power grid vias which generate DRC violations after detailed routing.\n"
   },
