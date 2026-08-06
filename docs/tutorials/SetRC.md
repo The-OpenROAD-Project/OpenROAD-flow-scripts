@@ -29,11 +29,17 @@ Unit RC values can be extracted by completing P&R flow for relevant designs in O
 ```
 % cd OpenROAD-flow-scripts/flow
 % make DESIGN_CONFIG=./designs/asap7/ibex/config.mk
-% make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_segment_rc
+% make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_rc
 ```
 
-This will generate a segment RC CSV file under results directory. For
-example, ./results/asap7/ibex/base/6_segment_rc.csv.
+This will generate a segment RC CSV file and a net RC CSV file under results
+directory. For example, ./results/asap7/ibex/base/6_segments_rc.csv and
+./results/asap7/ibex/base/6_nets_rc.csv. The segments data is used to fit the
+RC values, while the nets data is used to plot the difference between the
+global route estimates and the extracted parasitics.
+
+Note that the CSV files are not regenerated on their own after the design is
+run again, so delete them to write the RC data of the new run.
 
 ```
 % make DESIGN_CONFIG=./designs/asap7/ibex/config.mk correlate_rc
@@ -60,12 +66,12 @@ Segment RC CSV files from multiple designs can be combined to produce one large 
 
 ```
 % make DESIGN_CONFIG=./designs/asap7/ibex/config.mk
-% make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_segment_rc
+% make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_rc
 % make DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
-% make DESIGN_CONFIG=./designs/asap7/jpeg/config.mk write_segment_rc
-% cat ./results/asap7/ibex/base/6_segment_rc.csv ./results/asap7/jpeg/base/6_segment_rc.csv > combined_segment_rc.csv
-% ./util/correlateRC.py --mode segment combined_segment_rc.csv
-reading combined_segment_rc.csv
+% make DESIGN_CONFIG=./designs/asap7/jpeg/config.mk write_rc
+% cat ./results/asap7/ibex/base/6_segments_rc.csv ./results/asap7/jpeg/base/6_segments_rc.csv > combined_segments_rc.csv
+% ./util/correlateRC.py -segments_rc_file combined_segments_rc.csv
+Reading combined_segments_rc.csv.
 
 Units: resistance [kohm/um], capacitance [pf/um]
 
@@ -94,3 +100,17 @@ set_wire_rc -resistance 2.63040E-02 -capacitance 1.64745E-04
 set_wire_rc -signal -resistance 2.65684E-02 -capacitance 1.65790E-04
 set_wire_rc -clock -resistance 2.14161E-02 -capacitance 1.45426E-04
 ```
+
+## Generating correlation plots
+correlateRC.py has an option to generate capacitance and resistance correlation plots between global route and detail route where RC extraction is performed.
+
+For example, to plot capacitance correlation results for two designs ‘ibex’ and ‘jpeg’ from the above example, use -plot_cap option. For resistance correlation use -plot_res option.
+
+Note that both the combined nets and segments files are required to generate the plot.
+
+```
+% cat ./results/asap7/ibex/base/6_nets_rc.csv ./results/asap7/jpeg/base/6_nets_rc.csv > combined_nets_rc.csv
+% ./util/correlateRC.py -plot_cap -nets_rc_file ./combined_net_rc.csv -segments_rc_file ./combined_segment_rc.csv
+```
+
+![Capacitance correlation plot](./images/RC_cap_plot.png)

@@ -1,0 +1,4 @@
+NumWords,NumBits,compiler_name,memory_name,NumBanks,area_x (microns),area_y (microns),pin cap (pf),setup time (ns),hold time (ns),access time (ns),cycle time (ns),static power (uW),dynamic power (uW/MHz)
+64,256,fake_compiler,sssram_64x256_b2,2,22.7,65.9,0.000754,0.034,0.098,0.201,0.590,1.312,3.339
+,,fake_compiler,sssram_64x256,1,13.7,140.0,0.005,0.053,0.075,0.319,0.456,1.639,3.456
+128,64,fake_compiler,ss_dpsram_128x64,8,49.5,200.05,0.000912,0.079,0.221,0.412,0.456,123.4,2.15
