@@ -1,11 +1,11 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "357cb5b412d09a37d5c2271f6fec78404cd500c6",
+        "value": "36f3c36cd459164f6da315e618d393acea91e7e2",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "f75159d6cb90606b1edcfebc8685cfc195eb3d5b",
+        "value": "f63e9e36bbd116adf58e1a8fd7de74c0f2064bea",
         "compare": "==",
         "level": "warning"
     },
