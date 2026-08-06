@@ -1,32 +1,14 @@
-# Common Helpers
-#===============================================================================
-
-proc find_flat_db_net { sta_net } {
-  set db_net [sta::sta_to_db_net $sta_net]
-
-  if { $db_net eq "NULL" } {
-    set db_mod_net [sta::sta_to_db_mod_net $sta_net]
-    set db_net [$db_mod_net findRelatedNet]
-  }
-
-  if { $db_net eq "NULL" } {
-    error "Could not find the flat db net of [get_full_name $sta_net]."
-  }
-
-  return $db_net
-}
-
 # Helpers for Nets Data
 #===============================================================================
 
 proc fetch_nets_rc { var_name } {
   upvar 1 $var_name var
 
-  foreach net [get_nets -hierarchical *] {
-    set net_name [get_full_name $net]
-    set wire_res [net_wire_res $net]
-    set wire_cap [net_wire_cap $net]
-    set var($net_name) [list $wire_res $wire_cap]
+  foreach db_net [[ord::get_db_block] getNets] {
+    set sta_net [sta::db_net_to_sta $db_net]
+    set wire_res [net_wire_res $sta_net]
+    set wire_cap [net_wire_cap $sta_net]
+    set var([$db_net getName]) [list $wire_res $wire_cap]
   }
 }
 
@@ -65,23 +47,14 @@ proc write_nets_rc_csv { filename grt_var rcx_var } {
   puts $stream ""
 
   # Then, write the parasitics data of each net.
-  foreach net [get_nets -hierarchical *] {
-    set db_net [find_flat_db_net $net]
+  foreach db_net [[ord::get_db_block] getNets] {
     set type [$db_net getSigType]
 
     if { !([string equal $type "CLOCK"] || [string equal $type "SIGNAL"]) } {
       continue
     }
 
-    # Avoid fetching a flat net referenced by multiple module nets more
-    # than once.
-    if { [info exists seen_db_nets([$db_net getId])] } {
-      continue
-    }
-
-    set seen_db_nets([$db_net getId]) 1
-
-    set net_name [get_full_name $net]
+    set net_name [$db_net getName]
     set net_type [expr { $type eq "CLOCK" ? "clock" : "signal" }]
 
     lassign $grt_net_name_to_rc($net_name) grt_net_res grt_net_cap
@@ -102,21 +75,13 @@ proc write_nets_rc_csv { filename grt_var rcx_var } {
 proc fetch_segments_rc { net_to_segments_var } {
   upvar 1 $net_to_segments_var net_to_segments
 
-  foreach sta_net [get_nets -hierarchical *] {
-    set db_net [find_flat_db_net $sta_net]
+  foreach db_net [[ord::get_db_block] getNets] {
     set type [$db_net getSigType]
 
     if { !([string equal $type "CLOCK"] || [string equal $type "SIGNAL"]) } {
       continue
     }
 
-    # Avoid fetching a flat net referenced by multiple module nets more
-    # than once.
-    if { [info exists seen_db_nets([$db_net getId])] } {
-      continue
-    }
-
-    set seen_db_nets([$db_net getId]) 1
     set wire [$db_net getWire]
 
     if { $wire eq "NULL" } {
@@ -155,7 +120,7 @@ proc fetch_segments_rc { net_to_segments_var } {
       lappend seen_shape_ids $shape_id
     }
 
-    set net_to_segments([get_full_name $sta_net]) $segments
+    set net_to_segments([$db_net getName]) $segments
   }
 }
 
@@ -176,16 +141,13 @@ proc write_segments_rc_csv { filename net_to_segments_var } {
   puts $stream ""
 
   # Then, write the parasitics data of each wire segment.
-  foreach sta_net [get_nets -hierarchical *] {
-    set net_name [get_full_name $sta_net]
+  foreach db_net [[ord::get_db_block] getNets] {
+    set net_name [$db_net getName]
 
     if { ![info exists net_to_segments($net_name)] } {
       continue
     }
 
-    # Repeated flat nets don't need to be checked here as that was already
-    # done when fetching.
-    set db_net [find_flat_db_net $sta_net]
     set type [$db_net getSigType]
     set net_type [expr { $type eq "CLOCK" ? "clock" : "signal" }]
 
