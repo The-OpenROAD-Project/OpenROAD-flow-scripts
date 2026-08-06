@@ -1,0 +1,170 @@
+From 43f2d13a2669cc590d3af06c4e74647321f68095 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Sun, 19 Jul 2026 18:36:34 +0200
+Subject: [PATCH] rules: declare and propagate AUTO_MEMORIES stage artifacts
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ORFS's experimental AUTO_MEMORIES flow generates results/memories.json
+plus a memories/ directory of generated .lib/.lef macro views during
+canonicalization, and every later stage reads them from the results
+dir at tcl run time. In bazel-orfs each stage runs in a sandbox where
+only declared outputs survive, so without this change the generated
+views are discarded after synthesis and floorplan fails to link the
+blackboxed memory modules.
+
+Declare memories.json and the memories/ directory (a directory
+artifact: the per-memory file names are only known at run time) as
+canonicalize outputs when AUTO_MEMORIES=1, carry them on the new
+OrfsInfo.memories field, and stage them into every downstream stage's
+sandbox via source_inputs(). AUTO_MEMORIES is rejected with
+SYNTH_USE_SYN, which has no yosys canonicalize step.
+
+User-supplied ADDITIONAL_MEMORIES files need no new machinery: they
+reach the synth sandbox like any other sources= entry.
+
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
+---
+ private/environment.bzl |  8 ++++++++
+ private/providers.bzl   |  1 +
+ private/rules.bzl       | 29 ++++++++++++++++++++++++++---
+ 3 files changed, 35 insertions(+), 3 deletions(-)
+
+diff --git a/private/environment.bzl b/private/environment.bzl
+index f643501..f69359b 100644
+--- a/private/environment.bzl
++++ b/private/environment.bzl
+@@ -229,6 +229,11 @@ def source_inputs(ctx):
+             ctx.attr.src[OrfsInfo].additional_lefs,
+             ctx.attr.src[OrfsInfo].additional_libs,
+             ctx.attr.src[OrfsInfo].additional_libs_pre_layout,
++            # AUTO_MEMORIES artifacts (memories.json + the generated
++            # .lib/.lef directory): later stages glob them from the
++            # results dir at tcl run time, so they must be staged in
++            # every downstream stage's sandbox.
++            ctx.attr.src[OrfsInfo].memories,
+             ctx.attr.src[PdkInfo].files,
+             ctx.attr.src[PdkInfo].libs,
+             # Accumulate all JSON reports, so depend on previous stage.
+@@ -604,6 +609,9 @@ def _artifact_name(ctx, category, name = None):
+ def declare_artifact(ctx, category, name):
+     return ctx.actions.declare_file(_artifact_name(ctx, category, name))
+ 
++def declare_directory_artifact(ctx, category, name):
++    return ctx.actions.declare_directory(_artifact_name(ctx, category, name))
++
+ def declare_artifacts(ctx, category, names):
+     """Declares multiple artifacts in one call.
+ 
+diff --git a/private/providers.bzl b/private/providers.bzl
+index e2eabb2..8c3e5bf 100644
+--- a/private/providers.bzl
++++ b/private/providers.bzl
+@@ -17,6 +17,7 @@ OrfsInfo = provider(
+         "additional_libs",
+         "additional_libs_pre_layout",
+         "arguments",
++        "memories",
+     ],
+ )
+ PdkInfo = provider(
+diff --git a/private/rules.bzl b/private/rules.bzl
+index 6f0e502..e8379ef 100644
+--- a/private/rules.bzl
++++ b/private/rules.bzl
+@@ -21,6 +21,7 @@ load(
+     "data_inputs",
+     "declare_artifact",
+     "declare_artifacts",
++    "declare_directory_artifact",
+     "deps_inputs",
+     "environment_string",
+     "extensionless_basename",
+@@ -262,6 +263,7 @@ def _macro_impl(ctx):
+             additional_lefs = depset([]),
+             additional_libs = depset([]),
+             additional_libs_pre_layout = depset([]),
++            memories = depset([]),
+             arguments = depset([]),
+         ),
+         TopInfo(
+@@ -519,6 +521,7 @@ def _arguments_impl(ctx):
+             additional_lefs = src_info.additional_lefs,
+             additional_libs = src_info.additional_libs,
+             additional_libs_pre_layout = src_info.additional_libs_pre_layout,
++            memories = src_info.memories,
+             arguments = depset(
+                 [computed_json],
+                 transitive = [src_info.arguments],
+@@ -1353,6 +1356,22 @@ def _yosys_impl(ctx):
+     # come through arguments/stage_arguments, not extra_arguments .json files.
+     use_syn = all_arguments.get("SYNTH_USE_SYN") == "1"
+ 
++    # AUTO_MEMORIES: the canonicalize step generates memories.json plus a
++    # directory of .lib/.lef macro views (file names are only known at run
++    # time, hence a directory artifact). Declared as canonicalize outputs
++    # and threaded to every later stage via OrfsInfo.memories /
++    # source_inputs(), matching where the flow's tcl globs them.
++    auto_memories = all_arguments.get("AUTO_MEMORIES") == "1"
++    if auto_memories and use_syn:
++        fail("AUTO_MEMORIES is not supported with SYNTH_USE_SYN in " +
++             str(ctx.label))
++    memories_outputs = []
++    if auto_memories:
++        memories_outputs = [
++            declare_artifact(ctx, "results", "memories.json"),
++            declare_directory_artifact(ctx, "results", "memories"),
++        ]
++
+     canon_logs = declare_artifacts(ctx, "logs", ["1_1_yosys_canonicalize.log"])
+ 
+     canon_output = declare_artifact(ctx, "results", CANON_OUTPUT)
+@@ -1393,7 +1412,7 @@ def _yosys_impl(ctx):
+                     canon_deps,
+                 ],
+             ),
+-            outputs = [canon_output] + canon_logs,
++            outputs = [canon_output] + canon_logs + memories_outputs,
+             tools = yosys_inputs(ctx),
+             progress_message = "Canonicalizing RTL for %s" % module_top(ctx),
+         )
+@@ -1513,7 +1532,8 @@ def _yosys_impl(ctx):
+                 config_environment(config),
+             ),
+             inputs = depset(
+-                [canon_output, config] + ctx.files.extra_configs,
++                [canon_output, config] + memories_outputs +
++                ctx.files.extra_configs,
+                 transitive = [
+                     data_inputs(ctx),
+                     pdk_inputs(ctx),
+@@ -1553,7 +1573,8 @@ def _yosys_impl(ctx):
+             tools = depset(transitive = [flow_inputs(ctx)]),
+         )
+ 
+-    outputs = [canon_output, variables] + synth_outputs.values()
++    outputs = [canon_output, variables] + synth_outputs.values() + \
++              memories_outputs
+ 
+     # Write synth's data_arguments to a JSON so downstream stages
+     # inherit synth-time variables (SDC_FILE, VERILOG_FILES, SYNTH_*)
+@@ -1721,6 +1742,7 @@ def _yosys_impl(ctx):
+                     if (dep[OrfsInfo].lib_pre_layout or dep[OrfsInfo].lib)
+                 ],
+             ),
++            memories = depset(memories_outputs),
+             arguments = depset([synth_args_json]),
+         ),
+         ctx.attr.pdk[PdkInfo],
+@@ -2098,6 +2120,7 @@ def _make_impl(
+             additional_lefs = ctx.attr.src[OrfsInfo].additional_lefs,
+             additional_libs = ctx.attr.src[OrfsInfo].additional_libs,
+             additional_libs_pre_layout = ctx.attr.src[OrfsInfo].additional_libs_pre_layout,
++            memories = ctx.attr.src[OrfsInfo].memories,
+             arguments = depset(
+                 [stage_json],
+                 transitive = [ctx.attr.src[OrfsInfo].arguments] +
+-- 
+2.53.0
+

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "memories": [
+    {
+      "name": "tag_array",
+      "idiomatic": true,
+      "reason": "forced: the RTL provides no behavioral fallback for this wrapper"
+    }
+  ]
+}

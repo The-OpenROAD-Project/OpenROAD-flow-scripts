@@ -100,3 +100,17 @@ set_wire_rc -resistance 2.63040E-02 -capacitance 1.64745E-04
 set_wire_rc -signal -resistance 2.65684E-02 -capacitance 1.65790E-04
 set_wire_rc -clock -resistance 2.14161E-02 -capacitance 1.45426E-04
 ```
+
+## Generating correlation plots
+correlateRC.py has an option to generate capacitance and resistance correlation plots between global route and detail route where RC extraction is performed.
+
+For example, to plot capacitance correlation results for two designs ‘ibex’ and ‘jpeg’ from the above example, use -plot_cap option. For resistance correlation use -plot_res option.
+
+Note that both the combined nets and segments files are required to generate the plot.
+
+```
+% cat ./results/asap7/ibex/base/6_nets_rc.csv ./results/asap7/jpeg/base/6_nets_rc.csv > combined_nets_rc.csv
+% ./util/correlateRC.py -plot_cap -nets_rc_file ./combined_net_rc.csv -segments_rc_file ./combined_segment_rc.csv
+```
+
+![Capacitance correlation plot](./images/RC_cap_plot.png)
