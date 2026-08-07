@@ -149,11 +149,9 @@ class CongestionSwin(nn.Module):
         super().__init__()
         self.window_size = window_size
 
-        # Patch embedding: 1×1 conv treats each pixel as a patch
-        self.patch_embed = nn.Sequential(
-            nn.Conv2d(in_channels, embed_dim, 3, padding=1),
-            nn.LayerNorm([embed_dim, 64, 64]),  # spatial LN before flattening
-        )
+        # Patch embedding: conv + per-token LayerNorm (applied after flattening)
+        self.patch_conv = nn.Conv2d(in_channels, embed_dim, 3, padding=1)
+        self.patch_norm = nn.LayerNorm(embed_dim)
 
         depths    = [2, 2, 6, 2]
         num_heads = [2, 4, 8, 16]
@@ -191,12 +189,11 @@ class CongestionSwin(nn.Module):
     def forward(self, x: torch.Tensor) -> CongestionOutput:
         B = x.shape[0]
 
-        # Patch embed: (B, embed_dim, H, W)
-        feat = self.patch_embed(x)
+        # Patch embed → flatten → LayerNorm over channel dim
+        feat = self.patch_conv(x)                      # (B, embed_dim, H, W)
         H, W = feat.shape[2], feat.shape[3]
-
-        # Flatten to sequence: (B, H*W, C)
-        feat = feat.flatten(2).transpose(1, 2)
+        feat = feat.flatten(2).transpose(1, 2)         # (B, H*W, embed_dim)
+        feat = self.patch_norm(feat)
 
         cur_H, cur_W = H, W
         for i, stage in enumerate(self.stages):
