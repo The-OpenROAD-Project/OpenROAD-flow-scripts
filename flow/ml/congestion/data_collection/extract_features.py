@@ -15,8 +15,7 @@ import argparse
 import sys
 
 import numpy as np
-import openroad as ord
-import utl
+from openroad import Design, Tech
 
 
 def _parse_args():
@@ -28,10 +27,10 @@ def _parse_args():
 
 
 def extract_features(odb_path: str, grid: int = 64) -> dict[str, np.ndarray]:
-    db = ord.dbDatabase.create()
-    ord.read_db(db, odb_path)
-    chip = db.getChip()
-    block = chip.getBlock()
+    tech = Tech()
+    design = Design(tech)
+    design.readDb(odb_path)
+    block = design.getBlock()
 
     die = block.getDieArea()
     x0, y0 = die.xMin(), die.yMin()
