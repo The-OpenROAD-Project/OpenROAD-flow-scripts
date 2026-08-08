@@ -13,7 +13,6 @@
 import docutils
 import os
 import re
-import requests
 
 # -- Project information -----------------------------------------------------
 
@@ -71,6 +70,9 @@ master_doc = "index2.md"
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = [
     "_build",
+    # Verbatim copies of OpenROAD files; conf.py splices them into ORFS pages
+    # rather than publishing them directly. See docs/_vendor/openroad/README.md.
+    "_vendor",
     "Thumbs.db",
     ".DS_Store",
     "**/LICENSE",
@@ -135,10 +137,31 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 
 
-def get_file_from_url(url, fname):
-    r = requests.get(url)
-    with open(fname, "wb") as f:
-        f.write(r.content)
+# Files copied verbatim from the OpenROAD repository at the SHA that the
+# tools/OpenROAD submodule pins. They are checked in, so this build performs no
+# network access -- matching the intent of the hash-pinned requirements_lock.txt.
+# Refresh them with REFRESH_CMD; docs/scripts/check_vendored_docs.py asserts
+# they are still in sync with the submodule pointer.
+VENDOR_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "_vendor", "openroad"
+)
+REFRESH_CMD = "python3 docs/scripts/refresh_openroad_docs.py"
+
+# Holds one extracted section of OpenROAD's docs/index.md, not the whole page.
+SUPPORTED_OS_FILE = "index-SupportedOS.md"
+
+
+def read_vendored(fname):
+    """Read a file vendored from the OpenROAD repository."""
+    path = os.path.join(VENDOR_DIR, fname)
+    try:
+        with open(path, "r") as f:
+            return f.read()
+    except OSError as error:
+        raise RuntimeError(
+            "Cannot read the vendored OpenROAD file '%s': %s. "
+            "Regenerate the vendored files with: %s" % (path, error, REFRESH_CMD)
+        ) from error
 
 
 def swap_prefix(file, old, new):
@@ -156,56 +179,77 @@ def setup(app):
     shutil.copy("../README.md", "mainREADME.md")
     swap_prefix("mainREADME.md", "```mermaid", "```{mermaid}\n:align: center\n")
 
-    # Grab the reference file from OR
-    url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/contrib/GitGuide.md"
-    get_file_from_url(url, "contrib/GitGuide.md")
-
-    # Temporarily using commit number, will change once OR commit merged.
-    url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/index.md"
-    get_file_from_url(url, "SupportedOS.md")
-
-    # Adapt the downloaded GitGuide for ORFS: rename references and inject
-    # ORFS-specific submodule forking instructions from GitGuideAdapter.md.
-    with open("contrib/GitGuide.md", "r") as f:
-        content = f.read()
-    content = (
-        content.replace(
-            "user/Build.md", "../index.md#build-or-installing-orfs-dependencies"
-        )
-        .replace("OpenROAD", "OpenROAD-flow-scripts")
-        .replace("The-OpenROAD-flow-scripts", "The-OpenROAD")
+    # Adapt the vendored OpenROAD GitGuide for ORFS: rename references and
+    # inject ORFS-specific submodule forking instructions from
+    # GitGuideAdapter.md.
+    content = read_vendored("GitGuide.md")
+    content = content.replace(
+        "user/Build.md", "../index.md#build-or-installing-orfs-dependencies"
     )
+    # Rename OpenROAD -> OpenROAD-flow-scripts, but leave the GitHub
+    # organisation name ("The-OpenROAD-Project") and anything that already
+    # carries the "-flow-scripts" suffix alone. Equivalent to the previous
+    # blanket replace + "The-OpenROAD-flow-scripts" self-patch, without
+    # corrupting those two forms.
+    content = re.sub(
+        r"(?<!The-)OpenROAD(?!-flow-scripts)", "OpenROAD-flow-scripts", content
+    )
+
+    gitguide_anchor = "## Creating a branch"
+    if gitguide_anchor not in content:
+        raise RuntimeError(
+            "Could not find the heading '%s' in '%s' (vendored from "
+            "The-OpenROAD-Project/OpenROAD:docs/contrib/GitGuide.md). That is "
+            "where ORFS splices in contrib/GitGuideAdapter.md. Upstream most "
+            "likely renamed the heading: re-vendor with `%s`, then update the "
+            "anchor here and in docs/scripts/check_vendored_docs.py."
+            % (gitguide_anchor, os.path.join(VENDOR_DIR, "GitGuide.md"), REFRESH_CMD)
+        )
     with open("contrib/GitGuideAdapter.md", "r") as f:
         adapter_content = f.read()
-    content = content.replace(
-        "## Creating a branch", adapter_content + "\n## Creating a branch"
-    )
+    content = content.replace(gitguide_anchor, adapter_content + "\n" + gitguide_anchor)
     with open("contrib/GitGuide.md", "w") as f:
         f.write(content)
 
     # Create a copy of the index.md file
-    import shutil
-
     shutil.copy("index.md", "index2.md")
 
-    # Use re to find the desired content
+    # OpenROAD's supported-OS table. The vendored file holds only that one
+    # section of OpenROAD's docs/index.md -- the heading followed by the body
+    # spliced in below -- so the section is extracted at vendoring time by
+    # refresh_openroad_docs.py, not here. Demote the heading to #### so it
+    # nests under ORFS's own "### Setup".
     start_pattern = "## Supported Operating Systems"
-    end_pattern = "## Code of conduct"
-    with open("SupportedOS.md", "r") as f:
-        markdown_content = f.read()
-
-    match = re.search(f"{start_pattern}(.*?){end_pattern}", markdown_content, re.DOTALL)
-
-    assert match is not None, "No match found, check the OR Doc pattern on index.md"
-    extracted_content = match.group(1)
-    extracted_content = "\n#### Supported Operating Systems" + extracted_content
-    print(extracted_content)
+    section = read_vendored(SUPPORTED_OS_FILE)
+    if not section.startswith(start_pattern):
+        raise RuntimeError(
+            "'%s' does not start with '%s'. It is vendored from "
+            "The-OpenROAD-Project/OpenROAD:docs/index.md and must contain that "
+            "section and nothing else. Upstream most likely renamed the "
+            "heading: re-vendor with `%s`, then update this anchor here and in "
+            "docs/scripts/check_vendored_docs.py."
+            % (
+                os.path.join(VENDOR_DIR, SUPPORTED_OS_FILE),
+                start_pattern,
+                REFRESH_CMD,
+            )
+        )
+    extracted_content = "\n#### Supported Operating Systems" + section[
+        len(start_pattern) :
+    ]
 
     # Find insert position
     with open("index2.md", "r") as f:
         existing_content = f.read()
-    match = re.search(r"### Setup", existing_content)
-    assert match is not None, "Check search keyword."
+    insert_anchor = "### Setup"
+    match = re.search(re.escape(insert_anchor), existing_content)
+    if match is None:
+        raise RuntimeError(
+            "Could not find the heading '%s' in 'docs/index.md'; that is where "
+            "OpenROAD's supported-OS table is spliced in. Restore the heading, "
+            "or update the anchor here and in "
+            "docs/scripts/check_vendored_docs.py." % insert_anchor
+        )
     with open("index2.md", "w") as f:
         insert_position = match.end() + 1
         before_insert = existing_content[:insert_position]
@@ -216,6 +260,6 @@ def setup(app):
 
         f.write(updated_content)
 
-    # Get Manpage file
-    url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/src/utl/README.md"
-    get_file_from_url(url, "Manpage.md")
+    # Manpage page, vendored from OpenROAD's src/utl/README.md
+    with open("Manpage.md", "w") as f:
+        f.write(read_vendored("utl-README.md"))
