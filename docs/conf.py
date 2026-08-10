@@ -70,6 +70,12 @@ master_doc = "index2.md"
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = [
     "_build",
+    # The Makefile's actual BUILDDIR ("build", not the Sphinx-default "_build")
+    # and any local virtualenv -- without these, a second build treats its own
+    # previous output and installed packages' bundled images as source pages.
+    "build",
+    ".venv*",
+    "venv",
     # Verbatim copies of OpenROAD files; conf.py splices them into ORFS pages
     # rather than publishing them directly. See docs/_vendor/openroad/README.md.
     "_vendor",
