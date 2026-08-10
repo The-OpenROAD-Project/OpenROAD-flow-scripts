@@ -10,10 +10,10 @@ Behavioral models of memories are used in simulation and FPGA tools oftentimes a
 
 Before deciding how to set up a flow, it is useful to do a "screening build". All we're intersted in here is to know which modules we have and their relative sizes. This can help us identify memories that have not been successfully inferred by Yosys, which will manifest itself as very long synthesis times and appear in the OpenROAD hierarchical view with a large number of instances.
 
-The [minimal build configuration](flow/designs/asap7/minimal/README.md)
+The [minimal build configuration](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/asap7/minimal/README.md)
  can be useful to do a screening build.
 
-Options useful for a screening build are, check out [config.mk](flow/designs/asap7/minimal/config.mk):
+Options useful for a screening build are, check out [config.mk](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/asap7/minimal/config.mk):
 
 - `SYNTH_HIERARCHICAL=1` and `SYNTH_MINIMUM_KEEP_SIZE=0`, to see all modules in the hierarchical OpenROAD view
 - `SYNTH_MEMORY_MAX_BITS=1024`, set a low threshold initially to get an error with list of memories in the system that will need to be dealt with in some way
