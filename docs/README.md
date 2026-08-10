@@ -11,28 +11,33 @@ repository and is published at
 
 ### Requires
 
-- Python 3.10 — the version Read the Docs builds with (see `.readthedocs.yaml`).
-  The pinned Sphinx release does not run on Python 3.13 or newer.
+- Python 3.10+ (tested through 3.14) — Read the Docs builds with 3.12 (see
+  `.readthedocs.yaml`); any recent `python3` on PATH works locally.
 - `pip`
 - `virtualenv` (or the standard-library `venv`)
 
 ### Install prerequisites
 
-Run from the repository root:
+Run from `docs/`:
 
 ``` shell
-virtualenv .venv
+make venv
 source .venv/bin/activate
-pip install -r docs/requirements_lock.txt
 ```
+
+`make venv` just runs `python3 -m venv .venv && .venv/bin/pip install -r
+requirements_lock.txt`; pass `PYTHON=/path/to/python3` to use a specific
+interpreter instead of whatever `python3` resolves to on your PATH.
 
 `docs/requirements_lock.txt` is the hash-pinned lock file that Read the Docs
 installs, so a local build matches the published one. The direct dependencies
 are listed in `docs/requirements.in`; after editing that file, regenerate the
-lock with:
+lock with [`uv`](https://docs.astral.sh/uv/) (`pip-compile` from `pip-tools`
+is a documented alternative, but at time of writing has a compatibility bug
+with recent `pip` releases):
 
 ``` shell
-pip-compile --generate-hashes --output-file=docs/requirements_lock.txt docs/requirements.in
+uv pip compile --upgrade --generate-hashes --output-file=docs/requirements_lock.txt docs/requirements.in
 ```
 
 ### Build
@@ -62,7 +67,7 @@ It exits non-zero when any link is unreachable.
   `SupportedOS.md`, `Manpage.md`, `mainREADME.md`, and — because it is fetched
   rather than authored here — the tracked file `contrib/GitGuide.md`. Do not
   commit those changes; `git checkout docs/contrib/GitGuide.md` after a build.
-- Always `rm -rf docs/build` before rebuilding. The output directory is
-  `build/`, but `conf.py`'s `exclude_patterns` only excludes `_build`, so a
-  second run picks up the Markdown files written under `build/html/` as if they
-  were source pages.
+- `conf.py`'s `exclude_patterns` excludes `build` (the actual output directory
+  — Sphinx's own default is `_build`) and any local `.venv`/`venv`, so re-running
+  a build, or building from a checkout with a local virtualenv already in
+  `docs/`, does not pick that up as source content.
