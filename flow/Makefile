@@ -484,37 +484,35 @@ clean_floorplan:
 place: $(RESULTS_DIR)/3_place.odb \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
-# STEP 1: Global placement without placed IOs, timing-driven, and routability-driven.
+# STEP 1: IO placement
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place_skip_io))
+$(eval $(call do-step,3_1_place_iop,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),io_placement,.tcl))
 
-$(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb,io_placement))
-
-# STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
+# STEP 2: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_3_place_gp,$(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
+$(eval $(call do-step,3_2_place_gp,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_1_place_iop.tcl $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
 
-# STEP 4: Resizing & Buffering
+# STEP 3: Resizing & Buffering
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_4_place_resized,$(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc,resize))
+$(eval $(call do-step,3_3_place_resized,$(RESULTS_DIR)/3_2_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc,resize))
 
 .PHONY: clean_resize
 clean_resize:
-	rm -f $(RESULTS_DIR)/3_4_place_resized.odb
+	rm -f $(RESULTS_DIR)/3_3_place_resized.odb
 
-# STEP 5: Detail placement
+# STEP 4: Detail placement
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_5_place_dp,$(RESULTS_DIR)/3_4_place_resized.odb,detail_place))
+$(eval $(call do-step,3_4_place_dp,$(RESULTS_DIR)/3_3_place_resized.odb,detail_place))
 
-$(eval $(call do-copy,3_place,3_5_place_dp.odb,))
+$(eval $(call do-copy,3_place,3_4_place_dp.odb,))
 
-# detail_place writes 3_place.sdc alongside 3_5_place_dp.odb (constraints
+# detail_place writes 3_place.sdc alongside 3_4_place_dp.odb (constraints
 # are unchanged during placement), mirroring how synth writes 1_synth.sdc.
-$(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/3_5_place_dp.odb
+$(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/3_4_place_dp.odb
 
 .PHONY: do-place
 do-place:
-	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place
+	$(UNSET_AND_MAKE) do-3_1_place_iop do-3_2_place_gp do-3_3_place_resized do-3_4_place_dp do-3_place
 
 # Clean Targets
 #-------------------------------------------------------------------------------

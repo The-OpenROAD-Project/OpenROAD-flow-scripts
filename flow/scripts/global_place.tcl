@@ -1,7 +1,8 @@
 utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables place
-load_design 3_2_place_iop.odb 2_floorplan.sdc
+load_design 2_floorplan.odb 2_floorplan.sdc
+source $::env(RESULTS_DIR)/3_1_place_iop.tcl
 source_step_tcl PRE GLOBAL_PLACE
 
 set_dont_use $::env(DONT_USE_CELLS)
@@ -46,8 +47,6 @@ if { $min_phi > $max_phi } {
 MAX_PLACE_STEP_COEF ($max_phi)"
 }
 
-lappend global_placement_args -force_center_initial_place
-
 lappend global_placement_args -min_phi_coef $::env(MIN_PLACE_STEP_COEF)
 lappend global_placement_args -max_phi_coef $::env(MAX_PLACE_STEP_COEF)
 
@@ -64,7 +63,7 @@ proc do_placement { global_placement_args } {
 
 set result [catch { do_placement $global_placement_args } errMsg]
 if { $result != 0 } {
-  orfs_write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
+  orfs_write_db $::env(RESULTS_DIR)/3_2_place_gp-failed.odb
   error $errMsg
 }
 
@@ -79,4 +78,4 @@ report_metrics 3 "global place" false false
 
 source_step_tcl POST GLOBAL_PLACE
 
-orfs_write_db $::env(RESULTS_DIR)/3_3_place_gp.odb
+orfs_write_db $::env(RESULTS_DIR)/3_2_place_gp.odb
