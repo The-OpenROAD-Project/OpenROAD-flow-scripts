@@ -78,6 +78,8 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
   }
 
   check_placement -verbose
+
+  log_cmd estimate_parasitics -placement
 }
 
 report_metrics 4 "cts final"
