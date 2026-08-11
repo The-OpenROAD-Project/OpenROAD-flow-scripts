@@ -34,6 +34,8 @@ export SETUP_SLACK_MARGIN = 0.2
 # GRT non-default config
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
 
+export MAX_REPAIR_ANTENNAS_ITER_DRT = 2
+
 ifeq ($(SYNTH_MOCK_LARGE_MEMORIES),1)
     # ca. 3 minutes to run make synth
     #
