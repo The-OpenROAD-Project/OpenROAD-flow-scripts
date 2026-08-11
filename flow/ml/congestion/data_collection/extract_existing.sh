@@ -53,7 +53,7 @@ for entry in "${DESIGNS[@]}"; do
             /work/ml/congestion/data_collection/extract_features.py \
             --odb "/work/${dp_odb}" \
             --out "/work/${feat_out}" \
-            --grid "$GRID" 2>&1 | sed 's/^/    /'; then
+            --grid "$GRID" < /dev/null 2>&1 | sed 's/^/    /'; then
         echo "  FAIL — feature extraction"
         (( fail++ )) || true
         continue
@@ -64,7 +64,7 @@ for entry in "${DESIGNS[@]}"; do
             /work/ml/congestion/data_collection/extract_labels.py \
             --odb "/work/${grt_odb}" \
             --out "/work/${label_out}" \
-            --grid "$GRID" 2>&1 | sed 's/^/    /'; then
+            --grid "$GRID" < /dev/null 2>&1 | sed 's/^/    /'; then
         echo "  FAIL — label extraction"
         (( fail++ )) || true
         continue

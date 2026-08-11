@@ -48,10 +48,11 @@ def extract_labels(odb_path: str, grid: int = 64,
     if gcell_grid is None:
         raise RuntimeError("No GCell grid found — run GRT before extracting labels")
 
-    # Get GCell boundary arrays
-    x_grid, y_grid = [], []
-    gcell_grid.getGridX(x_grid)
-    gcell_grid.getGridY(y_grid)
+    # Get GCell boundary arrays (API returns lists directly)
+    x_grid = gcell_grid.getGridX()
+    y_grid = gcell_grid.getGridY()
+    nx = len(x_grid) - 1
+    ny = len(y_grid) - 1
 
     db_tech = block.getTech()
 
@@ -61,22 +62,13 @@ def extract_labels(odb_path: str, grid: int = 64,
         if layer is None:
             continue
 
-        # Iterate over all GCells for this layer using (x, y) index pairs
-        nx = len(x_grid) - 1
-        ny = len(y_grid) - 1
+        # API: getCapacity(layer, x_idx, y_idx) / getUsage(layer, x_idx, y_idx)
         for iy in range(ny):
             for ix in range(nx):
-                gcell = gcell_grid.getGCell(
-                    (x_grid[ix] + x_grid[ix + 1]) // 2,
-                    (y_grid[iy] + y_grid[iy + 1]) // 2,
-                    layer,
-                )
-                if gcell is None:
-                    continue
-                usage    = gcell.getUsage()
-                capacity = gcell.getCapacity()
+                capacity = gcell_grid.getCapacity(layer, ix, iy)
                 if capacity == 0:
                     continue
+                usage    = gcell_grid.getUsage(layer, ix, iy)
                 overflow = max(0.0, (usage - capacity) / capacity)
 
                 cx = (x_grid[ix] + x_grid[ix + 1]) / 2

@@ -1,74 +1,90 @@
 """
-GraphSAGE congestion predictor with three output heads.
+Pre-placement congestion predictor: GNN encoder + CNN decoder.
 
-Node features (8):
-  [area_norm, is_macro, is_seq, is_buf, fanin_norm, fanout_norm, x_norm, y_norm]
+Takes a post-synthesis netlist graph (no placement coordinates) and predicts
+a spatial congestion heatmap over the floorplan grid.
 
-The GNN produces per-node embeddings which are scattered onto a 2D grid,
-then fed to the same spatial heads as the U-Net for a fair comparison.
+Node features (6):
+  [area_norm, is_macro, is_seq, is_buf, fanin_norm, fanout_norm]
 
-Output: CongestionOutput namedtuple (same as unet.py)
-  .heatmap  (B, 10, H, W)
-  .hotspot  (B,  1, H, W)
-  .score    (B,  1)
+Architecture:
+  1. Linear projection + 3-layer GraphSAGE encoder
+  2. Global mean+max pooling → graph-level vector
+  3. Seed MLP → reshape to (B, decoder_dim, 4, 4) spatial seed
+  4. CNN decoder: 4×4 → grid×grid via bilinear upsample + conv
+  5. Shared output heads (same as U-Net — fair comparison)
+
+Why global pool + decoder instead of scatter-to-grid?
+  Scatter-to-grid needs placement coordinates to know where each node goes on
+  the spatial canvas. Pre-placement, those don't exist. Global pooling collapses
+  the netlist into a topology fingerprint; the decoder learns to translate that
+  fingerprint into a spatial congestion pattern purely from training signal.
+
+Output: CongestionOutput namedtuple
+  .heatmap  (B, 10, H, W)  — per-layer overflow fraction
+  .hotspot  (B,  1, H, W)  — binary congestion mask
+  .score    (B,  1)         — scalar congestion severity
 """
 
+import math
 from collections import namedtuple
 
 import torch
 import torch.nn as nn
-from torch_geometric.nn import SAGEConv, LayerNorm
+import torch.nn.functional as F
+from torch_geometric.nn import SAGEConv, LayerNorm, global_mean_pool, global_max_pool
 
 from heads import HeatmapHead, HotspotHead, ScoreHead
 
 CongestionOutput = namedtuple("CongestionOutput", ["heatmap", "hotspot", "score"])
 
-NODE_FEATURES = 8   # see docstring above
-EMBED_DIM     = 64  # node embedding dimension
+NODE_FEATURES = 6   # area_norm, is_macro, is_seq, is_buf, fanin_norm, fanout_norm
+EMBED_DIM     = 64
+DECODER_DIM   = 64
+SEED_SIZE     = 4   # spatial seed is SEED_SIZE × SEED_SIZE before upsampling
 
 
-def _scatter_to_grid(
-    node_feats: torch.Tensor,
-    x_norm: torch.Tensor,
-    y_norm: torch.Tensor,
-    batch: torch.Tensor,
-    grid: int,
-    batch_size: int,
-) -> torch.Tensor:
+def _build_decoder(decoder_dim: int, out_channels: int, grid: int) -> nn.Sequential:
     """
-    Scatter node embeddings onto (batch_size, C, grid, grid) by averaging
-    all nodes that fall into the same grid cell.
+    Build a CNN decoder that upsamples a (decoder_dim, SEED_SIZE, SEED_SIZE)
+    spatial seed to (out_channels, grid, grid).
+
+    Uses bilinear upsample + Conv2d rather than ConvTranspose2d to avoid
+    checkerboard artefacts. Each stage doubles the spatial resolution.
     """
-    C = node_feats.shape[1]
-    canvas = torch.zeros(batch_size, C, grid, grid,
-                         device=node_feats.device, dtype=node_feats.dtype)
-    count  = torch.zeros(batch_size, 1, grid, grid,
-                         device=node_feats.device, dtype=node_feats.dtype)
+    n_steps = int(math.log2(grid // SEED_SIZE))
+    assert SEED_SIZE * (2 ** n_steps) == grid, \
+        f"grid={grid} must be SEED_SIZE={SEED_SIZE} × a power of 2"
 
-    gx = (x_norm * (grid - 1)).long().clamp(0, grid - 1)
-    gy = (y_norm * (grid - 1)).long().clamp(0, grid - 1)
-
-    for n in range(node_feats.shape[0]):
-        b  = batch[n].item()
-        ix = gx[n].item()
-        iy = gy[n].item()
-        canvas[b, :, iy, ix] += node_feats[n]
-        count[b,  0, iy, ix] += 1.0
-
-    canvas = canvas / (count + 1e-9)
-    return canvas
+    layers = []
+    in_ch = decoder_dim
+    for i in range(n_steps):
+        out_ch = out_channels if i == n_steps - 1 else decoder_dim
+        layers += [
+            nn.Upsample(scale_factor=2, mode="bilinear", align_corners=False),
+            nn.Conv2d(in_ch, out_ch, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(out_ch),
+            nn.ReLU(inplace=True),
+        ]
+        in_ch = out_ch
+    return nn.Sequential(*layers)
 
 
 class CongestionGNN(nn.Module):
-    """
-    3-layer GraphSAGE encoder → scatter to spatial grid → shared heads.
-    """
 
-    def __init__(self, grid: int = 64, embed_dim: int = EMBED_DIM):
+    def __init__(
+        self,
+        grid: int = 64,
+        embed_dim: int = EMBED_DIM,
+        decoder_dim: int = DECODER_DIM,
+        spatial_channels: int = 32,  # channels fed into the output heads
+    ):
         super().__init__()
-        self.grid = grid
+        self.grid        = grid
+        self.decoder_dim = decoder_dim
 
-        self.proj = nn.Linear(NODE_FEATURES, embed_dim)
+        # ── Encoder ───────────────────────────────────────────────────────
+        self.proj  = nn.Linear(NODE_FEATURES, embed_dim)
 
         self.sage1 = SAGEConv(embed_dim, embed_dim)
         self.norm1 = LayerNorm(embed_dim)
@@ -77,41 +93,50 @@ class CongestionGNN(nn.Module):
         self.sage3 = SAGEConv(embed_dim, embed_dim)
         self.norm3 = LayerNorm(embed_dim)
 
-        self.act = nn.ReLU(inplace=True)
+        # ── Graph → spatial seed ──────────────────────────────────────────
+        # Concatenate mean and max pool → 2*embed_dim graph fingerprint,
+        # then project to a flat spatial seed and reshape.
+        self.seed_mlp = nn.Sequential(
+            nn.Linear(2 * embed_dim, decoder_dim * SEED_SIZE * SEED_SIZE),
+            nn.ReLU(inplace=True),
+        )
 
-        # Project from node embed_dim to a spatial channel count
-        # that matches the head input expectations
-        self.to_spatial = nn.Linear(embed_dim, 32)
+        # ── CNN decoder ───────────────────────────────────────────────────
+        self.decoder = _build_decoder(decoder_dim, spatial_channels, grid)
 
-        self.heatmap_head = HeatmapHead(32, num_layers=10)
-        self.hotspot_head = HotspotHead(32)
-        self.score_head   = ScoreHead(32)
+        # ── Output heads (identical to U-Net for fair comparison) ─────────
+        self.heatmap_head = HeatmapHead(spatial_channels, num_layers=10)
+        self.hotspot_head = HotspotHead(spatial_channels)
+        self.score_head   = ScoreHead(spatial_channels)
 
     def forward(
         self,
-        x: torch.Tensor,         # (N, 8)  node features
-        edge_index: torch.Tensor, # (2, E)
-        batch: torch.Tensor,      # (N,)    batch assignment
-        x_norm: torch.Tensor,     # (N,)    normalised x position [0,1]
-        y_norm: torch.Tensor,     # (N,)    normalised y position [0,1]
+        x: torch.Tensor,          # (N, 6)  node features
+        edge_index: torch.Tensor,  # (2, E)  COO edges
+        batch: torch.Tensor,       # (N,)    batch assignment per node
     ) -> CongestionOutput:
-        batch_size = int(batch.max().item()) + 1
 
-        h = self.act(self.proj(x))
+        # Encode
+        h = F.relu(self.proj(x))
+        h = F.relu(self.norm1(self.sage1(h, edge_index)))
+        h = F.relu(self.norm2(self.sage2(h, edge_index)))
+        h = F.relu(self.norm3(self.sage3(h, edge_index)))
 
-        h = self.act(self.norm1(self.sage1(h, edge_index)))
-        h = self.act(self.norm2(self.sage2(h, edge_index)))
-        h = self.act(self.norm3(self.sage3(h, edge_index)))
+        # Global pool: mean + max → graph fingerprint
+        h_mean = global_mean_pool(h, batch)          # (B, embed_dim)
+        h_max  = global_max_pool(h, batch)           # (B, embed_dim)
+        h_global = torch.cat([h_mean, h_max], dim=1) # (B, 2*embed_dim)
 
-        # Project to spatial channels before scattering
-        h_spatial = self.act(self.to_spatial(h))  # (N, 32)
+        # Project to spatial seed
+        seed = self.seed_mlp(h_global)                       # (B, D*S*S)
+        B = seed.shape[0]
+        seed = seed.view(B, self.decoder_dim, SEED_SIZE, SEED_SIZE)
 
-        grid_feats = _scatter_to_grid(
-            h_spatial, x_norm, y_norm, batch, self.grid, batch_size
-        )  # (B, 32, grid, grid)
+        # Decode to spatial feature map
+        spatial = self.decoder(seed)  # (B, spatial_channels, grid, grid)
 
         return CongestionOutput(
-            heatmap=self.heatmap_head(grid_feats),
-            hotspot=self.hotspot_head(grid_feats),
-            score=self.score_head(grid_feats),
+            heatmap=self.heatmap_head(spatial),
+            hotspot=self.hotspot_head(spatial),
+            score=self.score_head(spatial),
         )

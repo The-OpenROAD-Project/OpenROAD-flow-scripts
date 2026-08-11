@@ -45,12 +45,30 @@ def _load_deep(model_cls, ckpt, device, **kwargs):
     return m
 
 
+def _make_8neighbor_edges(grid, device):
+    """Build a sparse 8-connectivity edge_index for a grid*grid graph (matches train_gnn.py)."""
+    G = grid
+    rows, cols = [], []
+    for iy in range(G):
+        for ix in range(G):
+            src = iy * G + ix
+            for dy in [-1, 0, 1]:
+                for dx in [-1, 0, 1]:
+                    if dy == 0 and dx == 0:
+                        continue
+                    ny_, nx_ = iy + dy, ix + dx
+                    if 0 <= ny_ < G and 0 <= nx_ < G:
+                        rows.append(src)
+                        cols.append(ny_ * G + nx_)
+    return torch.tensor([rows, cols], dtype=torch.long, device=device)
+
+
 def _eval_deep(model, loader, device, grid=64, is_gnn=False, is_diffusion=False):
     totals = {"heatmap_mae": 0, "hotspot_iou": 0, "score_mae": 0, "score_pearson": 0}
     n = 0
     N = grid * grid
-    coords = torch.arange(N)
-    edge_full = torch.stack([coords.repeat_interleave(N), coords.repeat(N)], 0).to(device)
+    edge_base = _make_8neighbor_edges(grid, device)  # sparse 8-neighbor, same as training
+    N_edges = edge_base.shape[1]
 
     with torch.no_grad():
         for batch in loader:
@@ -66,7 +84,8 @@ def _eval_deep(model, loader, device, grid=64, is_gnn=False, is_diffusion=False)
                 x_norm = xx.flatten().repeat(B).to(device)
                 y_norm = yy.flatten().repeat(B).to(device)
                 bv = torch.arange(B, device=device).repeat_interleave(N)
-                edges = torch.cat([edge_full + b * N for b in range(B)], 1)
+                offsets = torch.arange(B, device=device).unsqueeze(1) * N
+                edges = (edge_base.unsqueeze(0) + offsets.unsqueeze(-1)).reshape(2, B * N_edges)
                 pred = model(feats, edges, bv, x_norm, y_norm)
             elif is_diffusion:
                 pred = model.sample(x, n_samples=1)

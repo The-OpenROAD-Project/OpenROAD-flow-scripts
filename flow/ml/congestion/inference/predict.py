@@ -30,6 +30,9 @@ def _load_model(model_name: str, checkpoint: str, device: torch.device):
     if model_name == "unet":
         from unet import CongestionUNet
         model = CongestionUNet(in_channels=4, base_features=32)
+    elif model_name == "swin":
+        from swin import CongestionSwin
+        model = CongestionSwin(in_channels=4)
     elif model_name == "gnn":
         from gnn import CongestionGNN
         model = CongestionGNN()
@@ -59,13 +62,22 @@ def predict(args):
 
     with torch.no_grad():
         if args.model == "gnn":
-            # Build trivial grid graph for inference
             G = x.shape[-1]
             N = G * G
-            coords = torch.arange(N)
-            row = coords.repeat_interleave(N)
-            col = coords.repeat(N)
-            edge_index = torch.stack([row, col], dim=0).to(device)
+            # Build sparse 8-neighbor edge_index (matches training)
+            rows, cols = [], []
+            for iy in range(G):
+                for ix in range(G):
+                    src = iy * G + ix
+                    for dy in [-1, 0, 1]:
+                        for dx in [-1, 0, 1]:
+                            if dy == 0 and dx == 0:
+                                continue
+                            ny_, nx_ = iy + dy, ix + dx
+                            if 0 <= ny_ < G and 0 <= nx_ < G:
+                                rows.append(src)
+                                cols.append(ny_ * G + nx_)
+            edge_index = torch.tensor([rows, cols], dtype=torch.long, device=device)
             ys = torch.arange(G).float() / (G - 1)
             xs = torch.arange(G).float() / (G - 1)
             yy, xx = torch.meshgrid(ys, xs, indexing="ij")
@@ -129,7 +141,7 @@ def predict(args):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--features",   required=True)
-    ap.add_argument("--model",      choices=["unet", "gnn"], default="unet")
+    ap.add_argument("--model",      choices=["unet", "swin", "gnn"], default="unet")
     ap.add_argument("--checkpoint", required=True)
     ap.add_argument("--out-dir",    default="ml/congestion/data")
     predict(ap.parse_args())

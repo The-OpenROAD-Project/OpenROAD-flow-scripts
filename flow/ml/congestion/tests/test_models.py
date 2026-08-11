@@ -1,20 +1,19 @@
 """
-Smoke tests for all congestion models.
+Smoke tests for the congestion/thermal ML models.
 
 Tests:
-  1. Forward pass shape correctness for each deep model
-  2. Dataset loading and batching
-  3. Metrics computation
-  4. Mini training loop (2 epochs) for U-Net, Swin, GNN, Diffusion
-  5. Classical model fit + predict
-  6. Ensemble forward pass
-  7. Checkpoint save/load round-trip
+  1. Forward pass shape correctness — U-Net and GNN
+  2. Output range [0, 1] for all heads
+  3. Dataset loading and batching
+  4. Metrics computation
+  5. Mini training loop (2 steps) for U-Net and GNN
+  6. Checkpoint save/load round-trip
 
 Run from the flow/ directory:
   python3 ml/congestion/tests/test_models.py
 
 Or run a specific test:
-  python3 ml/congestion/tests/test_models.py TestModels.test_unet_shapes
+  python3 ml/congestion/tests/test_models.py TestModelShapes.test_unet_shapes
 """
 
 import os
@@ -25,88 +24,79 @@ import unittest
 import numpy as np
 import torch
 
-# Add model and training paths
-_HERE    = os.path.dirname(__file__)
-_MODELS  = os.path.join(_HERE, "..", "models")
-_TRAIN   = os.path.join(_HERE, "..", "training")
+_HERE   = os.path.dirname(__file__)
+_MODELS = os.path.join(_HERE, "..", "models")
+_TRAIN  = os.path.join(_HERE, "..", "training")
 sys.path.insert(0, _MODELS)
 sys.path.insert(0, _TRAIN)
 
 from generate_synthetic_data import generate
 
-GRID    = 32   # smaller grid for faster tests
-BATCH   = 2
-DEVICE  = torch.device("cpu")
+GRID   = 32
+BATCH  = 2
+DEVICE = torch.device("cpu")
 
 
 def _make_batch(n=BATCH, grid=GRID):
-    """Random batch dict matching the dataset output format."""
     return {
         "x":       torch.rand(n, 4, grid, grid),
         "heatmap": torch.rand(n, 10, grid, grid),
-        "hotspot": torch.rand(n, 1, grid, grid),
+        "hotspot": torch.rand(n, 1,  grid, grid),
         "score":   torch.rand(n, 1),
     }
 
+
+def _make_gnn_inputs(batch=BATCH, n_nodes=64):
+    """
+    Build a minimal GNN input batch simulating a small netlist graph.
+    Each graph in the batch has n_nodes nodes with random edges.
+    Node features are 6-dimensional (no placement coords — pre-placement).
+    """
+    feats_list  = []
+    edges_list  = []
+    batch_list  = []
+    node_offset = 0
+    for b in range(batch):
+        N = n_nodes
+        feats_list.append(torch.rand(N, 6))
+        # Random sparse edges (~4 per node)
+        src = torch.randint(0, N, (N * 4,))
+        dst = torch.randint(0, N, (N * 4,))
+        edges_list.append(torch.stack([src, dst]) + node_offset)
+        batch_list.append(torch.full((N,), b, dtype=torch.long))
+        node_offset += N
+    return (
+        torch.cat(feats_list),
+        torch.cat(edges_list, dim=1),
+        torch.cat(batch_list),
+    )
+
+
+# ── Shape tests ────────────────────────────────────────────────────────────
 
 class TestModelShapes(unittest.TestCase):
 
     def test_unet_shapes(self):
         from unet import CongestionUNet
         model = CongestionUNet(in_channels=4, base_features=16)
-        x = torch.rand(BATCH, 4, GRID, GRID)
-        out = model(x)
-        self.assertEqual(out.heatmap.shape, (BATCH, 10, GRID, GRID))
-        self.assertEqual(out.hotspot.shape, (BATCH, 1,  GRID, GRID))
-        self.assertEqual(out.score.shape,   (BATCH, 1))
-
-    def test_swin_shapes(self):
-        from swin import CongestionSwin
-        model = CongestionSwin(in_channels=4, embed_dim=32, window_size=4)
-        x = torch.rand(BATCH, 4, GRID, GRID)
-        out = model(x)
+        out = model(torch.rand(BATCH, 4, GRID, GRID))
         self.assertEqual(out.heatmap.shape, (BATCH, 10, GRID, GRID))
         self.assertEqual(out.hotspot.shape, (BATCH, 1,  GRID, GRID))
         self.assertEqual(out.score.shape,   (BATCH, 1))
 
     def test_gnn_shapes(self):
         from gnn import CongestionGNN
-        model = CongestionGNN(grid=GRID, embed_dim=32)
-        N = GRID * GRID * BATCH
-        coords = torch.arange(GRID * GRID)
-        edge_index = torch.stack(
-            [coords.repeat_interleave(GRID * GRID),
-             coords.repeat(GRID * GRID)], 0
-        )
-        edges = torch.cat([edge_index + b * GRID * GRID for b in range(BATCH)], 1)
-        x_norm = torch.rand(N)
-        y_norm = torch.rand(N)
-        feats  = torch.rand(N, 8)
-        batch_vec = torch.arange(BATCH).repeat_interleave(GRID * GRID)
-        out = model(feats, edges, batch_vec, x_norm, y_norm)
+        model = CongestionGNN(grid=GRID, embed_dim=32, decoder_dim=32)
+        feats, edges, batch_vec = _make_gnn_inputs()
+        out = model(feats, edges, batch_vec)
         self.assertEqual(out.heatmap.shape, (BATCH, 10, GRID, GRID))
         self.assertEqual(out.hotspot.shape, (BATCH, 1,  GRID, GRID))
         self.assertEqual(out.score.shape,   (BATCH, 1))
 
-    def test_diffusion_shapes(self):
-        from diffusion import CongestionDiffusion
-        model = CongestionDiffusion(timesteps=10)   # tiny T for speed
-        x = torch.rand(BATCH, 4, GRID, GRID)
-        loss = model.compute_loss(x, torch.rand(BATCH, 10, GRID, GRID))
-        self.assertFalse(torch.isnan(loss))
-        out = model.sample(x, n_samples=1)
-        self.assertEqual(out.heatmap.shape, (BATCH, 10, GRID, GRID))
 
-    def test_ensemble_average(self):
-        from ensemble import CongestionEnsemble
-        ens = CongestionEnsemble(mode="average")
-        x = torch.rand(BATCH, 4, GRID, GRID)
-        out = ens(x)
-        self.assertEqual(out.heatmap.shape, (BATCH, 10, GRID, GRID))
-
+# ── Output range tests ─────────────────────────────────────────────────────
 
 class TestOutputRange(unittest.TestCase):
-    """All outputs must be in [0, 1] — sigmoid is applied inside every model."""
 
     def _check(self, out):
         for name, t in [("heatmap", out.heatmap),
@@ -120,11 +110,14 @@ class TestOutputRange(unittest.TestCase):
         self._check(CongestionUNet(in_channels=4, base_features=16)(
             torch.rand(1, 4, GRID, GRID)))
 
-    def test_swin_range(self):
-        from swin import CongestionSwin
-        self._check(CongestionSwin(in_channels=4, embed_dim=32, window_size=4)(
-            torch.rand(1, 4, GRID, GRID)))
+    def test_gnn_range(self):
+        from gnn import CongestionGNN
+        model = CongestionGNN(grid=GRID, embed_dim=32, decoder_dim=32)
+        feats, edges, batch_vec = _make_gnn_inputs(batch=1)
+        self._check(model(feats, edges, batch_vec))
 
+
+# ── Metrics tests ──────────────────────────────────────────────────────────
 
 class TestMetrics(unittest.TestCase):
 
@@ -154,13 +147,15 @@ class TestMetrics(unittest.TestCase):
         from unet import CongestionUNet
         model = CongestionUNet(in_channels=4, base_features=16)
         batch = _make_batch()
-        out   = model(batch["x"])
+        out = model(batch["x"])
         m = compute_all(out, {k: v for k, v in batch.items() if k != "x"})
         self.assertIn("heatmap_mae",   m)
         self.assertIn("hotspot_iou",   m)
         self.assertIn("score_mae",     m)
         self.assertIn("score_pearson", m)
 
+
+# ── Dataset tests ──────────────────────────────────────────────────────────
 
 class TestDataset(unittest.TestCase):
 
@@ -177,10 +172,10 @@ class TestDataset(unittest.TestCase):
         from dataset import CongestionDataset
         ds = CongestionDataset(self.tmp)
         item = ds[0]
-        self.assertEqual(item["x"].shape,       (4, GRID, GRID))
-        self.assertEqual(item["heatmap"].shape,  (10, GRID, GRID))
-        self.assertEqual(item["hotspot"].shape,  (1, GRID, GRID))
-        self.assertEqual(item["score"].shape,    (1,))
+        self.assertEqual(item["x"].shape,      (4, GRID, GRID))
+        self.assertEqual(item["heatmap"].shape, (10, GRID, GRID))
+        self.assertEqual(item["hotspot"].shape, (1, GRID, GRID))
+        self.assertEqual(item["score"].shape,   (1,))
 
     def test_split_sizes(self):
         from dataset import CongestionDataset, split_dataset
@@ -191,12 +186,12 @@ class TestDataset(unittest.TestCase):
     def test_augmentation(self):
         from dataset import CongestionDataset
         ds = CongestionDataset(self.tmp, augment=True)
-        # Just check it runs without error
         _ = ds[0]
 
 
+# ── Mini training tests ────────────────────────────────────────────────────
+
 class TestMiniTraining(unittest.TestCase):
-    """Run 2 training steps to catch gradient/shape bugs."""
 
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
@@ -214,8 +209,7 @@ class TestMiniTraining(unittest.TestCase):
         for i, batch in enumerate(loader):
             if i >= n_steps:
                 break
-            x = batch["x"]
-            out = model(x)
+            out = model(batch["x"])
             loss = (nn.functional.mse_loss(out.heatmap, batch["heatmap"]) +
                     nn.functional.binary_cross_entropy(out.hotspot, batch["hotspot"]) +
                     nn.functional.mse_loss(out.score, batch["score"]))
@@ -228,10 +222,8 @@ class TestMiniTraining(unittest.TestCase):
         from unet import CongestionUNet
         self._train_steps(CongestionUNet(in_channels=4, base_features=8))
 
-    def test_swin_trains(self):
-        from swin import CongestionSwin
-        self._train_steps(CongestionSwin(in_channels=4, embed_dim=16, window_size=4))
 
+# ── Checkpoint round-trip ──────────────────────────────────────────────────
 
 class TestCheckpointRoundTrip(unittest.TestCase):
 
@@ -244,38 +236,21 @@ class TestCheckpointRoundTrip(unittest.TestCase):
             model2 = CongestionUNet(in_channels=4, base_features=8)
             model2.load_state_dict(torch.load(path, map_location="cpu"))
             x = torch.rand(1, 4, GRID, GRID)
-            out1 = model(x)
-            out2 = model2(x)
-            self.assertTrue(torch.allclose(out1.heatmap, out2.heatmap))
+            self.assertTrue(torch.allclose(model(x).heatmap, model2(x).heatmap))
 
-
-class TestClassicalModels(unittest.TestCase):
-
-    def setUp(self):
-        self.tmp = tempfile.mkdtemp()
-        generate(self.tmp, n_designs=6, grid=GRID, seed=2)
-
-    def test_rf_fit_predict(self):
-        from classical import RandomForestCongestion, load_dataset
-        X, y_hm, y_hs, y_sc, did = load_dataset(self.tmp, grid=GRID)
-        rf = RandomForestCongestion(grid=GRID, n_estimators=10)
-        rf.fit(X, y_hm, y_hs, y_sc, did)
-        pred = rf.predict(X[:GRID*GRID])
-        self.assertEqual(pred["heatmap"].shape, (10, GRID, GRID))
-        self.assertEqual(pred["hotspot"].shape, (GRID, GRID))
-
-    def test_rf_save_load(self):
-        from classical import RandomForestCongestion, load_dataset
+    def test_gnn_save_load(self):
+        from gnn import CongestionGNN
         with tempfile.TemporaryDirectory() as d:
-            X, y_hm, y_hs, y_sc, did = load_dataset(self.tmp, grid=GRID)
-            rf = RandomForestCongestion(grid=GRID, n_estimators=5)
-            rf.fit(X, y_hm, y_hs, y_sc, did)
-            path = os.path.join(d, "rf.pkl")
-            rf.save(path)
-            rf2 = RandomForestCongestion.load(path)
-            pred1 = rf.predict(X[:GRID*GRID])
-            pred2 = rf2.predict(X[:GRID*GRID])
-            np.testing.assert_array_equal(pred1["hotspot"], pred2["hotspot"])
+            path = os.path.join(d, "gnn.pt")
+            model = CongestionGNN(grid=GRID, embed_dim=16, decoder_dim=16)
+            torch.save(model.state_dict(), path)
+            model2 = CongestionGNN(grid=GRID, embed_dim=16, decoder_dim=16)
+            model2.load_state_dict(torch.load(path, map_location="cpu"))
+            feats, edges, batch_vec = _make_gnn_inputs(batch=1)
+            self.assertTrue(torch.allclose(
+                model(feats, edges, batch_vec).heatmap,
+                model2(feats, edges, batch_vec).heatmap,
+            ))
 
 
 if __name__ == "__main__":

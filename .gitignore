@@ -109,8 +109,10 @@ MODULE.bazel.lock
 venv/
 tmp/
 
-# Congestion ML — generated data and model weights
+# Congestion/thermal ML — generated data and model weights
 flow/ml/congestion/data/*.npy
 flow/ml/congestion/data/*.npz
 flow/ml/congestion/data/*.png
 flow/ml/congestion/checkpoints/*.pt
+flow/ml/data/
+flow/thermal_report.html

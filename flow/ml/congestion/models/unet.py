@@ -40,7 +40,12 @@ class CongestionUNet(nn.Module):
     The bottleneck features are fed to all three heads.
     """
 
-    def __init__(self, in_channels: int = 4, base_features: int = 32):
+    def __init__(
+        self,
+        in_channels: int = 4,
+        base_features: int = 32,
+        num_heatmap_layers: int = 10,
+    ):
         super().__init__()
         f = base_features
 
@@ -68,8 +73,10 @@ class CongestionUNet(nn.Module):
         self.up1   = nn.ConvTranspose2d(f * 2, f, 2, stride=2)
         self.dec1  = _ConvBlock(f * 2,  f)
 
-        # Output heads (all operate on the full-resolution decoder output)
-        self.heatmap_head = HeatmapHead(f, num_layers=10)
+        # Output heads (all operate on the full-resolution decoder output).
+        # num_heatmap_layers=1 for the thermal track (single temperature map);
+        # num_heatmap_layers=10 (default) for the congestion track (per routing layer).
+        self.heatmap_head = HeatmapHead(f, num_layers=num_heatmap_layers)
         self.hotspot_head = HotspotHead(f)
         self.score_head   = ScoreHead(f)
 
