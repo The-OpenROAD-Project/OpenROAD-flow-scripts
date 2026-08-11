@@ -1448,6 +1448,13 @@ RTLMP_ARGS:
     Overrides all other RTL macro placer arguments.
   stages:
     - floorplan
+RTLMP_KEEP_CLUSTERING:
+  description: >
+    Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as
+    nested dbGroups.
+  default: 0
+  stages:
+    - floorplan
 GDS_ALLOW_EMPTY:
   description: >
     Single regular expression of module names of macros that have no .gds file

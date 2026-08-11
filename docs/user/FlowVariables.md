@@ -255,6 +255,7 @@ configuration file.
 | <a name="RTLMP_FENCE_LY"></a>RTLMP_FENCE_LY| Defines the lower left Y coordinate for the global fence bounding box in microns.| 0.0|
 | <a name="RTLMP_FENCE_UX"></a>RTLMP_FENCE_UX| Defines the upper right X coordinate for the global fence bounding box in microns.| 0.0|
 | <a name="RTLMP_FENCE_UY"></a>RTLMP_FENCE_UY| Defines the upper right Y coordinate for the global fence bounding box in microns.| 0.0|
+| <a name="RTLMP_KEEP_CLUSTERING"></a>RTLMP_KEEP_CLUSTERING| Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as nested dbGroups.| 0|
 | <a name="RTLMP_MAX_INST"></a>RTLMP_MAX_INST| Maximum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
 | <a name="RTLMP_MAX_LEVEL"></a>RTLMP_MAX_LEVEL| Maximum depth of the physical hierarchy tree.| 2|
 | <a name="RTLMP_MAX_MACRO"></a>RTLMP_MAX_MACRO| Maximum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
@@ -429,6 +430,7 @@ configuration file.
 - [RTLMP_FENCE_LY](#RTLMP_FENCE_LY)
 - [RTLMP_FENCE_UX](#RTLMP_FENCE_UX)
 - [RTLMP_FENCE_UY](#RTLMP_FENCE_UY)
+- [RTLMP_KEEP_CLUSTERING](#RTLMP_KEEP_CLUSTERING)
 - [RTLMP_MAX_INST](#RTLMP_MAX_INST)
 - [RTLMP_MAX_LEVEL](#RTLMP_MAX_LEVEL)
 - [RTLMP_MAX_MACRO](#RTLMP_MAX_MACRO)

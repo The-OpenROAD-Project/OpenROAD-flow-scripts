@@ -998,6 +998,13 @@
       "floorplan"
     ]
   },
+  "RTLMP_KEEP_CLUSTERING": {
+    "default": 0,
+    "description": "Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as nested dbGroups.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
   "RTLMP_MAX_INST": {
     "description": "Maximum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.\n",
     "stages": [
