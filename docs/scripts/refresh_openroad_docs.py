@@ -223,9 +223,7 @@ def extract_section(text: str, upstream_path: str, start: str, end: str) -> str:
     *now*, naming both headings, instead of vendoring a page the documentation
     build cannot splice.
     """
-    match = re.search(
-        "%s(.*?)%s" % (re.escape(start), re.escape(end)), text, re.DOTALL
-    )
+    match = re.search("%s(.*?)%s" % (re.escape(start), re.escape(end)), text, re.DOTALL)
     if match is None:
         raise RuntimeError(
             "cannot find a section starting at '%s' and ending at '%s' in "
