@@ -1,16 +1,16 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "ac96d25af26f4c444d6d33c37bcbe873ae3330f7",
+        "value": "2bfce367a7b9e450c60e37954e2129f0b0d0018c",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "ef0ae6eee3a802961bdd11bae631bb23692b1abe",
+        "value": "9ad86d2c1fc49d89f16f179403a07403d067c7b4",
         "compare": "==",
         "level": "warning"
     },
     "synth__design__instance__area__stdcell": {
-        "value": 677000.0,
+        "value": 676000.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -38,11 +38,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -2.32,
+        "value": -2.1,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -254.0,
+        "value": -219.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -54,7 +54,7 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 4314,
+        "value": 4098,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -269.0,
+        "value": -263.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -82,19 +82,19 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 8,
+        "value": 96,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 2725,
+        "value": 2336,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -2.16,
+        "value": -2.14,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -227.0,
+        "value": -221.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 5568932,
+        "value": 5568093,
         "compare": "<="
     }
 }
