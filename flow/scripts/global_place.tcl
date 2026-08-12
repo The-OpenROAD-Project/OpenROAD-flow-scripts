@@ -28,6 +28,14 @@ append_env_var global_placement_args GPL_ROUTABILITY_DRIVEN -routability_driven 
 
 append_env_var global_placement_args GPL_RANDOM_SEED -random_seed 1
 
+if { [info exists ::env(GPL_WIRELENGTH_PENALTY)] } {
+  lappend global_placement_args -init_wirelength_coef $::env(GPL_WIRELENGTH_PENALTY)
+}
+
+if { [info exists ::env(GPL_TIMING_SPAN_CLOCK_PERCENT)] } {
+  lappend global_placement_args -virtual_cts_max_skew_fraction $::env(GPL_TIMING_SPAN_CLOCK_PERCENT)
+}
+
 # Parameters for timing driven mode in global placement
 if { $::env(GPL_TIMING_DRIVEN) } {
   lappend global_placement_args {-timing_driven}

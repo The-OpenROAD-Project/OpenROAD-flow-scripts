@@ -664,6 +664,16 @@ GPL_TIMING_DRIVEN:
   stages:
     - place
   default: 1
+GPL_WIRELENGTH_PENALTY:
+  description: |
+    Global placement wirelength penalty (passed as -init_wirelength_coef or similar logic).
+  stages:
+    - place
+GPL_TIMING_SPAN_CLOCK_PERCENT:
+  description: |
+    Global placement timing weight span as a percent of clock (passed to virtual_cts_max_skew_fraction or similar logic).
+  stages:
+    - place
 GPL_ROUTABILITY_DRIVEN:
   description: |
     Specifies whether the placer should use routability driven placement.
