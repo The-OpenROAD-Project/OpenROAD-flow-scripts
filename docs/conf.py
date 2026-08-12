@@ -161,7 +161,7 @@ def read_vendored(fname):
     """Read a file vendored from the OpenROAD repository."""
     path = os.path.join(VENDOR_DIR, fname)
     try:
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             return f.read()
     except OSError as error:
         raise RuntimeError(
@@ -171,10 +171,10 @@ def read_vendored(fname):
 
 
 def swap_prefix(file, old, new):
-    with open(file, "r") as f:
+    with open(file, "r", encoding="utf-8") as f:
         lines = f.read()
     lines = lines.replace(old, new)
-    with open(file, "wt") as f:
+    with open(file, "wt", encoding="utf-8") as f:
         f.write(lines)
 
 
@@ -211,10 +211,10 @@ def setup(app):
             "anchor here and in docs/scripts/check_vendored_docs.py."
             % (gitguide_anchor, os.path.join(VENDOR_DIR, "GitGuide.md"), REFRESH_CMD)
         )
-    with open("contrib/GitGuideAdapter.md", "r") as f:
+    with open("contrib/GitGuideAdapter.md", "r", encoding="utf-8") as f:
         adapter_content = f.read()
     content = content.replace(gitguide_anchor, adapter_content + "\n" + gitguide_anchor)
-    with open("contrib/GitGuide.md", "w") as f:
+    with open("contrib/GitGuide.md", "w", encoding="utf-8") as f:
         f.write(content)
 
     # Create a copy of the index.md file
@@ -240,12 +240,12 @@ def setup(app):
                 REFRESH_CMD,
             )
         )
-    extracted_content = "\n#### Supported Operating Systems" + section[
-        len(start_pattern) :
-    ]
+    extracted_content = (
+        "\n#### Supported Operating Systems" + section[len(start_pattern) :]
+    )
 
     # Find insert position
-    with open("index2.md", "r") as f:
+    with open("index2.md", "r", encoding="utf-8") as f:
         existing_content = f.read()
     insert_anchor = "### Setup"
     match = re.search(re.escape(insert_anchor), existing_content)
@@ -256,7 +256,7 @@ def setup(app):
             "or update the anchor here and in "
             "docs/scripts/check_vendored_docs.py." % insert_anchor
         )
-    with open("index2.md", "w") as f:
+    with open("index2.md", "w", encoding="utf-8") as f:
         insert_position = match.end() + 1
         before_insert = existing_content[:insert_position]
         after_insert = existing_content[insert_position:]
@@ -267,5 +267,5 @@ def setup(app):
         f.write(updated_content)
 
     # Manpage page, vendored from OpenROAD's src/utl/README.md
-    with open("Manpage.md", "w") as f:
+    with open("Manpage.md", "w", encoding="utf-8") as f:
         f.write(read_vendored("utl-README.md"))
