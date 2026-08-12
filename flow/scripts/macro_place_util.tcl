@@ -67,6 +67,13 @@ if { [find_macros] != "" } {
   }
 
   log_cmd rtl_macro_placer {*}$all_args
+
+  # If macros are already fixed (e.g. by floorplan_anneal), rtl_macro_placer skips placement
+  # and never creates blockages. We must explicitly apply the base halo to fixed macros.
+  if { [info commands set_macro_base_halo] ne "" && [info commands block_macro_channels] ne "" } {
+    set_macro_base_halo $halo_x $halo_y $halo_x $halo_y
+    block_macro_channels
+  }
 } else {
   puts "No macros found: Skipping macro_placement"
 }
