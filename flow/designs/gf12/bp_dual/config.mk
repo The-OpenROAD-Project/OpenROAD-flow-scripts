@@ -68,3 +68,11 @@ export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 export MACRO_PLACE_HALO = 7 7
 
 export OPT_POST_GRT_WNS = 0
+
+# Have to use Verilog stubs for LEC for some of the RF's, since they have
+# a pin that has a condition that references multiple clocks. These two settings
+# use the Verilog stubs and remove the Liberty files from the kepler-formal
+# configuration file
+export LEC_AUX_VERILOG_FILES = $(PLATFORM_DIR)/verilog/gf12_1r1w_d32_w64_m1.v
+export REMOVE_LIBS_FOR_LEC   = $(PLATFORM_DIR)/lib/gf12_1r1w_d32_w64_m1_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+			       $(OBJECTS_DIR)/gf12_1r1w_d32_w64_m1_ffpg_sigcmin_0p88v_0p88v_m40c_mod.lib
