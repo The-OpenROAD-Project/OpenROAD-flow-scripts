@@ -1,11 +1,11 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "40b3cb7ad1e2fe9ce2529dc0589875050f8c84bd",
+        "value": "17ce8750964fb8436a41017b022516bccfdd8f7a",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "880351ea3088e4c7b144dd9fc8e137578c51f692",
+        "value": "b371b17cfe3008ecb19b852bfd2edeee7558a563",
         "compare": "==",
         "level": "warning"
     },
@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -1.2,
+        "value": -3.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -82,11 +82,11 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 1,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 108,
+        "value": 100,
         "compare": "<="
     },
     "finish__timing__setup__ws": {

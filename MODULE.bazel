@@ -65,17 +65,6 @@ single_version_override(
     version = "3.8.2.bcr.7",
 )
 
-# tclZipfs.c's '#include "crypt.h"' picks up glibc's crypt.h instead of
-# the vendored minizip one when glibc headers are explicit -isystem
-# directories (hermetic-llvm zero-sysroot toolchain). Drop when fixed
-# in a tcl_lang BCR release.
-single_version_override(
-    module_name = "tcl_lang",
-    patch_strip = 1,
-    patches = [
-        "//patches/tcl_lang:0001-tclZipfs-include-vendored-minizip-crypt.h-by-path.patch",
-    ],
-)
 
 bazel_dep(name = "openroad", dev_dependency = True)
 local_path_override(
@@ -129,6 +118,17 @@ git_override(
     commit = "7753ea70431d85929292b90c33b32f6dbdb3b048",
     init_submodules = True,
     remote = "https://github.com/povik/yosys-slang.git",
+)
+
+bazel_dep(name = "fakeram", dev_dependency = True)
+git_override(
+    module_name = "fakeram",
+    commit = "6f62c655952b683cda679d80850cb557cc3c262e",
+    patch_strip = 1,
+    patches = [
+        "//patches/fakeram:0001-Add-ORFS-ASAP7-backend.patch",
+    ],
+    remote = "https://github.com/The-OpenROAD-Project/FakeRAM2.0.git",
 )
 
 # --- Extensions ---

@@ -23,6 +23,13 @@ proc load_design { design_file sdc_file } {
         read_lef $lef
       }
     }
+    # AUTO_MEMORIES: abstract LEFs generated pre-synthesis; globbed
+    # because the file names are only known at run time.
+    if { [env_var_equals AUTO_MEMORIES 1] } {
+      foreach lef [glob -nocomplain $::env(RESULTS_DIR)/memories/*.lef] {
+        read_lef $lef
+      }
+    }
     read_verilog $::env(RESULTS_DIR)/$design_file
     log_cmd link_design {*}[hier_options] $::env(DESIGN_NAME)
   } elseif { $ext == ".odb" } {
