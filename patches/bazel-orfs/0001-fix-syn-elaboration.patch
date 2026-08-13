@@ -1,0 +1,36 @@
+diff --git a/private/rules.bzl b/private/rules.bzl
+index 2c77c53b9639..1bab7f1bda74 100644
+--- a/private/rules.bzl
++++ b/private/rules.bzl
+@@ -1229,13 +1229,13 @@ def _yosys_impl(ctx):
+             command = " && ".join(commands),
+             env = config_overrides(
+                 ctx,
+-                verilog_arguments([]) |
++                verilog_arguments(ctx.files.verilog_files) |
+                 flow_environment(ctx) |
+                 yosys_environment(ctx) |
+                 config_environment(config),
+             ),
+             inputs = depset(
+-                [canon_output, config] + ctx.files.extra_configs,
++                [canon_output, config] + ctx.files.extra_configs + ctx.files.verilog_files,
+                 transitive = [
+                     data_inputs(ctx),
+                     pdk_inputs(ctx),
+@@ -1258,13 +1258,13 @@ def _yosys_impl(ctx):
+             """.format(make = ctx.executable._make.path, out = variables.path),
+             env = config_overrides(
+                 ctx,
+-                verilog_arguments([]) |
++                verilog_arguments(ctx.files.verilog_files) |
+                 flow_environment(ctx) |
+                 yosys_environment(ctx) |
+                 config_environment(config),
+             ),
+             inputs = depset(
+-                [canon_output, config] + ctx.files.extra_configs,
++                [canon_output, config] + ctx.files.extra_configs + ctx.files.verilog_files,
+                 transitive = [
+                     data_inputs(ctx),
+                     pdk_inputs(ctx),

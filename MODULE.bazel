@@ -65,22 +65,18 @@ single_version_override(
     version = "3.8.2.bcr.7",
 )
 
-# tclZipfs.c's '#include "crypt.h"' picks up glibc's crypt.h instead of
-# the vendored minizip one when glibc headers are explicit -isystem
-# directories (hermetic-llvm zero-sysroot toolchain). Drop when fixed
-# in a tcl_lang BCR release.
-single_version_override(
-    module_name = "tcl_lang",
-    patch_strip = 1,
-    patches = [
-        "//patches/tcl_lang:0001-tclZipfs-include-vendored-minizip-crypt.h-by-path.patch",
-    ],
-)
 
 bazel_dep(name = "openroad", dev_dependency = True)
-local_path_override(
+git_override(
     module_name = "openroad",
-    path = "tools/OpenROAD",
+    commit = "08aa0b1c5ce18e55510560724e38f96f97bc96ad",
+    remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
+    init_submodules = True,
+    patch_strip = 1,
+    patches = [
+        "//patches/openroad:0001-Add-PDK-aware-GPL-parameters.patch",
+        "//patches/openroad:0002-yak-shave-cts-options.patch",
+    ],
 )
 
 bazel_dep(name = "qt-bazel", dev_dependency = True)
@@ -110,6 +106,10 @@ git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
     remote = BAZEL_ORFS_REMOTE,
+    patch_strip = 1,
+    patches = [
+        "//patches/bazel-orfs:0001-fix-syn-elaboration.patch",
+    ],
 )
 
 git_override(
