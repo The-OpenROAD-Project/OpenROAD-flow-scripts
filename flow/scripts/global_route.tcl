@@ -57,7 +57,7 @@ proc global_route_helper { } {
   log_cmd pin_access {*}$additional_args
 
   if { ![do_global_route $res_aware $use_cugr] } {
-    return
+    return 0
   }
 
   set_placement_padding -global \
@@ -91,7 +91,7 @@ proc global_route_helper { } {
       ![run_global_route_and_catch_failures -end_incremental {*}$res_aware \
         -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt]
     } {
-      return
+      return 0
     }
 
     # Repair timing using global route parasitics
@@ -112,7 +112,7 @@ proc global_route_helper { } {
       ![run_global_route_and_catch_failures -end_incremental {*}$res_aware \
         -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt]
     } {
-      return
+      return 0
     }
 
     log_cmd estimate_parasitics -global_routing
@@ -142,7 +142,7 @@ proc global_route_helper { } {
       ![run_global_route_and_catch_failures -end_incremental {*}$res_aware \
         -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt]
     } {
-      return
+      return 0
     }
   }
 
@@ -165,11 +165,13 @@ proc global_route_helper { } {
   # Write SDC to results with updated clock periods that are just failing.
   # Use make target update_sdc_clock to install the updated sdc.
   source [file join $::env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
+  
+  return 1
+}
 
+if { [global_route_helper] } {
   write_guides $::env(RESULTS_DIR)/route.guide
   source_step_tcl POST GLOBAL_ROUTE
   orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
   orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
 }
-
-global_route_helper
