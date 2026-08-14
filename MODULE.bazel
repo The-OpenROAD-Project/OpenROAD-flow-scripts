@@ -7,7 +7,7 @@ module(
 
 # --- Regular dependencies (propagated to downstream consumers) ---
 
-bazel_dep(name = "rules_python", version = "1.8.5")
+bazel_dep(name = "rules_python", version = "2.0.0")
 bazel_dep(name = "rules_shell", version = "0.6.1")
 
 # --- Dev dependencies (only honoured when @orfs is the root module) ---
