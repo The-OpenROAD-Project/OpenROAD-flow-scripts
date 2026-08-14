@@ -28,4 +28,7 @@ common --@rules_python//python/config_settings:bootstrap_impl=script
 # bazel-orfs itself does (its own .bazelrc:7).
 common --lockfile_mode=off
 
+# Suppress debug-level UI messages (such as pycross extension warnings)
+common --ui_event_filters=-debug
+
 try-import %workspace%/user.bazelrc
