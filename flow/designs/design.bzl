@@ -1,7 +1,7 @@
 """BUILD boilerplate for flow/designs/."""
 
-load("@bazel-orfs//:openroad.bzl", "orfs_flow")
-load("@orfs_designs//:designs.bzl", "orfs_design")
+load("@bazel-orfs//:openroad.bzl", "orfs_flow", "orfs_run")
+load("@orfs_designs//:designs.bzl", "orfs_design", "DESIGNS")
 
 # Per filegroup target: extensions included in the filegroup.
 # bazel-orfs's config_mk_parser produces these target names from
@@ -18,7 +18,7 @@ _GROUPS = {
 # cross-package references resolve. Kept tight on purpose: globbing "*"
 # silently exposes LICENSE/.gitignore/etc. as the public API surface.
 # gds/gds.gz are inputs in hierarchical flows via ADDITIONAL_GDS.
-_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib", "gds", "gds.gz"]
+_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib", "gds", "gds.gz", "memories"]
 
 _EXPORTS_SENTINEL = "_orfs_design_exports_sentinel"
 
@@ -78,6 +78,36 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         local_arguments = local_arguments,
         blender = True,
     )
+
+    pkg = native.package_name()
+    if pkg.startswith("flow/designs/"):
+        design_id = pkg[len("flow/designs/"):]
+        if design_id in DESIGNS:
+            design_args = DESIGNS[design_id]["arguments"]
+            # Find the actual synth target name instantiated by orfs_design
+            synth_name = None
+            for rule_name in native.existing_rules().keys():
+                if rule_name.endswith("_synth"):
+                    synth_name = rule_name
+                    break
+            
+            if synth_name:
+                design_name = synth_name[:-6] # Remove "_synth"
+                args_copy = {k: v for k, v in design_args.items()}
+                args_copy["FLOW_VARIANT"] = "tune_gpl"
+                platform = args_copy.get("PLATFORM", design_id.split('/')[0])
+                real_design_name = args_copy.get("DESIGN_NAME", design_name)
+                orfs_run(
+                    name = design_name + "_tune_gpl",
+                    src = ":" + synth_name,
+                    data = [":design_config"],
+                outs = [
+                    "results/{}/{}/tune_gpl/target_function.txt".format(platform, real_design_name),
+                ],
+                arguments = args_copy,
+                script = "//flow:scripts/place_only_and_measure.tcl",
+                variant = "tune_gpl",
+            )
 
 def files(group, extra_srcs = None):
     """Named filegroup over conventional extensions.

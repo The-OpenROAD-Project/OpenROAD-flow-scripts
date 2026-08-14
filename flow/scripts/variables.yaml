@@ -664,6 +664,24 @@ GPL_TIMING_DRIVEN:
   stages:
     - place
   default: 1
+GPL_USE_ENGINE_DEFAULTS:
+  description: |
+    If set to 1, ignores ORFS-specific parameters and forces the global placement engine to use its internal hardcoded defaults.
+  stages:
+    - place
+  default: 0
+GPL_WIRELENGTH_PENALTY:
+  description: |
+    Global placement wirelength penalty (passed as -init_wirelength_coef or similar logic).
+  stages:
+    - place
+  default: 0.0627
+GPL_TIMING_SPAN_CLOCK_PERCENT:
+  description: |
+    Global placement timing weight span as a percent of clock (passed to virtual_cts_max_skew_fraction or similar logic).
+  stages:
+    - place
+  default: 0.240
 GPL_ROUTABILITY_DRIVEN:
   description: |
     Specifies whether the placer should use routability driven placement.
@@ -1644,3 +1662,9 @@ GRT_SEED:
     - grt
   tunable: 1
   type: int
+TIGHTEN_CLOCK_PERIOD:
+  description: >
+    Tighten the clock period by this fraction (e.g. 0.1 for 10%) before measuring minimum clock period. Used by the autotuner.
+  stages:
+    - place
+  default: 0.0638

@@ -1,5 +1,5 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
-load("@rules_python//python:defs.bzl", "py_library", "py_test")
+load("@rules_python//python:defs.bzl", "py_library", "py_test", "py_binary")
 
 # Expose every individual file under platforms/ as a public source-file
 # target, so designs in other packages can refer to e.g.
@@ -24,7 +24,10 @@ exports_files(
 # instead of vendoring its own (drifting) copy at the bazel-orfs repo
 # root. See bazel-orfs `private/rules.bzl`.
 exports_files(
-    ["scripts/synth.tcl"],
+    [
+        "scripts/synth.tcl",
+        "scripts/place_only_and_measure.tcl",
+    ],
     visibility = ["//visibility:public"],
 )
 
@@ -229,3 +232,46 @@ test_suite(
     name = "memories_tests",
     tests = ["memories_" + test for test in MEMORIES_TESTS],
 )
+
+py_binary(
+    name = "tune_gpl_magic",
+    srcs = ["scripts/tune_gpl_magic.py"],
+    deps = [
+        "@orfs-pip//optuna",
+        "@orfs-pip//pyyaml",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "aggregate_path_data",
+    srcs = ["scripts/aggregate_path_data.py"],
+    deps = [
+        "@orfs-pip//pandas",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "qor_plotter",
+    srcs = ["scripts/qor_plotter.py"],
+    deps = [
+        "@orfs-pip//pandas",
+        "@orfs-pip//pyside6",
+        "@orfs-pip//matplotlib",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "correlation_table",
+    srcs = ["scripts/generate_correlation_table.py"],
+    main = "scripts/generate_correlation_table.py",
+    deps = [
+        "@orfs-pip//pandas",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+
+

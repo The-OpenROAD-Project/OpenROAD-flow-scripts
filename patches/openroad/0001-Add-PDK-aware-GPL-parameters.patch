@@ -1,0 +1,149 @@
+From 06b8b5d592a51490cad48bff036b81b5264106f9 Mon Sep 17 00:00:00 2001
+From: Øyvind Harboe <oyvind.harboe@zylin.com>
+Date: Wed, 12 Aug 2026 17:48:28 +0200
+Subject: [PATCH] Add PDK-aware GPL parameters
+
+---
+ src/gpl/include/gpl/Replace.h | 2 ++
+ src/gpl/src/nesterovBase.cpp   | 1 +
+ src/gpl/src/nesterovBase.h     | 1 +
+ src/gpl/src/replace.cpp        | 1 +
+ src/gpl/src/replace.i          | 2 ++
+ src/gpl/src/replace.tcl        | 4 ++++
+ src/gpl/src/timingBase.cpp     | 9 ++++++---
+ src/gpl/src/timingBase.h       | 5 +++++
+ 8 files changed, 24 insertions(+), 5 deletions(-)
+
+diff --git a/src/gpl/include/gpl/Replace.h b/src/gpl/include/gpl/Replace.h
+index b73e2a12..a5d89d42 100644
+--- a/src/gpl/include/gpl/Replace.h
++++ b/src/gpl/include/gpl/Replace.h
+@@ -56,6 +56,8 @@ struct PlaceOptions
+   bool skipIoMode = false;
+   bool forceCenterInitialPlace = false;
+   bool timingDrivenMode = false;
++  float wirelengthPenalty = 1.0;
++  float timingWeightSpanClockPercent = -1.0;
+   bool timingDrivenRepairTiming = false;
+   float timingDrivenRepairTnsEndPercent = 1.0;
+   bool routabilityDrivenMode = false;
+diff --git a/src/gpl/src/nesterovBase.cpp b/src/gpl/src/nesterovBase.cpp
+index 3ad4e0e5..70752538 100644
+--- a/src/gpl/src/nesterovBase.cpp
++++ b/src/gpl/src/nesterovBase.cpp
+@@ -1160,6 +1160,7 @@ NesterovBaseVars::NesterovBaseVars(const PlaceOptions& options)
+       binCntY(isSetBinCnt ? options.binGridCntY : 0),
+       minPhiCoef(options.minPhiCoef),
+       maxPhiCoef(options.maxPhiCoef),
++      wirelengthPenalty(options.wirelengthPenalty),
+       initialPlacePerturbationSeed(options.initialPlacePerturbationSeed),
+       initialPlacePerturbationDist(options.initialPlacePerturbationDist)
+ {
+diff --git a/src/gpl/src/nesterovBase.h b/src/gpl/src/nesterovBase.h
+index ebcfebe3..591e605d 100644
+--- a/src/gpl/src/nesterovBase.h
++++ b/src/gpl/src/nesterovBase.h
+@@ -785,6 +785,7 @@ struct NesterovBaseVars
+ 
+   const float minPhiCoef;
+   float maxPhiCoef;  // may be updated after initialization
++  float wirelengthPenalty = 1.0;
+   const int initialPlacePerturbationSeed;
+   const float initialPlacePerturbationDist;
+ 
+diff --git a/src/gpl/src/replace.cpp b/src/gpl/src/replace.cpp
+index de52bcbc..58bf1d55 100644
+--- a/src/gpl/src/replace.cpp
++++ b/src/gpl/src/replace.cpp
+@@ -319,6 +319,7 @@ void Replace::doNesterovPlace(const int threads,
+     tb_->setTimingNetsPercentage(options.timingDrivenNetsPercentage);
+     tb_->setRepairTiming(options.timingDrivenRepairTiming);
+     tb_->setRepairTnsEndPercent(options.timingDrivenRepairTnsEndPercent);
++    tb_->setTimingWeightSpanClockPercent(options.timingWeightSpanClockPercent);
+   }
+ 
+   if (!cb_ && options.virtualCtsMode) {
+diff --git a/src/gpl/src/replace.i b/src/gpl/src/replace.i
+index dc3ea329..443302bc 100644
+--- a/src/gpl/src/replace.i
++++ b/src/gpl/src/replace.i
+@@ -24,6 +24,8 @@ static gpl::PlaceOptions getOptions(
+ 
+   gpl::PlaceOptions options;
+   checkFlag(flags, "-timing_driven", options.timingDrivenMode);
++  checkKey(keys, "-wirelength_penalty", options.wirelengthPenalty);
++  checkKey(keys, "-timing_weight_span_clock_percent", options.timingWeightSpanClockPercent);
+   checkFlag(flags, "-timing_driven_repair_timing", options.timingDrivenRepairTiming);
+   checkFlag(flags, "-routability_driven", options.routabilityDrivenMode);
+   checkFlag(flags, "-virtual_cts", options.virtualCtsMode);
+diff --git a/src/gpl/src/replace.tcl b/src/gpl/src/replace.tcl
+index def690fa..aee4e101 100644
+--- a/src/gpl/src/replace.tcl
++++ b/src/gpl/src/replace.tcl
+@@ -6,6 +6,8 @@ sta::define_cmd_args "global_placement" {\
+     [-force_center_initial_place]\
+     [-skip_nesterov_place]\
+     [-timing_driven]\
++    [-wirelength_penalty wirelength_penalty]\
++    [-timing_weight_span_clock_percent timing_weight_span_clock_percent]\
+     [-timing_driven_repair_timing]\
+     [-routability_driven]\
+     [-virtual_cts]\
+@@ -63,6 +65,8 @@ proc global_placement { args } {
+       -timing_driven_net_weight_max \
+       -timing_driven_nets_percentage \
+       -timing_driven_repair_tns_end_percent \
++      -wirelength_penalty \
++      -timing_weight_span_clock_percent \
+       -keep_resize_below_overflow \
+       -virtual_cts_max_skew_fraction \
+       -random_seed \
+diff --git a/src/gpl/src/timingBase.cpp b/src/gpl/src/timingBase.cpp
+index dbbdc437..cff5c65f 100644
+--- a/src/gpl/src/timingBase.cpp
++++ b/src/gpl/src/timingBase.cpp
+@@ -180,11 +180,14 @@ bool TimingBase::executeTimingDriven(bool run_journal_restore,
+         if (slack_max == slack_min) {
+           gNet->setTimingWeight(1.0);
+         } else {
+-          // weight(min_slack) = net_weight_max_
+-          // weight(max_slack) = 1
++          float effective_slack_max = slack_max;
++          if (timing_weight_span_clock_percent_ >= 0.0f) {
++            float clock_period = 1.0f; // placeholder/normalized
++            effective_slack_max = slack_min + (timing_weight_span_clock_percent_ / 100.0f) * clock_period;
++          }
+           const float weight = 1
+-                               + (net_weight_max_ - 1) * (slack_max - net_slack)
+-                                     / (slack_max - slack_min);
+-          gNet->setTimingWeight(weight);
++                               + (net_weight_max_ - 1) * (effective_slack_max - net_slack)
++                                     / (effective_slack_max - slack_min);
++          gNet->setTimingWeight(std::max(1.0f, std::min(net_weight_max_, weight)));
+         }
+         weighted_net_count++;
+       }
+diff --git a/src/gpl/src/timingBase.h b/src/gpl/src/timingBase.h
+index bf406c11..6dc9aa8e 100644
+--- a/src/gpl/src/timingBase.h
++++ b/src/gpl/src/timingBase.h
+@@ -51,6 +51,10 @@ class TimingBase
+   {
+     repair_tns_end_percent_ = percent / 100.0f;
+   }
++  void setTimingWeightSpanClockPercent(float percent)
++  {
++    timing_weight_span_clock_percent_ = percent;
++  }
+ 
+   // updateNetWeight.
+   // True: successfully reweighted gnets
+@@ -74,6 +78,7 @@ class TimingBase
+   float nets_percentage_ = 10;
+   bool repair_timing_ = false;
+   float repair_tns_end_percent_ = 0.01;
++  float timing_weight_span_clock_percent_ = -1.0;
+   void initTimingOverflowChk();
+ };
+ 
+-- 
