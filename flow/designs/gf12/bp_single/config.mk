@@ -50,8 +50,6 @@ export LEC_CHECK = 0
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
-export PLACE_DENSITY = 0.80
-
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 export RTLMP_FENCE_LX = 850
 export RTLMP_FENCE_LY = 850
