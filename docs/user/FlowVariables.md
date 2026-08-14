@@ -165,6 +165,9 @@ configuration file.
 | <a name="GPL_RANDOM_SEED"></a>GPL_RANDOM_SEED| Specifies a random seed for global placement.  Useful for perturbation studies.| |
 | <a name="GPL_ROUTABILITY_DRIVEN"></a>GPL_ROUTABILITY_DRIVEN| Specifies whether the placer should use routability driven placement.| 1|
 | <a name="GPL_TIMING_DRIVEN"></a>GPL_TIMING_DRIVEN| Specifies whether the placer should use timing driven placement.| 1|
+| <a name="GPL_TIMING_SPAN_CLOCK_PERCENT"></a>GPL_TIMING_SPAN_CLOCK_PERCENT| Global placement timing weight span as a percent of clock (passed to virtual_cts_max_skew_fraction or similar logic).| 0.24|
+| <a name="GPL_USE_ENGINE_DEFAULTS"></a>GPL_USE_ENGINE_DEFAULTS| If set to 1, ignores ORFS-specific parameters and forces the global placement engine to use its internal hardcoded defaults.| 0|
+| <a name="GPL_WIRELENGTH_PENALTY"></a>GPL_WIRELENGTH_PENALTY| Global placement wirelength penalty (passed as -init_wirelength_coef or similar logic).| 0.0627|
 | <a name="GRT_SEED"></a>GRT_SEED| Specifies a random seed for global routing.  Useful for perturbation studies.| |
 | <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.| 1|
 | <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix (negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period.| 0|
@@ -325,6 +328,7 @@ configuration file.
 | <a name="TIEHI_CELL_AND_PORT"></a>TIEHI_CELL_AND_PORT| Tie high cells used in Yosys synthesis to replace a logical 1 in the Netlist.| |
 | <a name="TIELO_CELL_AND_PORT"></a>TIELO_CELL_AND_PORT| Tie low cells used in Yosys synthesis to replace a logical 0 in the Netlist.| |
 | <a name="TIE_SEPARATION"></a>TIE_SEPARATION| Distance separating tie high/low instances from the load.| 0|
+| <a name="TIGHTEN_CLOCK_PERIOD"></a>TIGHTEN_CLOCK_PERIOD| Tighten the clock period by this fraction (e.g. 0.1 for 10%) before measuring minimum clock period. Used by the autotuner.| 0.0638|
 | <a name="TNS_END_PERCENT"></a>TNS_END_PERCENT| Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.| 100|
 | <a name="UNSET_ABC9_BOX_CELLS"></a>UNSET_ABC9_BOX_CELLS| List of cells to unset the abc9_box attribute on| |
 | <a name="USE_FILL"></a>USE_FILL| Whether to perform metal density filling.| 0|
@@ -477,6 +481,9 @@ configuration file.
 - [GPL_RANDOM_SEED](#GPL_RANDOM_SEED)
 - [GPL_ROUTABILITY_DRIVEN](#GPL_ROUTABILITY_DRIVEN)
 - [GPL_TIMING_DRIVEN](#GPL_TIMING_DRIVEN)
+- [GPL_TIMING_SPAN_CLOCK_PERCENT](#GPL_TIMING_SPAN_CLOCK_PERCENT)
+- [GPL_USE_ENGINE_DEFAULTS](#GPL_USE_ENGINE_DEFAULTS)
+- [GPL_WIRELENGTH_PENALTY](#GPL_WIRELENGTH_PENALTY)
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
@@ -499,6 +506,7 @@ configuration file.
 - [PRE_RESIZE_TCL](#PRE_RESIZE_TCL)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+- [TIGHTEN_CLOCK_PERIOD](#TIGHTEN_CLOCK_PERIOD)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## cts variables

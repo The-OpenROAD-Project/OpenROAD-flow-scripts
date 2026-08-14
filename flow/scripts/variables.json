@@ -443,6 +443,27 @@
       "place"
     ]
   },
+  "GPL_TIMING_SPAN_CLOCK_PERCENT": {
+    "default": 0.24,
+    "description": "Global placement timing weight span as a percent of clock (passed to virtual_cts_max_skew_fraction or similar logic).\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "GPL_USE_ENGINE_DEFAULTS": {
+    "default": 0,
+    "description": "If set to 1, ignores ORFS-specific parameters and forces the global placement engine to use its internal hardcoded defaults.\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "GPL_WIRELENGTH_PENALTY": {
+    "default": 0.0627,
+    "description": "Global placement wirelength penalty (passed as -init_wirelength_coef or similar logic).\n",
+    "stages": [
+      "place"
+    ]
+  },
   "GRT_SEED": {
     "description": "Specifies a random seed for global routing.  Useful for perturbation studies.\n",
     "stages": [
@@ -1446,6 +1467,13 @@
     "description": "Distance separating tie high/low instances from the load.\n",
     "stages": [
       "floorplan"
+    ]
+  },
+  "TIGHTEN_CLOCK_PERIOD": {
+    "default": 0.0638,
+    "description": "Tighten the clock period by this fraction (e.g. 0.1 for 10%) before measuring minimum clock period. Used by the autotuner.\n",
+    "stages": [
+      "place"
     ]
   },
   "TNS_END_PERCENT": {
