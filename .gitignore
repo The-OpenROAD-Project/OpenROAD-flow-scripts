@@ -115,6 +115,5 @@ flow/ml/congestion/data/*.npz
 flow/ml/congestion/data/*.png
 flow/ml/congestion/checkpoints/*.pt
 flow/ml/data/
-flow/thermal_report.html
 flow/ml/congestion/*.log
 flow/ml/congestion/pipeline/logs/

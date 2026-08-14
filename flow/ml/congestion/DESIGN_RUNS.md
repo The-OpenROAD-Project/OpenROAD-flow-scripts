@@ -73,6 +73,133 @@ flow/ml/
 
 ## Changelog
 
+### 2026-08-13 — Cell-type weighted power model + full 48-sample retrain
+
+**Root cause of previous near-flat thermal maps:**
+The old `build_power_grid()` used uniform cell area as the power proxy — every cell weighted
+equally. Sequential cells (DFFs) and clock cells (ICG, CLKBUF) dissipate 3–5× more power than
+combinational logic. This produced near-uniform power grids → near-flat HotSpot output (ΔT ≈ 0–2°C).
+
+**`data_collection/extract_thermal_labels.py` — cell-type weighted power model:**
+
+Added `_cell_power_weight(master_name, master_type_str)` function:
+- Clock cells (CLKBUF, CLKINV, CKBUF, CKINV, ICG, CLKGATE, __CLK, __DLCLK): **5× weight**
+- Sequential (DFF, SDFF, LATCH, __DFX, __DLX, __DLAT, FD_, _FD_): **3× weight**
+- Macros (BLOCK master type): **2× weight**
+- Combinational: **1× weight**
+
+Rewrote `build_power_grid()` to accumulate `area_um2 × weight` into `weighted_grid`,
+then rescale to `total_power_w` so absolute power is preserved while spatial distribution
+reflects cell activity. Prints per-type breakdown at runtime (count, weighted-power %).
+
+**Re-extraction of all 48 samples:**
+Previous run failed with `FileNotFoundError: 'hotspot'` because `OR_IMAGE` was not set,
+so Docker used `openroad/orfs:latest` (no HotSpot) instead of `openroad/orfs-ml:latest`.
+Fix: always set `OR_IMAGE=openroad/orfs-ml:latest` before running `extract_thermal_batch.sh`.
+
+```bash
+cd flow && OR_IMAGE=openroad/orfs-ml:latest bash ml/congestion/data_collection/extract_thermal_batch.sh --force
+```
+Result: **passed=48, failed=0** (skipped=48 = features already extracted).
+
+**U-Net retrain on 48 samples (100 epochs, CPU):**
+- Dataset: 48 samples, T range 87–148°C (real thermal gradients confirmed)
+- Split: train=33, val=7, test=8
+- Best val MSE: **0.02912** at epoch 70
+- Final val MAE: ~0.138 normalized ≈ ~8°C absolute error
+- Train/val gap after epoch 70 indicates mild overfitting at 33 samples
+
+```bash
+OR_IMAGE=openroad/orfs-ml:latest util/docker_shell python3 /work/ml/congestion/training/train_thermal.py \
+    --data-dir /work/ml/congestion/data \
+    --checkpoint-dir /work/ml/congestion/checkpoints
+```
+
+**Visualization report (`inference/visualize_thermal.py`) — per-design correlation:**
+
+Run from `flow/` on host (matplotlib not in orfs-ml image):
+```bash
+python3 ml/congestion/inference/visualize_thermal.py \
+    --data-dir ml/congestion/data \
+    --checkpoint ml/congestion/checkpoints/thermal_best.pt \
+    --out thermal_report.html
+```
+
+Full per-design results (baseline for future model comparisons):
+
+| Design | Corr | MAE (norm) | T range (°C) |
+|---|---|---|---|
+| asap7_aes_base | +0.821 | 0.115 | 110–110 |
+| asap7_jpeg_hi_util_75 | NaN | 0.249 | 110–110 |
+| asap7_jpeg_pipeline_85 | +0.858 | 0.089 | 110–110 |
+| nangate45_adder4_base | +0.894 | 0.093 | 110–110 |
+| nangate45_aes_base | +0.941 | 0.076 | 108–112 |
+| nangate45_ariane133_base | +0.891 | 0.130 | 109–130 |
+| nangate45_ariane133_util_60 | +0.675 | 0.156 | 115–121 |
+| nangate45_ariane136_base | +0.940 | 0.083 | 87–148 |
+| nangate45_dynamic_node_base | +0.954 | 0.065 | 109–111 |
+| nangate45_gcd_base | +0.848 | 0.134 | 110–110 |
+| nangate45_gcd_hi_util | +0.199 | 0.277 | 110–110 |
+| nangate45_ibex_ar_05 | +0.858 | 0.096 | 108–112 |
+| nangate45_ibex_ar_15 | +0.737 | 0.158 | 109–111 |
+| nangate45_ibex_ar_20 | +0.823 | 0.138 | 107–112 |
+| nangate45_ibex_base | +0.912 | 0.095 | 108–112 |
+| nangate45_ibex_hi_util | +0.923 | 0.086 | 109–111 |
+| nangate45_ibex_pipeline_85 | +0.902 | 0.118 | 109–111 |
+| nangate45_ibex_util_60 | +0.931 | 0.114 | 109–111 |
+| nangate45_ibex_util_70 | +0.938 | 0.088 | 109–111 |
+| nangate45_jpeg_ar_05 | +0.974 | 0.064 | 109–112 |
+| nangate45_jpeg_ar_15 | +0.690 | 0.148 | 110–112 |
+| nangate45_jpeg_ar_20 | +0.616 | 0.149 | 110–112 |
+| nangate45_jpeg_base | +0.814 | 0.101 | 110–112 |
+| nangate45_jpeg_hi_util | +0.781 | 0.156 | 110–112 |
+| nangate45_jpeg_pipeline_88 | +0.795 | 0.147 | 110–112 |
+| nangate45_jpeg_util_60 | +0.542 | 0.167 | 109–113 |
+| nangate45_jpeg_util_70 | +0.879 | 0.078 | 109–112 |
+| nangate45_jpeg_util_90 | +0.781 | 0.156 | 110–112 |
+| nangate45_swerv_ar_05 | +0.807 | 0.135 | 108–114 |
+| nangate45_swerv_ar_15 | +0.822 | 0.105 | 108–114 |
+| nangate45_swerv_ar_20 | +0.647 | 0.166 | 107–114 |
+| nangate45_swerv_base | +0.741 | 0.104 | 109–113 |
+| nangate45_swerv_hi_util | +0.766 | 0.146 | 109–113 |
+| nangate45_swerv_pipeline_80 | +0.771 | 0.132 | 109–113 |
+| nangate45_swerv_util_60 | +0.734 | 0.109 | 109–113 |
+| nangate45_swerv_util_70 | +0.761 | 0.108 | 109–113 |
+| nangate45_tinyRocket_base | +0.331 | 0.265 | 110–112 |
+| sky130hd_aes_base | +0.787 | 0.113 | 111–113 |
+| sky130hd_gcd_base | +0.668 | 0.152 | 110–110 |
+| sky130hd_ibex_base | +0.816 | 0.268 | 110–116 |
+| sky130hd_jpeg_base | +0.887 | 0.157 | 111–119 |
+| sky130hd_riscv32i_ar_05 | +0.908 | 0.115 | 108–113 |
+| sky130hd_riscv32i_ar_15 | +0.967 | 0.054 | 109–112 |
+| sky130hd_riscv32i_ar_20 | +0.791 | 0.147 | 109–112 |
+| sky130hd_riscv32i_base | +0.824 | 0.097 | 108–112 |
+| sky130hd_riscv32i_pipeline_65 | +0.971 | 0.070 | 109–112 |
+| sky130hd_riscv32i_util_60 | +0.967 | 0.074 | 108–112 |
+| sky130hd_riscv32i_util_70 | +0.957 | 0.069 | 109–112 |
+
+Summary: 13 designs ≥0.9 (excellent), ~30 designs 0.6–0.9 (good), 3 designs <0.6 (poor),
+1 NaN (asap7_jpeg_hi_util_75, flat map). Mean corr across non-NaN designs: ~0.80.
+
+**Known issue — asap7 flat maps:**
+All asap7 designs show ΔT≈0°C (110–110°C). The cell naming in asap7 (`BUF_X1`, `DFF_X1`)
+does not match the substring patterns in `_cell_power_weight` (which expect e.g. `CLKBUF`,
+`DFF` not preceded by `_`). Fix needed: add asap7-specific patterns or use master type
+flags more aggressively instead of name patterns.
+
+**Warnings fixed in `visualize_thermal.py`:**
+- `tight_layout` warning: switched colorbar subplot to `layout="constrained"` in `plt.subplots`
+- `invalid value in divide` from `np.corrcoef`: wrapped in `np.errstate(invalid="ignore")`
+  (NaN result is expected for flat maps and rendered correctly in HTML)
+
+**Docker path note:**
+`util/docker_shell` mounts the workspace to `/work` but `cd`s to `/OpenROAD-flow-scripts/flow`
+inside the container. Always use absolute `/work/...` paths when passing scripts and data
+directories to docker_shell. Relative paths resolve to the baked-in image path, not the
+mounted workspace.
+
+---
+
 ### 2026-08-11 — Option A: pre-diffused input channel + data expansion plan
 
 **`training/thermal_dataset.py` — added 5th input channel (pre-diffused cell density):**

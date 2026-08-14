@@ -46,6 +46,7 @@ def _arr_to_b64(arr, cmap="hot", vmin=0, vmax=1, colorbar_label=None):
         fig, (ax, cax) = plt.subplots(
             1, 2, figsize=(3.0, 2.5),
             gridspec_kw={"width_ratios": [10, 0.5], "wspace": 0.05},
+            layout="constrained",
         )
     else:
         fig, ax = plt.subplots(figsize=(2.5, 2.5))
@@ -62,8 +63,8 @@ def _arr_to_b64(arr, cmap="hot", vmin=0, vmax=1, colorbar_label=None):
         cb.ax.yaxis.set_tick_params(color="#9090b0", labelsize=6, labelcolor="#9090b0")
         cax.set_facecolor("#0d0d0d")
         cb.outline.set_edgecolor("#2a2a38")
-
-    plt.tight_layout(pad=0.2)
+    else:
+        fig.tight_layout(pad=0.2)
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=80, bbox_inches="tight", facecolor="#0d0d0d")
     plt.close(fig)
@@ -110,7 +111,8 @@ def collect(data_dir, model, device):
             pred = model(x_t).heatmap[0, 0].cpu().numpy()
 
         mae  = float(np.abs(pred - t_norm).mean())
-        corr = float(np.corrcoef(pred.ravel(), t_norm.ravel())[0, 1])
+        with np.errstate(invalid="ignore"):
+            corr = float(np.corrcoef(pred.ravel(), t_norm.ravel())[0, 1])
 
         # Predicted temperature = rescale pred [0,1] back to °C using GT range.
         # This is an approximation: assumes model output spans the same range as GT.
