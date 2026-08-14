@@ -162,6 +162,7 @@ pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "orfs-pip",
     python_version = "3.13",
+    quiet = True,
     requirements_lock = "//flow:util/requirements_lock.txt",
 )
 use_repo(pip, "orfs-pip")
