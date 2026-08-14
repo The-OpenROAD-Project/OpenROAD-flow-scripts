@@ -46,9 +46,9 @@ export FOOTPRINT_TCL   = $(PLATFORM_DIR)/bp/footprint.tcl
 export DIE_AREA =    0   0 3000 3000
 export CORE_AREA = 200 200 2800 2800
 
-export LEC_CHECK = 0
-
 export ABC_CLOCK_PERIOD_IN_PS = 1250
+
+export PLACE_DENSITY = 0.80
 
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 export RTLMP_FENCE_LX = 850
