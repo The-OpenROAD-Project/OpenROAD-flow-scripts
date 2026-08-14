@@ -33,5 +33,4 @@ create_clock [get_ports $clk_port] -name $clk_name -period $clk_period
 #   i_cache_subsystem/i_cva6_icache/gen_sram_*__tag_sram/gen_cut_*__gen_mem_i_tc_sram_wrapper/addr_i[*]
 
 
-set_false_path -to [get_ports {rvfi_probes_o}]
 set_max_fanout 10 [current_design]
