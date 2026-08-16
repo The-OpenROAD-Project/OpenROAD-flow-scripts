@@ -45,6 +45,23 @@ if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
   }
 }
 
+# Automatically blackbox macros from ADDITIONAL_LIBS so that any competing
+# Verilog definitions in the source files are ignored in favor of the
+# liberty view — the same behavior the yosys+slang frontend gained for
+# issue #3849 (synth_preamble.tcl), expressed through OpenSTA since the
+# liberty views are already loaded here (read_liberty.tcl above).
+if { [env_var_exists_and_non_empty ADDITIONAL_LIBS] } {
+  set liberty_cells [dict create]
+  foreach lib [get_libs *] {
+    foreach cell [get_lib_cells "[get_name $lib]/*"] {
+      dict set liberty_cells [get_name $cell] 1
+    }
+  }
+  foreach m [dict keys $liberty_cells] {
+    lappend elaborate_args --blackboxed-module "$m"
+  }
+}
+
 lappend elaborate_args {*}$::env(SYNTH_SLANG_ARGS)
 
 # If the sources are solely .v files, enable Verilog compatibility
