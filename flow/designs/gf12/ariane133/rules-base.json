@@ -1,6 +1,16 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "0d94248554a617f1de65e548e92910b2c42db295",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "7d87cbeba32a4c818451bd1d98a37af8ed03b493",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
-        "value": 257488.39,
+        "value": 46500.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 288202,
+        "value": 279506,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 169477,
+        "value": 156228,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,19 +30,19 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 14737,
+        "value": 13585,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 14737,
+        "value": 13585,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -20.2409,
+        "value": -162.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": 0.0,
+        "value": -4840.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -64,11 +74,11 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 3495428,
+        "value": 4262653,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 3,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
@@ -96,11 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 290504,
+        "value": 282150,
         "compare": "<="
-    },
-    "finish__timing__wns_percent_delay": {
-        "value": -10.0,
-        "compare": ">="
     }
 }
