@@ -1,5 +1,6 @@
 """BUILD boilerplate for flow/designs/."""
 
+load("@bazel-orfs//:openroad.bzl", "orfs_flow")
 load("@orfs_designs//:designs.bzl", "orfs_design")
 
 # Per filegroup target: extensions included in the filegroup.
@@ -50,6 +51,7 @@ def _export_design_files():
         srcs = [],
         visibility = ["//visibility:private"],
     )
+
 
 def design(config = "config.mk", user_arguments = [], user_sources = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.

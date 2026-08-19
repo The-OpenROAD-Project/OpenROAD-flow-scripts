@@ -15,7 +15,7 @@ This is intended for:
 -   Beginners or new users with some understanding of basic VLSI
     design flow. Users will learn the basics of installation to use
     OpenROAD-flow-scripts for the complete RTL-to-GDS flow from
-    [here](../index.md#getting-started-with-openroad-flow-scripts).
+    [here](../index2.md#getting-started-with-openroad-flow-scripts).
 -   Users already familiar with the OpenROAD application and flow but would
     like to learn more about specific features and commands.
 
@@ -522,6 +522,7 @@ View clock tree structure below, the user needs to disable the metal
 From the top Toolbar, click on the `Windows` menu to select/hide different
 view options of Scripting, Display control, etc.
 
+(content:heat:maps)=
 ### Using Heat Maps
 
 From the Menu Bar, Click on `Tools` -> `Heat Maps` -> `Placement Density` to view
@@ -939,7 +940,7 @@ cd ../tools/OpenROAD/src/pdn/test
 openroad -gui
 ```
 
-Run [core_grid_snap.tcl](.(https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pdn/test/core_grid_snap.tcl)
+Run [core_grid_snap.tcl](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pdn/test/core_grid_snap.tcl)
 to generate power grid for `gcd` design.
 
 ```tcl
