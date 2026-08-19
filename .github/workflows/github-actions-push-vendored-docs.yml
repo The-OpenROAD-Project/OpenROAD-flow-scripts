@@ -1,0 +1,115 @@
+name: Push refreshed vendored OpenROAD docs
+
+on:
+  workflow_run:
+    workflows: ["Refresh vendored OpenROAD docs on submodule bump"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Run ID of the producer workflow to pull the patch from"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  push-refresh:
+    # workflow_run always executes in the base repo's trusted context (with
+    # secrets), even when the triggering pull_request run read a fork's PR --
+    # this is the standard safe split for acting-with-secrets on fork PR
+    # content: https://docs.github.com/actions/security-guides/... . Pushing
+    # onto a fork branch needs a real maintainer identity (the openroad-ci
+    # bot's DOCS_BOT_PAT); the default GITHUB_TOKEN can never write to a fork
+    # regardless of trigger type. That only works if the PR left "Allow edits
+    # by maintainers" enabled -- if not, the push step below fails and we
+    # fall back to commenting the patch on the PR instead (using the default
+    # token, which can always comment even on a fork PR -- no PAT needed for
+    # that half). workflow_dispatch is a manual escape hatch: workflow_run is
+    # only evaluated from the workflow file on the default branch, so it
+    # can't be exercised pre-merge or retried by hand without this.
+    if: >-
+      github.repository == 'The-OpenROAD-Project/OpenROAD-flow-scripts' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        github.event.workflow_run.conclusion == 'success'
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download patch + context
+        id: dl
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.inputs.run_id || github.event.workflow_run.id }}
+          pattern: vendor-refresh-*
+          path: artifact
+
+      - name: No artifact -- nothing to do
+        if: steps.dl.outcome != 'success'
+        run: echo "no vendor-refresh patch produced; docs already in sync."
+
+      - name: Read PR context
+        if: steps.dl.outcome == 'success'
+        id: ctx
+        run: |
+          json_file=$(find artifact -name pr-context.json)
+          patch_file=$(find artifact -name vendor-refresh.patch)
+          echo "number=$(jq -r .number "$json_file")" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$(jq -r .head_sha "$json_file")" >> "$GITHUB_OUTPUT"
+          echo "head_ref=$(jq -r .head_ref "$json_file")" >> "$GITHUB_OUTPUT"
+          echo "head_repo=$(jq -r .head_repo "$json_file")" >> "$GITHUB_OUTPUT"
+          echo "patch_file=$patch_file" >> "$GITHUB_OUTPUT"
+
+      - name: Push refresh onto the PR branch
+        if: steps.dl.outcome == 'success'
+        id: push
+        continue-on-error: true
+        env:
+          DOCS_BOT_PAT: ${{ secrets.DOCS_BOT_PAT }}
+          HEAD_REPO: ${{ steps.ctx.outputs.head_repo }}
+          HEAD_SHA: ${{ steps.ctx.outputs.head_sha }}
+          HEAD_REF: ${{ steps.ctx.outputs.head_ref }}
+          PATCH_FILE: ${{ steps.ctx.outputs.patch_file }}
+        run: |
+          git clone --depth 50 \
+            "https://x-access-token:${DOCS_BOT_PAT}@github.com/${HEAD_REPO}.git" \
+            work
+          cd work
+          git checkout "$HEAD_SHA"
+          git config user.name "openroad-ci"
+          git config user.email "openroad-ci@users.noreply.github.com"
+          git apply --index "../${PATCH_FILE}"
+          git commit --signoff -m "docs: refresh vendored OpenROAD docs for submodule bump"
+          git push origin "HEAD:${HEAD_REF}"
+
+      - name: Comment patch if push failed
+        if: steps.dl.outcome == 'success' && steps.push.outcome != 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.ctx.outputs.number }}
+          PATCH_FILE: ${{ steps.ctx.outputs.patch_file }}
+        run: |
+          {
+            echo "Automatic vendored-docs refresh could not be pushed to this PR branch"
+            echo "(most likely because **Allow edits by maintainers** is off)."
+            echo
+            echo "Run this locally and push the result:"
+            echo '```'
+            echo "python3 docs/scripts/refresh_openroad_docs.py"
+            echo '```'
+            echo
+            echo "Or apply this patch directly:"
+            echo '<details><summary>vendor-refresh.patch</summary>'
+            echo
+            echo '```diff'
+            cat "$PATCH_FILE"
+            echo '```'
+            echo '</details>'
+          } > comment.md
+          gh pr comment "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body-file comment.md

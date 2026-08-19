@@ -1,0 +1,71 @@
+name: Refresh vendored OpenROAD docs on submodule bump
+
+on:
+  pull_request:
+    paths:
+      - tools/OpenROAD
+
+permissions:
+  contents: read
+
+jobs:
+  build-refresh:
+    # Runs read-only against the PR's own head (fork or same-repo, either
+    # way) and never touches secrets or push access -- see
+    # github-actions-push-vendored-docs.yml for the trusted half that acts on
+    # this job's output. Only run in the org-owned repo itself, and skip our
+    # own bot's push-back retrigger (idempotent no-op anyway, this just saves
+    # the run).
+    if: >-
+      github.repository == 'The-OpenROAD-Project/OpenROAD-flow-scripts' &&
+      github.actor != 'openroad-ci'
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
+    steps:
+      - name: Check out PR head
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          submodules: true
+
+      - name: Refresh vendored OpenROAD docs
+        run: python3 docs/scripts/refresh_openroad_docs.py
+
+      - name: Check vendored docs are in sync
+        run: python3 docs/scripts/check_vendored_docs.py
+
+      - name: Build patch if changed
+        id: diff
+        run: |
+          if [ -n "$(git status --porcelain -- docs/_vendor/openroad)" ]; then
+            git diff -- docs/_vendor/openroad > vendor-refresh.patch
+            echo "has_diff=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "vendored docs already match the new submodule SHA; nothing to push."
+            echo "has_diff=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Save PR context
+        if: steps.diff.outputs.has_diff == 'true'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          jq -n \
+            --arg number "$PR_NUMBER" \
+            --arg head_sha "$PR_HEAD_SHA" \
+            --arg head_ref "$PR_HEAD_REF" \
+            --arg head_repo "$PR_HEAD_REPO" \
+            '{number: ($number | tonumber), head_sha: $head_sha, head_ref: $head_ref, head_repo: $head_repo}' \
+            > pr-context.json
+
+      - name: Upload patch + context
+        if: steps.diff.outputs.has_diff == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: vendor-refresh-${{ github.event.pull_request.number }}
+          path: |
+            vendor-refresh.patch
+            pr-context.json
+          retention-days: 1
