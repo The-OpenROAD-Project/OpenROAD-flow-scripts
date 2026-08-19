@@ -235,6 +235,11 @@ if { [env_var_exists_and_non_empty LATCH_MAP_FILE] } {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
+# Clock gate inference. Let yosys decide on which clock gating cell to use
+if { [env_var_equals INFER_CLKGATES 1] } {
+  log_cmd clockgate {*}$lib_args
+}
+
 # Technology mapping of flip-flops
 # dfflibmap only supports one liberty file
 if { [env_var_exists_and_non_empty DFF_LIB_FILE] } {

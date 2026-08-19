@@ -464,6 +464,13 @@
       "grt"
     ]
   },
+  "INFER_CLKGATES": {
+    "default": 0,
+    "description": "Enables Yosys clock gate inference. Uses Liberty to determine clock gating cell\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "IO_CONSTRAINTS": {
     "description": "File path to the IO constraints .tcl file. Also used for manual placement.\n",
     "stages": [

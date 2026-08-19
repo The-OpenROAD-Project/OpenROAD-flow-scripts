@@ -55,7 +55,7 @@ if { $result != 0 } {
 log_cmd estimate_parasitics -placement
 
 if { $::env(CTS_SNAPSHOTS) } {
-  save_progress 4_1_pre_repair_hold_setup
+  save_progress 4_1_pre_repair_setup_hold
 }
 
 if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
@@ -78,6 +78,8 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
   }
 
   check_placement -verbose
+
+  log_cmd estimate_parasitics -placement
 }
 
 report_metrics 4 "cts final"
