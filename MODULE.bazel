@@ -7,7 +7,7 @@ module(
 
 # --- Regular dependencies (propagated to downstream consumers) ---
 
-bazel_dep(name = "rules_python", version = "1.8.5")
+bazel_dep(name = "rules_python", version = "2.0.0")
 bazel_dep(name = "rules_shell", version = "0.6.1")
 
 # --- Dev dependencies (only honoured when @orfs is the root module) ---
@@ -65,17 +65,6 @@ single_version_override(
     version = "3.8.2.bcr.7",
 )
 
-# tclZipfs.c's '#include "crypt.h"' picks up glibc's crypt.h instead of
-# the vendored minizip one when glibc headers are explicit -isystem
-# directories (hermetic-llvm zero-sysroot toolchain). Drop when fixed
-# in a tcl_lang BCR release.
-single_version_override(
-    module_name = "tcl_lang",
-    patch_strip = 1,
-    patches = [
-        "//patches/tcl_lang:0001-tclZipfs-include-vendored-minizip-crypt.h-by-path.patch",
-    ],
-)
 
 bazel_dep(name = "openroad", dev_dependency = True)
 local_path_override(
@@ -173,6 +162,7 @@ pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "orfs-pip",
     python_version = "3.13",
+    quiet = True,
     requirements_lock = "//flow:util/requirements_lock.txt",
 )
 use_repo(pip, "orfs-pip")

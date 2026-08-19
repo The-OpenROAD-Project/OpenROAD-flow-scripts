@@ -379,6 +379,12 @@ ADDER_MAP_FILE:
     Optional mapping file supplied to Yosys to map adders
   stages:
     - synth
+INFER_CLKGATES:
+  description: |
+    Enables Yosys clock gate inference. Uses Liberty to determine clock gating cell
+  default: 0
+  stages:
+    - synth
 TIEHI_CELL_AND_PORT:
   description: >
     Tie high cells used in Yosys synthesis to replace a logical 1 in the

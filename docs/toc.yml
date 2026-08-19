@@ -17,10 +17,14 @@ entries:
     title: Build Locally
   - file: user/BuildWithWSL.md
     title: Build Using WSL
+  - file: user/AddingNewDesign.md
+    title: Adding New Designs to the ORFS
   - file: user/FlowVariables.md
     title: Flow Variables
   - file: user/AutoMemories.md
     title: Generated Memory Macros (AUTO_MEMORIES)
+  - file: user/LargeDesigns.md
+    title: Tips on building large design
   - file: contrib/Metrics.md
     title: Metrics
   - file: user/InstructionsForAutoTuner.md
@@ -37,6 +41,10 @@ entries:
   entries:
   - file: contrib/GitGuide.md
     title: Git Quickstart
+  - file: contrib/PlatformBringUp.md
+    title: Guide to Integrate a New Platform into the OpenROAD Flow
+  - file: contrib/CI.md
+    title: CI Guide
 
 - file: contrib/CODE_OF_CONDUCT.md
   title: Code of Conduct
@@ -49,6 +57,8 @@ entries:
   entries:
   - file: tutorials/FlowTutorial
     title: Flow Tutorial
+  - file: tutorials/SetRC.md
+    title: Correlating RC Values for PDKs
   - file: tutorials/Notebooks
     title: Running the OpenROAD Flow in Google Colab
 
