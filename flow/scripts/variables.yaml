@@ -380,9 +380,25 @@ ADDER_MAP_FILE:
   stages:
     - synth
 INFER_CLKGATES:
-  description: |
-    Enables Yosys clock gate inference. Uses Liberty to determine clock gating cell
+  description: >
+    Enables Yosys clock gate inference. By default, it uses the Liberty cell
+    definitions to determine clock gating cell. The selection can be overridden
+    using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.
   default: 0
+  stages:
+    - synth
+NEG_CLKGATE_AND_PORTS:
+  description: >
+    Specifies the active low enable clock gating cell and port names when used
+    in conjunction with the INFER_CLKGATES variable. Format is
+    "cell_name enable_port:master_clock:gated_clock"
+  stages:
+    - synth
+POS_CLKGATE_AND_PORTS:
+  description: >
+    Specifies the active high enable clock gating cell and port names when used
+    in conjunction with the INFER_CLKGATES variable. Format is
+    "cell_name enable_port:master_clock:gated_clock"
   stages:
     - synth
 TIEHI_CELL_AND_PORT:

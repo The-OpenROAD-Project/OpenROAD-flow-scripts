@@ -466,7 +466,7 @@
   },
   "INFER_CLKGATES": {
     "default": 0,
-    "description": "Enables Yosys clock gate inference. Uses Liberty to determine clock gating cell\n",
+    "description": "Enables Yosys clock gate inference. By default, it uses the Liberty cell definitions to determine clock gating cell. The selection can be overridden using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.\n",
     "stages": [
       "synth"
     ]
@@ -648,6 +648,12 @@
       "final"
     ]
   },
+  "NEG_CLKGATE_AND_PORTS": {
+    "description": "Specifies the active low enable clock gating cell and port names when used in conjunction with the INFER_CLKGATES variable. Format is \"cell_name enable_port:master_clock:gated_clock\"\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "NUM_CORES": {
     "description": "Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers of cores in system as determined by system specific code in Makefile, `nproc` is tried first. OpenROAD does not limit itself to this number of cores across OpenROAD running instances, which can lead to overprovisioning in contexts such as bazel-orfs where there could be many routing, or place jobs running at the same time.\n",
     "stages": [
@@ -817,6 +823,12 @@
     "description": "Specifies a Tcl script with commands to run after tapcell.\n",
     "stages": [
       "floorplan"
+    ]
+  },
+  "POS_CLKGATE_AND_PORTS": {
+    "description": "Specifies the active high enable clock gating cell and port names when used in conjunction with the INFER_CLKGATES variable. Format is \"cell_name enable_port:master_clock:gated_clock\"\n",
+    "stages": [
+      "synth"
     ]
   },
   "PRE_CTS_TCL": {
