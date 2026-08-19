@@ -55,7 +55,7 @@ export RTLMP_FENCE_LX = 850
 export RTLMP_FENCE_LY = 850
 export RTLMP_FENCE_UX = 2150
 export RTLMP_FENCE_UY = 2150
-export MACRO_PLACE_HALO = 28.2 28.2
+export MACRO_PLACE_HALO = 29 29
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
@@ -72,3 +72,11 @@ export SETUP_SLACK_MARGIN ?= 100
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
 export OPT_POST_GRT_WNS = 0
+
+# Have to use Verilog stubs for LEC for some of the RF's, since they have
+# a pin that has a condition that references multiple clocks. These two settings
+# use the Verilog stubs and remove the Liberty files from the kepler-formal
+# configuration file
+export LEC_AUX_VERILOG_FILES = $(PLATFORM_DIR)/verilog/gf12_1r1w_d32_w64_m1.v
+export REMOVE_LIBS_FOR_LEC   = $(PLATFORM_DIR)/lib/gf12_1r1w_d32_w64_m1_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+			       $(OBJECTS_DIR)/gf12_1r1w_d32_w64_m1_ffpg_sigcmin_0p88v_0p88v_m40c_mod.lib

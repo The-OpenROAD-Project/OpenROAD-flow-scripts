@@ -8,8 +8,7 @@ export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*
 
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   = 0 0 3020 3610
-export CORE_AREA  = 10 10 3010 3600
+export CORE_UTILIZATION = 55
 
 export ADDITIONAL_GDS  = $(wildcard $(DESIGN_DIR)/gds/*.gds.gz)
 
@@ -33,6 +32,8 @@ export SETUP_SLACK_MARGIN = 0.2
 
 # GRT non-default config
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
+
+export MAX_REPAIR_ANTENNAS_ITER_DRT = 2
 
 ifeq ($(SYNTH_MOCK_LARGE_MEMORIES),1)
     # ca. 3 minutes to run make synth
