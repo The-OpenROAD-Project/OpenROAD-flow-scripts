@@ -235,9 +235,26 @@ if { [env_var_exists_and_non_empty LATCH_MAP_FILE] } {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
-# Clock gate inference. Let yosys decide on which clock gating cell to use
+# Clock gate inference.
 if { [env_var_equals INFER_CLKGATES 1] } {
-  log_cmd clockgate {*}$lib_args
+  set clkgate_args {}
+  if {
+    [env_var_exists_and_non_empty POS_CLKGATE_AND_PORTS] ||
+    [env_var_exists_and_non_empty NEG_CLKGATE_AND_PORTS]
+  } {
+    if { [env_var_exists_and_non_empty POS_CLKGATE_AND_PORTS] } {
+      lappend clkgate_args "-pos"
+      lappend clkgate_args {*}$::env(POS_CLKGATE_AND_PORTS)
+    }
+    if { [env_var_exists_and_non_empty NEG_CLKGATE_AND_PORTS] } {
+      lappend clkgate_args "-neg"
+      lappend clkgate_args {*}$::env(NEG_CLKGATE_AND_PORTS)
+    }
+  } else {
+    # Let yosys decide on which clock gating cell to use
+    lappend clkgate_args {*}$lib_args
+  }
+  log_cmd clockgate {*}$clkgate_args
 }
 
 # Technology mapping of flip-flops
