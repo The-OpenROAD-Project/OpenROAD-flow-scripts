@@ -2,7 +2,7 @@ current_design jpeg_encoder
 
 set clk_name clk
 set clk_port_name clk
-set clk_period 680
+set clk_period 545
 
 # Match the old set_input/output_delay = 0.2 * clk_period budget, as
 # optimization targets only (no set_input/output_delay — see rationale in
