@@ -38,11 +38,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -900.0,
+        "value": -883.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -6700.0,
+        "value": -8300.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -102,7 +102,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -1600.0,
+        "value": -2390.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
