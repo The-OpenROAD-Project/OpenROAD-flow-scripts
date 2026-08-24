@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 make clean_all
+make do-sdc-clock-period
 make do-yosys-canonicalize
 make do-yosys-keep-hierarchy
 make do-yosys
