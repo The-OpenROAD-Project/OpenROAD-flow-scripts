@@ -254,30 +254,13 @@ memory:
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
 
-# Write the clock period consumed by synthesis (synth_preamble.tcl reads
-# $(SDC_FILE_CLOCK_PERIOD), never SDC_FILE). Fails when no clock period is
-# available: ABC_CLOCK_PERIOD_IN_PS is either set explicitly or extracted
-# from SDC_FILE by the simple regex in variables.mk. The check is done in
-# the recipe, not with a parse-time $(error), so only this rule fails.
-define GENERATE_SDC_CLOCK_PERIOD
-	mkdir -p $(dir $(SDC_FILE_CLOCK_PERIOD))
-	@if [ -z "$(ABC_CLOCK_PERIOD_IN_PS)" ]; then \
-	  echo "ERROR: no clock period: not extractable from SDC_FILE=$(SDC_FILE); set ABC_CLOCK_PERIOD_IN_PS explicitly" >&2; \
-	  exit 1; \
-	fi
-	echo $(ABC_CLOCK_PERIOD_IN_PS) > $(SDC_FILE_CLOCK_PERIOD)
-endef
-
-# Dependency checking: regenerate when SDC_FILE changed. Deliberately
-# simple — make cannot consider files that SDC_FILE pulls in.
 $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
-	$(GENERATE_SDC_CLOCK_PERIOD)
+	$(UNSET_AND_MAKE) do-sdc-clock-period
 
-# The action by itself, for build systems that do their own dependency
-# tracking (e.g. bazel-orfs) with full knowledge of the SDC's inputs.
 .PHONY: do-sdc-clock-period
 do-sdc-clock-period:
-	$(GENERATE_SDC_CLOCK_PERIOD)
+	mkdir -p $(dir $(SDC_FILE_CLOCK_PERIOD))
+	echo $(ABC_CLOCK_PERIOD_IN_PS) > $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
