@@ -42,7 +42,8 @@ export SYNTH_KEEP_MODULES ?= \
   ram_256x34
 
 
-export LIB_MODEL = CCS
+#export LIB_MODEL = CCS
+export LIB_MODEL = NLDM
 
 export VERILOG_FILES = $(DESIGN_HOME)/src/swerv/swerv_wrapper.sv2v.v \
                        $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/macros.v \
@@ -52,7 +53,7 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
 export ADDITIONAL_LEFS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lef/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lib/*.lib))
 
-export CORE_UTILIZATION = 30
+export CORE_UTILIZATION = 55
 
 export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/io.tcl
 export PLACE_DENSITY_LB_ADDON = 0.20
