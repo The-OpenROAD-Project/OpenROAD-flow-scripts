@@ -24,7 +24,14 @@ exports_files(
 # instead of vendoring its own (drifting) copy at the bazel-orfs repo
 # root. See bazel-orfs `private/rules.bzl`.
 exports_files(
-    ["scripts/synth.tcl"],
+    [
+        "scripts/synth.tcl",
+        # Expose variables.yaml as an addressable source label so a
+        # downstream target can data-dep the variable catalogue at this
+        # commit. It is reachable today only inside the private makefile
+        # filegroups' data, not as a source target.
+        "scripts/variables.yaml",
+    ],
     visibility = ["//visibility:public"],
 )
 
