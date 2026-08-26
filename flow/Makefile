@@ -255,8 +255,12 @@ memory:
 #-------------------------------------------------------------------------------
 
 $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
-	mkdir -p $(dir $@)
-	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
+	$(UNSET_AND_MAKE) do-sdc-clock-period
+
+.PHONY: do-sdc-clock-period
+do-sdc-clock-period:
+	mkdir -p $(dir $(SDC_FILE_CLOCK_PERIOD))
+	echo $(ABC_CLOCK_PERIOD_IN_PS) > $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
