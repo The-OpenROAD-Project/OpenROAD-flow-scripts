@@ -76,7 +76,14 @@ proc read_design_sources { } {
   }
 
   if { [env_var_equals SYNTH_HDL_FRONTEND slang] } {
-    # read_slang is built into Yosys (>=0.67); no plugin load needed.
+    # read_slang is built into Yosys >= 0.67, which vendors the frontend
+    # under frontends/slang. Older Yosys needs the same code loaded as an
+    # out-of-tree plugin; `plugin -i` finds it on YOSYS_PLUGIN_PATH. The
+    # guard makes this a no-op on a Yosys that has the frontend built in,
+    # so a build system is free to supply either one.
+    if { [info commands read_slang] eq "" } {
+      plugin -i slang
+    }
     set slang_args [list \
       -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions --top $::env(DESIGN_NAME) \
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
