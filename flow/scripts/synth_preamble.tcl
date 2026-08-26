@@ -51,7 +51,7 @@ proc auto_memories_blackboxes { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
   }
-  set f "$::env(RESULTS_DIR)/memories/blackboxes.txt"
+  set f [orfs_input_path memories/blackboxes.txt]
   if { ![file exists $f] } {
     error "AUTO_MEMORIES=1 but $f is missing;\
       the do-auto-memories step must run before synthesis"
