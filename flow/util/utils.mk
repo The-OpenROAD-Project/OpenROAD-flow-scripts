@@ -23,9 +23,9 @@ metadata-generate:
 	$(PYTHON_EXE) $(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 	    -p $(PLATFORM) \
 	    -v $(FLOW_VARIANT) \
-	    --logs $(LOG_DIR) \
-	    --reports $(REPORTS_DIR) \
-	    --results $(RESULTS_DIR) \
+	    --logs $(INPUT_LOG_DIR) \
+	    --reports $(INPUT_REPORTS_DIR) \
+	    --results $(INPUT_RESULTS_DIR) \
 	    -o $(REPORTS_DIR)/metadata.json 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
 
@@ -100,9 +100,9 @@ update_metadata_autotuner:
 	$(PYTHON_EXE) $(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 	    -p $(PLATFORM) \
 	    -v $(FLOW_VARIANT) \
-	    --logs $(LOG_DIR) \
-	    --reports $(REPORTS_DIR) \
-	    --results $(RESULTS_DIR) \
+	    --logs $(INPUT_LOG_DIR) \
+	    --reports $(INPUT_REPORTS_DIR) \
+	    --results $(INPUT_RESULTS_DIR) \
 	    -o $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-at.json -x
 
 #-------------------------------------------------------------------------------

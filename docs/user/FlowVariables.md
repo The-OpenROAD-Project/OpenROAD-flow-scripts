@@ -84,6 +84,70 @@ These are optional variables that may be over-ridden/appended with
 default value from the platform `config.mk` by defining in the design
 configuration file.
 
+## Variant directories: reading from one variant, writing to another
+
+`FLOW_VARIANT` names the directory a run writes to: `RESULTS_DIR`,
+`LOG_DIR`, `REPORTS_DIR` and `OBJECTS_DIR` all end in the variant name.
+`FLOW_INPUT_VARIANT` names the directory a run *reads* from, through the
+matching `INPUT_RESULTS_DIR`, `INPUT_LOG_DIR`, `INPUT_REPORTS_DIR` and
+`INPUT_OBJECTS_DIR`. It defaults to `FLOW_VARIANT`, so by default the
+two are the same directory and nothing about a normal run changes.
+
+Setting it forks a variant off a shared upstream one. The forked run
+reads the upstream variant's results and writes only its own, so the
+shared stages are never re-run and never copied. Results are looked up
+in `RESULTS_DIR` first and `INPUT_RESULTS_DIR` second, so a file an
+earlier step of the same run just wrote always wins over the upstream
+variant's copy of it.
+
+This is how to share an expensive front end across experiments — run
+synthesis, floorplan, placement and CTS once as `base`, then fork a
+variant per routing experiment:
+
+```shell
+make DESIGN_CONFIG=... FLOW_VARIANT=base cts
+make DESIGN_CONFIG=... FLOW_INPUT_VARIANT=base FLOW_VARIANT=high_effort do-grt do-route do-final
+```
+
+The same mechanism lets one fork produce an input for another. A custom
+flow computes the pin layout: it runs with `FLOW_INPUT_VARIANT=base
+FLOW_VARIANT=io`, reads the shared floorplan, and writes `io.tcl` into
+the `io` variant. The main flow then re-runs from floorplan with
+`IO_CONSTRAINTS` pointing at it, still reusing the same `base`
+synthesis:
+
+```mermaid
+flowchart LR
+  subgraph base["FLOW_VARIANT=base — shared front end"]
+    S["1_synth"] --> F["2_floorplan"] --> P["3_place"] --> C["4_cts"]
+  end
+
+  subgraph io["FLOW_INPUT_VARIANT=base, FLOW_VARIANT=io"]
+    Q["quick pin placement"] --> IOTCL["io.tcl"]
+  end
+
+  subgraph main["FLOW_INPUT_VARIANT=base, FLOW_VARIANT=main"]
+    G["5_grt"] --> R["5_route"] --> FIN["6_final"]
+  end
+
+  subgraph hi["FLOW_INPUT_VARIANT=base, FLOW_VARIANT=high_effort"]
+    G2["5_grt (higher effort)"] --> R2["5_route"] --> FIN2["6_final"]
+  end
+
+  F -. "reads base results" .-> Q
+  C -. "reads base results" .-> G
+  C -. "reads base results" .-> G2
+  IOTCL -- "IO_CONSTRAINTS" --> F
+```
+
+Dashed edges are reads across variants. Without `FLOW_INPUT_VARIANT`,
+each fork needs a physical copy of the `base` directories before it can
+start.
+
+Because `INPUT_*_DIR` are `?=`, a caller that repoints an output
+directory somewhere that is not variant-shaped can repoint the matching
+input directory too, independently of `FLOW_INPUT_VARIANT`.
+
 # Automatically generated tables from flow/scripts/variables.yaml
 ## Variables in alphabetic order
 
@@ -151,6 +215,7 @@ configuration file.
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| |
 | <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
+| <a name="FLOW_INPUT_VARIANT"></a>FLOW_INPUT_VARIANT| Flow variant a stage reads its inputs from, used in the INPUT_RESULTS_DIR/INPUT_LOG_DIR/INPUT_REPORTS_DIR/INPUT_OBJECTS_DIR directory names. Defaults to FLOW_VARIANT, i.e. a stage reads from the same variant directory it writes to. Set it to fork a variant off a shared upstream one: the forked variant reads the upstream results and writes only its own, so the shared stages are never re-run.| |
 | <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base|
 | <a name="FOOTPRINT"></a>FOOTPRINT| Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
 | <a name="FOOTPRINT_TCL"></a>FOOTPRINT_TCL| Specifies a Tcl script with custom footprint-related commands for floorplan setup.| |
@@ -650,6 +715,7 @@ configuration file.
 - [ENABLE_DPO](#ENABLE_DPO)
 - [FASTROUTE_TCL](#FASTROUTE_TCL)
 - [FILL_CONFIG](#FILL_CONFIG)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [FLOW_VARIANT](#FLOW_VARIANT)
 - [GDS_FILES](#GDS_FILES)
 - [GENERATE_ARTIFACTS_ON_FAILURE](#GENERATE_ARTIFACTS_ON_FAILURE)
