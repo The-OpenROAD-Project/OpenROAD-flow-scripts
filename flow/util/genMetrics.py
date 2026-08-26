@@ -399,6 +399,19 @@ def extract_metrics(
 if __name__ == "__main__":
     args = parse_args()
 
+    # FLOW_INPUT_VARIANT is not supported for metrics generation because
+    # resolving inputs requires a search path across logs/reports/results,
+    # which this script does not currently implement.
+    log_variant = os.path.basename(os.path.normpath(args.logs))
+    if log_variant != args.flowVariant:
+        import sys
+
+        print(
+            f"ERROR: genMetrics.py does not support FLOW_INPUT_VARIANT ({log_variant}) different from FLOW_VARIANT ({args.flowVariant})",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     extract_metrics(
         os.path.join(os.path.dirname(os.path.realpath(__file__)), "../"),
         args.platform,

@@ -3,6 +3,8 @@ GENERATE_ARTIFACTS_ON_FAILURE:
   description: >
     For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
     allow the user to save hours on re-running the failed step locally, but when
+    Note: FLOW_VARIANT and genMetrics.py works only within a single variant, FLOW_INPUT_VARIANT
+    different from FLOW_VARIANT is not supported.
     working with a Makefile flow, it is more natural to fail the step and leave
     the user to manually inspect the logs and artifacts directly via the file
     system.
@@ -1518,6 +1520,8 @@ FLOW_INPUT_VARIANT:
     off a shared upstream one: the forked variant reads the upstream
     results and writes only its own, so the shared stages are never
     re-run.
+    Note: FLOW_VARIANT and genMetrics.py works only within a single variant, FLOW_INPUT_VARIANT
+    different from FLOW_VARIANT is not supported.
 RULES_JSON:
   description: >
     json files with the metrics baseline regression rules.

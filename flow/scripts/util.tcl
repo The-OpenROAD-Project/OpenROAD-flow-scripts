@@ -80,10 +80,7 @@ proc recover_power_helper { } {
 # two are the same directory unless FLOW_INPUT_VARIANT says otherwise.
 proc orfs_input_dirs { } {
   set dirs [list $::env(RESULTS_DIR)]
-  if {
-    [info exists ::env(INPUT_RESULTS_DIR)] &&
-    $::env(INPUT_RESULTS_DIR) ne $::env(RESULTS_DIR)
-  } {
+  if { $::env(INPUT_RESULTS_DIR) ne $::env(RESULTS_DIR) } {
     lappend dirs $::env(INPUT_RESULTS_DIR)
   }
   return $dirs
