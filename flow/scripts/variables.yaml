@@ -380,9 +380,25 @@ ADDER_MAP_FILE:
   stages:
     - synth
 INFER_CLKGATES:
-  description: |
-    Enables Yosys clock gate inference. Uses Liberty to determine clock gating cell
+  description: >
+    Enables Yosys clock gate inference. By default, it uses the Liberty cell
+    definitions to determine clock gating cell. The selection can be overridden
+    using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.
   default: 0
+  stages:
+    - synth
+NEG_CLKGATE_AND_PORTS:
+  description: >
+    Specifies the active low enable clock gating cell and port names when used
+    in conjunction with the INFER_CLKGATES variable. Format is
+    "cell_name enable_port:master_clock:gated_clock"
+  stages:
+    - synth
+POS_CLKGATE_AND_PORTS:
+  description: >
+    Specifies the active high enable clock gating cell and port names when used
+    in conjunction with the INFER_CLKGATES variable. Format is
+    "cell_name enable_port:master_clock:gated_clock"
   stages:
     - synth
 TIEHI_CELL_AND_PORT:
@@ -1475,6 +1491,13 @@ RTLMP_ARGS:
     Overrides all other RTL macro placer arguments.
   stages:
     - floorplan
+RTLMP_KEEP_CLUSTERING:
+  description: >
+    Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as
+    nested dbGroups.
+  default: 0
+  stages:
+    - floorplan
 GDS_ALLOW_EMPTY:
   description: >
     Single regular expression of module names of macros that have no .gds file
@@ -1614,12 +1637,6 @@ LEC_AUX_VERILOG_FILES:
     Additional Verilog files (e.g. blackbox stubs) to include in LEC
     equivalence checks. Appended to the generated Verilog netlist before
     running the formal equivalence check.
-  stages:
-    - cts
-REMOVE_LIBS_FOR_LEC:
-  description: >
-    List of Liberty files to exclude from LEC. This is required for cases where
-    a Verilog black box needs to be used instead of a Liberty file.
   stages:
     - cts
 REMOVE_CELLS_FOR_LEC:
