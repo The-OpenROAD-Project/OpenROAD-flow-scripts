@@ -14,6 +14,7 @@ jobs:
   create-tag:
     name: Create quarterly tag
     runs-on: ubuntu-latest
+    if: github.repository == 'The-OpenROAD-Project/OpenROAD-flow-scripts'
     permissions:
       contents: write
     steps:
