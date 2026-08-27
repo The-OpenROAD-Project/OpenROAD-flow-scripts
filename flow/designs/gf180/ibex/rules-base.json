@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 725567,
+        "value": 724846,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 15783,
+        "value": 15301,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,11 +30,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1372,
+        "value": 1330,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1372,
+        "value": 1330,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -2.0,
+        "value": -8.23,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -2.07,
+        "value": -31.7,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
