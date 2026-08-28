@@ -187,6 +187,18 @@ proc place_density_with_lb_addon { } {
     set place_density_lb [gpl::get_global_placement_uniform_density \
       -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
       -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)]
+
+    if { $place_density_lb >= 1.0 } {
+      utl::error FLW 25 \
+        "Placement density lower bound is >= 1.00 ([format %.3f $place_density_lb]).\
+         The design does not fit the core. Reduce CORE_UTILIZATION or\
+         CELL_PAD_IN_SITES_GLOBAL_PLACEMENT."
+    } elseif { $place_density_lb > 0.80 } {
+      utl::warn FLW 26 \
+        "Placement density lower bound is > 0.80 ([format %.3f $place_density_lb]).\
+         Consider reducing CORE_UTILIZATION or CELL_PAD_IN_SITES_GLOBAL_PLACEMENT."
+    }
+
     set place_density \
       [expr $place_density_lb + ((1.0 - $place_density_lb) * $::env(PLACE_DENSITY_LB_ADDON)) + 0.01]
     if { $place_density > 1.0 } {
