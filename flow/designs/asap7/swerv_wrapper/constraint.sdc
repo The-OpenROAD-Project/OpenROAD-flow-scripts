@@ -2,7 +2,7 @@ current_design swerv_wrapper
 
 set clk_name core_clock
 set clk_port_name clk
-set clk_period 1300
+set clk_period 1100
 
 # Match the old set_input/output_delay = 0.2 * clk_period budget, as
 # optimization targets only (no set_input/output_delay — see rationale in
