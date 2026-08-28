@@ -7,7 +7,7 @@ set_max_area 0
 set clk_period 10.0
 
 create_clock [get_ports clock] -name clock -period $clk_period \
-    -waveform [list 0 [expr {$clk_period / 2.0}]]
+  -waveform [list 0 [expr { $clk_period / 2.0 }]]
 create_clock -name vclk -period $clk_period
 set input_delay_value_clock 4.0
 set output_delay_value_clock 4.0

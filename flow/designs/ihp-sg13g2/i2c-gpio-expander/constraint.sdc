@@ -8,7 +8,7 @@ set clk_period 10.0
 
 set_ideal_network [get_pins sg13g2_IOPad_io_clock/p2c]
 create_clock [get_pins sg13g2_IOPad_io_clock/p2c] -name clk_core -period $clk_period \
-    -waveform [list 0 [expr {$clk_period / 2.0}]]
+  -waveform [list 0 [expr { $clk_period / 2.0 }]]
 set clk_core_io_name vclk_clk_core
 create_clock -name $clk_core_io_name -period $clk_period
 set input_delay_value_clk_core 4.0
