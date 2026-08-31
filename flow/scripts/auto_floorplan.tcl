@@ -80,7 +80,18 @@ set ::af_aspect_ladder {0.8 1.0 1.25}
 set ::af_max_util_post [af_env AF_MAX_UTIL_POST 0.98]
 
 # Placer seeds used to measure this design's own noise floor.
-set ::af_tie_seeds {1 2 3}
+#
+# n=8, not 3. The range of three samples is a poor estimator of spread --
+# biased low, and wildly variable run to run -- and delta_tie is the
+# yardstick every threshold in this file is measured against, so a crude
+# reading of it propagates into every decision. bazel-orfs's
+# stage_variance walk resolves swerv's floor to ~1.1% of the achieved
+# period from 36 leaves; the first version of this file was reporting
+# floors of 7-525% of the clock period from three, which is not a noise
+# floor, it is a small sample's range.
+#
+# These run concurrently, so eight costs roughly the wall-clock of one.
+set ::af_tie_seeds {1 2 3 4 5 6 7 8}
 
 proc af_log { msg } {
   puts "AUTO_FLOORPLAN: $msg"
@@ -423,20 +434,26 @@ proc af_measure_delta_tie { winner work { clk 0 } } {
 treating every difference as real"
     return [list 0.0 [llength $scores]]
   }
-  set lo [lindex $scores 0]
-  set hi $lo
+  # Two standard deviations, not the range: a ~95% band under normality,
+  # and unlike the range it does not grow just because more samples were
+  # taken. The range of n samples is an estimator of spread whose
+  # expectation increases with n, so a range-based floor would tighten or
+  # loosen every guard purely by changing the seed count.
+  set n [llength $scores]
+  set sum 0.0
   foreach s $scores {
-    if { $s < $lo } {
-      set lo $s
-    }
-    if { $s > $hi } {
-      set hi $s
-    }
+    set sum [expr { $sum + $s }]
   }
-  set spread [expr { $hi - $lo }]
-  set pct_score [format %.2f [expr { 100.0 * $spread / $hi }]]
+  set mean [expr { $sum / $n }]
+  set ss 0.0
+  foreach s $scores {
+    set ss [expr { $ss + ($s - $mean) * ($s - $mean) }]
+  }
+  set sigma [expr { $n > 1 ? sqrt($ss / ($n - 1)) : 0.0 }]
+  set spread [expr { 2.0 * $sigma }]
+  set pct_score [format %.2f [expr { $mean > 0 ? 100.0 * $spread / $mean : -1 }]]
   set pct_clk [format %.2f [expr { $clk > 0 ? 100.0 * $spread / $clk : -1 }]]
-  af_log "noise floor over [llength $scores] seeds: spread\
+  af_log "noise floor over $n seeds: 2 sigma =\
  [format %.4g $spread] (${pct_score}% of score, ${pct_clk}% of the clock\
  period). A floor that is a large fraction of the clock means this\
  design's proxy cannot resolve small period differences at all."
