@@ -21,6 +21,34 @@ measurement should be. The right utilization is "the smallest core in
 which this netlist still closes" — a question about `repair_design`,
 CTS and routing, none of which have happened when the number is read.
 
+## What success looks like
+
+**The bar is parity with a good hand-tuned `config.mk`, reached
+automatically — not beating it.**
+
+That is worth saying plainly, because the obvious way to read the tables
+below is as a disappointment, and it is not one. The numbers in a
+hand-tuned `config.mk` are the accumulated result of somebody sweeping
+that specific design, and they are frozen the moment the RTL moves
+underneath them. Landing near them from a measurement that re-runs
+itself whenever synthesis changes is a large usability win even when it
+costs a little on the Pareto front: it removes the knob, it removes the
+staleness, and it removes the requirement that a person know the design
+well enough to guess.
+
+So the honest framing is a ladder, and each rung is useful on its own:
+
+| | |
+|---|---|
+| **Explore** | `AUTO_FLOORPLAN=1`, the default. Measured every run, always current, never stale. |
+| **Pin** | `bazelisk run //…:<name>_auto_floorplan_pin` writes the raced values into `config.mk` and sets `AUTO_FLOORPLAN=0`. A measurement becomes a decision. |
+| **Overfit** | With the netlist frozen, the pinned values are ordinary `config.mk` entries, so AutoTuner and seed sweeps apply to them like any other knob — the last-ditch pass before tapeout. |
+
+Judge the feature against "how close to hand-tuned, with nobody
+maintaining it", and against "does it ever quietly make things worse".
+The second question is what the guards below exist to answer, and it is
+the one worth being strict about.
+
 ## Intended use: design-space exploration, not tapeout sign-off
 
 **This is the most important thing to understand before using it.**
@@ -55,10 +83,40 @@ gets fixed in the RTL — and its period number is a development signal.
 The rule below does not change between the two regimes; the report tells
 you which one you are reading.
 
-If you are taping out, pin the values: run with `AUTO_FLOORPLAN=1` once,
-read the winner out of the evidence, and write it into `config.mk` with
-`AUTO_FLOORPLAN=0`. That converts a measurement into a decision, which
-is what sign-off needs.
+If you are taping out, pin the values:
+
+```
+bazelisk run //flow/designs/asap7/ibex:ibex_core_auto_floorplan_pin
+```
+
+That reads the evidence from the design's last floorplan run, writes the
+winning coordinates into `config.mk` between generated markers, and sets
+`AUTO_FLOORPLAN = 0` so they are used verbatim. It is idempotent —
+re-running updates the block in place — and the block records the noise
+floor the values were raced against and how far the design was from its
+SDC period at the time, so a reviewer can see what they are approving:
+
+```make
+# BEGIN AUTO_FLOORPLAN -- generated, do not edit by hand
+#
+# Raced against a measured noise floor (delta_tie) of 173.9
+# at the time of pinning: achieved 2739 against an SDC target of 1000
+# (10 noise floors short -- these values were explored, not signed off)
+#
+export CORE_UTILIZATION = 52
+export CORE_ASPECT_RATIO = 1
+export CORE_MARGIN = 2
+export PLACE_DENSITY_LB_ADDON = 0.1
+export PLACE_DENSITY = 0.668
+
+export AUTO_FLOORPLAN = 0
+# END AUTO_FLOORPLAN
+```
+
+Once pinned there is no machinery left in the way, so the frozen-RTL
+endgame works as it always did: the design's `autotuner.json` search
+space and a seed sweep can overfit these values as hard as a tapeout
+deserves.
 
 ## What it does
 
@@ -88,11 +146,48 @@ the two just inflates the die — or, as measured on gcd during
 development, deflates it and quietly sells the period away.
 
 So utilization is **constraint satisfaction, not minimisation**: take
-the smallest core whose score is still within `delta_tie` of the
-incumbent's, and if none qualifies, keep the incumbent. Density and
-aspect are then scored at that fixed area, which is a like-for-like
-period comparison. The incumbent is replaced only when the winner
-actually buys area.
+the smallest core whose score is *no worse than the incumbent's*, and if
+none qualifies, keep the incumbent. Density and aspect are then scored
+at that fixed area, which is a like-for-like period comparison. The
+incumbent is replaced only when the winner actually buys area.
+
+Note the tolerance on that admission is zero, not `delta_tie`. Spending
+the noise floor as an allowance sounds reasonable and is not: on the
+asap7 sweep `ibex`'s floor came out at 17% of its clock period, so
+"within `delta_tie`" would license handing over a sixth of the period in
+exchange for area. `delta_tie` decides what counts as *resolved* and
+what counts as a *tie*; it is not slack to be spent.
+
+### An unresolved ladder keeps the incumbent
+
+If the spread of scores across a ladder does not exceed the design's own
+noise floor, then every candidate is interchangeable with every other
+and the measurement has answered nothing. The response to that is to
+keep the incumbent — **not** to take the smallest core.
+
+This guard is load-bearing rather than decorative. Without it a large
+`delta_tie` makes the admission test vacuous, every candidate qualifies,
+and the rule silently degenerates into pure area minimisation with no
+period protection at all. Measured during development: `ethmac`'s noise
+floor came out at 525% of its clock period and `aes`'s at 31%, with
+ladder spreads *smaller* than the floor in both cases — and both duly
+shrank their core and gave up large amounts of TNS for a score
+difference indistinguishable from noise.
+
+Because of that, the noise floor is always reported against the clock
+period, which is the only scale on which a period number means
+anything:
+
+```
+AUTO_FLOORPLAN: noise floor over 3 seeds: spread 173.9 (7.06% of score,
+  17.39% of the clock period). A floor that is a large fraction of the
+  clock means this design's proxy cannot resolve small period
+  differences at all.
+```
+
+A design whose floor is a large fraction of its clock will mostly report
+"did not resolve" and keep its `config.mk` values. That is the correct
+outcome, not a failure to find one.
 
 ### Not overfitting the proxy
 

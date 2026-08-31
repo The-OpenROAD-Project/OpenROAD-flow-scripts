@@ -1,7 +1,8 @@
 """BUILD boilerplate for flow/designs/."""
 
 load("@bazel-orfs//:openroad.bzl", "orfs_flow")
-load("@orfs_designs//:designs.bzl", "orfs_design")
+load("@orfs_designs//:designs.bzl", "DESIGNS", "orfs_design")
+load("@rules_python//python:defs.bzl", "py_binary")
 
 # Per filegroup target: extensions included in the filegroup.
 # bazel-orfs's config_mk_parser produces these target names from
@@ -76,6 +77,55 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         user_arguments = user_arguments,
         user_sources = user_sources,
         local_arguments = local_arguments,
+    )
+    _auto_floorplan_pin(config)
+
+def _auto_floorplan_pin(config):
+    """Generate <name>_auto_floorplan_pin for this design.
+
+    AUTO_FLOORPLAN measures the floorplan shape on every run, which is
+    right while the RTL is moving and wrong at a tapeout: sign-off needs
+    a decision, not a measurement. This target turns one into the other,
+    the same way <name>_update does for rules-base.json --
+
+        bazelisk run //flow/designs/asap7/ibex:ibex_core_auto_floorplan_pin
+
+    reads the evidence the floorplan stage emitted, writes the winning
+    coordinates into config.mk between generated markers, and sets
+    AUTO_FLOORPLAN = 0. From then on they are ordinary config.mk entries,
+    so autotuner and seed sweeps apply to them like any other knob.
+    """
+    pkg = native.package_name()
+    prefix = "flow/designs/"
+    if not pkg.startswith(prefix):
+        return
+    key = pkg[len(prefix):]
+    entry = DESIGNS.get(key)
+    if not entry:
+        # Block sub-packages and designs without a parsed config.mk have
+        # no flow targets to hang this off.
+        return
+    name = entry["name"]
+
+    # The floorplan stage echoes its evidence into the stage log, which
+    # is a declared output; the REPORTS_DIR copy is not, and a sandboxed
+    # build discards it.
+    native.filegroup(
+        name = name + "_auto_floorplan_evidence",
+        srcs = [":" + name + "_floorplan"],
+        output_group = "2_1_floorplan.log",
+        tags = ["manual"],
+    )
+    py_binary(
+        name = name + "_auto_floorplan_pin",
+        srcs = ["//flow/util:pinAutoFloorplan.py"],
+        main = "pinAutoFloorplan.py",
+        args = [
+            "$(location :{}_auto_floorplan_evidence)".format(name),
+            pkg + "/" + config,
+        ],
+        data = [":" + name + "_auto_floorplan_evidence"],
+        tags = ["manual"],
     )
 
 def files(group, extra_srcs = None):

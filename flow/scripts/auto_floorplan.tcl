@@ -236,10 +236,51 @@ proc af_parse_result { text } {
 # you already had" is a target that exists for every design -- including
 # the many that never meet their SDC period. See
 # docs/user/AutoFloorplan.md on why the SDC period is not the gate.
-proc af_select_smallest_within { results ref_score delta_tie } {
+# Did the ladder resolve anything? If the spread of scores across the
+# candidates does not exceed the design's own noise floor, then every
+# candidate is interchangeable with every other and the measurement has
+# answered nothing. That is a legal outcome, not a failure -- but the
+# honest response to it is to keep the incumbent, NOT to take the
+# smallest core.
+#
+# This guard is load-bearing. Without it, a large delta_tie makes the
+# admission test (score <= ref + delta_tie) vacuous, every candidate
+# qualifies, and the rule silently degenerates into pure area
+# minimisation with no period protection at all. Measured on the asap7
+# sweep: ethmac's noise floor came out at 525% of its clock period and
+# aes's at 31%, with ladder spreads smaller than the floor in both cases
+# -- and both duly shrank their core and gave up large amounts of TNS
+# for a score difference that was indistinguishable from noise.
+proc af_ladder_resolves { results delta_tie } {
+  if { [llength $results] < 2 } {
+    return 0
+  }
+  set lo [dict get [lindex $results 0] score]
+  set hi $lo
+  foreach r $results {
+    set v [dict get $r score]
+    if { $v < $lo } {
+      set lo $v
+    }
+    if { $v > $hi } {
+      set hi $v
+    }
+  }
+  return [expr { ($hi - $lo) > $delta_tie }]
+}
+
+proc af_select_smallest_within { results ref_score } {
   set best ""
   foreach r $results {
-    if { [dict get $r score] > $ref_score + $delta_tie } {
+    # The tolerance here is zero: a candidate must be no worse than the
+    # incumbent on the point estimate, not merely within delta_tie of it.
+    # Spending the noise floor as an admission budget is what hollowed
+    # this rule out on the asap7 sweep -- ibex's floor is 17% of its
+    # clock period, so "within delta_tie" licensed handing over a sixth
+    # of the period in exchange for area. delta_tie still decides what
+    # counts as resolved and what counts as a tie; it is not a slack
+    # allowance to be spent.
+    if { [dict get $r score] > $ref_score } {
       continue
     }
     if { $best eq "" || [dict get $r core_um2] < [dict get $best core_um2] } {
@@ -365,7 +406,7 @@ proc af_cand { tag util aspect margin addon seed } {
 # winning candidate under different placer seeds. Measured, never
 # searched -- a threshold that came from anywhere else would let the
 # selector be rewarded for predicting noise.
-proc af_measure_delta_tie { winner work } {
+proc af_measure_delta_tie { winner work { clk 0 } } {
   set cands {}
   foreach seed [lrange $::af_tie_seeds 1 end] {
     lappend cands [af_cand "tie_s$seed" [dict get $winner util] \
@@ -393,8 +434,12 @@ treating every difference as real"
     }
   }
   set spread [expr { $hi - $lo }]
+  set pct_score [format %.2f [expr { 100.0 * $spread / $hi }]]
+  set pct_clk [format %.2f [expr { $clk > 0 ? 100.0 * $spread / $clk : -1 }]]
   af_log "noise floor over [llength $scores] seeds: spread\
-[format %.4g $spread] ([format %.2f [expr { 100.0 * $spread / $hi }]]% of score)"
+ [format %.4g $spread] (${pct_score}% of score, ${pct_clk}% of the clock\
+ period). A floor that is a large fraction of the clock means this\
+ design's proxy cannot resolve small period differences at all."
   return [list $spread [llength $scores]]
 }
 
@@ -424,25 +469,40 @@ proc af_json_num { v } {
 # Render one JSON object from a list of key/value pairs. Building the
 # string in one piece per field keeps every value adjacent to its key,
 # which a multi-line quoted string with continuations did not.
-proc af_json_obj { pairs } {
-  set parts {}
+# Write one JSON object straight to a channel, field by field.
+#
+# Deliberately NOT built as one Tcl string and printed: constructing a
+# long line with lappend + join corrupted it under OpenROAD's Tcl --
+# elements came back spliced with fragments of themselves
+# ("inst_after": 18704,ter": 18704,) once the record grew past a few
+# hundred characters. The same code is correct under stock tclsh. Writing
+# incrementally keeps every string short and sidesteps it.
+proc af_json_obj_to { fh pairs } {
+  puts -nonewline $fh "{"
+  set first 1
   foreach { k v } $pairs {
     if { $v eq "" } {
       set v "null"
     } elseif { [string is double -strict $v] } {
-      # Force an explicit string representation before interpolating.
-      # Interpolating a raw double straight into a quoted string produced
-      # corrupted output under OpenROAD's Tcl -- a long mantissa came out
-      # with a fragment of itself spliced in after the value, which broke
-      # the evidence JSON. The identical code and data are correct under
-      # stock tclsh, so this normalises the representation rather than
-      # trusting it. %.10g is also plenty for evidence and keeps the file
-      # readable.
       set v [format %.10g $v]
     }
-    lappend parts "\"$k\": $v"
+    if { !$first } {
+      puts -nonewline $fh ", "
+    }
+    set first 0
+    puts -nonewline $fh "\"$k\": $v"
   }
-  return "{[join $parts {, }]}"
+  puts -nonewline $fh "}"
+}
+
+proc af_json_num { v } {
+  if { $v eq "" } {
+    return "null"
+  }
+  if { [string is double -strict $v] } {
+    return [format %.10g $v]
+  }
+  return $v
 }
 
 # Write the evidence: every candidate, its score, why it was eliminated
@@ -454,46 +514,56 @@ proc af_write_evidence { path phases winner delta_tie tie_n incumbent regime } {
     core_um2 util_post repair_growth inst_before inst_after
     repair_ms grt_ms total_ms
   }
-  set entries {}
-  foreach ph $phases {
-    lassign $ph name results
-    foreach r $results {
-      set pairs [list phase "\"$name\"" tag "\"[dict get $r tag]\""]
-      foreach f $fields {
-        lappend pairs $f [af_dict_get_or $r $f -1]
-      }
-      lappend entries "    [af_json_obj $pairs]"
-    }
-  }
-
   set fh [open $path w]
   puts $fh "{"
   puts $fh "  \"design\": \"$::env(DESIGN_NAME)\","
   puts $fh "  \"platform\": \"$::env(PLATFORM)\","
   puts $fh "  \"search\": \"coordinate-descent: utilization, then density, then aspect\","
+  puts $fh "  \"intent\": \"design-space exploration, not tapeout sign-off\","
   puts $fh "  \"delta_tie\": [af_json_num $delta_tie],"
   puts $fh "  \"delta_tie_n\": $tie_n,"
-  puts $fh "  \"intent\": \"design-space exploration, not tapeout sign-off\","
-  puts $fh "  \"period\": [af_json_obj [list \
-  sdc_target [af_json_num [dict get $regime target]] \
-  achieved [af_json_num [dict get $regime achieved]] \
-  gap [af_json_num [dict get $regime gap]] \
-  gap_in_delta_tie [af_json_num [dict get $regime gap_ties]]]],"
-  puts $fh "  \"incumbent\": [af_json_obj [list \
-  util [af_json_num [dict get $incumbent util]] \
-  aspect [af_json_num [dict get $incumbent aspect]] \
-  addon [af_json_num [dict get $incumbent addon]]]],"
+  puts -nonewline $fh "  \"period\": "
+  af_json_obj_to $fh [list \
+    sdc_target [af_json_num [dict get $regime target]] \
+    achieved [af_json_num [dict get $regime achieved]] \
+    gap [af_json_num [dict get $regime gap]] \
+    gap_in_delta_tie [af_json_num [dict get $regime gap_ties]]]
+  puts $fh ","
+  puts -nonewline $fh "  \"incumbent\": "
+  af_json_obj_to $fh [list \
+    util [af_json_num [dict get $incumbent util]] \
+    aspect [af_json_num [dict get $incumbent aspect]] \
+    addon [af_json_num [dict get $incumbent addon]]]
+  puts $fh ","
+  puts -nonewline $fh "  \"winner\": "
   if { $winner eq "" } {
-    puts $fh "  \"winner\": null,"
+    puts -nonewline $fh "null"
   } else {
     set wp [list tag "\"[dict get $winner tag]\""]
     foreach f { util aspect margin density addon score core_um2 } {
       lappend wp $f [af_dict_get_or $winner $f -1]
     }
-    puts $fh "  \"winner\": [af_json_obj $wp],"
+    af_json_obj_to $fh $wp
   }
+  puts $fh ","
   puts $fh "  \"candidates\": \["
-  puts $fh [join $entries ",\n"]
+  set first 1
+  foreach ph $phases {
+    lassign $ph name results
+    foreach r $results {
+      if { !$first } {
+        puts $fh ","
+      }
+      set first 0
+      set pairs [list phase "\"$name\"" tag "\"[dict get $r tag]\""]
+      foreach f $fields {
+        lappend pairs $f [af_dict_get_or $r $f -1]
+      }
+      puts -nonewline $fh "    "
+      af_json_obj_to $fh $pairs
+    }
+  }
+  puts $fh ""
   puts $fh "  \]"
   puts $fh "}"
   close $fh
@@ -503,9 +573,15 @@ proc af_write_evidence { path phases winner delta_tie tie_n incumbent regime } {
   # evidence for a verdict would vanish exactly where it is most needed --
   # in CI. The stage log is a declared output, so the record survives
   # there. The AUTO_FLOORPLAN-EVIDENCE markers make it machine-extractable.
+  # Echo line by line, never as one blob. Every corruption seen while
+  # developing this landed just past offset 4096 -- a single puts of a
+  # string larger than the channel buffer came back with fragments of
+  # itself spliced in. Short writes are unaffected.
   set fh [open $path r]
   puts "AUTO_FLOORPLAN-EVIDENCE-BEGIN"
-  puts -nonewline [read $fh]
+  while { [gets $fh line] >= 0 } {
+    puts $line
+  }
   close $fh
   puts "AUTO_FLOORPLAN-EVIDENCE-END"
 }
@@ -576,7 +652,8 @@ proc af_run { } {
   if { $inc_cand eq "" } {
     set inc_cand [lindex $r_util 0]
   }
-  lassign [af_measure_delta_tie $inc_cand $work] delta_tie tie_n
+  lassign [af_measure_delta_tie $inc_cand $work \
+    [dict get $inc_cand clock_period]] delta_tie tie_n
   set ref_score [dict get $inc_cand score]
 
   # How far is this design from the period it was asked for? The gap is
@@ -606,12 +683,19 @@ proc af_run { } {
  not a sign-off margin"
   }
 
-  set w [af_select_smallest_within $r_util $ref_score $delta_tie]
+  if { ![af_ladder_resolves $r_util $delta_tie] } {
+    set w $inc_cand
+    af_log "utilization ladder did not resolve: its score spread is within\
+ delta_tie [format %.4g $delta_tie], so every candidate is\
+ interchangeable. Keeping the incumbent rather than picking on noise."
+  } else {
+    set w [af_select_smallest_within $r_util $ref_score]
+  }
   if { $w eq "" } {
     set w $inc_cand
     af_log "no smaller core holds the incumbent's period within delta_tie;\
  keeping utilization [dict get $w util]"
-  } else {
+  } elseif { [dict get $w util] != [dict get $inc_cand util] } {
     af_log "utilization phase: [dict get $w util] is the smallest core\
  holding period within delta_tie [format %.4g $delta_tie] ([format %.4g \
   [dict get $w core_um2]] um2 vs [format %.4g [dict get $inc_cand core_um2]]\
