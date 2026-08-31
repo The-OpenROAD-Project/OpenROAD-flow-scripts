@@ -128,25 +128,40 @@ if { [env_var_exists_and_non_empty IO_CONSTRAINTS] } {
   source $::env(IO_CONSTRAINTS)
 }
 
+# Place the pins the way io_placement.tcl does. This is not optional
+# decoration: global_placement -place_ios leaves pins that global route
+# rejects outright with GRT-0080 "Invalid pin placement", which
+# eliminated every candidate on aes, ibex and ethmac -- including each
+# design's own incumbent configuration, which routes fine in the real
+# flow. Off-track pins are indeed irrelevant to a placement-only ranking
+# scalar, but they are fatal once the scorer routes.
+#
+# IO_PLACER_H/V and PLACE_PINS_ARGS are declared for the floorplan stage
+# as well as place for exactly this reason. A platform that does not set
+# them falls back to -place_ios, which is still usable when AF_GRT=0.
+set af_place_ios 0
+if {
+  [env_var_exists_and_non_empty IO_PLACER_H] &&
+  [env_var_exists_and_non_empty IO_PLACER_V]
+} {
+  log_cmd place_pins -hor_layers $::env(IO_PLACER_H) \
+    -ver_layers $::env(IO_PLACER_V) \
+    {*}[env_var_or_empty PLACE_PINS_ARGS]
+} else {
+  set af_place_ios 1
+  puts "AUTO_FLOORPLAN: IO_PLACER_H/V unset; falling back to -place_ios"
+}
+
 set af_gp0 [clock milliseconds]
 # AF_SEED lets the driver re-run one candidate under different placer
 # seeds to measure this design's own noise floor, which is what makes
 # delta_tie a measurement rather than a guessed threshold.
 #
-# -place_ios rather than an explicit place_pins: IO_PLACER_H/V are
-# place-stage variables and erase_non_stage_variables has already removed
-# them by the time the floorplan stage runs, so a candidate cannot see
-# them. It is also the better answer -- per-candidate pin adaptation
-# mirrors production (io_placement runs after macro placement), and
-# off-track pins do not matter to a ranking scalar. Whether -place_ios
-# costs ranking accuracy versus pre-placed pins is an open question in
-# the estimation-ladder work; it is recorded here so the choice is not
-# mistaken for a settled one.
 log_cmd global_placement -density $af_density \
   -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
   -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
   -random_seed [af_env AF_SEED 1] \
-  -place_ios \
+  {*}[expr { $af_place_ios ? "-place_ios" : "" }] \
   -force_center_initial_place
 set af_gp1 [clock milliseconds]
 
@@ -222,6 +237,9 @@ set af_grt_ok 1
 if { [af_env AF_GRT 1] ne "0" } {
   if { [catch { log_cmd global_route } af_grt_err] } {
     set af_grt_ok 0
+    # Carry the message up: the candidate's own log is discarded by a
+    # sandboxed build, so a bare "global route failed" is undebuggable.
+    set af_grt_reason [string map {"\n" " "} $af_grt_err]
     puts "AUTO_FLOORPLAN: global route failed: $af_grt_err"
   } else {
     log_cmd estimate_parasitics -global_routing
@@ -231,7 +249,7 @@ set af_t_grt1 [clock milliseconds]
 
 if { !$af_grt_ok } {
   set f [open $::env(AF_RESULT) w]
-  puts $f [list ok 0 reason "global route failed"]
+  puts $f [list ok 0 reason "global route failed: $af_grt_reason"]
   close $f
   exit 0
 }

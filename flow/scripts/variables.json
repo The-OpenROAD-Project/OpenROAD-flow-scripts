@@ -488,12 +488,14 @@
   "IO_PLACER_H": {
     "description": "A list of metal layers on which the I/O pins are placed horizontally (top and bottom of the die).\n",
     "stages": [
+      "floorplan",
       "place"
     ]
   },
   "IO_PLACER_V": {
     "description": "A list of metal layers on which the I/O pins are placed vertically (sides of the die).\n",
     "stages": [
+      "floorplan",
       "place"
     ]
   },
@@ -719,6 +721,7 @@
   "PLACE_PINS_ARGS": {
     "description": "Arguments to place_pins\n",
     "stages": [
+      "floorplan",
       "place"
     ]
   },
