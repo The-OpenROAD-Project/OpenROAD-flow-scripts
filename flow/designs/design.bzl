@@ -2,7 +2,7 @@
 
 load("@bazel-orfs//:openroad.bzl", "orfs_flow")
 load("@orfs_designs//:designs.bzl", "DESIGNS", "orfs_design")
-load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python:defs.bzl", "py_binary", "py_test")
 
 # Per filegroup target: extensions included in the filegroup.
 # bazel-orfs's config_mk_parser produces these target names from
@@ -53,7 +53,6 @@ def _export_design_files():
         visibility = ["//visibility:private"],
     )
 
-
 def design(config = "config.mk", user_arguments = [], user_sources = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.
 
@@ -79,6 +78,7 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         local_arguments = local_arguments,
     )
     _auto_floorplan_pin(config)
+    _pareto_test()
 
 def _auto_floorplan_pin(config):
     """Generate <name>_auto_floorplan_pin for this design.
@@ -145,3 +145,52 @@ def files(group, extra_srcs = None):
         visibility = ["//visibility:public"],
     )
     _export_design_files()
+
+def _pareto_test():
+    """Generate <name>_pareto_test for designs that have a rules-base.json.
+
+    <name>_test asks whether anything got worse than a padded bound.
+    This asks the question that one cannot: did the QoR point move in a
+    good direction, or is it dominated? A change that shrinks the core
+    and gives up a little slack fails the first and passes the second,
+    and the difference matters when the whole point of a change is to
+    trade along the front.
+
+    It shares the metadata action with <name>_test, so it adds no flow
+    runtime. Designs whose rules-base.json has no `golden` values yet
+    (recorded by <name>_update once genRuleFile.py has run) warn and
+    pass rather than failing on absence.
+    """
+    pkg = native.package_name()
+    prefix = "flow/designs/"
+    if not pkg.startswith(prefix):
+        return
+    entry = DESIGNS.get(pkg[len(prefix):])
+    if not entry:
+        return
+    if not native.glob(["rules-base.json"], allow_empty = True):
+        return
+    name = entry["name"]
+
+    native.filegroup(
+        name = name + "_metadata_json",
+        srcs = [":" + name + "_generate_metadata"],
+        output_group = "metadata.json",
+        tags = ["manual"],
+    )
+    py_test(
+        name = name + "_pareto_test",
+        srcs = ["//flow/util:checkPareto.py"],
+        main = "checkPareto.py",
+        args = [
+            "-m",
+            "$(location :{}_metadata_json)".format(name),
+            "-r",
+            "$(location :rules-base.json)",
+        ],
+        data = [
+            ":" + name + "_metadata_json",
+            ":rules-base.json",
+        ],
+        tags = ["orfs"],
+    )

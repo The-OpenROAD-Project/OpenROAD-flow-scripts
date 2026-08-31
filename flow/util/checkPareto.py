@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+
+"""Check whether a run moved the QoR Pareto front in a good direction.
+
+`checkMetadata.py` answers a different question, and answers it well:
+"did anything get worse than a bound we set". Its bounds carry generous
+margin -- 15% on area, 5% of the clock period on worst slack -- so it
+tolerates drift, which is what a regression guard should do.
+
+What it cannot express is a *trade*. A change that shrinks the core 8%
+and gives up 1% of worst slack fails the slack rule and says nothing at
+all about the area rule it just improved. Read literally it reports a
+regression; read honestly it is a point that moved along the front. The
+two are not distinguishable from `rules-base.json` alone, because the
+file records padded thresholds rather than measurements.
+
+So this reads the `golden` values that `genRuleFile.py` now records
+next to those thresholds -- the unpadded numbers actually measured --
+treats them as a point in KPI space, and asks where the new point sits
+relative to it:
+
+  * a **hard constraint** regression (DRC, placement violations, antenna)
+    fails outright, no tie band, no trade. These are not axes you are
+    allowed to spend.
+  * **losing timing closure** -- crossing from meeting the constraint to
+    missing it -- fails outright. That is a change in kind, not a Pareto
+    cost, and no amount of area buys it back.
+  * otherwise the new point fails only if it is **dominated**: every
+    axis worse-or-tied and at least one worse beyond its tie band. A
+    genuine trade -- better on one axis, worse on another -- passes, and
+    the trade is printed.
+
+`--require-improvement` additionally demands at least one axis improve
+beyond its tie band, which is what you want when gating a change that is
+*supposed* to move the front rather than merely not wreck it.
+
+Tie bands come from the `tie` field when present, and otherwise from
+conservative defaults below. A band that came from a real noise
+measurement is worth far more than these defaults; where one exists,
+record it in the rules file so the verdict is measured rather than
+assumed.
+"""
+
+import argparse
+import json
+import sys
+
+# axis -> (metric, direction, default fractional tie band)
+#   direction "up"   : larger is better (slack, TNS -- both negative-ish)
+#   direction "down" : smaller is better (area, power, wirelength)
+#
+# The defaults mirror the padding genRuleFile.py already applies, which
+# is the closest thing to a stated tolerance this flow has. They are
+# deliberately not tight: an unmeasured band should not manufacture
+# confident verdicts.
+AXES = [
+    ("period_ws", "finish__timing__setup__ws", "up", 0.05),
+    ("period_tns", "finish__timing__setup__tns", "up", 0.20),
+    ("core_area", "finish__design__core__area", "down", 0.015),
+    ("cell_area", "finish__design__instance__area", "down", 0.015),
+    ("power", "finish__power__total", "down", 0.05),
+]
+
+# Regressions here are never a trade.
+HARD = [
+    "detailedroute__route__drc_errors",
+    "detailedplace__design__violations",
+    "detailedroute__antenna__violating__nets",
+]
+
+# Reported next to the verdict, never gated: these are how a flow buys
+# timing when you are not looking (more repair, more runtime, more wire).
+DIAGNOSTIC = [
+    "detailedroute__route__wirelength",
+    "cts__design__instance__count__setup_buffer",
+    "cts__design__instance__count__hold_buffer",
+]
+
+# Closure is judged on this metric.
+CLOSURE = "finish__timing__setup__ws"
+
+
+def num(v):
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    return float(v)
+
+
+def classify(base, new, direction, tie):
+    """improved / tied / regressed, plus the fractional delta."""
+    if base == 0:
+        delta = 0.0 if new == base else (1.0 if new > base else -1.0)
+    else:
+        delta = (new - base) / abs(base)
+    better = (new > base) if direction == "up" else (new < base)
+    if abs(delta) <= tie:
+        return "tied", delta
+    return ("improved" if better else "regressed"), delta
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--metadata", "-m", required=True)
+    ap.add_argument("--rules", "-r", required=True)
+    ap.add_argument(
+        "--require-improvement",
+        action="store_true",
+        help="also fail unless at least one axis improves beyond its tie band",
+    )
+    args = ap.parse_args()
+
+    with open(args.metadata) as f:
+        meta = json.load(f)
+    with open(args.rules) as f:
+        rules = json.load(f)
+
+    errors = []
+    notes = []
+
+    # --- hard constraints ------------------------------------------------
+    for field in HARD:
+        rule = rules.get(field)
+        if not rule or "golden" not in rule:
+            continue
+        b, n = num(rule["golden"]), num(meta.get(field))
+        if b is None or n is None:
+            continue
+        if n > b:
+            errors.append(f"{field}: {b:g} -> {n:g} (hard constraint, never a trade)")
+        else:
+            notes.append(f"[ok]   {field:52s} {b:g} -> {n:g}")
+
+    # --- timing closure --------------------------------------------------
+    rule = rules.get(CLOSURE)
+    if rule and "golden" in rule:
+        b, n = num(rule["golden"]), num(meta.get(CLOSURE))
+        if b is not None and n is not None and b >= 0 > n:
+            errors.append(
+                f"{CLOSURE}: {b:g} -> {n:g} (was meeting the constraint, now "
+                "missing it; that is a change in kind, not a Pareto cost)"
+            )
+
+    # --- Pareto axes -----------------------------------------------------
+    improved, regressed, tied, missing = [], [], [], []
+    for name, field, direction, default_tie in AXES:
+        rule = rules.get(field)
+        if not rule or "golden" not in rule:
+            missing.append(name)
+            continue
+        b, n = num(rule["golden"]), num(meta.get(field))
+        if b is None or n is None:
+            missing.append(name)
+            continue
+        tie = rule.get("tie", default_tie)
+        src = "measured" if "tie" in rule else "default"
+        verdict, delta = classify(b, n, direction, tie)
+        line = (
+            f"{name:11s} {field:44s} {b:12.6g} -> {n:12.6g} "
+            f"{100 * delta:+7.2f}%  {verdict} (tie {100 * tie:.1f}% {src})"
+        )
+        notes.append("       " + line)
+        {"improved": improved, "regressed": regressed, "tied": tied}[verdict].append(
+            name
+        )
+
+    for field in DIAGNOSTIC:
+        rule = rules.get(field)
+        if not rule or "golden" not in rule:
+            continue
+        b, n = num(rule["golden"]), num(meta.get(field))
+        if b is None or n is None or b == 0:
+            continue
+        notes.append(
+            f"[diag] {field:52s} {b:12.6g} -> {n:12.6g} "
+            f"{100 * (n - b) / abs(b):+7.2f}%"
+        )
+
+    print("Pareto check against rules-base.json golden values")
+    print("-" * 78)
+    for line in notes:
+        print(line)
+    print("-" * 78)
+
+    if missing:
+        print(
+            f"[WARN] no golden value for: {', '.join(missing)} — "
+            "run <design>_update to record them"
+        )
+
+    # Dominated: nothing improved, something regressed.
+    dominated = bool(regressed) and not improved
+    if dominated:
+        errors.append(
+            "point is dominated: "
+            f"{', '.join(regressed)} regressed and no axis improved"
+        )
+
+    if improved and regressed:
+        print(
+            f"[INFO] trade: {', '.join(improved)} improved, "
+            f"{', '.join(regressed)} regressed — this is a move along the "
+            "front, not a regression"
+        )
+    elif improved:
+        print(f"[INFO] strict improvement on: {', '.join(improved)}")
+    elif not regressed:
+        print("[INFO] every axis within its tie band — no measurable movement")
+
+    if args.require_improvement and not improved and not errors:
+        errors.append(
+            "--require-improvement: no axis improved beyond its tie band"
+        )
+
+    for e in errors:
+        print(f"[ERROR] {e}")
+
+    if errors:
+        print("Pareto check FAILED")
+        sys.exit(1)
+    print("Pareto check passed")
+
+
+if __name__ == "__main__":
+    main()

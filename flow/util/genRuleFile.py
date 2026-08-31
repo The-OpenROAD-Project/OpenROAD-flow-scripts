@@ -422,6 +422,24 @@ def gen_rule_file(
             rule_entry = {"value": rule_value, "compare": option["compare"]}
             if "level" in option:
                 rule_entry["level"] = option["level"]
+
+            # The unpadded measurement, alongside the padded bound.
+            #
+            # "value" is a threshold with margin baked in -- 15% on area,
+            # 5% of the clock period on WS -- which is what makes it a
+            # usable regression guard and what makes it useless for
+            # asking whether results got *better*. A change that shrinks
+            # the core 8% and gives up 1% of WS is a real trade, and
+            # against the padded bounds it reads as "one rule failed" with
+            # nothing said about the other axis. checkPareto.py compares
+            # against "golden" instead, so it can see both halves.
+            #
+            # Purely additive: checkMetadata.py and updateRules.py read
+            # "value"/"compare" and ignore everything else.
+            if option["mode"] != "literal" and field in metrics:
+                golden = metrics[field]
+                if isinstance(golden, (int, float)) and not isinf(golden):
+                    rule_entry["golden"] = float(f"{golden:.6g}")
             rules[field] = rule_entry
 
     if len(change_str) > 0:

@@ -6,6 +6,7 @@ load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 exports_files([
     "open_plots.sh",
     "pinAutoFloorplan.py",
+    "checkPareto.py",
 ])
 
 compile_pip_requirements(
@@ -66,4 +67,14 @@ py_binary(
     name = "pinAutoFloorplan",
     srcs = ["pinAutoFloorplan.py"],
     visibility = ["//visibility:public"],
+)
+
+# Whether a run moved the QoR Pareto front in a good direction, as
+# opposed to checkMetadata.py's question of whether anything got worse
+# than a padded bound. Instantiated per design by //flow/designs:design.bzl
+# as <name>_pareto_test.
+py_test(
+    name = "checkPareto_test",
+    srcs = ["checkPareto_test.py"],
+    data = ["checkPareto.py"],
 )
