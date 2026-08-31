@@ -45,21 +45,37 @@ import argparse
 import json
 import sys
 
-# axis -> (metric, direction, default fractional tie band)
-#   direction "up"   : larger is better (slack, TNS -- both negative-ish)
-#   direction "down" : smaller is better (area, power, wirelength)
+# axis -> (metric, direction, default fractional tie band); "down" means
+# smaller is better. The defaults are deliberately not tight: an
+# unmeasured band should not manufacture confident verdicts.
 #
-# The defaults mirror the padding genRuleFile.py already applies, which
-# is the closest thing to a stated tolerance this flow has. They are
-# deliberately not tight: an unmeasured band should not manufacture
-# confident verdicts.
+# The period axis is the ACHIEVED PERIOD (clock - WNS), never WNS itself.
+#
+# WNS is a signed quantity that lives near zero, so a fractional change in
+# it is meaningless: a design at +5.8 ps that moves to +0.9 ps has "lost
+# 85%" of nothing, while one at -274 ps that moves to -280 ps has "lost
+# 2%" of a great deal. Both readings are noise dressed as precision, and
+# a tie band expressed as a fraction of WNS is correspondingly absurd --
+# tight where WNS is small, loose where it is large, for no reason
+# connected to the design.
+#
+# clock - WNS is a stable positive quantity of order the clock period, so
+# a fractional change in it means what it appears to mean, and a tie band
+# expressed as a fraction of it is a fraction of the clock. This is the
+# same convention genRuleFile.py already uses for its timing rules
+# ("period_padding": pad by a percentage of the clock, not of the slack).
+#
+# TNS is deliberately NOT an axis. It is unbounded below, frequently
+# exactly zero, and its scale depends on the endpoint count, so it has
+# the same pathology as WNS and worse. It stays a diagnostic.
 AXES = [
-    ("period_ws", "finish__timing__setup__ws", "up", 0.05),
-    ("period_tns", "finish__timing__setup__tns", "up", 0.20),
+    ("period", None, "down", 0.005),  # synthesised: clock - WNS
     ("core_area", "finish__design__core__area", "down", 0.015),
     ("cell_area", "finish__design__instance__area", "down", 0.015),
     ("power", "finish__power__total", "down", 0.05),
 ]
+
+WNS = "finish__timing__setup__ws"
 
 # Regressions here are never a trade.
 HARD = [
@@ -71,13 +87,32 @@ HARD = [
 # Reported next to the verdict, never gated: these are how a flow buys
 # timing when you are not looking (more repair, more runtime, more wire).
 DIAGNOSTIC = [
+    "finish__timing__setup__tns",
     "detailedroute__route__wirelength",
     "cts__design__instance__count__setup_buffer",
     "cts__design__instance__count__hold_buffer",
 ]
 
-# Closure is judged on this metric.
-CLOSURE = "finish__timing__setup__ws"
+# Closure is judged on WNS, and on WNS alone: "does this design meet its
+# constraint" is a discrete fact about the sign, not a magnitude, and it
+# is the one question the achieved period cannot answer.
+CLOSURE = WNS
+
+
+def clock_period(meta):
+    """The first clock's period, as genRuleFile.py reads it."""
+    details = meta.get("constraints__clocks__details")
+    if isinstance(details, list) and details:
+        first = details[0]
+        if isinstance(first, (int, float)):
+            return float(first)
+        if isinstance(first, str):
+            for tok in first.split():
+                try:
+                    return float(tok)
+                except ValueError:
+                    continue
+    return None
 
 
 def num(v):
@@ -142,15 +177,29 @@ def main():
 
     # --- Pareto axes -----------------------------------------------------
     improved, regressed, tied, missing = [], [], [], []
+    period = clock_period(meta)
     for name, field, direction, default_tie in AXES:
-        rule = rules.get(field)
-        if not rule or "golden" not in rule:
-            missing.append(name)
-            continue
-        b, n = num(rule["golden"]), num(meta.get(field))
-        if b is None or n is None:
-            missing.append(name)
-            continue
+        if name == "period":
+            # Synthesised from the clock and WNS rather than read directly.
+            rule = rules.get(WNS)
+            if not rule or "golden" not in rule or period is None:
+                missing.append(name)
+                continue
+            gb, gn = num(rule["golden"]), num(meta.get(WNS))
+            if gb is None or gn is None:
+                missing.append(name)
+                continue
+            b, n = period - gb, period - gn
+            field = f"{WNS} -> achieved period (clock {period:g})"
+        else:
+            rule = rules.get(field)
+            if not rule or "golden" not in rule:
+                missing.append(name)
+                continue
+            b, n = num(rule["golden"]), num(meta.get(field))
+            if b is None or n is None:
+                missing.append(name)
+                continue
         tie = rule.get("tie", default_tie)
         src = "measured" if "tie" in rule else "default"
         verdict, delta = classify(b, n, direction, tie)

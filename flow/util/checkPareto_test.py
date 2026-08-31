@@ -18,7 +18,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SCRIPT = os.path.join(HERE, "checkPareto.py")
 
 # A baseline that meets timing with margin, so closure cases are testable.
+CLOCK = 1000.0
+
 BASE = {
+    "constraints__clocks__details": [f"core_clock {CLOCK} ..."],
     "finish__timing__setup__ws": 10.0,
     "finish__timing__setup__tns": -100.0,
     "finish__design__core__area": 1000.0,
@@ -33,6 +36,8 @@ BASE = {
 def rules_from(base, tie=None):
     out = {}
     for k, v in base.items():
+        if not isinstance(v, (int, float)):
+            continue  # clock details are metadata, not a rule
         entry = {"value": v, "compare": "<=", "golden": v}
         if tie and k in tie:
             entry["tie"] = tie[k]
@@ -69,20 +74,24 @@ class TestCheckPareto(unittest.TestCase):
         self.assertIn("strict improvement", out)
 
     def test_genuine_trade_passes(self):
-        # Core area down 10%, TNS worse 50%: a real move along the front.
-        # The existing rules check would simply fail on the TNS half.
+        # Core area down 10%, achieved period up ~1% (WNS 10 -> 0.5 ps on a
+        # 1000 ps clock): a real move along the front. The existing rules
+        # check would fail on the slack half and say nothing about the area
+        # half. WNS deliberately stays positive so this exercises the trade
+        # path and not the closure check.
         new = dict(BASE)
         new["finish__design__core__area"] = 900.0
-        new["finish__timing__setup__tns"] = -150.0
+        new["finish__timing__setup__ws"] = 0.5
         rc, out = run(new, rules_from(BASE))
         self.assertEqual(rc, 0, out)
         self.assertIn("trade:", out)
 
     def test_dominated_fails(self):
-        # Everything worse, nothing better.
+        # Everything worse, nothing better -- and still meeting timing, so
+        # this is dominance rather than a closure failure.
         new = dict(BASE)
         new["finish__design__core__area"] = 1200.0
-        new["finish__timing__setup__tns"] = -200.0
+        new["finish__timing__setup__ws"] = 2.0
         rc, out = run(new, rules_from(BASE))
         self.assertEqual(rc, 1, out)
         self.assertIn("dominated", out)
@@ -139,6 +148,18 @@ class TestCheckPareto(unittest.TestCase):
         rc, out = run(new, rules)
         self.assertEqual(rc, 0, out)
         self.assertIn("measured", out)
+
+    def test_tiny_wns_swing_is_not_a_huge_period_change(self):
+        # WNS +5.8 -> +0.9 ps is an 85% "loss" of WNS and 0.5% of the
+        # clock. Judged on WNS it looks catastrophic; judged on achieved
+        # period it is inside the tie band, which is the point.
+        base = dict(BASE)
+        base["finish__timing__setup__ws"] = 5.8
+        new = dict(base)
+        new["finish__timing__setup__ws"] = 0.9
+        rc, out = run(new, rules_from(base))
+        self.assertEqual(rc, 0, out)
+        self.assertIn("no measurable movement", out)
 
     def test_missing_golden_is_warned_not_fatal(self):
         rules = rules_from(BASE)
