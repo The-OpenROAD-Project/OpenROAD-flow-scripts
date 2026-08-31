@@ -207,23 +207,20 @@ proc af_shell_quote { s } {
 
 # The candidate writes a flat one-line JSON object of numbers and short
 # strings; a full parser would be a dependency for no gain.
-proc af_parse_result { json } {
-  set d [dict create]
-  # Keys carry digits (core_um2, stdcell_um2, n_paths), so the key class
-  # has to include them -- [a-z_]+ silently dropped exactly the area
-  # fields the guards and the tie-break need.
-  set matches [regexp -all -inline {"([a-z_0-9]+)"\s*:\s*(-?[0-9][0-9.eE+-]*|"[^"]*")} $json]
-  foreach { whole key val } $matches {
-    set val [string trim $val "\""]
-    dict set d $key $val
-  }
-  if { ![dict exists $d ok] } {
+# The candidate writes a Tcl dict literal, so reading it is just a
+# validity check. Returns "" when the record is not a well-formed dict.
+proc af_parse_result { text } {
+  set text [string trim $text]
+  if { [catch { dict size $text }] } {
     return ""
   }
-  if { ![dict exists $d reason] } {
-    dict set d reason ""
+  if { ![dict exists $text ok] } {
+    return ""
   }
-  return $d
+  if { ![dict exists $text reason] } {
+    dict set text reason ""
+  }
+  return $text
 }
 
 # Survivors of the feasibility guards, in the order given.
@@ -375,9 +372,22 @@ treating every difference as real"
   return [list $spread [llength $scores]]
 }
 
+# A candidate produced by an older script may lack a field; -1 records
+# "not measured" rather than silently reading as a real zero, which is
+# how a stale cached action first went unnoticed here.
+proc af_dict_get_or { d key default } {
+  if { [dict exists $d $key] } {
+    return [dict get $d $key]
+  }
+  return $default
+}
+
 proc af_json_num { v } {
   if { $v eq "" } {
     return "null"
+  }
+  if { [string is double -strict $v] } {
+    return [format %.10g $v]
   }
   return $v
 }
@@ -385,20 +395,51 @@ proc af_json_num { v } {
 # Write the evidence: every candidate, its score, why it was eliminated
 # if it was, the measured noise floor, and the winner. A verdict without
 # its evidence is an assertion.
+# Render one JSON object from a list of key/value pairs. Building the
+# string in one piece per field keeps every value adjacent to its key,
+# which a multi-line quoted string with continuations did not.
+proc af_json_obj { pairs } {
+  set parts {}
+  foreach { k v } $pairs {
+    if { $v eq "" } {
+      set v "null"
+    } elseif { [string is double -strict $v] } {
+      # Force an explicit string representation before interpolating.
+      # Interpolating a raw double straight into a quoted string produced
+      # corrupted output under OpenROAD's Tcl -- a long mantissa came out
+      # with a fragment of itself spliced in after the value, which broke
+      # the evidence JSON. The identical code and data are correct under
+      # stock tclsh, so this normalises the representation rather than
+      # trusting it. %.10g is also plenty for evidence and keeps the file
+      # readable.
+      set v [format %.10g $v]
+    }
+    lappend parts "\"$k\": $v"
+  }
+  return "{[join $parts {, }]}"
+}
+
+# Write the evidence: every candidate, its score, why it was eliminated
+# if it was, the measured noise floor, and the winner. A verdict without
+# its evidence is an assertion.
 proc af_write_evidence { path phases winner delta_tie tie_n incumbent } {
+  set fields {
+    util aspect density addon score macro_score degraded n_paths
+    core_um2 util_post repair_growth inst_before inst_after
+    repair_ms grt_ms total_ms
+  }
   set entries {}
   foreach ph $phases {
     lassign $ph name results
     foreach r $results {
-      lappend entries "    {\"phase\": \"$name\", \"tag\": \"[dict get $r tag]\",\
- \"util\": [dict get $r util], \"aspect\": [dict get $r aspect],\
- \"density\": [dict get $r density], \"addon\": [dict get $r addon],\
- \"score\": [dict get $r score], \"macro_score\": [dict get $r macro_score],\
- \"degraded\": [dict get $r degraded], \"n_paths\": [dict get $r n_paths],\
- \"core_um2\": [dict get $r core_um2], \"util_post\": [dict get $r util_post],\
- \"total_ms\": [dict get $r total_ms]}"
+      set pairs [list phase "\"$name\"" tag "\"[dict get $r tag]\""]
+      foreach f $fields {
+        lappend pairs $f [af_dict_get_or $r $f -1]
+      }
+      lappend entries "    [af_json_obj $pairs]"
     }
   }
+
   set fh [open $path w]
   puts $fh "{"
   puts $fh "  \"design\": \"$::env(DESIGN_NAME)\","
@@ -406,17 +447,18 @@ proc af_write_evidence { path phases winner delta_tie tie_n incumbent } {
   puts $fh "  \"search\": \"coordinate-descent: utilization, then density, then aspect\","
   puts $fh "  \"delta_tie\": [af_json_num $delta_tie],"
   puts $fh "  \"delta_tie_n\": $tie_n,"
-  puts $fh "  \"incumbent\": {\"util\": [af_json_num [dict get $incumbent util]],\
- \"aspect\": [af_json_num [dict get $incumbent aspect]],\
- \"addon\": [af_json_num [dict get $incumbent addon]]},"
+  puts $fh "  \"incumbent\": [af_json_obj [list \
+  util [af_json_num [dict get $incumbent util]] \
+  aspect [af_json_num [dict get $incumbent aspect]] \
+  addon [af_json_num [dict get $incumbent addon]]]],"
   if { $winner eq "" } {
     puts $fh "  \"winner\": null,"
   } else {
-    puts $fh "  \"winner\": {\"tag\": \"[dict get $winner tag]\",\
- \"util\": [dict get $winner util], \"aspect\": [dict get $winner aspect],\
- \"margin\": [dict get $winner margin], \"density\": [dict get $winner density],\
- \"addon\": [dict get $winner addon], \"score\": [dict get $winner score],\
- \"core_um2\": [dict get $winner core_um2]},"
+    set wp [list tag "\"[dict get $winner tag]\""]
+    foreach f { util aspect margin density addon score core_um2 } {
+      lappend wp $f [af_dict_get_or $winner $f -1]
+    }
+    puts $fh "  \"winner\": [af_json_obj $wp],"
   }
   puts $fh "  \"candidates\": \["
   puts $fh [join $entries ",\n"]

@@ -108,7 +108,7 @@ set ::env(PLACE_DENSITY) $af_density
 # ordinary flow would raise (FLW-24). Eliminate it here instead.
 if { $af_density >= 1.0 } {
   set f [open $::env(AF_RESULT) w]
-  puts $f "{\"ok\": 0, \"reason\": \"density $af_density >= 1.0\"}"
+  puts $f [list ok 0 reason "density $af_density >= 1.0"]
   close $f
   exit 0
 }
@@ -150,8 +150,96 @@ log_cmd global_placement -density $af_density \
   -force_center_initial_place
 set af_gp1 [clock milliseconds]
 
+# --- repair rung ---------------------------------------------------------
+# The scoring placement alone is blind to the half of the answer that
+# matters most here. PLACE_DENSITY's headroom exists for growth the flow
+# has not committed yet -- repair_design's buffer insertion and gate
+# upsizing above all -- and a proxy that stops at global placement cannot
+# see any of it. Measured on gcd without this rung, the score improved
+# monotonically as the core shrank (330.4 -> 325.7 across the utilization
+# ladder, against a delta_tie of 0.46) while the flow's TNS at finish got
+# 2.2x worse: a rank inversion, and exactly the one auto-floorplan.md
+# predicts if the scorer is blind to repair growth.
+#
+# So run the production repair. resize.tcl is the reference for what that
+# means; it cannot be sourced directly (it re-reads 3_3_place_gp.odb and
+# re-scopes the variables), so the same helper is called on the design
+# already in memory. repair_timing is deliberately not run:
+# ENABLE_PLACE_REPAIR_TIMING defaults to 0, so production does not run it
+# here either, and matching production is the point of this rung.
+#
+# The growth this exposes is recorded next to the score. It is the
+# quantity PLACE_DENSITY_LB_ADDON was always a guess at, so having it as
+# a measurement is worth as much as the ranking it fixes.
+set af_t_rep0 [clock milliseconds]
+set af_inst_before [sta::network_leaf_instance_count]
+set af_pin_before [sta::network_leaf_pin_count]
+set af_area_before [dict get [af_design_area] stdcell_um2]
+
+if { [af_env AF_REPAIR 1] ne "0" } {
+  estimate_parasitics -placement
+  if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
+    set_dont_use $::env(DONT_USE_CELLS)
+  }
+  repair_design_helper
+}
+
+set af_inst_after [sta::network_leaf_instance_count]
+set af_area_after [dict get [af_design_area] stdcell_um2]
+set af_growth [expr {
+  $af_area_before > 0
+  ? ($af_area_after - $af_area_before) / $af_area_before
+  : 0.0
+}]
+set af_t_rep1 [clock milliseconds]
+set af_growth_pct [format %.1f [expr { 100.0 * $af_growth }]]
+puts "AUTO_FLOORPLAN: repair grew std-cell area by ${af_growth_pct}%\
+ ($af_inst_before -> $af_inst_after instances)"
+
+# --- global route rung ---------------------------------------------------
+# estimate_parasitics -placement prices wires by an ideal-length estimate,
+# so a placement score built on it is blind to routing congestion -- and
+# congestion is what a denser core actually buys you. Measured on gcd:
+# the placement-only score improved monotonically as the core shrank
+# (330.4 -> 325.7 across the utilization ladder, 10x the 0.46 noise
+# floor), while at finish the flow's detailed-route wirelength was +59%
+# and TNS 2.2x worse. The repair rung above did not explain it: gcd's
+# instance count is unchanged by repair_design, 304 -> 304.
+#
+# So price the wires the way the flow does, with the flow's own element:
+# global_route, then estimate_parasitics -global_routing, which is
+# exactly the pair global_route.tcl runs.
+#
+# A candidate whose global route fails is eliminated rather than scored.
+# That is not a workaround, it is the guard doing its job: a floorplan
+# that cannot be routed is not a cheap floorplan.
+#
+# This is the expensive rung, and it is on by default because fidelity is
+# what makes the ranking mean anything. AF_GRT=0 falls back to the
+# placement-only estimate for a cheaper, less faithful race.
+set af_t_grt0 [clock milliseconds]
+set af_grt_ok 1
+if { [af_env AF_GRT 1] ne "0" } {
+  if { [catch { log_cmd global_route } af_grt_err] } {
+    set af_grt_ok 0
+    puts "AUTO_FLOORPLAN: global route failed: $af_grt_err"
+  } else {
+    log_cmd estimate_parasitics -global_routing
+  }
+}
+set af_t_grt1 [clock milliseconds]
+
+if { !$af_grt_ok } {
+  set f [open $::env(AF_RESULT) w]
+  puts $f [list ok 0 reason "global route failed"]
+  close $f
+  exit 0
+}
+
 # --- score ---------------------------------------------------------------
-estimate_parasitics -placement
+if { [af_env AF_GRT 1] eq "0" } {
+  estimate_parasitics -placement
+}
 set_propagated_clock [all_clocks]
 set af_sampled [af_sample_paths]
 set af_score [af_score_from_paths $af_sampled]
@@ -169,29 +257,41 @@ set af_util_post [expr {
 
 set af_t1 [clock milliseconds]
 
+# The driver is also Tcl, so hand it a Tcl dict rather than JSON parsed
+# back out with a regex. A dict literal round-trips exactly, needs no
+# parser, and cannot be corrupted by quoting -- an earlier JSON+regexp
+# version silently mangled long float fields once the record grew.
+set af_rec [list \
+  ok 1 \
+  util $::env(AF_UTIL) \
+  aspect $::env(AF_ASPECT) \
+  margin $::env(AF_MARGIN) \
+  density $af_density \
+  density_lb $af_lb \
+  addon [af_env AF_ADDON -1] \
+  seed [af_env AF_SEED 1] \
+  score $af_score \
+  macro_score $af_macro_score \
+  degraded [dict get $af_sampled degraded] \
+  n_paths [dict get $af_sampled n_paths] \
+  wns [dict get $af_sampled wns] \
+  clock_period [dict get $af_sampled clock_period] \
+  core_um2 [dict get $af_area core_um2] \
+  stdcell_um2 [dict get $af_area stdcell_um2] \
+  macro_um2 [dict get $af_area macro_um2] \
+  util_post $af_util_post \
+  repair_growth $af_growth \
+  inst_before $af_inst_before \
+  inst_after $af_inst_after \
+  repair_ms [expr { $af_t_rep1 - $af_t_rep0 }] \
+  grt_ms [expr { $af_t_grt1 - $af_t_grt0 }] \
+  floorplan_ms [expr { $af_t_fp - $af_t0 }] \
+  macro_place_ms [expr { $af_t_mp - $af_t_fp }] \
+  gpl_ms [expr { $af_gp1 - $af_gp0 }] \
+  total_ms [expr { $af_t1 - $af_t0 }]]
+
 set f [open $::env(AF_RESULT) w]
-puts $f "{\"ok\": 1,\
-\"util\": $::env(AF_UTIL),\
-\"aspect\": $::env(AF_ASPECT),\
-\"margin\": $::env(AF_MARGIN),\
-\"density\": $af_density,\
-\"density_lb\": $af_lb,\
-\"addon\": [af_env AF_ADDON -1],\
-\"score\": $af_score,\
-\"macro_score\": $af_macro_score,\
-\"degraded\": [dict get $af_sampled degraded],\
-\"n_paths\": [dict get $af_sampled n_paths],\
-\"wns\": [dict get $af_sampled wns],\
-\"clock_period\": [dict get $af_sampled clock_period],\
-\"core_um2\": [dict get $af_area core_um2],\
-\"stdcell_um2\": [dict get $af_area stdcell_um2],\
-\"macro_um2\": [dict get $af_area macro_um2],\
-\"util_post\": $af_util_post,\
-\"floorplan_ms\": [expr { $af_t_fp - $af_t0 }],\
-\"macro_place_ms\": [expr { $af_t_mp - $af_t_fp }],\
-\"gpl_ms\": [expr { $af_gp1 - $af_gp0 }],\
-\"seed\": [af_env AF_SEED 1],\
-\"total_ms\": [expr { $af_t1 - $af_t0 }]}"
+puts $f $af_rec
 close $f
 
 exit 0
