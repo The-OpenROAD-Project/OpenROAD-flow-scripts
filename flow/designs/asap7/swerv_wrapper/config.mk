@@ -44,9 +44,14 @@ export SYNTH_KEEP_MODULES ?= \
 
 export LIB_MODEL = CCS
 
+# The sv2v'd RTL instantiates OPENROAD_CLKGATE directly, so the clkgate
+# mapping model is a source file. Referenced by its resolved path (must
+# match CLKGATE_MAP_FILE for the platform's default PRIMARY_VT, R) so
+# bazel-orfs's config.mk parser, which cannot evaluate the make
+# functions behind $(PRIMARY_VT_TAG), can turn it into a file label.
 export VERILOG_FILES = $(DESIGN_HOME)/src/swerv/swerv_wrapper.sv2v.v \
                        $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/macros.v \
-                       $(CLKGATE_MAP_FILE)
+                       $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
 
 export ADDITIONAL_LEFS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lef/*.lef))
