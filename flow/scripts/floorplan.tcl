@@ -80,7 +80,7 @@ if { $use_floorplan_def } {
     {*}$additional_args
   # Method 4: Calculate core area from utilization, aspect ratio, and margins
 } elseif { $use_core_utilization } {
-  initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
+  log_cmd initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
     -aspect_ratio $::env(CORE_ASPECT_RATIO) \
     -core_space $::env(CORE_MARGIN) \
     -site $::env(PLACE_SITE) \
@@ -96,7 +96,7 @@ if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
 } elseif { [file exists $::env(PLATFORM_DIR)/make_tracks.tcl] } {
   log_cmd source $::env(PLATFORM_DIR)/make_tracks.tcl
 } else {
-  make_tracks
+  log_cmd make_tracks
 }
 
 # Configure global routing: FASTROUTE_TCL script or
@@ -111,7 +111,7 @@ if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
 }
 
 source_env_var_if_exists FOOTPRINT_TCL
-set_dont_use $::env(DONT_USE_CELLS)
+log_cmd set_dont_use $::env(DONT_USE_CELLS)
 
 # The transforms below (repair_tie_fanout, replace_arith_modules,
 # remove_buffers, repair_timing_helper) look like synthesis-stage
@@ -133,29 +133,27 @@ if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
   # This needs to come before any call to remove_buffers.  You could have one
   # tie driving multiple buffers that drive multiple outputs.
   # Repair tie lo fanout
-  puts "Repair tie lo fanout..."
   set tielo_cell_name [lindex $::env(TIELO_CELL_AND_PORT) 0]
   set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
   set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $::env(TIELO_CELL_AND_PORT) 1]
-  repair_tie_fanout -separation $::env(TIE_SEPARATION) $tielo_pin
+  log_cmd repair_tie_fanout -separation $::env(TIE_SEPARATION) $tielo_pin
 
   # Repair tie hi fanout
-  puts "Repair tie hi fanout..."
   set tiehi_cell_name [lindex $::env(TIEHI_CELL_AND_PORT) 0]
   set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
   set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
-  repair_tie_fanout -separation $::env(TIE_SEPARATION) $tiehi_pin
+  log_cmd repair_tie_fanout -separation $::env(TIE_SEPARATION) $tiehi_pin
 }
 
 if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
   # Enable sanity checker until replace_arith_modules becomes stable
   set_debug_level ODB replace_design_check_sanity 1
-  replace_arith_modules
+  log_cmd replace_arith_modules
 }
 
 if { $::env(REMOVE_ABC_BUFFERS) } {
   # remove buffers inserted by yosys/abc
-  remove_buffers
+  log_cmd remove_buffers
 } else {
   # Skip clone & split
   repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"

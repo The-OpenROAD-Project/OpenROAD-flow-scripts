@@ -466,7 +466,7 @@
   },
   "INFER_CLKGATES": {
     "default": 0,
-    "description": "Enables Yosys clock gate inference. Uses Liberty to determine clock gating cell\n",
+    "description": "Enables Yosys clock gate inference. By default, it uses the Liberty cell definitions to determine clock gating cell. The selection can be overridden using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.\n",
     "stages": [
       "synth"
     ]
@@ -648,6 +648,12 @@
       "final"
     ]
   },
+  "NEG_CLKGATE_AND_PORTS": {
+    "description": "Specifies the active low enable clock gating cell and port names when used in conjunction with the INFER_CLKGATES variable. Format is \"cell_name enable_port:master_clock:gated_clock\"\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "NUM_CORES": {
     "description": "Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers of cores in system as determined by system specific code in Makefile, `nproc` is tried first. OpenROAD does not limit itself to this number of cores across OpenROAD running instances, which can lead to overprovisioning in contexts such as bazel-orfs where there could be many routing, or place jobs running at the same time.\n",
     "stages": [
@@ -819,6 +825,12 @@
       "floorplan"
     ]
   },
+  "POS_CLKGATE_AND_PORTS": {
+    "description": "Specifies the active high enable clock gating cell and port names when used in conjunction with the INFER_CLKGATES variable. Format is \"cell_name enable_port:master_clock:gated_clock\"\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "PRE_CTS_TCL": {
     "description": "Specifies a Tcl script with commands to run before CTS.\n",
     "stages": [
@@ -943,12 +955,6 @@
     "description": "String patterns directly passed to write_verilog -remove_cells <> for lec checks.\n",
     "type": "string"
   },
-  "REMOVE_LIBS_FOR_LEC": {
-    "description": "List of Liberty files to exclude from LEC. This is required for cases where a Verilog black box needs to be used instead of a Liberty file.\n",
-    "stages": [
-      "cts"
-    ]
-  },
   "REPAIR_PDN_VIA_LAYER": {
     "description": "Remove power grid vias which generate DRC violations after detailed routing.\n"
   },
@@ -1017,6 +1023,13 @@
   "RTLMP_FENCE_UY": {
     "default": 0.0,
     "description": "Defines the upper right Y coordinate for the global fence bounding box in microns.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_KEEP_CLUSTERING": {
+    "default": 0,
+    "description": "Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as nested dbGroups.\n",
     "stages": [
       "floorplan"
     ]
