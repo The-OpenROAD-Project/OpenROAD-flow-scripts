@@ -70,6 +70,14 @@
       "All stages"
     ]
   },
+  "AUTO_FLOORPLAN": {
+    "default": 1,
+    "description": "Measure the floorplan shape instead of reading it.\n\nWhen enabled, the floorplan stage races a set of candidate outlines and\nplacement densities, scores each with a report-only global placement, and\nuses the winner. The raced values OVERRIDE whatever the design's config.mk\nsets for CORE_UTILIZATION, CORE_ASPECT_RATIO, CORE_MARGIN, DIE_AREA,\nCORE_AREA, PLACE_DENSITY and PLACE_DENSITY_LB_ADDON; those values become\nthe incumbent candidate, kept unless a candidate beats them by more than\nthe measured noise floor.\n\nIgnored when FLOORPLAN_DEF or FOOTPRINT is set: those describe a die that\nis a constraint, not a choice.\n\n0 disables it and uses the config.mk values verbatim. \"fast\" is reserved\nfor a future reduced-effort cascade.\n",
+    "stages": [
+      "floorplan",
+      "place"
+    ]
+  },
   "AUTO_MEMORIES": {
     "default": 0,
     "description": "Experimental. When set to 1, memory-shaped modules in the RTL (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and \u2014 when idiomatic as an SRAM macro \u2014 given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.\n"

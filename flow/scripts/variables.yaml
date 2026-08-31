@@ -84,6 +84,27 @@ DETAILED_METRICS:
   stages:
     - cts
     - grt
+AUTO_FLOORPLAN:
+  description: |
+    Measure the floorplan shape instead of reading it.
+
+    When enabled, the floorplan stage races a set of candidate outlines and
+    placement densities, scores each with a report-only global placement, and
+    uses the winner. The raced values OVERRIDE whatever the design's config.mk
+    sets for CORE_UTILIZATION, CORE_ASPECT_RATIO, CORE_MARGIN, DIE_AREA,
+    CORE_AREA, PLACE_DENSITY and PLACE_DENSITY_LB_ADDON; those values become
+    the incumbent candidate, kept unless a candidate beats them by more than
+    the measured noise floor.
+
+    Ignored when FLOORPLAN_DEF or FOOTPRINT is set: those describe a die that
+    is a constraint, not a choice.
+
+    0 disables it and uses the config.mk values verbatim. "fast" is reserved
+    for a future reduced-effort cascade.
+  stages:
+    - floorplan
+    - place
+  default: 1
 CORE_UTILIZATION:
   description: |
     The core utilization percentage (0-100).
