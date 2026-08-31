@@ -280,22 +280,83 @@ proc af_ladder_resolves { results delta_tie } {
   return [expr { ($hi - $lo) > $delta_tie }]
 }
 
-proc af_select_smallest_within { results ref_score } {
+# The exchange rate between area and period: one percent of achieved
+# period is worth this many percent of core area. Not a tuning constant
+# but a product decision -- how much silicon a percent of speed is worth
+# -- which is why it is stated as a rate rather than a threshold.
+#
+# Validated once against the asap7 sweep rather than searched per design:
+# lambda = 3 rejects the two trades that gave up a lot of period for
+# little area (ethmac +13.4% period for -16.7% area, aes +5.6% for -8.7%)
+# and accepts every win and every cheap trade (gcd-ccs +0.78% for -24.2%,
+# mock-alu +0.92% for -28.8%, aes_lvt +1.37% for -28.5%). Every verdict in
+# that table is unchanged for lambda anywhere in [2, 5], so this is the
+# shape of a policy, not a fitted number.
+set ::af_lambda [af_env AF_LAMBDA 3.0]
+
+# Width of the handover around the target period, as a fraction of the
+# clock. Verdicts are unchanged for tau in [0.01, 0.10].
+set ::af_tau_frac [af_env AF_TAU_FRAC 0.02]
+
+# ln(1 + e^x), computed so neither tail overflows.
+proc af_softplus { x } {
+  if { $x > 0 } {
+    return [expr { $x + log(1.0 + exp(-$x)) }]
+  }
+  return [expr { log(1.0 + exp($x)) }]
+}
+
+# The objective the race minimises:
+#
+#   P_eff = T + tau * ln(1 + e^((p - T)/tau))
+#   J     = ln(area) + lambda * ln(P_eff)
+#
+# P_eff is a smooth one-sided penalty: it tracks the achieved period p
+# when the design is slower than its target T, and flattens to T when it
+# is faster. So speed beyond what the SDC asked for has no value, and
+# area spent buying it is never repaid -- while a design that is short of
+# target pays the full exchange rate for every percent it gives up.
+#
+# Written this way there is no regime switch to get wrong. The same
+# expression minimises area down to the target on a design that closes
+# (the period term goes flat, so only ln(area) is left) and trades period
+# against area on one that does not. The derivative makes the intent
+# explicit:
+#
+#   dA/A = -lambda * sigma((p - T)/tau) * dp/P_eff
+#
+# The effective exchange rate is lambda*sigma, which scales itself down
+# as the design gets comfortably faster than target. A hard max(p, T)
+# gives the same verdicts on every design measured, but its kink means
+# two candidates either side of the target are treated very differently
+# on a noisy measurement; the softplus removes that cliff for free.
+#
+# Deliberately NOT tied to delta_tie, tempting as that is for a width.
+# A large delta_tie would inflate P_eff, which *reduces* period
+# sensitivity and makes the policy more aggressive exactly when the
+# instrument is worst. Whether a difference is measurable belongs in the
+# resolvability guard; what we want belongs here.
+proc af_objective { area period target } {
+  if { $area <= 0 || $target <= 0 } {
+    return 1e30
+  }
+  set tau [expr { $::af_tau_frac * $target }]
+  set p_eff [expr { $target + $tau * [af_softplus [expr { ($period - $target) / $tau }]] }]
+  return [expr { log($area) + $::af_lambda * log($p_eff) }]
+}
+
+# Pick the candidate minimising J. The incumbent is included by the
+# caller, so "nothing beats the incumbent" falls out as the incumbent
+# winning rather than needing its own branch.
+proc af_select_objective { results target } {
   set best ""
+  set best_j 0
   foreach r $results {
-    # The tolerance here is zero: a candidate must be no worse than the
-    # incumbent on the point estimate, not merely within delta_tie of it.
-    # Spending the noise floor as an admission budget is what hollowed
-    # this rule out on the asap7 sweep -- ibex's floor is 17% of its
-    # clock period, so "within delta_tie" licensed handing over a sixth
-    # of the period in exchange for area. delta_tie still decides what
-    # counts as resolved and what counts as a tie; it is not a slack
-    # allowance to be spent.
-    if { [dict get $r score] > $ref_score } {
-      continue
-    }
-    if { $best eq "" || [dict get $r core_um2] < [dict get $best core_um2] } {
+    set period [expr { [dict get $r clock_period] - [dict get $r wns] }]
+    set j [af_objective [dict get $r core_um2] $period $target]
+    if { $best eq "" || $j < $best_j } {
       set best $r
+      set best_j $j
     }
   }
   return $best
@@ -731,17 +792,16 @@ proc af_run { } {
  delta_tie [format %.4g $delta_tie], so every candidate is\
  interchangeable. Keeping the incumbent rather than picking on noise."
   } else {
-    set w [af_select_smallest_within $r_util $ref_score]
+    set w [af_select_objective $r_util $af_target]
   }
   if { $w eq "" } {
     set w $inc_cand
-    af_log "no smaller core holds the incumbent's period within delta_tie;\
- keeping utilization [dict get $w util]"
+    af_log "no utilization candidate could be scored; keeping utilization\
+ [dict get $w util]"
   } elseif { [dict get $w util] != [dict get $inc_cand util] } {
-    af_log "utilization phase: [dict get $w util] is the smallest core\
- holding period within delta_tie [format %.4g $delta_tie] ([format %.4g \
-  [dict get $w core_um2]] um2 vs [format %.4g [dict get $inc_cand core_um2]]\
- um2 at the incumbent)"
+    af_log "utilization phase: [dict get $w util] minimises the objective\
+ ([format %.4g [dict get $w core_um2]] um2 vs [format %.4g \
+  [dict get $inc_cand core_um2]] um2 at the incumbent)"
   }
 
   # --- phase 2: density -------------------------------------------------
@@ -775,15 +835,19 @@ proc af_run { } {
   # design exists to avoid. Area was settled above as a budget; the
   # density and aspect candidates all sit at that budget, so scoring
   # between them is a like-for-like period comparison.
-  set all [concat [list $w] $r_dens $r_asp]
-  set winner [af_select $all $delta_tie]
-
-  # Hysteresis: replace the incumbent only when the winner actually buys
-  # area. Without this a design whose folklore was already right would
-  # drift every time the race runs, on noise.
-  if { $winner ne "" && [dict get $winner core_um2] >= [dict get $inc_cand core_um2] } {
-    af_log "no candidate beats the incumbent on area; keeping it"
-    set winner $inc_cand
+  # The incumbent is in the running set, so "nothing beat it" is the
+  # incumbent winning rather than a separate hysteresis branch: a
+  # candidate that gives up period and returns no area can never lower J,
+  # so the objective rejects it without being told to.
+  set all [concat [list $w] [list $inc_cand] $r_dens $r_asp]
+  set winner [af_select_objective $all $af_target]
+  if { $winner ne "" } {
+    set jw [af_objective [dict get $winner core_um2] \
+      [expr { [dict get $winner clock_period] - [dict get $winner wns] }] $af_target]
+    set ji [af_objective [dict get $inc_cand core_um2] \
+      [expr { [dict get $inc_cand clock_period] - [dict get $inc_cand wns] }] $af_target]
+    af_log "objective (lambda $::af_lambda, tau [expr { 100.0 * $::af_tau_frac }]% of\
+ clock): winner J [format %.5f $jw] vs incumbent J [format %.5f $ji]"
   }
 
   af_write_evidence [file join $::env(REPORTS_DIR) auto_floorplan.json] \
