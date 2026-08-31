@@ -511,8 +511,8 @@ proc af_json_num { v } {
 proc af_write_evidence { path phases winner delta_tie tie_n incumbent regime } {
   set fields {
     util aspect density addon score macro_score degraded n_paths
-    core_um2 util_post repair_growth inst_before inst_after
-    repair_ms grt_ms total_ms
+    wns clock_period core_um2 util_post repair_growth inst_before
+    inst_after repair_ms grt_ms total_ms
   }
   set fh [open $path w]
   puts $fh "{"
@@ -683,6 +683,31 @@ proc af_run { } {
  not a sign-off margin"
   }
 
+  # NO CLOSURE GUARD IS POSSIBLE HERE, and that is worth stating rather
+  # than leaving as an absence.
+  #
+  # The obvious guard is "if this design already meets timing by less
+  # than delta_tie, do not trade area for period" -- losing closure is a
+  # change in kind, not a Pareto cost. It cannot be implemented from this
+  # scorer. The score is measured after global route but before CTS and
+  # repair_timing, so its absolute period is not merely noisy, it is
+  # heavily biased: on ibex the proxy reads wns = -1739 ps where the
+  # flow finishes at +13.8 ps, a bias of 1753 ps or 175% of the clock
+  # period. The proxy cannot tell a design that closes from one that
+  # misses by a nanosecond, so it cannot protect a margin it cannot see.
+  #
+  # Ranking accuracy at a fixed area is a weaker property than this and
+  # may well hold; knowing where you sit relative to the target is what
+  # an area-versus-period trade needs, and this measurement does not
+  # supply it. The flow-measured reference that would (a design's own
+  # last finish__timing__setup__ws) is not available at the floorplan
+  # stage: RULES_JSON is scoped to the test stage and carries a padded
+  # bound rather than the measurement.
+  #
+  # Consequence, documented in docs/user/AutoFloorplan.md: a design that
+  # currently closes with a small margin can be pushed out of closure by
+  # this feature. That is why it is a design-space exploration tool and
+  # why the pin target exists.
   if { ![af_ladder_resolves $r_util $delta_tie] } {
     set w $inc_cand
     af_log "utilization ladder did not resolve: its score spread is within\

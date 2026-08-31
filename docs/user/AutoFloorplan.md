@@ -227,6 +227,46 @@ rank inversion against the flow.
 `AF_REPAIR=0` and `AF_GRT=0` drop those rungs for a cheaper, less
 faithful race.
 
+## Known limitation: it can push a closing design out of closure
+
+**If your design currently meets timing with a small margin, this
+feature can take that margin away, and it cannot detect that it has.**
+
+The scorer measures after global route but before CTS and
+`repair_timing`. Its absolute period is therefore not merely noisy, it
+is heavily biased. Measured on `ibex`: the proxy reads `wns = -1739 ps`
+where the finished flow lands at `+13.8 ps` — a bias of 1753 ps, 175% of
+the clock period. The proxy cannot distinguish a design that closes from
+one that misses by a nanosecond.
+
+The obvious guard — "if this design already meets timing by less than
+the noise floor, do not trade area for period" — is therefore not
+implementable from this measurement. Ranking accuracy *at a fixed area*
+is a weaker property that may well hold; knowing where you sit relative
+to the target is what an area-versus-period trade needs, and this scorer
+does not supply it. The reference that would (a design's own last
+`finish__timing__setup__ws`) is not available at the floorplan stage:
+`RULES_JSON` is scoped to the `test` stage and carries a padded bound
+rather than the measurement.
+
+Observed consequence, on the asap7 sweep: `ibex` went from `WS +13.8 ps`
+(closing) to `-2.9 ps` (not closing) while its core shrank 23%. That is
+a change in kind, not a Pareto cost, and no amount of area buys it back.
+
+So, concretely:
+
+- If your design **does not close** — the common design-space
+  exploration case, and what this feature is for — you are in the
+  regime it reports as a "DSE gradient" and this limitation costs you
+  nothing.
+- If your design **does close**, and the margin matters, either pin the
+  values (above) and set `AUTO_FLOORPLAN = 0`, or leave it off. Check
+  the reported margin before trusting a shrink.
+
+This is the honest reason the feature is documented as exploration
+rather than sign-off, and it is the first thing to fix if the scorer is
+ever made CTS-aware.
+
 ## Cost
 
 Candidates run as parallel subprocesses, `AF_JOBS` at a time (default:
