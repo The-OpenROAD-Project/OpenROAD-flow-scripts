@@ -1,0 +1,9 @@
+"""bazel-orfs fixes carried until they land upstream.
+
+Applied via git_override(patches = ...) in //:MODULE.bazel; bzlmod
+honours overrides only from the root module, so carrying them here is
+what makes a fresh checkout of this branch build. Each patch names the
+upstream state it is waiting on; drop it at the bump that absorbs it.
+"""
+
+exports_files(glob(["*.patch"]))

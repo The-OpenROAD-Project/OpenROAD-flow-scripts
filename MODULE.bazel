@@ -75,7 +75,7 @@ local_path_override(
 bazel_dep(name = "qt-bazel", dev_dependency = True)
 git_override(
     module_name = "qt-bazel",
-    commit = "886104974c2fd72439f2c33b5deebf0fe4649df7",
+    commit = "5587ebcaf61bab7abe8e69c4db6d068b35562245",
     remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
 )
 
@@ -88,24 +88,24 @@ git_override(
 # the resolved module graph is unchanged.
 bazel_dep(name = "bazel-orfs", version = "0.0.1")
 
-bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
-
-BAZEL_ORFS_COMMIT = "6ebadeb4be5c9ada103081c9a5e668c014126616"
+BAZEL_ORFS_COMMIT = "f0b525ae4ce02de7f9780450f7d0887a848d8a4d"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
+#
+# 0001 is carried, not upstreamed, while this branch is in draft: the
+# config.mk DSL always forwards user_stages, and orfs_update has no such
+# attribute, so every design with a rules-base.json fails analysis
+# without it. Drop it at the bump that absorbs it.
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        "//patches/bazel-orfs:0001-flow-dont-leak-user_stages-into-orfs_update.patch",
+    ],
     remote = BAZEL_ORFS_REMOTE,
-)
-
-git_override(
-    module_name = "bazel-orfs-verilog",
-    commit = BAZEL_ORFS_COMMIT,
-    remote = BAZEL_ORFS_REMOTE,
-    strip_prefix = "verilog",
 )
 
 # yosys-slang is not on BCR. Pin to a commit on povik/yosys-slang master

@@ -1,0 +1,40 @@
+From 0f1578d407ed16eb14d029e880e5da4207ff8728 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Mon, 31 Aug 2026 13:08:42 +0200
+Subject: [PATCH] fix(flow): don't leak user_stages into orfs_update
+
+orfs_flow() reads user_stages with .get(), so it stays in kwargs.
+_orfs_stage() pops it for every stage target, but orfs_update is not a
+stage and its rule has no such attribute. The config.mk DSL always
+passes it -- orfs_design() defaults user_stages to {} and forwards it
+unconditionally -- so every design that has a rules-base.json fails
+analysis with:
+
+  no such attribute 'user_stages' in 'orfs_update' rule
+
+_strip_tool_kwargs() only strips openroad/opensta/yosys, so it does not
+cover this. Pop user_stages next to the substeps/lint pops already at
+the call site.
+---
+ private/flow.bzl | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/private/flow.bzl b/private/flow.bzl
+index 3988dff..0bcfe01 100644
+--- a/private/flow.bzl
++++ b/private/flow.bzl
+@@ -882,6 +882,14 @@ def _orfs_pass(
+             update_kwargs = dict(kwargs)
+             update_kwargs.pop("substeps", None)
+             update_kwargs.pop("lint", None)
++
++            # orfs_flow() reads user_stages with .get(), so it stays in
++            # kwargs; _orfs_stage() pops it for every stage target, but
++            # orfs_update is not a stage and has no such attr. The
++            # config.mk DSL always passes it (orfs_design defaults it to
++            # {}), so without this every design with a RULES_JSON fails
++            # analysis with "no such attribute 'user_stages'".
++            update_kwargs.pop("user_stages", None)
+             orfs_update(
+                 name = _step_name(name, variant, "update"),
+                 rules_json = sources["RULES_JSON"][0],
