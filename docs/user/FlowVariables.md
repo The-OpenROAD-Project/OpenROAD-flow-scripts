@@ -103,6 +103,7 @@ configuration file.
 | <a name="ADDITIONAL_MEMORIES"></a>ADDITIONAL_MEMORIES| Experimental. Space-separated list of user-supplied `.memories` files (the memories.json JSON schema) merged onto the set AUTO_MEMORIES detects — to force-convert a memory the idiomatic gate rejects, or to describe one the scanner cannot find. See docs/user/AutoMemories.md.| |
 | <a name="ADDITIONAL_SITES"></a>ADDITIONAL_SITES| Passed as -additional_sites to initialize_floorplan.| |
 | <a name="ASAP7_USE_VT"></a>ASAP7_USE_VT| A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.| RVT|
+| <a name="AUTO_FLOORPLAN"></a>AUTO_FLOORPLAN| Measure the floorplan shape instead of reading it.  When enabled, the floorplan stage races a set of candidate outlines and placement densities, scores each with a report-only global placement, and uses the winner. The raced values OVERRIDE whatever the design's config.mk sets for CORE_UTILIZATION, CORE_ASPECT_RATIO, CORE_MARGIN, DIE_AREA, CORE_AREA, PLACE_DENSITY and PLACE_DENSITY_LB_ADDON; those values become the incumbent candidate, kept unless a candidate beats them by more than the measured noise floor.  Intended for design-space exploration, not tapeout sign-off: it gives a measured gradient for "how much smaller could this core be, and what does that cost", and reports how far the design sits from its SDC period in units of its own measured noise floor. To tape out, run it once, write the winner into config.mk and set AUTO_FLOORPLAN=0.  Ignored when FLOORPLAN_DEF or FOOTPRINT is set: those describe a die that is a constraint, not a choice.  0 disables it and uses the config.mk values verbatim. "fast" is reserved for a future reduced-effort cascade. See docs/user/AutoFloorplan.md.| 1|
 | <a name="AUTO_MEMORIES"></a>AUTO_MEMORIES| Experimental. When set to 1, memory-shaped modules in the RTL (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM macro — given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.| 0|
 | <a name="BALANCE_ROWS"></a>BALANCE_ROWS| Balance rows during placement.| 0|
 | <a name="BLOCKS"></a>BLOCKS| Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.| |
@@ -397,6 +398,7 @@ configuration file.
 ## floorplan variables
 
 - [ADDITIONAL_SITES](#ADDITIONAL_SITES)
+- [AUTO_FLOORPLAN](#AUTO_FLOORPLAN)
 - [CELL_PAD_IN_SITES_GLOBAL_PLACEMENT](#CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 - [CORE_AREA](#CORE_AREA)
 - [CORE_ASPECT_RATIO](#CORE_ASPECT_RATIO)
@@ -468,6 +470,7 @@ configuration file.
 
 ## place variables
 
+- [AUTO_FLOORPLAN](#AUTO_FLOORPLAN)
 - [BALANCE_ROWS](#BALANCE_ROWS)
 - [BUFFER_PORTS_ARGS](#BUFFER_PORTS_ARGS)
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)

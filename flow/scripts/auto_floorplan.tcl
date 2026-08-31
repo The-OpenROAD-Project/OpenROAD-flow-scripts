@@ -223,6 +223,32 @@ proc af_parse_result { text } {
   return $text
 }
 
+# Area is never scored against period -- a bigger core always makes
+# period easier, so any blended objective just inflates the die (or, as
+# measured on gcd with the first version of this file, deflates it and
+# quietly sells the period away). Area is a budget and period is the goal
+# axis, so the utilization phase is constraint satisfaction, not
+# minimisation: take the SMALLEST core whose score is still within
+# delta_tie of the reference, and if none qualifies, keep the reference.
+#
+# The reference is the incumbent's own achieved score. It is the only
+# period this design is known to reach, so "do not get worse than what
+# you already had" is a target that exists for every design -- including
+# the many that never meet their SDC period. See
+# docs/user/AutoFloorplan.md on why the SDC period is not the gate.
+proc af_select_smallest_within { results ref_score delta_tie } {
+  set best ""
+  foreach r $results {
+    if { [dict get $r score] > $ref_score + $delta_tie } {
+      continue
+    }
+    if { $best eq "" || [dict get $r core_um2] < [dict get $best core_um2] } {
+      set best $r
+    }
+  }
+  return $best
+}
+
 # Survivors of the feasibility guards, in the order given.
 proc af_survivors { results } {
   set out {}
@@ -422,7 +448,7 @@ proc af_json_obj { pairs } {
 # Write the evidence: every candidate, its score, why it was eliminated
 # if it was, the measured noise floor, and the winner. A verdict without
 # its evidence is an assertion.
-proc af_write_evidence { path phases winner delta_tie tie_n incumbent } {
+proc af_write_evidence { path phases winner delta_tie tie_n incumbent regime } {
   set fields {
     util aspect density addon score macro_score degraded n_paths
     core_um2 util_post repair_growth inst_before inst_after
@@ -447,6 +473,12 @@ proc af_write_evidence { path phases winner delta_tie tie_n incumbent } {
   puts $fh "  \"search\": \"coordinate-descent: utilization, then density, then aspect\","
   puts $fh "  \"delta_tie\": [af_json_num $delta_tie],"
   puts $fh "  \"delta_tie_n\": $tie_n,"
+  puts $fh "  \"intent\": \"design-space exploration, not tapeout sign-off\","
+  puts $fh "  \"period\": [af_json_obj [list \
+  sdc_target [af_json_num [dict get $regime target]] \
+  achieved [af_json_num [dict get $regime achieved]] \
+  gap [af_json_num [dict get $regime gap]] \
+  gap_in_delta_tie [af_json_num [dict get $regime gap_ties]]]],"
   puts $fh "  \"incumbent\": [af_json_obj [list \
   util [af_json_num [dict get $incumbent util]] \
   aspect [af_json_num [dict get $incumbent aspect]] \
@@ -524,15 +556,67 @@ proc af_run { } {
     lappend cands [af_cand "u[string map {. p} $f]" $u $a0 $m0 $hold_addon 1]
   }
   set r_util [af_survivors [af_run_batch $cands $work]]
-  set w [af_select $r_util 0.0]
-  if { $w eq "" } {
+  if { [llength $r_util] == 0 } {
     af_log "no utilization candidate survived; leaving config.mk values in place"
     af_write_evidence [file join $::env(REPORTS_DIR) auto_floorplan.json] \
-      [list [list utilization $r_util]] "" 0.0 0 $incumbent
+      [list [list utilization $r_util]] "" 0.0 0 $incumbent \
+      [dict create target 0 achieved 0 gap 0 gap_ties -1]
     return 0
   }
-  af_log "utilization phase: [dict get $w util] wins (score\
-[format %.5g [dict get $w score]])"
+  # The noise floor has to be known before area can be traded against
+  # period, so it is measured here, on the incumbent, rather than at the
+  # end of the walk.
+  set inc_cand ""
+  foreach r $r_util {
+    if { [dict get $r util] == [format %.4g $u0] } {
+      set inc_cand $r
+      break
+    }
+  }
+  if { $inc_cand eq "" } {
+    set inc_cand [lindex $r_util 0]
+  }
+  lassign [af_measure_delta_tie $inc_cand $work] delta_tie tie_n
+  set ref_score [dict get $inc_cand score]
+
+  # How far is this design from the period it was asked for? The gap is
+  # reported in units of the design's own noise floor, so the statement
+  # is dimensionless and needs no threshold to be meaningful.
+  #
+  # It matters because it says what the verdict below IS. A design sitting
+  # a few noise floors off its SDC period is being closed, and giving up
+  # period to buy area is a real cost. A design sitting hundreds of noise
+  # floors off is not going to be closed by the backend at all -- that gap
+  # gets fixed in the RTL -- and its period number is a gradient for
+  # design-space exploration, not a sign-off margin. AUTO_FLOORPLAN is
+  # documented as the exploration tool, so it does not change its rule
+  # between the two; it reports which one you are in, and never trades
+  # period away in either.
+  set af_target [dict get $inc_cand clock_period]
+  set af_achieved [expr { $af_target - [dict get $inc_cand wns] }]
+  set af_gap [expr { $af_achieved - $af_target }]
+  set af_gap_ties [expr { $delta_tie > 0 ? $af_gap / $delta_tie : -1 }]
+  if { $af_gap <= 0 } {
+    af_log "design meets its SDC period ([format %.4g $af_achieved] vs\
+ [format %.4g $af_target]); period here is a sign-off margin"
+  } else {
+    af_log "design misses its SDC period by [format %.4g $af_gap]\
+ ([format %.4g $af_achieved] vs [format %.4g $af_target]) =\
+ [format %.0f $af_gap_ties] noise floors; period here is a DSE gradient,\
+ not a sign-off margin"
+  }
+
+  set w [af_select_smallest_within $r_util $ref_score $delta_tie]
+  if { $w eq "" } {
+    set w $inc_cand
+    af_log "no smaller core holds the incumbent's period within delta_tie;\
+ keeping utilization [dict get $w util]"
+  } else {
+    af_log "utilization phase: [dict get $w util] is the smallest core\
+ holding period within delta_tie [format %.4g $delta_tie] ([format %.4g \
+  [dict get $w core_um2]] um2 vs [format %.4g [dict get $inc_cand core_um2]]\
+ um2 at the incumbent)"
+  }
 
   # --- phase 2: density -------------------------------------------------
   set cands {}
@@ -559,32 +643,28 @@ proc af_run { } {
   }
   set r_asp [af_survivors [af_run_batch $cands $work]]
 
-  # --- noise floor, then selection over everything ----------------------
-  lassign [af_measure_delta_tie $w $work] delta_tie tie_n
-  set all [concat $r_util $r_dens $r_asp]
+  # --- selection, at the chosen area only -------------------------------
+  # Deliberately NOT over $r_util as well: those candidates differ in
+  # area, and picking across them by score is the blended objective this
+  # design exists to avoid. Area was settled above as a budget; the
+  # density and aspect candidates all sit at that budget, so scoring
+  # between them is a like-for-like period comparison.
+  set all [concat [list $w] $r_dens $r_asp]
   set winner [af_select $all $delta_tie]
 
-  # Rule: the incumbent is replaced only when beaten beyond delta_tie.
-  # Without this a design whose folklore was already right would still
+  # Hysteresis: replace the incumbent only when the winner actually buys
+  # area. Without this a design whose folklore was already right would
   # drift every time the race runs, on noise.
-  set inc_match ""
-  foreach r $all {
-    if { [dict get $r util] == [format %.4g $u0] && [dict get $r aspect] == $a0 } {
-      set inc_match $r
-      break
-    }
-  }
-  if {
-    $inc_match ne "" && $winner ne "" &&
-    [dict get $inc_match score] - [dict get $winner score] <= $delta_tie
-  } {
-    af_log "incumbent is within delta_tie of the best candidate; keeping it"
-    set winner $inc_match
+  if { $winner ne "" && [dict get $winner core_um2] >= [dict get $inc_cand core_um2] } {
+    af_log "no candidate beats the incumbent on area; keeping it"
+    set winner $inc_cand
   }
 
   af_write_evidence [file join $::env(REPORTS_DIR) auto_floorplan.json] \
     [list [list utilization $r_util] [list density $r_dens] [list aspect $r_asp]] \
-    $winner $delta_tie $tie_n $incumbent
+    $winner $delta_tie $tie_n $incumbent \
+    [dict create target $af_target achieved $af_achieved gap $af_gap \
+      gap_ties $af_gap_ties]
 
   if { $winner eq "" } {
     af_log "no candidate survived; leaving config.mk values in place"
