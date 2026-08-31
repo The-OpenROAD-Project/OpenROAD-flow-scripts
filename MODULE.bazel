@@ -8,7 +8,7 @@ module(
 # --- Regular dependencies (propagated to downstream consumers) ---
 
 bazel_dep(name = "rules_python", version = "2.0.0")
-bazel_dep(name = "rules_shell", version = "0.6.1")
+bazel_dep(name = "rules_shell", version = "0.8.0")
 
 # --- Dev dependencies (only honoured when @orfs is the root module) ---
 #
@@ -66,10 +66,45 @@ single_version_override(
 )
 
 
+# OpenROAD is fetched and patched here rather than taken from the
+# tools/OpenROAD submodule, so that a fresh checkout of this branch builds
+# the toolchain this work was measured on without any submodule dance.
+# bzlmod honours *_override only from the root module, so a downstream
+# module's patches never reach us -- carrying them here is the only way
+# they apply. local_path_override cannot carry patches; to iterate on
+# OpenROAD sources locally, comment the git_override out and restore:
+#
+#   local_path_override(
+#       module_name = "openroad",
+#       path = "tools/OpenROAD",
+#   )
+#
+# The macro-placement patches are carried while upstream mpl churns; each
+# names the issue it tracks, and is dropped at the bump that absorbs it.
+#   0040 -> The-OpenROAD-Project/OpenROAD#11277 (re-run segfault)
+#   0041 -> no issue yet: rtl_macro_placer -random_seed, a feature;
+#           re-upstreamed as a PR once mpl settles
+#   0042 -> The-OpenROAD-Project/OpenROAD#11278 (snap residue past core)
+#   0043 -> The-OpenROAD-Project/OpenROAD#11279 (all-fixed skips seeding)
+#   0045 -> The-OpenROAD-Project/OpenROAD#11262 (gpl parallel density
+#           scatter; also the mt_invariance test that makes scores
+#           CPU-count-invariant)
+OPENROAD_COMMIT = "3ca581e384324a1d09a53d29b00d4fad1c365e70"
+
 bazel_dep(name = "openroad", dev_dependency = True)
-local_path_override(
+git_override(
     module_name = "openroad",
-    path = "tools/OpenROAD",
+    commit = OPENROAD_COMMIT,
+    init_submodules = True,
+    patch_strip = 1,
+    patches = [
+        "//patches/openroad:0040-openroad-mpl-rerun-segfault.patch",
+        "//patches/openroad:0041-openroad-mpl-random-seed.patch",
+        "//patches/openroad:0042-openroad-mpl-snap-inside-core.patch",
+        "//patches/openroad:0043-openroad-mpl-all-fixed-std-seed.patch",
+        "//patches/openroad:0045-openroad-gpl-parallel-density-scatter.patch",
+    ],
+    remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
 )
 
 bazel_dep(name = "qt-bazel", dev_dependency = True)
@@ -138,12 +173,12 @@ register_toolchains(
     dev_dependency = True,
 )
 
-# sv-lang (via tools/OpenROAD) pulls in rules_pycross, whose toolchain
+# sv-lang (via @openroad) pulls in rules_pycross, whose toolchain
 # extension fails on Python 3.8 (transitively registered via or-tools ->
 # pybind11_abseil, dropped from rules_python 2.0.0's MINOR_MAPPING).
 # pycross.configure_environments is root-honored only, so the workaround
 # must be mirrored here from tools/OpenROAD/MODULE.bazel.
-bazel_dep(name = "rules_pycross", version = "0.8.1", dev_dependency = True)
+bazel_dep(name = "rules_pycross", version = "0.8.3", dev_dependency = True)
 
 pycross = use_extension(
     "@rules_pycross//pycross/extensions:pycross.bzl",

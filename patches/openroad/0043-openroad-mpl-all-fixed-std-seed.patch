@@ -1,0 +1,229 @@
+From f784d0aab8d160ec414af0468a0610bebc31b0f1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Sun, 30 Aug 2026 23:08:05 +0200
+Subject: [PATCH 4/4] mpl: seed standard cells when all macros are fixed
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When every macro is fixed, HierRTLMP::run() skipped the whole pipeline,
+including generateTemporaryStdCellsPlacement() and the soft blockages
+around macros. A full run seeds every standard cell at the center of
+its cluster before global placement reads the database, so a macro
+placement re-injected through place_macro/MACRO_PLACEMENT_TCL diverged
+from the run that generated it (~2% achieved period on designs where
+this was measured) even with bit-identical macro geometry.
+
+Now a design with standard cells goes through clustering, shaping and
+the soft-macro annealing even when there are no unfixed macros: the
+fixed macros act as fixed obstacles (as they already did in mixed
+fixed/unfixed designs), no macro is moved, standard cells are seeded at
+their cluster centers and the soft blockages are created, matching what
+a generating run leaves behind. Macro-only designs with no standard
+cells skip as before.
+
+The new all_fixed_macros1 test locks every macro and checks that the
+standard cells come out placed, no macro moved and the blockages exist.
+The no_unfixed_macros golden gains the design-data report block that is
+now printed before the skip; its DEF is unchanged.
+
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
+---
+ src/mpl/src/clusterEngine.cpp      |  8 +++--
+ src/mpl/src/hier_rtlmp.cpp         |  4 ++-
+ src/mpl/test/BUILD                 |  5 ++++
+ src/mpl/test/CMakeLists.txt        |  1 +
+ src/mpl/test/all_fixed_macros1.ok  | 25 ++++++++++++++++
+ src/mpl/test/all_fixed_macros1.tcl | 47 ++++++++++++++++++++++++++++++
+ src/mpl/test/no_unfixed_macros.ok  | 14 +++++++++
+ 7 files changed, 101 insertions(+), 3 deletions(-)
+ create mode 100644 src/mpl/test/all_fixed_macros1.ok
+ create mode 100644 src/mpl/test/all_fixed_macros1.tcl
+
+diff --git a/src/mpl/src/clusterEngine.cpp b/src/mpl/src/clusterEngine.cpp
+index 332f61cc00..baaa4b59ad 100644
+--- a/src/mpl/src/clusterEngine.cpp
++++ b/src/mpl/src/clusterEngine.cpp
+@@ -48,7 +48,12 @@ void ClusteringEngine::run()
+ {
+   init();
+ 
+-  if (!tree_->has_unfixed_macros) {
++  // With no unfixed macros there is nothing to place, but a design with
++  // standard cells still goes through clustering so that the temporary
++  // standard-cell placement matches the one a run with unfixed macros
++  // would produce - e.g. when a full run's placement is re-injected
++  // with locked macros through place_macro.
++  if (!tree_->has_unfixed_macros && design_metrics_->getNumStdCell() == 0) {
+     return;
+   }
+ 
+@@ -114,7 +119,6 @@ void ClusteringEngine::init()
+   if (unfixed_macros.empty()) {
+     tree_->has_unfixed_macros = false;
+     logger_->info(MPL, 17, "No unfixed macros.");
+-    return;
+   }
+ 
+   tree_->macro_with_halo_area = computeMacroWithHaloArea(unfixed_macros);
+diff --git a/src/mpl/src/hier_rtlmp.cpp b/src/mpl/src/hier_rtlmp.cpp
+index 5300665a1c..d9b547f1d5 100644
+--- a/src/mpl/src/hier_rtlmp.cpp
++++ b/src/mpl/src/hier_rtlmp.cpp
+@@ -343,7 +343,9 @@ void HierRTLMP::runMultilevelAutoclustering()
+   clustering_engine_->setHalos(base_halo_, use_full_halo_, macro_to_halo_);
+   clustering_engine_->run();
+ 
+-  if (!tree_->has_unfixed_macros) {
++  // Without a tree there is nothing to place or to seed: the design
++  // has neither unfixed macros nor standard cells.
++  if (!tree_->root) {
+     skip_macro_placement_ = true;
+     return;
+   }
+diff --git a/src/mpl/test/BUILD b/src/mpl/test/BUILD
+index e9f20addfb..2233dbfbd2 100644
+--- a/src/mpl/test/BUILD
++++ b/src/mpl/test/BUILD
+@@ -12,6 +12,7 @@ package(features = ["layering_check"])
+ 
+ # From CMakeLists.txt or_integration_tests(TESTS
+ COMPULSORY_TESTS = [
++    "all_fixed_macros1",
+     "boundary_push1",
+     "centralization1",
+     "clocked_macro",
+@@ -74,6 +75,10 @@ filegroup(
+             [
+                 test_name + ".*",
+             ] + {
++                "all_fixed_macros1": [
++                    "testcases/fixed_macros1.def",
++                    "testcases/orientation_improve1.lef",
++                ],
+                 "boundary_push1": [
+                     "testcases/boundary_push1.def",
+                     "testcases/orientation_improve1.lef",
+diff --git a/src/mpl/test/CMakeLists.txt b/src/mpl/test/CMakeLists.txt
+index 7b3e67ce7a..a45cec1404 100644
+--- a/src/mpl/test/CMakeLists.txt
++++ b/src/mpl/test/CMakeLists.txt
+@@ -1,6 +1,7 @@
+ or_integration_tests(
+   "mpl"
+   TESTS
++    all_fixed_macros1
+     macro_only
+     no_unfixed_macros
+     guides1
+diff --git a/src/mpl/test/all_fixed_macros1.ok b/src/mpl/test/all_fixed_macros1.ok
+new file mode 100644
+index 0000000000..e60c661cd4
+--- /dev/null
++++ b/src/mpl/test/all_fixed_macros1.ok
+@@ -0,0 +1,25 @@
++[INFO ODB-0227] LEF file: ./Nangate45/Nangate45.lef, created 22 layers, 27 vias, 135 library cells
++[INFO ODB-0227] LEF file: ./testcases/orientation_improve1.lef, created 10 library cells
++[INFO ODB-0128] Design: boundary_push1
++[INFO ODB-0131]     Created 152 components and 904 component-terminals.
++[INFO MPL-0062] Found fixed macro MACRO_1.
++[INFO MPL-0062] Found fixed macro MACRO_2.
++[INFO MPL-0017] No unfixed macros.
++Die Area: (0.00, 0.00) (220.02, 221.20),  Floorplan Area: (0.00, 0.00) (220.02, 221.20)
++	Number of std cell instances: 150
++	Area of std cell instances: 678.30
++	Number of macros: 2
++	Macros to be placed: 0
++	Area of macros: 20000.00
++	Base halo (L, B, R, T): (0.00, 0.00, 0.00, 0.00)
++	Area of macros with halos: 0.00
++	Area of std cell instances + Area of macros: 20678.30
++	Floorplan area: 48668.42
++	Design Utilization: 0.42
++	Floorplan Utilization: 0.02
++	Manufacturing Grid: 10
++
++[WARNING MPL-0026] Design has no IO pins!
++std cells placed: 150 unplaced: 0
++macros disturbed: 0
++blockages: 2
+diff --git a/src/mpl/test/all_fixed_macros1.tcl b/src/mpl/test/all_fixed_macros1.tcl
+new file mode 100644
+index 0000000000..6866b439fe
+--- /dev/null
++++ b/src/mpl/test/all_fixed_macros1.tcl
+@@ -0,0 +1,47 @@
++# Test that a design whose macros are all fixed still gets the
++# temporary standard-cell placement and the soft blockages around the
++# macros, exactly like a run with unfixed macros would produce them.
++# This keeps a placement re-injected through place_macro (e.g. with
++# MACRO_PLACEMENT_TCL) equivalent to the run that generated it.
++source "helpers.tcl"
++
++read_lef "./Nangate45/Nangate45.lef"
++read_lef "./testcases/orientation_improve1.lef"
++
++read_def "./testcases/fixed_macros1.def"
++
++set_thread_count 0
++
++set block [ord::get_db_block]
++foreach inst [$block getInsts] {
++  if { [[$inst getMaster] isBlock] } {
++    $inst setPlacementStatus LOCKED
++  }
++}
++
++rtl_macro_placer -report_directory [make_result_dir]
++
++set placed 0
++set unplaced 0
++foreach inst [$block getInsts] {
++  if { ![[$inst getMaster] isBlock] } {
++    if { [$inst isPlaced] } {
++      incr placed
++    } else {
++      incr unplaced
++    }
++  }
++}
++
++set macros_moved 0
++foreach inst [$block getInsts] {
++  if { [[$inst getMaster] isBlock] } {
++    if { [$inst getPlacementStatus] ne "LOCKED" } {
++      incr macros_moved
++    }
++  }
++}
++
++puts "std cells placed: $placed unplaced: $unplaced"
++puts "macros disturbed: $macros_moved"
++puts "blockages: [llength [$block getBlockages]]"
+diff --git a/src/mpl/test/no_unfixed_macros.ok b/src/mpl/test/no_unfixed_macros.ok
+index e024bd4877..f1d9da47bc 100644
+--- a/src/mpl/test/no_unfixed_macros.ok
++++ b/src/mpl/test/no_unfixed_macros.ok
+@@ -15,5 +15,19 @@
+ [INFO MPL-0062] Found fixed macro U8.
+ [INFO MPL-0062] Found fixed macro U9.
+ [INFO MPL-0017] No unfixed macros.
++Die Area: (0.00, 0.00) (450.00, 450.00),  Floorplan Area: (4.94, 4.20) (444.98, 443.80)
++	Number of std cell instances: 0
++	Area of std cell instances: 0.00
++	Number of macros: 10
++	Macros to be placed: 0
++	Area of macros: 166000.00
++	Base halo (L, B, R, T): (0.00, 0.00, 0.00, 0.00)
++	Area of macros with halos: 0.00
++	Area of std cell instances + Area of macros: 166000.00
++	Floorplan area: 193441.58
++	Design Utilization: 0.86
++	Floorplan Utilization: 0.00
++	Manufacturing Grid: 10
++
+ [INFO MPL-0013] Skipping macro placement.
+ No differences found.
+-- 
+2.53.0
+

@@ -1,0 +1,45 @@
+From 672f4bdd6e411703b76b9a5c176f5283e3bff3dc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Sun, 30 Aug 2026 22:51:43 +0200
+Subject: [PATCH 1/4] mpl: fix segfault when rtl_macro_placer is invoked more
+ than once
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+HierRTLMP::run() ends by calling clear(), which destroys the physical
+hierarchy tree. The tree was only ever created in the constructor, so a
+second rtl_macro_placer invocation in the same process handed a null
+tree to the clustering engine and crashed. Recreate the tree in init()
+and reset the stale skip_macro_placement_ flag so every place() call is
+self-contained.
+
+Covered by the new random_seed1 regression test, which runs the placer
+three times in one process.
+
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
+---
+ src/mpl/src/hier_rtlmp.cpp | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/mpl/src/hier_rtlmp.cpp b/src/mpl/src/hier_rtlmp.cpp
+index f25b865895..bea60cb8ba 100644
+--- a/src/mpl/src/hier_rtlmp.cpp
++++ b/src/mpl/src/hier_rtlmp.cpp
+@@ -306,6 +306,13 @@ void HierRTLMP::blockMacroChannels()
+ 
+ void HierRTLMP::init()
+ {
++  // run() ends by destroying the tree, so a new one is needed to
++  // make a subsequent run possible.
++  if (!tree_) {
++    tree_ = std::make_unique<PhysicalHierarchy>();
++  }
++  skip_macro_placement_ = false;
++
+   block_ = db_->getChip()->getBlock();
+   clustering_engine_ = std::make_unique<ClusteringEngine>(
+       block_, logger_, tritonpart_, graphics_.get());
+-- 
+2.53.0
+

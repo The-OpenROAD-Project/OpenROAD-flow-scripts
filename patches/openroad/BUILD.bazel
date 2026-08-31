@@ -1,0 +1,10 @@
+"""OpenROAD patches carried until they land upstream.
+
+Applied via git_override(patches = ...) in //:MODULE.bazel. bzlmod
+honours overrides only from the root module, so a downstream module's
+patches never reach this build -- carrying them here is what makes a
+fresh checkout of this branch build the measured toolchain. Each patch
+tracks an upstream issue; see the drop-at-bump notes in MODULE.bazel.
+"""
+
+exports_files(glob(["*.patch"]))
