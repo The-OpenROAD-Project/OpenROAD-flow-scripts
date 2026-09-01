@@ -69,39 +69,72 @@ set mpl_s [expr { ([clock clicks -milliseconds] - $t0) / 1000.0 }]
 
 set block [ord::get_db_block]
 
-# Emit leaf groups only. A dbGroup tree node whose children are groups
-# is an interior level of the hierarchy; its instances are already
-# accounted for by its descendants, so folding it in would double-count.
-proc e12_leaf_groups { groups } {
-  set leaves {}
-  foreach group $groups {
-    set children [$group getGroups]
-    if { [llength $children] == 0 } {
-      lappend leaves $group
-    } else {
-      lappend leaves {*}[e12_leaf_groups $children]
-    }
+# Leaf groups only: an interior node's instances are already accounted
+# for by its descendants.
+#
+# dbBlock::getGroups() returns EVERY group in the block, not just the
+# roots of the tree, so recursing from each entry reaches the same leaf
+# through itself and through each of its ancestors -- which silently
+# counted every instance twice on swerv_wrapper (203718 rows for 101831
+# movables). Select leaves directly from the flat list instead; no
+# recursion is needed or wanted.
+set leaves {}
+foreach group [$block getGroups] {
+  if { [llength [$group getGroups]] == 0 } {
+    lappend leaves $group
   }
-  return $leaves
 }
 
-set leaves [e12_leaf_groups [$block getGroups]]
-
-# Sort by group name, and instances within a group by odb id, so the file
-# is a pure function of the database.
-set rows {}
-set grouped 0
-foreach group $leaves {
-  set name [$group getName]
-  set ids {}
+# Build the assignment and check it really is a partition. A cluster
+# model that double-assigns an instance is not a coarsening of the
+# netlist, and gpl would take the last declaration silently, so this
+# fails loudly instead.
+set assignment [dict create]
+set conflicts {}
+foreach group [lsort -command {apply {{a b} {string compare [$a getName] [$b getName]}}} $leaves] {
+  set cname [$group getName]
   foreach inst [$group getInsts] {
-    lappend ids [$inst getId]
+    set iname [$inst getName]
+    if { [dict exists $assignment $iname] } {
+      set previous [lindex [dict get $assignment $iname] 0]
+      if { $previous ne $cname } {
+        lappend conflicts "$iname in $previous and $cname"
+      }
+      continue
+    }
+    dict set assignment $iname [list $cname [$inst getId]]
   }
-  foreach id [lsort -integer -unique $ids] {
-    set inst [odb::dbInst_getInst $block $id]
-    lappend rows [list $name $id [$inst getName]]
-    incr grouped
+}
+if { [llength $conflicts] > 0 } {
+  error "dump_clusters: [llength $conflicts] instances assigned to more\
+    than one cluster, e.g. [lindex $conflicts 0]"
+}
+
+# Coverage is measured over the instances the scorer will actually
+# cluster -- movable, non-macro -- because that is the population the
+# reduction ratio is about. Macros appear in the tree too and are
+# harmless here: the scorer filters them out.
+set movable 0
+set covered 0
+set uncovered {}
+foreach inst [$block getInsts] {
+  if { [[$inst getMaster] isBlock] || [$inst isFixed] } {
+    continue
   }
+  incr movable
+  if { [dict exists $assignment [$inst getName]] } {
+    incr covered
+  } elseif { [llength $uncovered] < 5 } {
+    lappend uncovered [$inst getName]
+  }
+}
+
+# Sorted by cluster name, then by odb id within a cluster, so the file is
+# a pure function of the database.
+set rows {}
+dict for {iname entry} $assignment {
+  lassign $entry cname id
+  lappend rows [list $cname $id $iname]
 }
 set rows [lsort -index 1 -integer [lsort -index 0 -ascii $rows]]
 
@@ -113,21 +146,16 @@ foreach row $rows {
 }
 close $fp
 
-# Coverage report. gpl only clusters what it is handed, so an instance
-# missing from the partition silently stays a movable of its own; saying
-# so out loud is what keeps the reduction ratio honest.
-set movable 0
-foreach inst [$block getInsts] {
-  if { [[$inst getMaster] isBlock] || [$inst isFixed] } {
-    continue
-  }
-  incr movable
-}
 e12_write_leaf [file join $::e12_out clusters.json] [list \
   leaf_clusters [llength $leaves] \
-  grouped_insts $grouped \
+  clustered_insts [dict size $assignment] \
   movable_insts $movable \
+  movable_covered $covered \
   mpl_s $mpl_s]
-puts "e12: [llength $leaves] leaf clusters covering\
-  $grouped of $movable movable instances (${mpl_s}s)"
+puts "e12: [llength $leaves] leaf clusters, [dict size $assignment]\
+  instances assigned, $covered of $movable movable instances covered\
+  (${mpl_s}s)"
+if { [llength $uncovered] > 0 } {
+  puts "e12: uncovered movables (first few): $uncovered"
+}
 exit 0

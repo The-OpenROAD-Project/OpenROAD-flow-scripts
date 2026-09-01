@@ -15,7 +15,7 @@ load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
 SWERV = DESIGNS["asap7/swerv_wrapper"]
 
-SWERV_SYNTH = "//flow/designs/asap7/swerv_wrapper:swerv_wrapper_synth"
+SWERV_SYNTH = "//flow/designs/asap7/swerv_wrapper:swerv_wrapper_synth_for_e12"
 
 # The helper Tcl travels as `data`, which orfs_run_executable stages
 # alongside `script`, so each driver sources it as a sibling.
