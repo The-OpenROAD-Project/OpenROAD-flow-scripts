@@ -44,9 +44,18 @@ export SYNTH_KEEP_MODULES ?= \
 
 export LIB_MODEL = CCS
 
+# The sv2v'd RTL instantiates OPENROAD_CLKGATE directly, so the clkgate
+# mapping model is a source file rather than a synthesis techmap input.
+# Spelled as a resolved path on purpose: bazel-orfs's config.mk parser
+# cannot evaluate the make functions behind $(PRIMARY_VT_TAG), so
+# $(CLKGATE_MAP_FILE) is dropped when the file list is turned into bazel
+# labels, and elaboration then fails with `unknown module
+# 'OPENROAD_CLKGATE'`. This path is what $(CLKGATE_MAP_FILE) expands to
+# for the platform's default PRIMARY_VT (RVT); it must be kept in step
+# with that default, and with ASAP7_USE_VT if this design ever sets it.
 export VERILOG_FILES = $(DESIGN_HOME)/src/swerv/swerv_wrapper.sv2v.v \
                        $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/macros.v \
-                       $(CLKGATE_MAP_FILE)
+                       $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
 
 export ADDITIONAL_LEFS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lef/*.lef))
