@@ -184,6 +184,76 @@ def rho_table(tags, sources, n_boot):
     return table
 
 
+# Score-versus-score pairs. Comparing a candidate scorer against the
+# established one needs no ground truth, which makes it the cheapest
+# decisive experiment available: the flat rung is the thing already shown
+# to predict the flow, so a clustered rung that does not track it cannot
+# predict the flow either. Necessary, not sufficient -- agreement says
+# nothing about whether either scorer is right.
+AGREEMENT_PAIRS = (
+    ("clustered_hpwl", "regen_flat_wq25"),
+    ("clustered_hpwl", "regen_flat_hpwl"),
+    ("clustered_cone_hpwl", "regen_flat_wq25"),
+    ("clustered_cone_hpwl", "regen_flat_hpwl"),
+)
+
+VARIANT_FIELDS = {label: (source, field) for label, source, field in VARIANTS}
+
+
+def agreement_table(tags, sources, n_boot):
+    """rho between a candidate scorer and the established one."""
+    table = {}
+    for candidate, reference in AGREEMENT_PAIRS:
+        pairs = []
+        for label in (candidate, reference):
+            source, field = VARIANT_FIELDS[label]
+            pairs.append((sources.get(source, {}), field))
+        usable = [
+            t
+            for t in tags
+            if all(t in records and field in records[t] for records, field in pairs)
+        ]
+        if len(usable) < 3:
+            continue
+        xs = [pairs[0][0][t][pairs[0][1]] for t in usable]
+        ys = [pairs[1][0][t][pairs[1][1]] for t in usable]
+        rho = spearman(xs, ys)
+        low, high = spearman_ci(xs, ys, n_boot=n_boot)
+        table["%s_vs_%s" % (candidate, reference)] = {
+            "n": len(usable),
+            "rho": rho,
+            "ci": [low, high],
+            "tracks": bool(low > 0.0),
+        }
+    return table
+
+
+def gate_agreement(table):
+    """Does the clustered rung track the flat rung at all?
+
+    The verdict rides on the plain HPWL pair, because that is the
+    like-for-like comparison: same scalar, same nets, only the movable
+    model differs.
+    """
+    entry = table.get("clustered_hpwl_vs_regen_flat_hpwl")
+    if entry is None:
+        return {"pass": False, "verdict": "fail", "reason": "no paired scores"}
+    verdict = "pass" if entry["tracks"] else "inconclusive"
+    return {
+        "pair": "clustered_hpwl_vs_regen_flat_hpwl",
+        "rho": entry["rho"],
+        "ci": entry["ci"],
+        "n": entry["n"],
+        "ci_clear_of_zero": entry["tracks"],
+        "verdict": verdict,
+        "pass": verdict == "pass",
+        "note": (
+            "necessary condition only: tracking the flat rung does not "
+            "show either rung predicts the flow"
+        ),
+    }
+
+
 def cost_table(tags, sources):
     """Mean of each cost field, per source, over the candidates that have it."""
     costs = {}
@@ -345,6 +415,21 @@ def format_report(verdict):
             )
         lines.append(row)
 
+    if verdict["agreement"]:
+        lines.append("")
+        lines.append("scorer agreement (no ground truth needed):")
+        for pair, entry in verdict["agreement"].items():
+            lines.append(
+                "  {:<48} {:>3}  {:>+6.2f} [{:>+6.2f},{:>+6.2f}]{}".format(
+                    pair,
+                    entry["n"],
+                    entry["rho"],
+                    entry["ci"][0],
+                    entry["ci"][1],
+                    "" if entry["tracks"] else "  (interval includes zero)",
+                )
+            )
+
     if verdict["cost"]:
         lines.append("")
         lines.append("mean cost per candidate:")
@@ -356,6 +441,22 @@ def format_report(verdict):
     if verdict["diverged"]:
         lines.append("")
         lines.append("DIVERGED (not scorable): {}".format(verdict["diverged"]))
+
+    gate_a = verdict["gate_agreement"]
+    lines.append("")
+    if "reason" in gate_a:
+        lines.append("Agreement gate: FAIL -- {}".format(gate_a["reason"]))
+    else:
+        lines.append(
+            "Agreement gate: {} -- rho(clustered vs flat HPWL) = "
+            "{:+.2f} [{:+.2f}, {:+.2f}], n = {}".format(
+                gate_a["verdict"].upper(),
+                gate_a["rho"],
+                gate_a["ci"][0],
+                gate_a["ci"][1],
+                gate_a["n"],
+            )
+        )
 
     gate1 = verdict["gate_1_e12"]
     lines.append("")
@@ -388,11 +489,14 @@ def format_report(verdict):
 def build_verdict(truth, flat, clustered, expected_n, n_boot, tolerance):
     tags, sources = collect(truth, flat, clustered)
     table = rho_table(tags, sources, n_boot)
+    agreement = agreement_table(tags, sources, n_boot)
     return {
         "design": truth.get("design"),
         "population": truth.get("population"),
         "tags": tags,
         "rho": table,
+        "agreement": agreement,
+        "gate_agreement": gate_agreement(agreement),
         "cost": cost_table(tags, sources),
         "diverged": diverged_tags(sources),
         "gate_0_rig_check": gate_zero(

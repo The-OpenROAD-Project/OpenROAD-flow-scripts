@@ -160,6 +160,91 @@ That test also recomputes five published numbers from the committed
 archive (+0.72, +0.82, +0.57, +0.65, +0.47). If it fails, the archive or
 the statistics moved and every E12 number is void.
 
+## Measured so far
+
+Run on an 8C/16T host, serial (bazel-orfs's //fork is unreachable from
+any pin ORFS can currently take).
+
+### The apparatus works end to end
+
+Flushed on nangate45/tinyRocket, k=4: candidate generation (4 distinct
+placements), flat scoring, cluster dump (15 leaves, 29067/29067 movable
+instances covered), clustered scoring (no divergence at default bins),
+production tail to grt, verdict. ~30 minutes for the whole chain.
+`e12_verdict_tinyRocket.json` is committed as evidence of the flush, not
+as a result: n=4 with no measured noise band, so its rho is
+uninterpretable and the gate correctly calls it inconclusive.
+
+### The clustered rung tracks the flat rung, and is 4.3x cheaper
+
+asap7/swerv_wrapper, k=24, all 24 converged (`e12_verdict_swerv.json`):
+
+| | rho vs flat HPWL | cost | peak RSS |
+|---|---|---|---|
+| flat rung | -- | 63.0 s | 2.40 GB |
+| clustered rung | **+0.66 [+0.36, +0.86]** | **14.7 s** | 0.87 GB |
+
+The interval is clear of zero, so the necessary condition holds: the
+clustered abstraction carries a substantial part of the flat rung's
+wirelength signal at roughly a quarter of the cost. It is not a faithful
+reproduction -- a third of the rank information is gone -- and it tracks
+the flat rung's *HPWL* (+0.66) far better than its STA aggregate
+(+0.23, interval includes zero), which is what one would expect of a
+wirelength score.
+
+Caveat, disclosed: those 24 runs use `E12_BIN_GRID_COUNT=8`, because the
+pre-registered default diverges on this design (see below). That is a
+number tuned to this design's cluster count, so it is a knob, and this is
+an exploratory measurement rather than a gate result.
+
+### The archive cannot serve as ground truth here
+
+This is now measured rather than argued. Pairing the *regenerated* scores
+against the *archived* grt truth gives:
+
+| score column | rho vs archived `macro_paths_mean` |
+|---|---|
+| archive's own `wq25` | **+0.72 [+0.48, +0.84]** (reproduces the published figure) |
+| regenerated `wq25` | **-0.42 [-0.75, +0.00]** |
+| regenerated `macro_mean` | -0.43 [-0.75, -0.00] |
+
+The archive is internally consistent -- its own score column reproduces
+the published +0.72 exactly -- but our regenerated scores anti-correlate
+with it. The regenerated/archived score ratio scatters from 0.574 to
+2.093 (stdev 0.357), so this is not a calibration offset: seed N here
+produces a genuinely different placement than seed N did in the campaign,
+and the archived truth therefore does not describe our candidates.
+
+Ruled out as causes: ORFS (identical to the campaign's `be0dca0b` pin
+apart from the clkgate fix) and OpenROAD (zero source diffs against the
+campaign's `3ca581e38`, same `src/sta`). The remaining difference is the
+campaign's much newer bazel-orfs, which carries several synth-pipeline
+commits and would change the OpenROAD-SYN netlist.
+
+**Consequence: any grt-anchored verdict needs the truth re-measured on
+this setup.** `evaluate.tcl` does that, and `grade_e12.py --truth-dir`
+consumes it. On swerv that is roughly 5 hours per candidate here.
+
+### The clustered solve diverges at the pre-registered default on swerv
+
+Overflow floors at 0.92 for 2175 iterations while the density penalty
+climbs from 6.9e-14 to 4.1e+28, then the step length goes Inf/NaN
+(GPL-0305). With bins matched to cluster size it converges in 227
+iterations.
+
+The cause is a granularity mismatch, not a defect: `BinGrid::initBins()`
+sizes bins from the average **dbInst** area, which is correct for the
+regime `placement_cluster` was built for -- its commit describes "a small
+group of gates" whose members are "all placed at the center of the
+cluster", and notes small clusters give better results. RTL-MP's leaf
+clusters are the opposite: `min_num_macros_for_multilevel = 150` forces
+`max_level = 1` on this design and `base_min_std_cell` targets
+10183-50915 cells per cluster, so 7 clusters hold 98.6% of the instances.
+Both tools behave as their authors intended; E12 straddles the seam.
+
+Note tinyRocket converges at the default with 13 clusters, so the
+divergence is a property of the granularity, not of clustering per se.
+
 ## Files
 
 | File | Role |
