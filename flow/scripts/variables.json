@@ -532,23 +532,11 @@
     "default": "NLDM",
     "description": "Selects between NLDM and CCS timing models for the ASAP7 platform. Valid values: NLDM (default), CCS. Used in flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list, and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.\n"
   },
-  "MACRO_BLOCKAGE_HALO": {
-    "description": "Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.\n",
-    "stages": [
-      "floorplan"
-    ]
-  },
   "MACRO_EXTENSION": {
     "description": "Sets the number of GCells added to the blockages boundaries from macros.\n"
   },
   "MACRO_PLACEMENT_TCL": {
     "description": "Specifies the path of a TCL file on how to place macros manually.\nThe user may choose to place just some of the macros in the design.\nThe macro placer will handle the remaining unplaced macros.\n",
-    "stages": [
-      "floorplan"
-    ]
-  },
-  "MACRO_PLACE_HALO": {
-    "description": "Horizontal/vertical halo around macros (microns). Used by automatic macro placement.\n",
     "stages": [
       "floorplan"
     ]
@@ -1060,6 +1048,12 @@
       "floorplan"
     ]
   },
+  "RTLMP_MIN_CHANNEL_SIZE": {
+    "description": "Minimum channel width and height between macros (microns), given as one value for both, or two values \"width height\".\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
   "RTLMP_MIN_INST": {
     "description": "Minimum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.\n",
     "stages": [
@@ -1082,6 +1076,13 @@
   "RTLMP_OUTLINE_WT": {
     "default": 100.0,
     "description": "Weight for violating the fixed outline constraint, meaning that all clusters should be placed within the shape of their parent cluster.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_PIN_AWARE_CHANNELS": {
+    "default": 0,
+    "description": "Set to 1 to trim macro channels based on the pin locations of macros, instead of using full channels. Requires RTLMP_MIN_CHANNEL_SIZE to also be set. Defaults to 1 whenever RTLMP_MIN_CHANNEL_SIZE is set and this variable is not explicitly set to 0.\n",
     "stages": [
       "floorplan"
     ]

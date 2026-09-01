@@ -544,21 +544,6 @@ MACRO_PLACEMENT_TCL:
     The macro placer will handle the remaining unplaced macros.
   stages:
     - floorplan
-MACRO_PLACE_HALO:
-  description: >
-    Horizontal/vertical halo around macros (microns). Used by automatic macro
-    placement.
-  stages:
-    - floorplan
-MACRO_BLOCKAGE_HALO:
-  description: >
-    Distance beyond the edges of a macro that will also be covered by the
-    blockage generated for that macro.
-    Note that the default macro blockage halo comes from the largest of the
-    specified MACRO_PLACE_HALO x or y values. This variable overrides that
-    calculation.
-  stages:
-    - floorplan
 PDN_TCL:
   description: >
     File path which has a set of power grid policies used by pdn to be applied
@@ -1412,6 +1397,21 @@ RTLMP_MIN_MACRO:
   description: >
     Minimum number of macros in a cluster. If unset, rtl_macro_placer will
     calculate a value based on the design attributes.
+  stages:
+    - floorplan
+RTLMP_MIN_CHANNEL_SIZE:
+  description: >
+    Minimum channel width and height between macros (microns), given as one
+    value for both, or two values "width height".
+  stages:
+    - floorplan
+RTLMP_PIN_AWARE_CHANNELS:
+  description: >
+    Set to 1 to trim macro channels based on the pin locations of macros,
+    instead of using full channels. Requires RTLMP_MIN_CHANNEL_SIZE to also be set.
+    Defaults to 1 whenever RTLMP_MIN_CHANNEL_SIZE is set and
+    this variable is not explicitly set to 0.
+  default: 0
   stages:
     - floorplan
 RTLMP_MIN_AR:
