@@ -155,7 +155,23 @@ bazel_dep(name = "bazel-orfs", version = "0.0.1")
 
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
-BAZEL_ORFS_COMMIT = "6ebadeb4be5c9ada103081c9a5e668c014126616"
+# Bumped past bazel-orfs 4254fc9 "synth: support OpenROAD-SYN engine
+# (SYNTH_USE_SYN=1)". The previous pin predated that support, so every
+# design whose config.mk sets SYNTH_USE_SYN=1 -- gcd and swerv_wrapper
+# among them -- failed its bazel synth with `sv_elaborate ... error: no
+# input files`. bazel-orfs empties VERILOG_FILES for the synth action
+# because the yosys path reads canonicalized RTLIL instead and the
+# sources are not among that action's inputs; OpenROAD-SYN elaborates the
+# sources directly and has no canonicalize step, so it needs them.
+#
+# This is the last commit before bazel-orfs 9bc8c74 "migrate from local
+# verilog submodule to rules_chisel", which deletes the verilog/ subtree
+# that @bazel-orfs-verilog is built from below (strip_prefix = "verilog").
+# Going further therefore means migrating ORFS to rules_chisel, which is
+# its own change. Note that bazel-orfs's //fork facility lands only after
+# that removal, so it is still unavailable here -- flow/test/macro_e12
+# detects its absence and runs candidates serially.
+BAZEL_ORFS_COMMIT = "ca4e9dd41e0f2e7ab3174535dab4fc7c680b1085"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
