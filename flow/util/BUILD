@@ -78,3 +78,9 @@ py_test(
     srcs = ["checkPareto_test.py"],
     data = ["checkPareto.py"],
 )
+
+py_test(
+    name = "pinAutoFloorplan_test",
+    srcs = ["pinAutoFloorplan_test.py"],
+    data = ["pinAutoFloorplan.py"],
+)
