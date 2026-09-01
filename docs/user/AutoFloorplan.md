@@ -202,6 +202,9 @@ bazelisk run //flow/designs/<platform>/<design>:<name>_auto_floorplan_pin
 | **ORFS itself** | rarely — when the flow or PDK moves materially, not per OpenROAD bump |
 | **A design under development** | nightly, against the day's RTL |
 
+Ideas for making this better, and the bugs still open, are collected in
+[docs/contrib/AutoFloorplanIdeas.md](../contrib/AutoFloorplanIdeas.md).
+
 ## Limits worth knowing
 
 - **Interactions between the coordinates are not explored.** Coordinate
