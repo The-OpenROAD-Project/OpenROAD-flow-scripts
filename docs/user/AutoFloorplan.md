@@ -129,7 +129,16 @@ per-design constant anywhere in the implementation.
   available headroom, `{0.00, 0.05, 0.10, 0.15, 0.20}`, which is exactly
   what `PLACE_DENSITY_LB_ADDON` means. The winner also becomes RTL-MP's
   `-target_util`, so one measurement fixes both consumers of the knob.
-- **Utilization** — fractions of the incumbent, `{0.9 … 1.4}`.
+- **Utilization** — **not raced by default.** The scorer does not rank
+  this axis, and that is measured rather than suspected: running the
+  production flow at every rung of the ladder and correlating against the
+  proxy gives `rho = -1.000` on gcd (n=4) and `+0.100` on gcd-ccs (n=5) —
+  the only two designs whose noise floor (1.1% and 0.3% of clock) is
+  small enough for an answer to exist. On gcd the proxy *improves*
+  338 → 335 across the ladder while the flow *degrades* 349.2 → 355.1 ps.
+  Driving the objective with those numbers picks badly: on aes it chose a
+  core 11.2% **larger** with a worse period. `AF_RACE_UTIL=1` re-enables
+  it for reproduction.
 - **Aspect ratio** — `{0.8, 1.0, 1.25}` at the winning area point. On
   many designs this comes back a tie, which is a result: the folklore
   value gets graded rather than assumed.
@@ -226,6 +235,35 @@ rank inversion against the flow.
 
 `AF_REPAIR=0` and `AF_GRT=0` drop those rungs for a cheaper, less
 faithful race.
+
+## The utilization axis needs the flow, not the proxy
+
+The objective is fine. Given the **flow's** own numbers it picks well on
+every design measured:
+
+| design | J picks | core | achieved period | DRC |
+|---|---|---|---|---|
+| gcd | util 78 | 61.3 → 50.0 (−18.4%) | 348.3 → 355.1 (+2.0%) | 0 |
+| gcd-ccs | util 78 | 66.0 → 50.0 (−24.2%) | 354.3 → 355.8 (+0.4%) | 0 |
+| ibex | util 56 | 5283 → 3766 (−28.7%) | 986.2 → 995.8 (+1.0%) | 0 |
+
+What is wrong is the instrument, and only on this axis. Density and
+aspect are compared at **fixed area**, which is the ranking property
+bazel-orfs#868's E1/E3 measured to hold (rho +0.67…+0.72); utilization
+changes the area, and across that change the proxy does not rank.
+
+`ideas/auto-floorplan.md` always said the oracle here was the flow —
+*"the race is the oracle inside a utilization shmoo"* — and using a
+pre-route proxy for the outer loop was the shortcut that failed. The
+correct derivation runs the production flow at each rung and picks by
+`J`. That costs ~6 flow runs per design (4 minutes on gcd, 23 on ibex):
+an offline overnight artifact to be pinned with
+`<name>_auto_floorplan_pin`, not something to run per build.
+
+Two smaller findings from the same experiment: gcd's core clamps at
+50.0 µm² for utilization ≥ 78, so the top rungs are wasted candidates;
+and ibex reaches its best `J` at the ladder's *top* rung, so the
+`{0.9 … 1.4}` ladder is too narrow and leaves area unclaimed.
 
 ## Known limitation: it can push a closing design out of closure
 

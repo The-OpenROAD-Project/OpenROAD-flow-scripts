@@ -701,6 +701,46 @@ proc af_run { } {
   set hold_addon [expr { $addon0 eq "" ? 0.10 : $addon0 }]
 
   # --- phase 1: utilization ---------------------------------------------
+  #
+  # OFF BY DEFAULT, and the reason is measured rather than cautious.
+  #
+  # The scorer does not rank this axis. Running the production flow at
+  # every rung of the utilization ladder and correlating it against the
+  # proxy score gives, on the only designs whose noise floor is small
+  # enough for an answer to exist:
+  #
+  #   gcd      rho = -1.000 (n=4, delta_tie 1.1% of clock)  perfectly inverted
+  #   gcd-ccs  rho = +0.100 (n=5, delta_tie 0.3% of clock)  uncorrelated
+  #
+  # On gcd the proxy improves 338 -> 335 across the ladder while the flow
+  # degrades 349.2 -> 355.1 ps. Driving the objective with those numbers
+  # duly picks badly: on aes it chose a core 11.2% LARGER with a worse
+  # period, which no objective can be blamed for.
+  #
+  # The objective itself is fine. Given the flow's own numbers it picks
+  # well on every design measured -- gcd util 78 (-18.4% core, +2.0%
+  # period), gcd-ccs util 78 (-24.2%, +0.4%), ibex util 56 (-28.7%,
+  # +1.0%), zero DRC throughout. What is wrong is the instrument, and
+  # only on this axis: density and aspect are compared at fixed area,
+  # which is the ranking property bazel-orfs#868 E1/E3 measured to hold.
+  #
+  # ideas/auto-floorplan.md always said the oracle here was the flow --
+  # "the race is the oracle inside a utilization shmoo" -- and using a
+  # pre-route proxy for the outer loop was the shortcut that failed.
+  # The correct derivation runs the production flow at each rung and
+  # picks by J; it costs ~6 flow runs per design (4 min on gcd, 23 min on
+  # ibex), which is an offline overnight artifact to be pinned with
+  # <name>_auto_floorplan_pin, not something to run per build.
+  #
+  # AF_RACE_UTIL=1 re-enables it for anyone reproducing the above.
+  if { [af_env AF_RACE_UTIL 0] eq "0" } {
+    af_log "utilization axis not raced: the scorer does not rank it\
+ (measured rho -1.00 on gcd, +0.10 on gcd-ccs). Keeping utilization\
+ [format %.4g $u0]; density and aspect are raced at that fixed area.\
+ See docs/user/AutoFloorplan.md."
+    set ::af_util_ladder [list 1.0]
+  }
+
   set cands {}
   foreach f $::af_util_ladder {
     set u [expr { $u0 * $f }]
