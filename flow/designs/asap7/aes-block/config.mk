@@ -26,7 +26,7 @@ export GND_NETS_VOLTAGES      =
 export PWR_NETS_VOLTAGES      =
 
 # The macros are very small so use a smaller halo
-export MACRO_PLACE_HALO        ?= 3 3
+export RTLMP_MIN_CHANNEL_SIZE  ?= 6 6
 
 export ROUTING_LAYER_ADJUSTMENT = 0.3
 export HOLD_SLACK_MARGIN        = -30
