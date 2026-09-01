@@ -24,7 +24,14 @@ exports_files(
 # instead of vendoring its own (drifting) copy at the bazel-orfs repo
 # root. See bazel-orfs `private/rules.bzl`.
 exports_files(
-    ["scripts/synth.tcl"],
+    [
+        # bazel-orfs points its _synth_tcl attr default here instead of
+        # vendoring a drifting copy; see bazel-orfs private/rules.bzl.
+        "scripts/synth.tcl",
+        # The floorplan derivation runs as an orfs_run off a design's
+        # synth stage, so its driver has to be addressable as a label.
+        "scripts/auto_floorplan.tcl",
+    ],
     visibility = ["//visibility:public"],
 )
 
@@ -195,8 +202,8 @@ py_library(
         ["scripts/memories/*.py"],
         exclude = ["scripts/memories/*_test.py"],
     ),
-    imports = ["scripts/memories"],
     data = ["@fakeram//:all_files"],
+    imports = ["scripts/memories"],
 )
 
 # Test fixtures (Verilog snippets) live in detect_test.py and are

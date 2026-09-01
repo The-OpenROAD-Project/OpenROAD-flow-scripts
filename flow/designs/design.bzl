@@ -1,6 +1,6 @@
 """BUILD boilerplate for flow/designs/."""
 
-load("@bazel-orfs//:openroad.bzl", "orfs_flow")
+load("@bazel-orfs//:openroad.bzl", "orfs_run")
 load("@orfs_designs//:designs.bzl", "DESIGNS", "orfs_design")
 load("@rules_python//python:defs.bzl", "py_binary", "py_test")
 
@@ -77,43 +77,63 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         user_sources = user_sources,
         local_arguments = local_arguments,
     )
-    _auto_floorplan_pin(config)
+    _auto_floorplan(config)
     _pareto_test()
 
-def _auto_floorplan_pin(config):
-    """Generate <name>_auto_floorplan_pin for this design.
+def _auto_floorplan(config):
+    """Generate the floorplan derivation and pinning targets.
 
-    AUTO_FLOORPLAN measures the floorplan shape on every run, which is
-    right while the RTL is moving and wrong at a tapeout: sign-off needs
-    a decision, not a measurement. This target turns one into the other,
-    the same way <name>_update does for rules-base.json --
+    Deriving a floorplan means running the production flow several times,
+    so it is a job you run rather than something a build does. Split in
+    two so the expensive half is paid once:
 
-        bazelisk run //flow/designs/asap7/ibex:ibex_core_auto_floorplan_pin
+        bazelisk build //flow/designs/asap7/gcd:gcd_auto_floorplan_data
+        bazelisk run   //flow/designs/asap7/gcd:gcd_auto_floorplan_pin
 
-    reads the evidence the floorplan stage emitted, writes the winning
-    coordinates into config.mk between generated markers, and sets
-    AUTO_FLOORPLAN = 0. From then on they are ordinary config.mk entries,
-    so autotuner and seed sweeps apply to them like any other knob.
+    _data races the candidates and writes auto_floorplan.json as a
+    declared output, so bazel caches it: iterating on the pin never
+    re-derives, and several designs' data can be built in one command,
+    scoped to whatever the machine can take.
+
+    _pin depends on _data, which is what keeps it from ever writing stale
+    values -- bazel's dependency graph is the freshness check, so a
+    changed netlist, SDC or toolchain re-derives before the pin sees it.
+    Nothing lands in the source tree except the config.mk edit itself.
+
+    Both are manual: no wildcard build should ever start a derivation.
+
+    Provisioning note: the derivation is ONE action that forks its own
+    candidates, because bazel provisions roughly one core per action
+    while each candidate runs a multi-threaded flow. Building several
+    designs at once multiplies AF_JOBS by bazel's --jobs.
     """
     pkg = native.package_name()
     prefix = "flow/designs/"
     if not pkg.startswith(prefix):
         return
-    key = pkg[len(prefix):]
-    entry = DESIGNS.get(key)
+    entry = DESIGNS.get(pkg[len(prefix):])
     if not entry:
-        # Block sub-packages and designs without a parsed config.mk have
-        # no flow targets to hang this off.
         return
     name = entry["name"]
 
-    # The floorplan stage echoes its evidence into the stage log, which
-    # is a declared output; the REPORTS_DIR copy is not, and a sandboxed
-    # build discards it.
-    native.filegroup(
-        name = name + "_auto_floorplan_evidence",
-        srcs = [":" + name + "_floorplan"],
-        output_group = "2_1_floorplan.log",
+    orfs_run(
+        name = name + "_auto_floorplan_data",
+        src = ":" + name + "_synth",
+        outs = ["auto_floorplan.json"],
+        arguments = entry["arguments"] | {
+            "AF_EVIDENCE": "$(location auto_floorplan.json)",
+        },
+        script = "//flow:scripts/auto_floorplan.tcl",
+        # The candidates run the flow from floorplan to finish, so every
+        # stage's variables have to reach them.
+        stages = [
+            "floorplan",
+            "place",
+            "cts",
+            "grt",
+            "route",
+            "final",
+        ],
         tags = ["manual"],
     )
     py_binary(
@@ -121,10 +141,10 @@ def _auto_floorplan_pin(config):
         srcs = ["//flow/util:pinAutoFloorplan.py"],
         main = "pinAutoFloorplan.py",
         args = [
-            "$(location :{}_auto_floorplan_evidence)".format(name),
+            "$(location :auto_floorplan.json)",
             pkg + "/" + config,
         ],
-        data = [":" + name + "_auto_floorplan_evidence"],
+        data = [":auto_floorplan.json"],
         tags = ["manual"],
     )
 

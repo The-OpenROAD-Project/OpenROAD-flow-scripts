@@ -92,12 +92,14 @@ if { [info exists ::env(PLACE_DENSITY)] } {
   unset ::env(PLACE_DENSITY)
 }
 set ::af_used_density -1
-rename place_density_with_lb_addon af_real_place_density
-proc place_density_with_lb_addon { } {
-  set d [af_real_place_density]
-  set ::af_used_density $d
-  return $d
+proc af_after_global_place { } {
+  set ::af_used_density [place_density_with_lb_addon]
 }
+
+# Vary the placer seed so the noise floor measures something. Without
+# this every seed runs an identical flow and 2 sigma comes out at 1e-13,
+# which would make the hysteresis inert and every difference look real.
+set ::env(GPL_RANDOM_SEED) [af_env AF_SEED 1]
 
 # --- the production flow, floorplan to finish ----------------------------
 # The oracle. A pre-route proxy was measured not to rank the utilization

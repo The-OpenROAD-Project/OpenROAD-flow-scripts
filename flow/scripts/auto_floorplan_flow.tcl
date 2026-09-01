@@ -63,6 +63,16 @@ flow_source io_placement.tcl
 flow_write_db 3_2_place_iop.odb
 flow_source global_place.tcl
 flow_write_db 3_3_place_gp.odb
+# Hook for the derivation: the placement density production just used.
+# It cannot be captured by wrapping place_density_with_lb_addon, because
+# load.tcl re-sources util.tcl at the top of every stage script and would
+# redefine the wrapper away. Called here because
+# gpl::get_global_placement_uniform_density is instance-area over
+# whitespace and so does not depend on the placement that just ran --
+# the number is the same one global_place.tcl resolved.
+if { [info procs af_after_global_place] ne "" } {
+  af_after_global_place
+}
 flow_source resize.tcl
 flow_write_db 3_4_place_resized.odb
 flow_source detail_place.tcl
