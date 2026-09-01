@@ -70,14 +70,6 @@
       "All stages"
     ]
   },
-  "AUTO_FLOORPLAN": {
-    "default": 1,
-    "description": "Measure the floorplan shape instead of reading it.\n\nWhen enabled, the floorplan stage races a set of candidate outlines and\nplacement densities, scores each with a report-only global placement, and\nuses the winner. The raced values OVERRIDE whatever the design's config.mk\nsets for CORE_UTILIZATION, CORE_ASPECT_RATIO, CORE_MARGIN, DIE_AREA,\nCORE_AREA, PLACE_DENSITY and PLACE_DENSITY_LB_ADDON; those values become\nthe incumbent candidate, kept unless a candidate beats them by more than\nthe measured noise floor.\n\nIntended for design-space exploration, not tapeout sign-off: it gives a\nmeasured gradient for \"how much smaller could this core be, and what\ndoes that cost\", and reports how far the design sits from its SDC\nperiod in units of its own measured noise floor. To tape out, run it\nonce, write the winner into config.mk and set AUTO_FLOORPLAN=0.\n\nIgnored when FLOORPLAN_DEF or FOOTPRINT is set: those describe a die\nthat is a constraint, not a choice.\n\n0 disables it and uses the config.mk values verbatim. \"fast\" is reserved\nfor a future reduced-effort cascade. See docs/user/AutoFloorplan.md.\n",
-    "stages": [
-      "floorplan",
-      "place"
-    ]
-  },
   "AUTO_MEMORIES": {
     "default": 0,
     "description": "Experimental. When set to 1, memory-shaped modules in the RTL (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and \u2014 when idiomatic as an SRAM macro \u2014 given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.\n"
@@ -488,14 +480,12 @@
   "IO_PLACER_H": {
     "description": "A list of metal layers on which the I/O pins are placed horizontally (top and bottom of the die).\n",
     "stages": [
-      "floorplan",
       "place"
     ]
   },
   "IO_PLACER_V": {
     "description": "A list of metal layers on which the I/O pins are placed vertically (sides of the die).\n",
     "stages": [
-      "floorplan",
       "place"
     ]
   },
@@ -721,7 +711,6 @@
   "PLACE_PINS_ARGS": {
     "description": "Arguments to place_pins\n",
     "stages": [
-      "floorplan",
       "place"
     ]
   },

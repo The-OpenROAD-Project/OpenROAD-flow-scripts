@@ -182,23 +182,6 @@ proc erase_non_stage_variables { stage_name } {
 set global_route_congestion_report $::env(REPORTS_DIR)/congestion.rpt
 
 proc place_density_with_lb_addon { } {
-  # AUTO_FLOORPLAN raced this at the floorplan stage and left the winner
-  # on the block, so the place stage uses the measured value instead of
-  # recomputing a lower bound and adding a guessed margin to it. The same
-  # value is what macro_place_util.tcl hands RTL-MP as -target_util, so
-  # one measurement fixes both consumers of this knob.
-  if {
-    [env_var_exists_and_non_empty AUTO_FLOORPLAN] &&
-    ![env_var_equals AUTO_FLOORPLAN 0]
-  } {
-    if { [info procs af_stashed_place_density] eq "" } {
-      source $::env(SCRIPTS_DIR)/auto_floorplan.tcl
-    }
-    set staged [af_stashed_place_density]
-    if { $staged ne "" } {
-      return $staged
-    }
-  }
   if { [env_var_exists_and_non_empty PLACE_DENSITY_LB_ADDON] } {
     # check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON
     set place_density_lb [gpl::get_global_placement_uniform_density \

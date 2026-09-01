@@ -44,24 +44,6 @@ puts "number instances in verilog is $num_instances"
 set additional_args ""
 append_env_var additional_args ADDITIONAL_SITES -additional_sites 1
 
-# AUTO_FLOORPLAN: race the outline and the placement density and override
-# whatever config.mk asked for. Runs here, before the init method is
-# chosen, because a candidate has to be evaluated by actually building
-# the floorplan it describes -- the density lower bound alone needs core
-# rows to exist. af_run leaves ::env holding the winning coordinates, so
-# everything below is the ordinary stage code at measured values.
-#
-# The raced density also has to reach the place stage, which is a
-# different process; af_stash_place_density puts it on the block as an
-# ODB property, where it rides along with 2_floorplan.odb for free.
-if {
-  [env_var_exists_and_non_empty AUTO_FLOORPLAN] &&
-  ![env_var_equals AUTO_FLOORPLAN 0]
-} {
-  source $::env(SCRIPTS_DIR)/auto_floorplan.tcl
-  af_run
-}
-
 # Check which floorplan initialization method is specified (mutually exclusive)
 set use_floorplan_def [env_var_exists_and_non_empty FLOORPLAN_DEF]
 set use_footprint [env_var_exists_and_non_empty FOOTPRINT]
@@ -106,17 +88,6 @@ if { $use_floorplan_def } {
 } else {
   puts "Error: No floorplan initialization method specified"
   exit 1
-}
-
-# Carry the raced placement density to the place stage on the block. Done
-# here rather than in af_run because there is no block to attach it to
-# until initialize_floorplan has run.
-if {
-  [env_var_exists_and_non_empty AUTO_FLOORPLAN] &&
-  ![env_var_equals AUTO_FLOORPLAN 0] &&
-  [env_var_exists_and_non_empty PLACE_DENSITY]
-} {
-  af_stash_place_density $::env(PLACE_DENSITY)
 }
 
 # Create routing tracks: MAKE_TRACKS script, platform make_tracks.tcl, or make_tracks command

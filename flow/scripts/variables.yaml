@@ -84,33 +84,6 @@ DETAILED_METRICS:
   stages:
     - cts
     - grt
-AUTO_FLOORPLAN:
-  description: |
-    Measure the floorplan shape instead of reading it.
-
-    When enabled, the floorplan stage races a set of candidate outlines and
-    placement densities, scores each with a report-only global placement, and
-    uses the winner. The raced values OVERRIDE whatever the design's config.mk
-    sets for CORE_UTILIZATION, CORE_ASPECT_RATIO, CORE_MARGIN, DIE_AREA,
-    CORE_AREA, PLACE_DENSITY and PLACE_DENSITY_LB_ADDON; those values become
-    the incumbent candidate, kept unless a candidate beats them by more than
-    the measured noise floor.
-
-    Intended for design-space exploration, not tapeout sign-off: it gives a
-    measured gradient for "how much smaller could this core be, and what
-    does that cost", and reports how far the design sits from its SDC
-    period in units of its own measured noise floor. To tape out, run it
-    once, write the winner into config.mk and set AUTO_FLOORPLAN=0.
-
-    Ignored when FLOORPLAN_DEF or FOOTPRINT is set: those describe a die
-    that is a constraint, not a choice.
-
-    0 disables it and uses the config.mk values verbatim. "fast" is reserved
-    for a future reduced-effort cascade. See docs/user/AutoFloorplan.md.
-  stages:
-    - floorplan
-    - place
-  default: 1
 CORE_UTILIZATION:
   description: |
     The core utilization percentage (0-100).
@@ -609,14 +582,12 @@ IO_PLACER_H:
     bottom
     of the die).
   stages:
-    - floorplan
     - place
 IO_PLACER_V:
   description: >
     A list of metal layers on which the I/O pins are placed vertically (sides of the
     die).
   stages:
-    - floorplan
     - place
 GUI_TIMING:
   description: >
@@ -663,7 +634,6 @@ PLACE_PINS_ARGS:
   description: |
     Arguments to place_pins
   stages:
-    - floorplan
     - place
 PLACE_DENSITY:
   description: >
