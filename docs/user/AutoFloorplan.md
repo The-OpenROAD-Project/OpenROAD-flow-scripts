@@ -1,14 +1,9 @@
-# AUTO_FLOORPLAN
+# Deriving a floorplan
 
-`AUTO_FLOORPLAN=1` makes the floorplan stage *measure* the floorplan
-shape instead of reading it from `config.mk`. It races candidate
-outlines and placement densities, scores each one by running the real
-flow elements against it, and uses the winner.
+A design's `config.mk` carries a handful of numbers that decide its
+floorplan:
 
-The values it overrides are the last hand-carried numbers in a
-`config.mk`:
-
-| Variable | What it was |
+| Variable | What it is |
 |---|---|
 | `CORE_UTILIZATION` | a guess at the smallest core the netlist closes in |
 | `DIE_AREA` / `CORE_AREA` | the same guess, written as a rectangle |
@@ -18,338 +13,206 @@ The values it overrides are the last hand-carried numbers in a
 
 Each is a human prediction of downstream behaviour standing where a
 measurement should be. The right utilization is "the smallest core in
-which this netlist still closes" — a question about `repair_design`,
-CTS and routing, none of which have happened when the number is read.
+which this netlist still closes" — a question about `repair_design`, CTS
+and routing, none of which have happened when the number is read.
 
-## What success looks like
+These two targets measure them instead:
 
-**The bar is parity with a good hand-tuned `config.mk`, reached
-automatically — not beating it.**
+```bash
+bazelisk build //flow/designs/asap7/gcd:gcd_auto_floorplan_data
+bazelisk run   //flow/designs/asap7/gcd:gcd_auto_floorplan_pin
+```
 
-That is worth saying plainly, because the obvious way to read the tables
-below is as a disappointment, and it is not one. The numbers in a
-hand-tuned `config.mk` are the accumulated result of somebody sweeping
-that specific design, and they are frozen the moment the RTL moves
-underneath them. Landing near them from a measurement that re-runs
-itself whenever synthesis changes is a large usability win even when it
-costs a little on the Pareto front: it removes the knob, it removes the
-staleness, and it removes the requirement that a person know the design
-well enough to guess.
+The first races candidate floorplans and writes the evidence. The second
+writes the winner into `config.mk` as ordinary variables. **Nothing runs
+during a normal build** — the flow reads `config.mk` exactly as it always
+has, and both targets are `manual`, so no wildcard starts a derivation.
 
-So the honest framing is a ladder, and each rung is useful on its own:
+## Why it is a job and not a flow mode
 
-| | |
+An earlier version was a flow variable that raced candidates on every
+build. Two things killed that.
+
+**The cadence is wrong.** What changes in ORFS is the OpenROAD binary,
+and binary churn rarely moves the Pareto front, so a per-build race
+re-derives a number that did not need re-deriving — while adding
+run-to-run variance to a benchmark suite whose whole value is stable
+comparison. A real design's RTL changes during the day and wants a
+nightly re-derivation, which is a job, not a flag.
+
+**A cheap scorer cannot answer the question.** The per-build version
+scored candidates with a fast pre-route proxy: global placement plus a
+sampled-path timing readout. Measured against the finished flow across a
+utilization ladder:
+
+| design | ρ (proxy vs flow) | noise floor |
+|---|---:|---:|
+| gcd | **−1.000** | 1.1% of clock |
+| gcd-ccs | +0.100 | 0.3% of clock |
+
+On gcd the proxy is perfectly inverted: it improves 338 → 335 across the
+ladder while the flow degrades 349.2 → 355.1 ps. Selection driven by
+those numbers picked a core 11.2% *larger* with a worse period on `aes`.
+
+So each candidate here runs the production flow from floorplan to finish
+and reports what it achieved. That is expensive, and it is exactly why
+this is something you run rather than something the flow does.
+
+## What gets raced
+
+Three coordinates, each on a dimensionless ladder. There is no per-design
+constant anywhere in the implementation.
+
+- **Utilization** — fractions of the incumbent, `{0.9 … 1.4}`.
+- **Density** — fractions of the headroom above the measured lower bound
+  (`gpl::get_global_placement_uniform_density`), `{0.00 … 0.20}`. That
+  fraction *is* `PLACE_DENSITY_LB_ADDON`, now measured.
+- **Aspect ratio** — `{0.8, 1.0, 1.25}` at the winning area point. Often
+  a tie, which is a result: the folklore value gets graded rather than
+  assumed.
+
+Coordinate descent, not a grid — utilization, then density, then aspect.
+A full cross product is 90 flows; this is about 20. Interactions between
+the coordinates are therefore not explored, which is a real limitation
+and is recorded in the evidence rather than papered over.
+
+The design's own `config.mk` values enter as a candidate, so a design
+whose folklore was already right keeps it.
+
+## How the winner is chosen
+
+```
+P_eff = T + τ·ln(1 + e^((p−T)/τ))          τ = 2% of the clock
+J     = ln(A) + λ·ln(P_eff)                 λ = 3
+                                            minimise J
+```
+
+`λ` is an **exchange rate**: one percent of achieved period is worth
+three percent of core area. That is a product decision someone has an
+opinion about, not a threshold nobody can defend.
+
+`P_eff` tracks the achieved period when the design is slower than its
+target and flattens to the target when it is faster, so speed nobody
+asked for has no value and area spent buying it is never repaid. That
+removes the regime switch: the same expression minimises area down to the
+target on a design that closes, and trades period against area on one
+that does not.
+
+Both constants are flat: every verdict on an asap7 sweep is unchanged for
+λ ∈ [2, 5] and τ ∈ [1%, 10%], and the smooth form agrees with a hard
+`max(p, T)` on all 15 designs. A policy whose decisions survive a 2.5×
+range in one constant and 10× in the other is a shape, not a fitted
+number.
+
+Two behaviours fall out rather than being coded: a candidate that gives
+up period and returns no area can never lower `J`, and the incumbent is
+just another candidate, so "nothing beat it" needs no special case.
+
+### Guards
+
+- **A floorplan that routes with violations is eliminated**, not scored.
+  No amount of area buys past a DRC.
+- **A flow that fails is an eliminated candidate**, not a crash — a
+  floorplan that cannot be built is a legitimate answer about that
+  floorplan.
+- **Hysteresis in `J`.** The winner must beat the incumbent by more `J`
+  than the measured period noise could account for on its own, or the
+  design keeps what it has. Area is exact — the same coordinates give the
+  same core every time — so only the period term carries noise.
+
+### `delta_tie` is measured, never chosen
+
+The noise floor comes from re-running one candidate under eight different
+placer seeds and taking two standard deviations. Not the range: the range
+of a small sample is biased low and its expectation grows with `n`, so a
+range-based floor would move every threshold purely by changing the seed
+count.
+
+On gcd it comes out at 1.20% of the clock period, independently
+reproducing the ~1.1% measured for gcd by a separate experiment.
+
+## Splitting derive from pin
+
+`_data` is a normal build target with a declared output, so bazel caches
+it. Iterating on the pin never re-derives — a `pin` run against cached
+data takes under a second. And `_pin` **depends on** `_data`, so it can
+never write stale values: bazel's dependency graph is the freshness
+check, and a changed netlist, SDC or toolchain re-derives before the pin
+sees it.
+
+Nothing lands in your source tree except the `config.mk` edit; the
+evidence lives in `bazel-out`.
+
+Derive as many designs in one command as the machine warrants:
+
+```bash
+bazelisk build --keep_going \
+  //flow/designs/asap7/gcd:gcd_auto_floorplan_data \
+  //flow/designs/asap7/ibex:ibex_core_auto_floorplan_data
+```
+
+### Provisioning
+
+The derivation is **one bazel action that forks its own candidates**.
+Bazel provisions roughly one core per action while each candidate runs a
+multi-threaded flow, so expressing candidates as separate targets would
+overprovision by the thread count of every concurrent flow.
+
+Total concurrency is `--jobs × AF_JOBS × AF_THREADS`. Pick a shape:
+
+| goal | `--jobs` | `AF_JOBS` | `AF_THREADS` |
+|---|---|---|---|
+| one design, all cores | 1 | 8 | 4 |
+| many designs at once | 8 | 2 | 2 |
+
+## What the pin writes
+
+Ordinary `config.mk` variables, updated in place, keeping their position,
+alignment and assignment operator. No markers, no generated block, no
+banner — somebody reading a `config.mk` to understand a design should not
+have to care which numbers were typed and which were measured. The
+provenance is printed by the pinning run, for the commit message.
+
+It answers in the form the design asked the question in: a design stating
+`DIE_AREA`/`CORE_AREA` gets a rectangle back, one stating
+`CORE_UTILIZATION` gets a utilization. The rectangle is not recomputed
+from the utilization — each candidate reads back the die and core its own
+`initialize_floorplan` produced, so the two forms cannot disagree.
+
+Exactly one density variable is written. `PLACE_DENSITY_LB_ADDON` and
+`PLACE_DENSITY` are not additive: `place_density_with_lb_addon` returns
+the addon form whenever the addon is set and only falls back to
+`PLACE_DENSITY` otherwise, so writing both would leave a dead variable
+and hand the flow an addon that re-resolves to something other than what
+was measured.
+
+### Bringing up a new design
+
+Wire up only the strictly necessary variables — sources, SDC, platform —
+and let the pin fill in the floorplan:
+
+```bash
+bazelisk run //flow/designs/<platform>/<design>:<name>_auto_floorplan_pin
+```
+
+## When to re-run it
+
+| | cadence |
 |---|---|
-| **Explore** | `AUTO_FLOORPLAN=1`, the default. Measured every run, always current, never stale. |
-| **Pin** | `bazelisk run //…:<name>_auto_floorplan_pin` writes the raced values into `config.mk` and sets `AUTO_FLOORPLAN=0`. A measurement becomes a decision. |
-| **Overfit** | With the netlist frozen, the pinned values are ordinary `config.mk` entries, so AutoTuner and seed sweeps apply to them like any other knob — the last-ditch pass before tapeout. |
+| **ORFS itself** | rarely — when the flow or PDK moves materially, not per OpenROAD bump |
+| **A design under development** | nightly, against the day's RTL |
 
-Judge the feature against "how close to hand-tuned, with nobody
-maintaining it", and against "does it ever quietly make things worse".
-The second question is what the guards below exist to answer, and it is
-the one worth being strict about.
+## Limits worth knowing
 
-## Intended use: design-space exploration, not tapeout sign-off
-
-**This is the most important thing to understand before using it.**
-
-It is normal in this field to work on a design with a known target
-frequency that does not yet close. When that is true, the flow cannot
-tell the difference between two very different intentions:
-
-- *this clock period or we do not tape out*, and
-- *this is where we are aiming; the RTL is still moving*.
-
-Nothing in a `config.mk` distinguishes them, and guessing wrong in the
-first direction silently ships a worse chip. So AUTO_FLOORPLAN does not
-guess: **it is documented and intended as a design-space exploration
-tool.** It gives you a gradient — a measured answer to "how much smaller
-could this core be, and what does that cost" — and it is not a sign-off
-gate.
-
-To make the distinction visible rather than assumed, every run reports
-how far the design sits from its SDC period, in units of the design's
-own measured noise floor:
-
-```
-AUTO_FLOORPLAN: design misses its SDC period by 69.34 (379.3 vs 310)
-  = 34 noise floors; period here is a DSE gradient, not a sign-off margin
-```
-
-A design a few noise floors off its target is being closed, and period
-given up to buy area is a real cost. A design tens or hundreds of noise
-floors off is not going to be closed by the backend at all — that gap
-gets fixed in the RTL — and its period number is a development signal.
-The rule below does not change between the two regimes; the report tells
-you which one you are reading.
-
-If you are taping out, pin the values:
-
-```
-bazelisk run //flow/designs/asap7/ibex:ibex_core_auto_floorplan_pin
-```
-
-That reads the evidence from the design's last floorplan run, writes the
-winning coordinates into `config.mk` between generated markers, and sets
-`AUTO_FLOORPLAN = 0` so they are used verbatim. It is idempotent —
-re-running updates the block in place — and the block records the noise
-floor the values were raced against and how far the design was from its
-SDC period at the time, so a reviewer can see what they are approving:
-
-```make
-# BEGIN AUTO_FLOORPLAN -- generated, do not edit by hand
-#
-# Raced against a measured noise floor (delta_tie) of 173.9
-# at the time of pinning: achieved 2739 against an SDC target of 1000
-# (10 noise floors short -- these values were explored, not signed off)
-#
-export CORE_UTILIZATION = 52
-export CORE_ASPECT_RATIO = 1
-export CORE_MARGIN = 2
-export PLACE_DENSITY_LB_ADDON = 0.1
-export PLACE_DENSITY = 0.668
-
-export AUTO_FLOORPLAN = 0
-# END AUTO_FLOORPLAN
-```
-
-Once pinned there is no machinery left in the way, so the frozen-RTL
-endgame works as it always did: the design's `autotuner.json` search
-space and a seed sweep can overfit these values as hard as a tapeout
-deserves.
-
-## What it does
-
-Three coordinates, each raced on a dimensionless ladder. There is no
-per-design constant anywhere in the implementation.
-
-- **Density** — the measured lower bound
-  (`gpl::get_global_placement_uniform_density`) stays, because it is
-  derived rather than guessed. Raced above it are fractions of the
-  available headroom, `{0.00, 0.05, 0.10, 0.15, 0.20}`, which is exactly
-  what `PLACE_DENSITY_LB_ADDON` means. The winner also becomes RTL-MP's
-  `-target_util`, so one measurement fixes both consumers of the knob.
-- **Utilization** — **not raced by default.** The scorer does not rank
-  this axis, and that is measured rather than suspected: running the
-  production flow at every rung of the ladder and correlating against the
-  proxy gives `rho = -1.000` on gcd (n=4) and `+0.100` on gcd-ccs (n=5) —
-  the only two designs whose noise floor (1.1% and 0.3% of clock) is
-  small enough for an answer to exist. On gcd the proxy *improves*
-  338 → 335 across the ladder while the flow *degrades* 349.2 → 355.1 ps.
-  Driving the objective with those numbers picks badly: on aes it chose a
-  core 11.2% **larger** with a worse period. `AF_RACE_UTIL=1` re-enables
-  it for reproduction.
-- **Aspect ratio** — `{0.8, 1.0, 1.25}` at the winning area point. On
-  many designs this comes back a tie, which is a result: the folklore
-  value gets graded rather than assumed.
-
-The search is coordinate descent (utilization, then density, then
-aspect), about 14 candidates rather than the 75 a full grid needs.
-Interactions between the coordinates are therefore not explored — a real
-limitation, recorded in the evidence rather than papered over.
-
-### Die and core area are computed, in whichever form you asked
-
-A design states its floorplan either as `CORE_UTILIZATION` (+ aspect and
-margin) or as an explicit `DIE_AREA`/`CORE_AREA` rectangle.
-AUTO_FLOORPLAN handles both, and **answers in the form the question was
-asked in**: a rectangle design gets a rectangle back, a utilization
-design gets a utilization.
-
-The rectangle is not recomputed from the utilization by this code. Each
-candidate reads back the die and core its own `initialize_floorplan` call
-produced, so the winner carries the geometry the flow itself built —
-including the rounding and the row/site snap — and the two forms cannot
-disagree. The evidence file and the pinned block record both, so a
-reviewer can see the die a utilization implies without deriving it.
-
-Preserving the form matters even when nothing is raced. An earlier
-version always wrote `CORE_UTILIZATION` and unset the rectangle, which
-silently re-derived the die for every `DIE_AREA` design: `uart`'s
-explicit `0 0 17 17` became whatever `-utilization` produced from an
-equivalent utilization, moving its core area with no candidate having won
-anything. Converting the form is a change to the design, and should only
-happen because a measurement asked for it.
-
-### Area is a budget, not a score
-
-A bigger core always makes period easier, so any objective that blends
-the two just inflates the die — or, as measured on gcd during
-development, deflates it and quietly sells the period away.
-
-So utilization is **constraint satisfaction, not minimisation**: take
-the smallest core whose score is *no worse than the incumbent's*, and if
-none qualifies, keep the incumbent. Density and aspect are then scored
-at that fixed area, which is a like-for-like period comparison. The
-incumbent is replaced only when the winner actually buys area.
-
-Note the tolerance on that admission is zero, not `delta_tie`. Spending
-the noise floor as an allowance sounds reasonable and is not: on the
-asap7 sweep `ibex`'s floor came out at 17% of its clock period, so
-"within `delta_tie`" would license handing over a sixth of the period in
-exchange for area. `delta_tie` decides what counts as *resolved* and
-what counts as a *tie*; it is not slack to be spent.
-
-### An unresolved ladder keeps the incumbent
-
-If the spread of scores across a ladder does not exceed the design's own
-noise floor, then every candidate is interchangeable with every other
-and the measurement has answered nothing. The response to that is to
-keep the incumbent — **not** to take the smallest core.
-
-This guard is load-bearing rather than decorative. Without it a large
-`delta_tie` makes the admission test vacuous, every candidate qualifies,
-and the rule silently degenerates into pure area minimisation with no
-period protection at all. Measured during development: `ethmac`'s noise
-floor came out at 525% of its clock period and `aes`'s at 31%, with
-ladder spreads *smaller* than the floor in both cases — and both duly
-shrank their core and gave up large amounts of TNS for a score
-difference indistinguishable from noise.
-
-Because of that, the noise floor is always reported against the clock
-period, which is the only scale on which a period number means
-anything:
-
-```
-AUTO_FLOORPLAN: noise floor over 3 seeds: spread 173.9 (7.06% of score,
-  17.39% of the clock period). A floor that is a large fraction of the
-  clock means this design's proxy cannot resolve small period
-  differences at all.
-```
-
-A design whose floor is a large fraction of its clock will mostly report
-"did not resolve" and keep its `config.mk` values. That is the correct
-outcome, not a failure to find one.
-
-### Not overfitting the proxy
-
-Racing hard on a cheap pre-route proxy overfits: the winner scores well
-before routing and then produces DRC errors or a repair explosion.
-Three rules guard against it.
-
-1. **Feasibility guards are hard filters, not score terms.** A candidate
-   that fails to place, fails to globally route, or whose post-placement
-   utilization exceeds `AF_MAX_UTIL_POST` is eliminated outright. No
-   score buys past a guard.
-2. **The objective is an aggregate, never WNS.** The achieved period is
-   a max, dominated by one path that repair usually rescues; the mean of
-   the sampled worst-quartile paths is what transmits downstream.
-3. **Ties break toward headroom.** Among candidates within `delta_tie`,
-   take the loosest — lowest density, largest core. When the measurement
-   cannot separate two candidates, take the one with more room for the
-   growth the proxy never saw.
-
-### delta_tie is measured, never configured
-
-Every verdict is published next to the design's own noise floor, found
-by re-running the winning candidate under three placer seeds. A selector
-must never be rewarded for predicting noise, and a threshold that came
-from anywhere but the design itself would do exactly that.
-
-### Fidelity of the scorer
-
-Candidates run the production stage scripts — `floorplan.tcl`,
-`macro_place.tcl` — rather than a reimplementation, then
-`global_placement`, `repair_design` and `global_route` with
-`estimate_parasitics -global_routing`. That last pair matters: pricing
-wires by an ideal-length estimate makes the score blind to the
-congestion a denser core actually buys, which was measured to cause a
-rank inversion against the flow.
-
-`AF_REPAIR=0` and `AF_GRT=0` drop those rungs for a cheaper, less
-faithful race.
-
-## The utilization axis needs the flow, not the proxy
-
-The objective is fine. Given the **flow's** own numbers it picks well on
-every design measured:
-
-| design | J picks | core | achieved period | DRC |
-|---|---|---|---|---|
-| gcd | util 78 | 61.3 → 50.0 (−18.4%) | 348.3 → 355.1 (+2.0%) | 0 |
-| gcd-ccs | util 78 | 66.0 → 50.0 (−24.2%) | 354.3 → 355.8 (+0.4%) | 0 |
-| ibex | util 56 | 5283 → 3766 (−28.7%) | 986.2 → 995.8 (+1.0%) | 0 |
-
-What is wrong is the instrument, and only on this axis. Density and
-aspect are compared at **fixed area**, which is the ranking property
-bazel-orfs#868's E1/E3 measured to hold (rho +0.67…+0.72); utilization
-changes the area, and across that change the proxy does not rank.
-
-`ideas/auto-floorplan.md` always said the oracle here was the flow —
-*"the race is the oracle inside a utilization shmoo"* — and using a
-pre-route proxy for the outer loop was the shortcut that failed. The
-correct derivation runs the production flow at each rung and picks by
-`J`. That costs ~6 flow runs per design (4 minutes on gcd, 23 on ibex):
-an offline overnight artifact to be pinned with
-`<name>_auto_floorplan_pin`, not something to run per build.
-
-Two smaller findings from the same experiment: gcd's core clamps at
-50.0 µm² for utilization ≥ 78, so the top rungs are wasted candidates;
-and ibex reaches its best `J` at the ladder's *top* rung, so the
-`{0.9 … 1.4}` ladder is too narrow and leaves area unclaimed.
-
-## Known limitation: it can push a closing design out of closure
-
-**If your design currently meets timing with a small margin, this
-feature can take that margin away, and it cannot detect that it has.**
-
-The scorer measures after global route but before CTS and
-`repair_timing`. Its absolute period is therefore not merely noisy, it
-is heavily biased. Measured on `ibex`: the proxy reads `wns = -1739 ps`
-where the finished flow lands at `+13.8 ps` — a bias of 1753 ps, 175% of
-the clock period. The proxy cannot distinguish a design that closes from
-one that misses by a nanosecond.
-
-The obvious guard — "if this design already meets timing by less than
-the noise floor, do not trade area for period" — is therefore not
-implementable from this measurement. Ranking accuracy *at a fixed area*
-is a weaker property that may well hold; knowing where you sit relative
-to the target is what an area-versus-period trade needs, and this scorer
-does not supply it. The reference that would (a design's own last
-`finish__timing__setup__ws`) is not available at the floorplan stage:
-`RULES_JSON` is scoped to the `test` stage and carries a padded bound
-rather than the measurement.
-
-Observed consequence, on the asap7 sweep: `ibex` went from `WS +13.8 ps`
-(closing) to `-2.9 ps` (not closing) while its core shrank 23%. That is
-a change in kind, not a Pareto cost, and no amount of area buys it back.
-
-So, concretely:
-
-- If your design **does not close** — the common design-space
-  exploration case, and what this feature is for — you are in the
-  regime it reports as a "DSE gradient" and this limitation costs you
-  nothing.
-- If your design **does close**, and the margin matters, either pin the
-  values (above) and set `AUTO_FLOORPLAN = 0`, or leave it off. Check
-  the reported margin before trusting a shrink.
-
-This is the honest reason the feature is documented as exploration
-rather than sign-off, and it is the first thing to fix if the scorer is
-ever made CTS-aware.
-
-## Cost
-
-Candidates run as parallel subprocesses, `AF_JOBS` at a time (default:
-half the core count). Each pays a floorplan, a macro placement if the
-design has macros, a global placement, a repair pass and a global route.
-A separate process also sidesteps `rtl_macro_placer`'s non-re-entrancy
-and leaves the parent database untouched, so only the winner is ever
-committed.
-
-## Evidence
-
-Every run writes `reports/.../auto_floorplan.json` — every candidate,
-its score, why it was eliminated if it was, the measured noise floor,
-the period regime, and the winner. Because files in `REPORTS_DIR` are
-not declared build outputs and a sandboxed build discards them, the same
-JSON is echoed into the floorplan stage log between
-`AUTO_FLOORPLAN-EVIDENCE-BEGIN` / `-END` markers.
-
-A verdict without its evidence is an assertion.
-
-## Turning it off
-
-`AUTO_FLOORPLAN=0` uses the `config.mk` values verbatim. It is also
-skipped automatically when `FLOORPLAN_DEF` or `FOOTPRINT` is set: a die
-that comes from a DEF or a pad ring is a constraint, not a choice.
+- **Interactions between the coordinates are not explored.** Coordinate
+  descent finds a good point, not necessarily the best one.
+- **The ladder can saturate or clip.** On gcd the core stops shrinking
+  past utilization 78, so the top rungs are wasted candidates; on ibex
+  the best `J` was at the top rung, meaning the ladder was too narrow and
+  left area unclaimed.
+- **A design that meets timing with a small margin can lose it.** The
+  objective values period against area at a fixed rate; it does not know
+  that crossing zero slack is a change in kind. Check the reported
+  achieved period against your target before accepting a shrink.
+- **`FLOORPLAN_DEF` and `FOOTPRINT` designs are skipped.** A die that
+  comes from a DEF or a pad ring is a constraint, not a choice.

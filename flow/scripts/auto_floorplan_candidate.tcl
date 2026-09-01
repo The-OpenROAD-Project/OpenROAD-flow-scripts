@@ -96,6 +96,14 @@ proc af_after_global_place { } {
   set ::af_used_density [place_density_with_lb_addon]
 }
 
+# Bound this candidate's own threading. Total concurrency is bazel's
+# --jobs times AF_JOBS times this, and OpenROAD otherwise takes every
+# core it can see, so a pool of candidates would each try to use the
+# whole machine. Two is a reasonable default: most of the flow is
+# single-threaded anyway, and the parallelism that matters here is
+# across candidates.
+set_thread_count [af_env AF_THREADS 2]
+
 # Vary the placer seed so the noise floor measures something. Without
 # this every seed runs an identical flow and 2 sigma comes out at 1e-13,
 # which would make the hysteresis inert and every difference look real.
