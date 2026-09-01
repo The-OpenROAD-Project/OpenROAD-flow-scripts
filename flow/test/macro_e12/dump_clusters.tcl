@@ -138,11 +138,21 @@ dict for {iname entry} $assignment {
 }
 set rows [lsort -index 1 -integer [lsort -index 0 -ascii $rows]]
 
+# Tab-delimited, and written field by field rather than with join.
+#
+# odb instance names contain escaped Verilog identifiers such as
+#   buffer/Queue/_T_address\[0\]\[0\]$_DFFE_PP_$
+# and a whitespace-joined line read back with Tcl LIST parsing has its
+# backslash escapes interpreted, so \[ arrives as [ and the name no
+# longer matches the database. Tab-delimited fields split with `split`
+# are raw strings and survive the round trip; a tab cannot occur in an
+# odb name.
 set fp [open [file join $::e12_out clusters.txt] w]
-puts $fp "# <cluster_name> <inst_id> <inst_name>"
+puts $fp "# cluster_name\tinst_id\tinst_name (tab-delimited)"
 puts $fp "# leaf clusters from rtl_macro_placer -keep_clustering_data"
 foreach row $rows {
-  puts $fp [join $row " "]
+  lassign $row cname id iname
+  puts $fp "$cname\t$id\t$iname"
 }
 close $fp
 

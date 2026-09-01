@@ -70,6 +70,8 @@ GATE_KPI = "macro_paths_mean"
 
 CLUSTERED_SUFFIX = ".clustered.json"
 
+TRUTH_SUFFIX = ".grt.json"
+
 # Score variants. Each is (label, source, field), where source picks the
 # per-candidate record to read the field out of. Every variant is
 # oriented so that *lower is better*, which is why they are all expected
@@ -128,6 +130,19 @@ def load_leaves(evidence_dir, suffix, exclude=()):
     return leaves
 
 
+def truth_from_leaves(leaves):
+    """Shape re-measured truth like the committed archive.
+
+    evaluate.tcl writes the same field names the archive's `grt` block
+    uses, so a truth measured here is a drop-in replacement rather than a
+    second schema the gate has to understand.
+    """
+    return {
+        "design": "re-measured",
+        "candidates": {tag: {"grt": rec} for tag, rec in leaves.items()},
+    }
+
+
 def collect(truth, flat, clustered):
     """Per-tag records, one dict per source, over the common tags only."""
     archive = truth["candidates"]
@@ -137,7 +152,9 @@ def collect(truth, flat, clustered):
         tags = sorted(set(archive) & set(flat))
     return tags, {
         "grt": {t: archive[t]["grt"] for t in tags},
-        "archive_proxy": {t: archive[t]["proxy"] for t in tags},
+        "archive_proxy": {
+            t: archive[t]["proxy"] for t in tags if "proxy" in archive[t]
+        },
         "archive_objective": {
             t: {"objective_fixed_norm": archive[t]["objective_fixed_norm"]}
             for t in tags
@@ -184,7 +201,7 @@ def cost_table(tags, sources):
     return costs
 
 
-def gate_zero(tags, sources, tolerance):
+def gate_zero(tags, sources, tolerance, has_archived_scores=True):
     """Did the regenerated flat scores reproduce the archived ones?
 
     Reproduction is checked on ranking (rho against the same truth) and,
@@ -196,6 +213,18 @@ def gate_zero(tags, sources, tolerance):
     flat = sources.get("flat", {})
     archive = sources.get("archive_proxy", {})
     usable = [t for t in tags if t in flat and t in archive]
+    if not has_archived_scores:
+        # A re-measured truth carries no archived score to reproduce, so
+        # the rig check has nothing to compare against and is vacuous
+        # rather than failing. This is decided from the truth source
+        # itself, not from an empty intersection -- a run that produced no
+        # candidates must still fail below.
+        return {
+            "candidates_compared": 0,
+            "not_applicable": "truth source carries no archived scores",
+            "mismatches": [],
+            "pass": True,
+        }
     mismatches = []
     for tag in usable:
         for field in REPRODUCED_FIELDS:
@@ -229,27 +258,54 @@ def gate_zero(tags, sources, tolerance):
 
 
 def gate_one(table, expected_n):
-    """The E12 criterion itself."""
+    """The E12 criterion itself.
+
+    Three conditions, not one. A rho landing inside the flat scorer's
+    interval is necessary but says nothing on its own: on a four-candidate
+    population the bootstrap interval spans [-1, +1], and any rho at all
+    would "land inside" by accident. So the measurement must also be
+    informative in its own right -- the campaign's E1 criterion is a rho
+    "with CI clear of zero" -- and the population must be the one that was
+    pre-registered.
+
+    A measurement that is not informative is reported as inconclusive
+    rather than as a pass or a failure, because it is neither: nothing was
+    learned about the scorer.
+    """
     entry = table.get("clustered_hpwl")
     if entry is None:
         return {
             "pass": False,
+            "verdict": "fail",
             "reason": "no clustered scores present",
         }
     stats = entry["kpi"][GATE_KPI]
     rho = stats["rho"]
+    low, high = stats["ci"]
     inside = FLAT_CI[0] <= rho <= FLAT_CI[1]
     complete = entry["n"] == expected_n
+    # "Clear of zero" in the direction the score is supposed to predict:
+    # lower score should mean lower (better) period, so a useful result
+    # has an interval entirely above zero.
+    informative = low > 0.0
+    if not informative:
+        verdict = "inconclusive"
+    elif inside and complete:
+        verdict = "pass"
+    else:
+        verdict = "fail"
     return {
         "kpi": GATE_KPI,
         "rho": rho,
-        "ci": stats["ci"],
+        "ci": [low, high],
         "flat_ci": list(FLAT_CI),
         "n": entry["n"],
         "expected_n": expected_n,
         "inside_flat_ci": inside,
         "population_complete": complete,
-        "pass": bool(inside and complete),
+        "ci_clear_of_zero": informative,
+        "verdict": verdict,
+        "pass": verdict == "pass",
     }
 
 
@@ -310,7 +366,7 @@ def format_report(verdict):
             "Gate 1 (E12): {} -- rho(clustered_hpwl vs {}) = "
             "{:+.2f} [{:+.2f}, {:+.2f}], flat interval "
             "[{:+.2f}, {:+.2f}], n = {}/{}".format(
-                "PASS" if gate1["pass"] else "FAIL",
+                gate1["verdict"].upper(),
                 gate1["kpi"],
                 gate1["rho"],
                 gate1["ci"][0],
@@ -321,6 +377,11 @@ def format_report(verdict):
                 gate1["expected_n"],
             )
         )
+        if gate1["verdict"] == "inconclusive":
+            lines.append(
+                "    the interval does not clear zero, so this measures "
+                "nothing about the scorer"
+            )
     return "\n".join(lines)
 
 
@@ -334,7 +395,14 @@ def build_verdict(truth, flat, clustered, expected_n, n_boot, tolerance):
         "rho": table,
         "cost": cost_table(tags, sources),
         "diverged": diverged_tags(sources),
-        "gate_0_rig_check": gate_zero(tags, sources, tolerance),
+        "gate_0_rig_check": gate_zero(
+            tags,
+            sources,
+            tolerance,
+            has_archived_scores=any(
+                "proxy" in record for record in truth["candidates"].values()
+            ),
+        ),
         "gate_1_e12": gate_one(table, expected_n),
     }
 
@@ -343,8 +411,14 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--truth",
-        required=True,
         help="score_vs_flow_swerv.json, the committed archive",
+    )
+    parser.add_argument(
+        "--truth-dir",
+        help=(
+            "directory of <tag>.grt.json leaves from evaluate.tcl, used "
+            "instead of --truth when the truth is re-measured here"
+        ),
     )
     parser.add_argument(
         "--evidence-dir",
@@ -372,9 +446,22 @@ def main(argv=None):
     )
     args = parser.parse_args(argv)
 
+    if not args.truth and not args.truth_dir:
+        parser.error("one of --truth or --truth-dir is required")
+    if args.truth_dir:
+        truth = truth_from_leaves(load_leaves(args.truth_dir, TRUTH_SUFFIX))
+        if not truth["candidates"]:
+            parser.error("no %s leaves in %s" % (TRUTH_SUFFIX, args.truth_dir))
+    else:
+        truth = load_json(args.truth)
+
     verdict = build_verdict(
-        load_json(args.truth),
-        load_leaves(args.evidence_dir, ".json", exclude=(CLUSTERED_SUFFIX,)),
+        truth,
+        load_leaves(
+            args.evidence_dir,
+            ".json",
+            exclude=(CLUSTERED_SUFFIX, TRUTH_SUFFIX),
+        ),
         load_leaves(args.evidence_dir, CLUSTERED_SUFFIX),
         args.expected_n,
         args.n_boot,

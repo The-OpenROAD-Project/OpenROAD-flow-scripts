@@ -123,8 +123,22 @@ proc e12_signal_nets { block { large_net_threshold 0 } } {
 proc e12_hpwl_dbu { nets } {
   set hpwl 0
   foreach net $nets {
+    # A net whose terminals have no physical location yields an inverted
+    # (empty) rectangle, whose dx/dy are negative. Summing those blindly
+    # produced a NEGATIVE total on the first real run -- a number that is
+    # obviously wrong, but only obviously so because it went below zero;
+    # a partially placed design would have quietly produced a plausible
+    # one. Require a real two-terminal net and a non-inverted box.
+    if { [$net getTermCount] < 2 } {
+      continue
+    }
     set bbox [$net getTermBBox]
-    set hpwl [expr { $hpwl + [$bbox dx] + [$bbox dy] }]
+    set dx [$bbox dx]
+    set dy [$bbox dy]
+    if { $dx < 0 || $dy < 0 } {
+      continue
+    }
+    set hpwl [expr { $hpwl + $dx + $dy }]
   }
   return $hpwl
 }

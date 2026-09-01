@@ -13,72 +13,77 @@ load("@bazel-orfs//:openroad.bzl", "orfs_run_executable")
 load("@orfs_designs//:designs.bzl", "DESIGNS")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
-SWERV = DESIGNS["asap7/swerv_wrapper"]
+# The design ladder. Every design here gets the same four executables, so
+# an experiment can be flushed on a cheap design and then repeated on an
+# expensive one without editing anything.
+#
+#   tinyRocket   mechanics. Two macros and a ~6 minute production tail, so
+#                the whole chain -- generation, scoring, truth, verdict --
+#                runs in minutes. Its candidate population is too small to
+#                rank, so a rho from it means nothing; it exists to prove
+#                the pipeline executes.
+#   swerv        the real population: 28 macros, and the design the
+#                archived reference numbers were measured on. Hours per
+#                candidate for the truth stage.
+E12_DESIGNS = {
+    "tinyRocket": "nangate45/tinyRocket",
+    "swerv": "asap7/swerv_wrapper",
+}
 
-SWERV_SYNTH = "//flow/designs/asap7/swerv_wrapper:swerv_wrapper_synth_for_e12"
+# Per-design synth target, exposed to this package by a narrow alias in
+# the design's own BUILD (orfs_design leaves flow targets
+# package-private and ORFS's design() has no visibility passthrough).
+E12_SYNTH = {
+    "tinyRocket": "//flow/designs/nangate45/tinyRocket:RocketTile_synth_for_e12",
+    "swerv": "//flow/designs/asap7/swerv_wrapper:swerv_wrapper_synth_for_e12",
+}
 
 # The helper Tcl travels as `data`, which orfs_run_executable stages
 # alongside `script`, so each driver sources it as a sibling.
-# e12_lib.tcl is shared by all three drivers; extract_lib.tcl is the
-# vendored instrument the archived reference numbers were measured with.
+# e12_lib.tcl is shared by all drivers; extract_lib.tcl is the vendored
+# instrument the archived reference numbers were measured with.
 E12_DATA = [
     "e12_lib.tcl",
     "extract_lib.tcl",
 ]
 
-# The design's own source files (SDC, LEFs, LIBs, io.tcl) reach the flow
-# through `data` too: the drivers run real ORFS stage scripts, which read
-# them by the variable names the config.mk sets.
-E12_DESIGN_DATA = [
-    label
-    for labels in SWERV["sources"].values()
-    for label in labels
-]
+# Each stage of the pipeline, as script -> target suffix.
+E12_STAGES = {
+    "macro_e12.tcl": "candidates",
+    "dump_clusters.tcl": "dump_clusters",
+    "score_clustered.tcl": "score_clustered",
+    "evaluate.tcl": "evaluate",
+}
 
-# Step 0: regenerate the 24-candidate population and re-measure it with
-# the flat scorer. Writes cand_s<N>.{json,place.tcl,odb} plus
-# base_floorplan.odb into $E12_OUT_DIR. This is also the rig check: the
-# regenerated flat scores must reproduce the archive.
-#
-# All four flow targets are `bazelisk run` executables taking KEY=VALUE
-# overrides, rather than build-time actions with declared outputs. That
-# matches what they are -- a manual campaign whose evidence directory is
-# an input to analysis, not a build artifact -- and it is what lets the
+# Four `bazelisk run` executables per design, taking KEY=VALUE overrides,
+# rather than build-time actions with declared outputs. That matches what
+# they are -- a manual campaign whose evidence directory is an input to
+# analysis, not a build artifact -- and it is what lets the
 # reduction-axis sweeps vary E12_* without a target per value.
-orfs_run_executable(
-    name = "swerv_candidates",
-    src = SWERV_SYNTH,
-    arguments = SWERV["arguments"],
-    cmd = "run",
-    data = E12_DATA + E12_DESIGN_DATA,
-    script = "macro_e12.tcl",
-    tags = ["manual"],
-)
-
-# Step 1: dump RTL-MP's cluster partition from the base floorplan, once.
-orfs_run_executable(
-    name = "swerv_dump_clusters",
-    src = SWERV_SYNTH,
-    arguments = SWERV["arguments"],
-    cmd = "run",
-    data = E12_DATA + E12_DESIGN_DATA,
-    script = "dump_clusters.tcl",
-    tags = ["manual"],
-)
-
-# Step 2: score one candidate with the clustered rung. E12_TAG selects
-# the candidate; one candidate per process is mandatory, so the sweep
-# over candidates is a loop over invocations of this target rather than
-# an inner loop.
-orfs_run_executable(
-    name = "swerv_score_clustered",
-    src = SWERV_SYNTH,
-    arguments = SWERV["arguments"],
-    cmd = "run",
-    data = E12_DATA + E12_DESIGN_DATA,
-    script = "score_clustered.tcl",
-    tags = ["manual"],
-)
+#
+#   candidates       regenerate the population and score it flat. Also the
+#                    rig check when grading against the archive.
+#   dump_clusters    RTL-MP's cluster partition, once, from the base
+#                    floorplan.
+#   score_clustered  the clustered rung, one candidate per process.
+#   evaluate         the production tail to grt: the truth.
+[
+    orfs_run_executable(
+        name = "%s_%s" % (short, suffix),
+        src = E12_SYNTH[short],
+        arguments = DESIGNS[full]["arguments"],
+        cmd = "run",
+        data = E12_DATA + [
+            label
+            for labels in DESIGNS[full]["sources"].values()
+            for label in labels
+        ],
+        script = script,
+        tags = ["manual"],
+    )
+    for short, full in E12_DESIGNS.items()
+    for script, suffix in E12_STAGES.items()
+]
 
 py_library(
     name = "e12_stats",

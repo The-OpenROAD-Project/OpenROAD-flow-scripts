@@ -88,6 +88,21 @@ load_design $stem.odb $stem.sdc
 
 set block [ord::get_db_block]
 
+# Place the IO pins.
+#
+# The candidate .odb is the post-macro-placement database, which is
+# exactly what ORFS's 2_2_floorplan_macro stage produces and therefore
+# has unplaced top-level ports; gpl refuses to run on it (GPL-0326, "{}
+# toplevel port is not placed"). The flat rung places pins as part of
+# scoring for the same reason, so doing it here keeps the two rungs
+# measuring the same configuration rather than making the candidate
+# archive carry scoring state.
+if { [e12_env IO_CONSTRAINTS ""] ne "" } {
+  uplevel #0 [list source $::env(IO_CONSTRAINTS)]
+}
+place_pins -hor_layers $::env(IO_PLACER_H) \
+  -ver_layers $::env(IO_PLACER_V)
+
 # --------------------------------------------------------------------
 # Halo-flat set and the macro cone, from one traversal.
 
@@ -118,10 +133,15 @@ while { [gets $fp line] >= 0 } {
   if { [string index $line 0] eq "#" || [string trim $line] eq "" } {
     continue
   }
-  set cname [lindex $line 0]
-  # The instance name is the remainder of the line, not just field 3, so
-  # a name containing a space cannot silently truncate.
-  set iname [join [lrange $line 2 end] " "]
+  # split on the tab delimiter rather than treating the line as a Tcl
+  # list: list parsing interprets backslash escapes, and odb names carry
+  # escaped Verilog identifiers (\[0\] and the like). Reading such a name
+  # as a list turns \[ into [ and the lookup silently misses -- 3751 of
+  # 29069 names on tinyRocket, which is why the partition check below
+  # exists.
+  set fields [split $line "\t"]
+  set cname [lindex $fields 0]
+  set iname [lindex $fields 2]
 
   # Match by name, not by odb id. clusters.txt is written from the base
   # floorplan database and consumed against a candidate's, and while

@@ -147,19 +147,77 @@ class TestGateOne(unittest.TestCase):
         self.assertFalse(gate1["pass"])
 
     def test_score_inside_the_flat_interval_passes(self):
-        # Swap enough neighbouring pairs to land rho in [0.48, 0.84].
-        order = list(range(24))
-        for i in range(0, 24, 2):
-            order[i], order[i + 1] = order[i + 1], order[i]
-        order[0], order[17] = order[17], order[0]
-        order[3], order[20] = order[20], order[3]
-        verdict = self._verdict(order)
+        """A rho inside the interval AND informative is a pass.
+
+        This ordering was chosen to land where the real reference lands --
+        rho 0.74, CI [0.49, 0.84] against the archive's 0.72 [0.48, 0.84]
+        -- so the fixture exercises the gate at its actual operating
+        point rather than at an artificial extreme.
+        """
+        order = [
+            5,
+            0,
+            2,
+            9,
+            3,
+            11,
+            4,
+            14,
+            6,
+            10,
+            1,
+            7,
+            20,
+            19,
+            8,
+            22,
+            13,
+            12,
+            23,
+            17,
+            18,
+            21,
+            15,
+            16,
+        ]
+        values = [100.0 + i for i in range(24)]
+        truth = make_truth(24, values)
+        flat, clustered = make_leaves(24, values, order)
+        verdict = grade_e12.build_verdict(truth, flat, clustered, 24, 400, 1e-6)
         gate1 = verdict["gate_1_e12"]
         self.assertTrue(
             grade_e12.FLAT_CI[0] <= gate1["rho"] <= grade_e12.FLAT_CI[1],
             "fixture rho %.3f outside the interval it is meant to hit" % gate1["rho"],
         )
+        self.assertTrue(gate1["ci_clear_of_zero"])
+        self.assertEqual(gate1["verdict"], "pass")
         self.assertTrue(gate1["pass"])
+
+    def test_uninformative_interval_is_inconclusive_not_pass(self):
+        """The failure mode the four-candidate smoke run exposed.
+
+        With a tiny population the bootstrap interval spans [-1, +1], so
+        a rho can land inside the flat scorer's interval purely by
+        accident. That is not a pass and it is not a failure -- nothing
+        was measured -- so the gate must say so.
+        """
+        values = [100.0 + i for i in range(4)]
+        truth = make_truth(4, values)
+        flat, clustered = make_leaves(4, values, [0, 1, 3, 2])
+        verdict = grade_e12.build_verdict(truth, flat, clustered, 4, 200, 1e-6)
+        gate1 = verdict["gate_1_e12"]
+        self.assertFalse(gate1["ci_clear_of_zero"])
+        self.assertEqual(gate1["verdict"], "inconclusive")
+        self.assertFalse(gate1["pass"])
+
+    def test_informative_interval_can_still_pass(self):
+        """A wide population with a real signal keeps passing."""
+        verdict = self._verdict(list(range(24)))
+        gate1 = verdict["gate_1_e12"]
+        self.assertTrue(gate1["ci_clear_of_zero"])
+        # rho = 1.0 is above the flat interval, so this is a fail rather
+        # than inconclusive -- the point is that it is decided, not vague.
+        self.assertEqual(gate1["verdict"], "fail")
 
     def test_inverted_score_fails(self):
         verdict = self._verdict(list(reversed(range(24))))
@@ -183,6 +241,53 @@ class TestGateOne(unittest.TestCase):
     def test_divergence_is_surfaced(self):
         verdict = self._verdict(list(range(24)), diverged=("cand_s3",))
         self.assertEqual(verdict["diverged"], ["cand_s3"])
+
+
+class TestRemeasuredTruth(unittest.TestCase):
+    """Truth measured here, rather than read from the archive."""
+
+    def test_leaves_shape_like_the_archive(self):
+        leaves = {
+            "cand_s%d"
+            % i: {
+                "macro_paths_mean": 100.0 + i,
+                "achieved": 1000.0 + i,
+                "general_paths_mean": 900.0 + i,
+                "stdcell_um2": 10000.0 + i,
+            }
+            for i in range(4)
+        }
+        truth = grade_e12.truth_from_leaves(leaves)
+        self.assertEqual(sorted(truth["candidates"]), sorted(leaves))
+        self.assertEqual(
+            truth["candidates"]["cand_s0"]["grt"]["macro_paths_mean"], 100.0
+        )
+
+    def test_rig_check_is_vacuous_not_failing(self):
+        """No archived score to reproduce, so gate 0 must not block."""
+        leaves = {
+            "cand_s%d"
+            % i: {
+                "macro_paths_mean": 100.0 + i,
+                "achieved": 1000.0 + i,
+                "general_paths_mean": 900.0 + i,
+                "stdcell_um2": 10000.0 + i,
+            }
+            for i in range(4)
+        }
+        flat, clustered = make_leaves(4, [100.0 + i for i in range(4)], list(range(4)))
+        verdict = grade_e12.build_verdict(
+            grade_e12.truth_from_leaves(leaves), flat, clustered, 4, 100, 1e-6
+        )
+        gate0 = verdict["gate_0_rig_check"]
+        self.assertTrue(gate0["pass"])
+        self.assertIn("not_applicable", gate0)
+
+    def test_empty_run_still_fails_the_rig_check(self):
+        """The vacuous path must not swallow a run that produced nothing."""
+        truth = make_truth(4, [1.0, 2.0, 3.0, 4.0])
+        verdict = grade_e12.build_verdict(truth, {}, {}, 4, 100, 1e-6)
+        self.assertFalse(verdict["gate_0_rig_check"]["pass"])
 
 
 class TestLeafLoading(unittest.TestCase):
