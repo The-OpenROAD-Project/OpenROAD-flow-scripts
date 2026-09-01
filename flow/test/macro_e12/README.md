@@ -87,10 +87,19 @@ named explicitly rather than declared as an output.
 EV=$PWD/e12_evidence          # anywhere outside the source tree
 mkdir -p "$EV"
 
-# Step 0 -- regenerate the 24 candidates and re-measure them flat (~25 min
-# on a 24-core machine). Writes cand_s<N>.{json,place.tcl,odb} and
-# base_floorplan.odb.
+# Step 0 -- regenerate the candidates and re-measure them flat. Writes
+# cand_s<N>.{json,place.tcl,odb} and base_floorplan.{odb,sdc}.
+#
+# Candidates run SERIALLY on the bazel-orfs pin ORFS currently uses: the
+# fork facility that makes them cheap is not present, and the script
+# detects that and falls back rather than failing. The upstream campaign
+# measured 65 candidates/h forked against 23.8 serial, so budget hours
+# rather than the ~25 minutes a forked run takes -- or start with E12_K=1.
 bazelisk run //flow/test/macro_e12:swerv_candidates -- E12_OUT_DIR=$EV
+
+# Probe first. One candidate is enough to exercise every step below, and
+# it is what the pre-campaign checks need.
+bazelisk run //flow/test/macro_e12:swerv_candidates -- E12_OUT_DIR=$EV E12_K=1
 
 # Step 1 -- dump RTL-MP's cluster partition from the base floorplan, once.
 bazelisk run //flow/test/macro_e12:swerv_dump_clusters -- E12_OUT_DIR=$EV

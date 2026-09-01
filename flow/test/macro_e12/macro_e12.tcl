@@ -19,18 +19,38 @@
 # live in a score measured after the fact, not in the cost function.
 #
 # One production floorplan spine is shared; candidates diverge only at
-# macro_place, so the fork copy-on-write snapshot pays for the whole
-# shared prefix. Two execution shapes, selected by E12_SERIAL_THREADS:
+# macro_place, so a copy-on-write snapshot would pay for the whole shared
+# prefix. Two execution shapes, selected by E12_SERIAL_THREADS:
 #
-#   0 (default)  fork -jobs $E12_JOBS: candidates in parallel,
-#                single-threaded each (a fork child must not raise its
-#                own thread count).
+#   0            fork -jobs $E12_JOBS: candidates in parallel,
+#                single-threaded each (a fork child must not raise its own
+#                thread count). Requires bazel-orfs's fork facility.
 #   N > 0        no fork: candidates run sequentially in the parent with
-#                set_thread_count N. Kept because it is the only shape
-#                that can be compared against the clustered scorer's
-#                threading behaviour.
+#                set_thread_count N.
+#
+# The fork facility is not in every bazel-orfs pin -- notably not in the
+# one ORFS currently pins -- so when it is missing this falls back to the
+# serial arm automatically. That is a throughput difference, not a
+# measurement difference: the upstream campaign measured 65 candidates/h
+# forked against 23.8 serial, because generation dominates and RTL-MP is
+# thread-insensitive. Budget accordingly before asking for 24 of them.
 
-source $::env(ORFS_FORK_TCL)
+# The fork facility is optional. It is what makes many candidates cheap
+# -- they share the whole floorplan prefix through a copy-on-write
+# snapshot -- but it lives in bazel-orfs and is not present in every pin,
+# so its absence must degrade to the serial arm rather than crash. The
+# serial arm is not a lesser measurement: it produces the same scores,
+# one at a time (see e12_reset_placement for what it has to undo by hand
+# that a fork child gets for free).
+set ::e12_have_fork 0
+if {
+  [info exists ::env(ORFS_FORK_TCL)]
+  && [file exists $::env(ORFS_FORK_TCL)]
+} {
+  source $::env(ORFS_FORK_TCL)
+  set ::e12_have_fork 1
+}
+
 set e12_dir [file dirname [file normalize [info script]]]
 source [file join $e12_dir e12_lib.tcl]
 source [file join $e12_dir extract_lib.tcl]
@@ -42,7 +62,12 @@ if { $::e12_out eq "" } {
 set ::e12_work [e12_env E12_WORK [file join $::env(WORK_HOME) e12_work]]
 set ::e12_k [e12_env E12_K 24]
 set ::e12_jobs [e12_env E12_JOBS 12]
+# 0 means "use fork if it is available". A positive value, or the absence
+# of fork, selects the serial arm with that many threads.
 set ::e12_serial_threads [e12_env E12_SERIAL_THREADS 0]
+if { !$::e12_have_fork && $::e12_serial_threads == 0 } {
+  set ::e12_serial_threads 1
+}
 set ::e12_fork_opts [list -timeout [e12_env E12_CHILD_TIMEOUT 14400]]
 file mkdir $::e12_out
 
@@ -186,12 +211,15 @@ set seeds {}
 for { set i 0 } { $i < $::e12_k } { incr i } {
   lappend seeds $i
 }
-puts "e12: [llength $seeds] candidates,\
-  [expr {
-  $::e12_serial_threads > 0 ?
-  "serial with $::e12_serial_threads threads" :
-  "fork -jobs $::e12_jobs"
-}]"
+if { $::e12_serial_threads > 0 } {
+  set shape "serial with $::e12_serial_threads threads"
+  if { !$::e12_have_fork } {
+    append shape " (fork unavailable in this bazel-orfs pin)"
+  }
+} else {
+  set shape "fork -jobs $::e12_jobs"
+}
+puts "e12: [llength $seeds] candidates, $shape"
 
 e12_redirect spine
 file copy -force $::env(ODB_FILE) \
