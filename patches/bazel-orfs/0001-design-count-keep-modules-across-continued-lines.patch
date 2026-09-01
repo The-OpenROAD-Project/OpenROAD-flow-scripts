@@ -1,0 +1,35 @@
+diff --git a/private/orfs_design.bzl b/private/orfs_design.bzl
+index e85b80b..0ac66f0 100644
+--- a/private/orfs_design.bzl
++++ b/private/orfs_design.bzl
+@@ -51,6 +51,19 @@ def _convert_sources(sources, pkg):
+             result[var] = converted
+     return result
+ 
++def _split_whitespace(value):
++    """Split on any run of whitespace, dropping empties.
++
++    Starlark's split() requires an explicit separator and has no
++    whitespace-splitting form, so a config.mk list that is spread over
++    several backslash-continued lines cannot be counted with a single
++    split(" "): the continuations leave newlines and runs of spaces that
++    would be counted as empty entries.
++    """
++    for whitespace in ["\n", "\t", "\r"]:
++        value = value.replace(whitespace, " ")
++    return [word for word in value.split(" ") if word]
++
+ def orfs_design(name = None, config = "config.mk", platform = None, design = None, designs = None, mock_openroad = None, mock_yosys = None, user_arguments = [], user_sources = [], local_arguments = [], blender = False, extra = None):  # buildifier: disable=unused-variable
+     """Create orfs_flow() targets for a design based on its parsed config.mk.
+ 
+@@ -233,7 +246,9 @@ def orfs_design(name = None, config = "config.mk", platform = None, design = Non
+         if "SYNTH_NUM_PARTITIONS" not in arguments:
+             keep_modules = arguments.get("SYNTH_KEEP_MODULES", "")
+             if keep_modules:
+-                arguments["SYNTH_NUM_PARTITIONS"] = str(len(keep_modules.split()))
++                arguments["SYNTH_NUM_PARTITIONS"] = str(
++                    len(_split_whitespace(keep_modules)),
++                )
+             else:
+                 arguments["SYNTH_NUM_PARTITIONS"] = "32"
+ 

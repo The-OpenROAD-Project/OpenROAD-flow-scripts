@@ -1,0 +1,7 @@
+"""bazel-orfs fixes carried as git_override patches.
+
+Drop each file when the fix lands upstream and BAZEL_ORFS_COMMIT is
+bumped past it.
+"""
+
+exports_files(glob(["*.patch"]))

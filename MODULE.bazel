@@ -176,9 +176,21 @@ BAZEL_ORFS_COMMIT = "ca4e9dd41e0f2e7ab3174535dab4fc7c680b1085"
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
+# patches/bazel-orfs/0001-design-count-keep-modules-across-continued-lines.patch:
+# orfs_design() sizes SYNTH_NUM_PARTITIONS from SYNTH_KEEP_MODULES using
+# Starlark's split() with no separator, which is a Python-ism -- Starlark
+# requires one. Any design setting both SYNTH_HIERARCHICAL=1 and
+# SYNTH_KEEP_MODULES therefore fails at analysis with "split() missing 1
+# required positional argument: sep". Splitting on runs of whitespace is
+# what the count actually needs, because a config.mk list is spread over
+# backslash-continued lines.
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        "//patches/bazel-orfs:0001-design-count-keep-modules-across-continued-lines.patch",
+    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 
