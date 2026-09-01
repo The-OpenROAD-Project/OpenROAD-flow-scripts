@@ -65,11 +65,76 @@ single_version_override(
     version = "3.8.2.bcr.7",
 )
 
-
+# openroad is normally consumed straight from the tools/OpenROAD
+# submodule via local_path_override. While the E12 macro-placement
+# experiment carries OpenROAD patches in //patches/openroad
+# (local_path_override does not accept patches), it is fetched via
+# git_override instead, pinned to the exact commit the submodule
+# gitlink records so make (submodule) and bazel (fetched + patched)
+# build the same base. Note that bazel builds the fetched source, not
+# the live submodule tree, while this override is in place; revert to
+# local_path_override when the patches land upstream.
+#
+# All five patches originate on the public bazel-orfs `macro-selector`
+# branch (patches/0040-0043, 0045) and apply cleanly and in order at
+# the pinned commit. src/mpl, src/gpl, src/par and src/odb/src are
+# byte-identical between the pinned commit and OpenROAD 3ca581e38,
+# which is the commit the archived swerv_wrapper measurements in
+# flow/test/macro_e12/score_vs_flow_swerv.json were taken at -- that
+# is what makes those numbers a valid reference here.
+#
+# patches/openroad/0001-mpl-fix-rerun-segfault.patch:
+# HierRTLMP::run() ends with clear(), which destroys the physical
+# hierarchy tree that was only ever built in the constructor, so a
+# second rtl_macro_placer in one process handed a null tree to the
+# clustering engine and crashed. Recreates the tree lazily. Required
+# for generating many candidates in one process.
+# OpenROAD issue #11277.
+#
+# patches/openroad/0002-mpl-add-random_seed.patch:
+# adds `rtl_macro_placer -random_seed`, defaulting to the previously
+# hard-coded 0 so stock behaviour is unchanged. Same seed reproduces
+# the placement; different seeds explore different annealing
+# trajectories. This is what turns the macro placer into a
+# deterministic candidate generator instead of requiring CORE_AREA or
+# cost-weight perturbation to obtain distinct placements.
+# No upstream issue: a feature, to be proposed separately.
+#
+# patches/openroad/0003-mpl-keep-snapped-macros-inside-core.patch:
+# the Snapper picked the track position closest to the pin centre,
+# rounding up, which pushed top/right-edge macros past the core;
+# place_macro then rejected the placer's own -write_macro_placement
+# output with MPL-0034, so a selected placement could not be
+# re-injected via MACRO_PLACEMENT_TCL. OpenROAD issue #11278.
+#
+# patches/openroad/0004-mpl-seed-std-cells-when-all-macros-fixed.patch:
+# when every macro was fixed, run() skipped the whole pipeline
+# including generateTemporaryStdCellsPlacement() and the macro soft
+# blockages, so a re-injected placement diverged (~2% achieved
+# period) from the run that generated it despite bit-identical macro
+# geometry. OpenROAD issue #11279.
+#
+# patches/openroad/0005-gpl-thread-invariant-parallel-density-scatter.patch:
+# BinGrid's density scatter was serial at any -threads. Parallelises
+# it while accumulating into the bins' existing int64_t fields via
+# std::atomic_ref with relaxed ordering: each addend is truncated to
+# int64 before adding, so the sum is over a fixed multiset and is
+# bit-identical at any thread count. Ships an mt_invariance
+# integration test. OpenROAD PR #11262.
 bazel_dep(name = "openroad", dev_dependency = True)
-local_path_override(
+git_override(
     module_name = "openroad",
-    path = "tools/OpenROAD",
+    commit = "4b704bb69321203e5bf5db74182bfae9e8721d1e",
+    init_submodules = True,
+    patch_strip = 1,
+    patches = [
+        "//patches/openroad:0001-mpl-fix-rerun-segfault.patch",
+        "//patches/openroad:0002-mpl-add-random_seed.patch",
+        "//patches/openroad:0003-mpl-keep-snapped-macros-inside-core.patch",
+        "//patches/openroad:0004-mpl-seed-std-cells-when-all-macros-fixed.patch",
+        "//patches/openroad:0005-gpl-thread-invariant-parallel-density-scatter.patch",
+    ],
+    remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
 )
 
 bazel_dep(name = "qt-bazel", dev_dependency = True)
