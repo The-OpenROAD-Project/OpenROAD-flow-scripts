@@ -55,7 +55,7 @@ export RTLMP_FENCE_LX = 850
 export RTLMP_FENCE_LY = 850
 export RTLMP_FENCE_UX = 2150
 export RTLMP_FENCE_UY = 2150
-export MACRO_PLACE_HALO = 29 29
+export RTLMP_MIN_CHANNEL_SIZE = 58 58
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
