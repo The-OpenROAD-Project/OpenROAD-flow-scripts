@@ -91,6 +91,31 @@ source $::env(SCRIPTS_DIR)/floorplan.tcl
 
 set af_t_fp [clock milliseconds]
 
+# The die and core rectangles this candidate actually produced, in
+# microns, read back from the block rather than recomputed.
+#
+# initialize_floorplan derives them from the design area, the utilization,
+# the aspect ratio and the margins (ifp/src/InitFloorplan.cc), with a
+# rounding step and a row/site snap. Reimplementing that arithmetic here
+# would be a second source of truth that drifts the first time either
+# side changes, so the winner carries the geometry the flow itself
+# produced.
+#
+# This is what lets AUTO_FLOORPLAN answer in whichever form a design
+# asked the question: a config.mk written with DIE_AREA/CORE_AREA gets a
+# rectangle back, one written with CORE_UTILIZATION gets a utilization.
+proc af_rect_um { rect dbu } {
+  return [list \
+    [expr { [$rect xMin] / double($dbu) }] \
+    [expr { [$rect yMin] / double($dbu) }] \
+    [expr { [$rect xMax] / double($dbu) }] \
+    [expr { [$rect yMax] / double($dbu) }]]
+}
+set af_blk [ord::get_db_block]
+set af_dbu [$af_blk getDbUnitsPerMicron]
+set af_die_rect [af_rect_um [$af_blk getDieArea] $af_dbu]
+set af_core_rect [af_rect_um [$af_blk getCoreArea] $af_dbu]
+
 # Resolve the density now that core rows exist.
 set af_density [af_env AF_DENSITY]
 if { $af_density eq "" } {
@@ -295,6 +320,8 @@ set af_rec [list \
   wns [dict get $af_sampled wns] \
   clock_period [dict get $af_sampled clock_period] \
   core_um2 [dict get $af_area core_um2] \
+  die_rect $af_die_rect \
+  core_rect $af_core_rect \
   stdcell_um2 [dict get $af_area stdcell_um2] \
   macro_um2 [dict get $af_area macro_um2] \
   util_post $af_util_post \

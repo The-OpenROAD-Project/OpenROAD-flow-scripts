@@ -66,7 +66,21 @@ def extract_evidence(path):
         sys.exit(f"[ERROR] could not parse AUTO_FLOORPLAN evidence in {path}: {e}")
 
 
-def render_block(ev):
+def uses_rectangle(config_text):
+    """Does this config.mk state its floorplan as an explicit rectangle?
+
+    AUTO_FLOORPLAN answers in whichever form the question was asked, so
+    the pinned block has to match: rewriting a DIE_AREA design as a
+    utilization silently re-derives its die, which is a change to the
+    design rather than a record of a measurement.
+    """
+    return bool(
+        re.search(r"(?m)^\s*export\s+DIE_AREA\s*=", config_text)
+        and re.search(r"(?m)^\s*export\s+CORE_AREA\s*=", config_text)
+    )
+
+
+def render_block(ev, rectangle=False):
     winner = ev.get("winner")
     if not winner:
         sys.exit(
@@ -102,7 +116,25 @@ def render_block(ev):
             )
     lines.append("#")
 
+    # The measured geometry, recorded either way: as the pinned values for
+    # a rectangle design, and as a comment for a utilization one so a
+    # reviewer can see the die the utilization implies without deriving it.
+    die, core = winner.get("die_rect"), winner.get("core_rect")
+    if die and core:
+        lines.append(f"# measured die area  {die}")
+        lines.append(f"# measured core area {core}")
+        lines.append("#")
+
+    if rectangle and die and core:
+        lines.append(f"export DIE_AREA  = {die}")
+        lines.append(f"export CORE_AREA = {core}")
+        skip = {"CORE_UTILIZATION", "CORE_ASPECT_RATIO", "CORE_MARGIN"}
+    else:
+        skip = set()
+
     for var, key in FIELDS:
+        if var in skip:
+            continue
         val = winner.get(key)
         if val is None or val == -1:
             continue
@@ -144,10 +176,10 @@ def main():
         sys.exit(f"[ERROR] no config.mk at {config_path}")
 
     ev = extract_evidence(args.evidence)
-    block = render_block(ev)
 
     with open(config_path) as f:
         before = f.read()
+    block = render_block(ev, rectangle=uses_rectangle(before))
     after = splice(before, block)
 
     if before == after:

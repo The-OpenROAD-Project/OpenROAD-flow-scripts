@@ -621,6 +621,11 @@ proc af_write_evidence { path phases winner delta_tie tie_n incumbent regime } {
     foreach f { util aspect margin density addon score core_um2 } {
       lappend wp $f [af_dict_get_or $winner $f -1]
     }
+    foreach f { die_rect core_rect } {
+      if { [dict exists $winner $f] } {
+        lappend wp $f "\"[dict get $winner $f]\""
+      }
+    }
     af_json_obj_to $fh $wp
   }
   puts $fh ","
@@ -902,16 +907,47 @@ proc af_run { } {
   }
 
   # --- apply -------------------------------------------------------------
-  # Override every form the floorplan can be specified in, so whichever
-  # branch floorplan.tcl takes below sees the raced values and the
-  # mutual-exclusion check still sees exactly one method.
-  set ::env(CORE_UTILIZATION) [dict get $winner util]
-  set ::env(CORE_ASPECT_RATIO) [dict get $winner aspect]
-  set ::env(CORE_MARGIN) [dict get $winner margin]
-  foreach v { DIE_AREA CORE_AREA } {
-    if { [info exists ::env($v)] } {
-      af_log "overriding $v from config.mk"
-      unset ::env($v)
+  # Answer in the form the design asked the question in.
+  #
+  # A config.mk written with DIE_AREA/CORE_AREA gets a rectangle back; one
+  # written with CORE_UTILIZATION gets a utilization. Both are computed --
+  # the rectangle is the geometry initialize_floorplan actually produced
+  # for the winning candidate, read back from its block, so the two forms
+  # cannot disagree.
+  #
+  # Preserving the form matters even when nothing was raced. An earlier
+  # version always wrote CORE_UTILIZATION and unset the rectangle, which
+  # silently re-derived the die for every DIE_AREA design: uart's explicit
+  # "0 0 17 17" became whatever -utilization produced from an equivalent
+  # utilization, moving its core area with no candidate having won
+  # anything. Converting the form is a change to the design, and it should
+  # only ever happen because a measurement asked for it.
+  set af_rect_form [expr {
+    [env_var_exists_and_non_empty DIE_AREA] &&
+    [env_var_exists_and_non_empty CORE_AREA]
+  }]
+  if { $af_rect_form && [dict exists $winner die_rect] } {
+    set ::env(DIE_AREA) [dict get $winner die_rect]
+    set ::env(CORE_AREA) [dict get $winner core_rect]
+    if { [info exists ::env(CORE_UTILIZATION)] } {
+      unset ::env(CORE_UTILIZATION)
+    }
+    af_log "die area [dict get $winner die_rect], core area\
+ [dict get $winner core_rect] (measured; this design specifies its\
+ floorplan as a rectangle)"
+  } else {
+    set ::env(CORE_UTILIZATION) [dict get $winner util]
+    set ::env(CORE_ASPECT_RATIO) [dict get $winner aspect]
+    set ::env(CORE_MARGIN) [dict get $winner margin]
+    foreach v { DIE_AREA CORE_AREA } {
+      if { [info exists ::env($v)] } {
+        af_log "overriding $v from config.mk"
+        unset ::env($v)
+      }
+    }
+    if { [dict exists $winner die_rect] } {
+      af_log "equivalent die area [dict get $winner die_rect], core area\
+ [dict get $winner core_rect]"
     }
   }
   set ::env(PLACE_DENSITY) [dict get $winner density]

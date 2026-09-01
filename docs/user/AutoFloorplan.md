@@ -148,6 +148,29 @@ aspect), about 14 candidates rather than the 75 a full grid needs.
 Interactions between the coordinates are therefore not explored — a real
 limitation, recorded in the evidence rather than papered over.
 
+### Die and core area are computed, in whichever form you asked
+
+A design states its floorplan either as `CORE_UTILIZATION` (+ aspect and
+margin) or as an explicit `DIE_AREA`/`CORE_AREA` rectangle.
+AUTO_FLOORPLAN handles both, and **answers in the form the question was
+asked in**: a rectangle design gets a rectangle back, a utilization
+design gets a utilization.
+
+The rectangle is not recomputed from the utilization by this code. Each
+candidate reads back the die and core its own `initialize_floorplan` call
+produced, so the winner carries the geometry the flow itself built —
+including the rounding and the row/site snap — and the two forms cannot
+disagree. The evidence file and the pinned block record both, so a
+reviewer can see the die a utilization implies without deriving it.
+
+Preserving the form matters even when nothing is raced. An earlier
+version always wrote `CORE_UTILIZATION` and unset the rectangle, which
+silently re-derived the die for every `DIE_AREA` design: `uart`'s
+explicit `0 0 17 17` became whatever `-utilization` produced from an
+equivalent utilization, moving its core area with no candidate having won
+anything. Converting the form is a change to the design, and should only
+happen because a measurement asked for it.
+
 ### Area is a budget, not a score
 
 A bigger core always makes period easier, so any objective that blends
