@@ -76,6 +76,11 @@ orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # out by OpenSTA that has no dependencies. Sole writer of
 # 1_synth.sdc.
 orfs_write_sdc $::env(RESULTS_DIR)/1_synth.sdc
+
+# Gate-level netlist for downstream consumers. The Bazel synthesis action
+# declares this file as an output, so it must be written unconditionally.
+write_lec_verilog 1_synth.v
+
 if { $::env(LEC_CHECK) || $::env(SEC_CHECK) } {
   write_lec_verilog 1_synth_lec.v
 }

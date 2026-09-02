@@ -31,7 +31,7 @@ The two main directories are:
 
 ## Setup
 
-See [Getting Started](../index.md#getting-started-with-openroad-flow-scripts) guide.
+See [Getting Started](../index2.md#getting-started-with-openroad-flow-scripts) guide.
 
 ## Using the OpenROAD Flow
 

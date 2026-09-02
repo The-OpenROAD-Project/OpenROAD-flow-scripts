@@ -55,7 +55,7 @@ export RTLMP_FENCE_LX = 850
 export RTLMP_FENCE_LY = 850
 export RTLMP_FENCE_UX = 2150
 export RTLMP_FENCE_UY = 2150
-export MACRO_PLACE_HALO = 28.2 28.2
+export MACRO_PLACE_HALO = 29 29
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
@@ -72,3 +72,4 @@ export SETUP_SLACK_MARGIN ?= 100
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
 export OPT_POST_GRT_WNS = 0
+

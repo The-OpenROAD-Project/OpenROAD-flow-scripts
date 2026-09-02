@@ -1,11 +1,11 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "24d1128afe4c92ecfe91e78f05b71e9f23fe18a0",
+        "value": "9e2e2c9cc4e968ec295970a0f7541d3308d688be",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "35c991086e2870003e3a2bd8f0b533614ab30c5a",
+        "value": "5532a110b870b6fb999c2ea9431d524eebd96cea",
         "compare": "==",
         "level": "warning"
     },
@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 2985,
+        "value": 2972,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 11797,
+        "value": 11671,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,11 +30,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1026,
+        "value": 1015,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1026,
+        "value": 1015,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -42,7 +42,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -190.0,
+        "value": -234.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -206.0,
+        "value": -3800.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -90,11 +90,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -81.2,
+        "value": -79.5,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -17000.0,
+        "value": -27600.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 3061,
+        "value": 3050,
         "compare": "<="
     }
 }

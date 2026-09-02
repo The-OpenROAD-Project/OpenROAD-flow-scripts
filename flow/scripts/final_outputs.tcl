@@ -26,7 +26,8 @@ if {
 } {
   # RCX section
   define_process_corner -ext_model_index 0 X
-  extract_parasitics -ext_model_file $::env(RCX_RULES)
+  set_extraction_rules_file $::env(RCX_RULES)
+  extract_parasitics
 
   # Write Spef
   write_spef $::env(RESULTS_DIR)/6_final.spef

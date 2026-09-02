@@ -255,16 +255,50 @@ memory:
 #-------------------------------------------------------------------------------
 
 $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
-	mkdir -p $(dir $@)
-	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
+	$(UNSET_AND_MAKE) do-sdc-clock-period
+
+.PHONY: do-sdc-clock-period
+do-sdc-clock-period:
+	mkdir -p $(dir $(SDC_FILE_CLOCK_PERIOD))
+	echo $(ABC_CLOCK_PERIOD_IN_PS) > $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
+# AUTO_MEMORIES: detect memories in the RTL pre-synthesis and generate
+# .lib/.lef macro views for them. Experimental; see
+# docs/user/AutoMemories.md.
+ifeq ($(AUTO_MEMORIES),1)
+$(RESULTS_DIR)/memories_inferred.json: $(VERILOG_FILES) $(SCRIPTS_DIR)/memories/extract_memories.tcl
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR)
+	$(SCRIPTS_DIR)/synth.sh $(SCRIPTS_DIR)/memories/extract_memories.tcl $(LOG_DIR)/memories_extract.log
+
+.PHONY: do-auto-memories
+do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
+	mkdir -p $(RESULTS_DIR)
+	$(PYTHON_EXE) $(SCRIPTS_DIR)/memories/gen_memories.py \
+	  --platform $(PLATFORM) \
+	  --yosys-json $(RESULTS_DIR)/memories_inferred.json \
+	  --out-dir $(RESULTS_DIR)/memories \
+	  --json $(RESULTS_DIR)/memories.json \
+	  $(foreach file,$(VERILOG_FILES),--verilog $(file)) \
+	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file))
+
+$(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \
+    $(wildcard $(SCRIPTS_DIR)/memories/*.py)
+	$(UNSET_AND_MAKE) do-auto-memories
+
+yosys-dependencies: $(RESULTS_DIR)/memories.json
+$(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
+endif
+
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
 	$(SCRIPTS_DIR)/synth.sh $(SYNTH_SCRIPT) $(LOG_DIR)/1_2_yosys.log
-	cp $(SDC_FILE) $(RESULTS_DIR)/1_2_yosys.sdc
+
+$(RESULTS_DIR)/1_2_yosys.sdc: $(SDC_FILE)
+	cp $(SDC_FILE) $@
+	touch -r $(SDC_FILE) $@
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies
@@ -273,11 +307,12 @@ do-yosys-canonicalize: yosys-dependencies
 $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
-$(RESULTS_DIR)/1_2_yosys.v $(RESULTS_DIR)/1_2_yosys.sdc: $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
+$(RESULTS_DIR)/1_2_yosys.v: $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
 	$(UNSET_AND_MAKE) do-yosys
 .PHONY: clean_synth
 clean_synth:
 	rm -f $(RESULTS_DIR)/1_* $(RESULTS_DIR)/mem*.json
+	rm -rf $(RESULTS_DIR)/memories
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STATS)

@@ -189,6 +189,27 @@ SYNTH_USE_SYN:
   stages:
     - synth
   default: 0
+AUTO_MEMORIES:
+  description: >
+    Experimental. When set to 1, memory-shaped modules in the RTL
+    (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only)
+    are detected pre-synthesis, inventoried in
+    `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM
+    macro — given generated .lib/.lef views under
+    `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and
+    all later stages read the generated views, so an existing design
+    gets macro-based results without a memory compiler. Supported for
+    the asap7 platform only. See docs/user/AutoMemories.md.
+  default: 0
+ADDITIONAL_MEMORIES:
+  description: >
+    Experimental. Space-separated list of user-supplied `.memories`
+    files (the memories.json JSON schema) merged onto the set
+    AUTO_MEMORIES detects — to force-convert a memory the idiomatic
+    gate rejects, or to describe one the scanner cannot find. See
+    docs/user/AutoMemories.md.
+  stages:
+    - synth
 SYNTH_MEMORY_MAX_BITS:
   description: >
     Maximum number of bits for memory synthesis.
@@ -356,6 +377,28 @@ CLKGATE_MAP_FILE:
 ADDER_MAP_FILE:
   description: |
     Optional mapping file supplied to Yosys to map adders
+  stages:
+    - synth
+INFER_CLKGATES:
+  description: >
+    Enables Yosys clock gate inference. By default, it uses the Liberty cell
+    definitions to determine clock gating cell. The selection can be overridden
+    using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.
+  default: 0
+  stages:
+    - synth
+NEG_CLKGATE_AND_PORTS:
+  description: >
+    Specifies the active low enable clock gating cell and port names when used
+    in conjunction with the INFER_CLKGATES variable. Format is
+    "cell_name enable_port:master_clock:gated_clock"
+  stages:
+    - synth
+POS_CLKGATE_AND_PORTS:
+  description: >
+    Specifies the active high enable clock gating cell and port names when used
+    in conjunction with the INFER_CLKGATES variable. Format is
+    "cell_name enable_port:master_clock:gated_clock"
   stages:
     - synth
 TIEHI_CELL_AND_PORT:
@@ -1448,6 +1491,13 @@ RTLMP_ARGS:
     Overrides all other RTL macro placer arguments.
   stages:
     - floorplan
+RTLMP_KEEP_CLUSTERING:
+  description: >
+    Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as
+    nested dbGroups.
+  default: 0
+  stages:
+    - floorplan
 GDS_ALLOW_EMPTY:
   description: >
     Single regular expression of module names of macros that have no .gds file
@@ -1623,3 +1673,10 @@ OPT_POST_GRT_WNS:
     VT swap and wire rerouting only to minimize placement and routing disturbance
   stages:
     - grt
+GRT_SEED:
+  description: >
+    Specifies a random seed for global routing.  Useful for perturbation studies.
+  stages:
+    - grt
+  tunable: 1
+  type: int
