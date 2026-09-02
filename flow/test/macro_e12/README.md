@@ -225,6 +225,69 @@ commits and would change the OpenROAD-SYN netlist.
 this setup.** `evaluate.tcl` does that, and `grade_e12.py --truth-dir`
 consumes it. On swerv that is roughly 5 hours per candidate here.
 
+### Graded against a truth measured here: the scalar is the problem, not the clustering
+
+24 candidates generated, 23 evaluable (cand_s2 is infeasible -- its macro
+placement leaves a channel PDN cannot repair, `PDN-0179`, which is the
+strongest truth signal a candidate can give and one no wirelength score
+can express). Truth measured by `evaluate.tcl` through the full
+production tail, ~34 min per candidate, ~1 h wall for all 23 at 4-way
+parallel (`e12_verdict_swerv_remeasured.json`).
+
+| scorer | rho vs grt `macro_paths_mean` | reads |
+|---|---|---|
+| flat, STA aggregate (`wq25`) | **+0.61 [+0.29, +0.78]** | ranks |
+| flat, STA macro aggregate | +0.59 [+0.20, +0.80] | ranks |
+| flat, raw HPWL | +0.24 [-0.24, +0.65] | no evidence |
+| clustered HPWL | +0.26 [-0.22, +0.66] | no evidence |
+| clustered **macro-cone** HPWL | +0.39 [-0.01, +0.72] | just misses |
+
+Three things follow, and they change what E12 should be.
+
+**The campaign's central phenomenon reproduces.** A fast
+non-timing-driven placement with an STA readout ranks the macro-path KPI
+at +0.61, interval clear of zero, against the published +0.72
+[+0.48, +0.84]. So the rig is sound and the idea of scoring after the fog
+holds -- what did not reproduce was the specific candidate population.
+
+**E3's "drop the STA" does not reproduce.** The campaign reports raw HPWL
+ranking the same truth at +0.67. Here it is +0.24 with the interval
+spanning zero: no demonstrable signal. That conclusion needs
+re-examination before anything is built on it.
+
+**E12's clustered HPWL (+0.26) is statistically indistinguishable from
+flat HPWL (+0.24).** The clustering is not what costs the ranking -- it
+faithfully reproduces the flat rung's HPWL (agreement +0.66 [+0.34,
++0.86]) at 14.7 s against 63.0 s and 0.87 GB against 2.43 GB. The
+limitation is inherited: E12 is built on an HPWL-only readout, and
+HPWL-only does not rank on this setup. No improvement to the cluster
+model can fix a scalar that carries no signal.
+
+The constructive thread is the **macro-cone** readout at +0.39, the best
+of the HPWL family and only just short of significance. Restricting the
+sum to nets within reach of a macro pin is the one variant that moved
+toward the live KPI, which suggests the next E12 iteration should pursue
+a readout aimed at macro-relevant structure -- or carry STA -- rather
+than a cheaper way to compute the same weak number.
+
+### The archive and this truth describe different populations
+
+Measured from both directions, so this is settled:
+
+| comparison | rho |
+|---|---|
+| our scores vs archived truth | -0.42 [-0.75, +0.00] |
+| **our truth vs archived truth** | **-0.26 [-0.65, +0.24]** (`macro_paths_mean`) |
+| our truth vs archived truth (`achieved`) | +0.07 [-0.37, +0.48] |
+
+Our re-measured truth is uncorrelated with the archived truth on every
+KPI. Seed N here is simply a different placement than seed N was in the
+campaign. (cand_s0's `achieved` matching the archive to 0.6 ps is
+coincidence: the population ties on `achieved` anyway, which is E1's own
+finding.) The archive remains internally consistent and its own score
+column still reproduces the published +0.72 -- it just does not describe
+these candidates.
+
 ### The clustered solve diverges at the pre-registered default on swerv
 
 Overflow floors at 0.92 for 2175 iterations while the density penalty
