@@ -308,6 +308,15 @@ google-cloud-pubsub==2.39.1 \
     --hash=sha256:b40347cff2df3c4b33747bfdf8a8d74942754c5a6752592acd51a20fec316b56 \
     --hash=sha256:dacead1fa0aca7b2015f1acc88d279cd4b12852087908f426fbecf71985940e8
     # via -r etc/requirements-common.in
+# Hand-added: pip-compile emits only the [grpc] variant below, but
+# google-api-core also requires the plain package. pip resolves that as a
+# separate requirement, and without a pin here it fetches the newest release
+# from the index and then fails the --require-hashes check. Keep both entries
+# at the same version when regenerating this file.
+googleapis-common-protos==1.75.0 \
+    --hash=sha256:53a062ff3c32552fbd62c11fe23768b78e4ddf0494d5e5fd97d3f4689c75fbbd \
+    --hash=sha256:961ed60399c457ceb0ee8f285a84c870aabc9c6a832b9d37bb281b5bebde43ed
+    # via google-api-core
 googleapis-common-protos[grpc]==1.75.0 \
     --hash=sha256:53a062ff3c32552fbd62c11fe23768b78e4ddf0494d5e5fd97d3f4689c75fbbd \
     --hash=sha256:961ed60399c457ceb0ee8f285a84c870aabc9c6a832b9d37bb281b5bebde43ed
