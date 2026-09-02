@@ -80,6 +80,15 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
     _auto_floorplan(config)
     _pareto_test()
 
+# Candidates run concurrently inside the single derive action, each with
+# AF_THREADS threads, so one design occupies AF_JOBS * AF_THREADS cores.
+# Empty means "let the driver use its own default" and keeps the value out
+# of the action key.
+AF_JOBS = ""
+
+AF_THREADS = ""
+
+
 def _auto_floorplan(config):
     """Generate the floorplan derivation and pinning targets.
 
@@ -122,6 +131,20 @@ def _auto_floorplan(config):
         outs = ["auto_floorplan.json"],
         arguments = entry["arguments"] | {
             "AF_EVIDENCE": "$(location auto_floorplan.json)",
+        } | {
+            # Provisioning. These have to be declared here rather than
+            # passed on the command line: orfs_run builds the action with
+            # a fixed environment, so --action_env never reaches the
+            # driver. Raise AF_JOBS for a big design being derived on its
+            # own -- the phases are serialised, so a design whose ladder
+            # does not fit in one batch per phase pays a full candidate's
+            # wall time for every extra batch.
+            k: v
+            for k, v in [
+                ("AF_JOBS", AF_JOBS),
+                ("AF_THREADS", AF_THREADS),
+            ]
+            if v
         },
         script = "//flow:scripts/auto_floorplan.tcl",
         # The candidates run the flow from floorplan to finish, so every
