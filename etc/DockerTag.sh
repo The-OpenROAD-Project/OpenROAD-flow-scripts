@@ -8,6 +8,7 @@ if [[ "$@" == "-dev" ]]; then
         "./docker/Dockerfile.dev"
         "./Dockerfile"
         "./etc/DependencyInstaller.sh"
+        "./etc/requirements-common_lock.txt"
         "./tools/OpenROAD/etc/DependencyInstaller.sh"
     )
     cat "${file_list[@]}" | sha256sum | awk '{print substr($1, 1, 6)}'
