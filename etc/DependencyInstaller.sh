@@ -14,10 +14,6 @@ cd "${_script_dir}/../"
 
 # package versions
 klayoutVersion=0.30.7
-# pip 23.3 is the first release that matches an extras-bearing pin such as
-# googleapis-common-protos[grpc]==X against a plain request for the same
-# package. Older pip fails --require-hashes on requirements-common_lock.txt.
-pipVersion=25.2
 if [[ "$OSTYPE" == "darwin"* ]]; then
     numThreads=$(sysctl -n hw.logicalcpu)
 else
@@ -43,26 +39,31 @@ _installPipCommon() {
         source /opt/rh/rh-python38/enable
         set -u
     fi
-    local lockfile
+    local lockfile piplock
     lockfile="${_script_dir}/requirements-common_lock.txt"
+    piplock="${_script_dir}/requirements-pip_lock.txt"
     if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ "$EUID" -eq 0 ]]; then
             echo "Error: Do NOT run with sudo."
             exit 1
         fi
         if [[ -n "${VIRTUAL_ENV:-}" ]]; then
-            pip3 install --no-cache-dir -r "$lockfile"
+            python3 -m pip install --no-cache-dir -r "$lockfile"
         else
             echo "Error: Activate a virtual environment on macOS."
             exit 1
         fi
     else
+        # pip before 23.3 fails --require-hashes on requirements-common_lock.txt:
+        # it does not match an extras-bearing pin such as
+        # googleapis-common-protos[grpc]==X against a plain request for the same
+        # package. Raise pip first, from its own hashed lock.
         if [[ $(id -u) == 0 ]]; then
-            pip3 install --no-cache-dir --upgrade "pip==${pipVersion}"
-            pip3 install --no-cache-dir -r "$lockfile"
+            python3 -m pip install --no-cache-dir --upgrade --require-hashes -r "$piplock"
+            python3 -m pip install --no-cache-dir -r "$lockfile"
         else
-            pip3 install --no-cache-dir --user --upgrade "pip==${pipVersion}"
-            pip3 install --no-cache-dir --user -r "$lockfile"
+            python3 -m pip install --no-cache-dir --user --upgrade --require-hashes -r "$piplock"
+            python3 -m pip install --no-cache-dir --user -r "$lockfile"
         fi
     fi
 }
