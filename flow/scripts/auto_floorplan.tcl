@@ -163,9 +163,13 @@ proc af_shell_quote { s } {
   return "'[string map {' '\\''} $s]'"
 }
 
-proc af_cand { tag util aspect margin addon seed } {
+# A candidate expresses its density in exactly one of the two forms the
+# flow supports: a raced headroom fraction (addon), or a fixed
+# PLACE_DENSITY. The second form exists so the incumbent can be run as
+# the design actually is -- see af_incumbent_density.
+proc af_cand { tag util aspect margin addon seed { density "" } } {
   return [dict create tag $tag util [format %.4g $util] aspect $aspect \
-    margin $margin addon $addon seed $seed]
+    margin $margin addon $addon seed $seed density_fixed $density]
 }
 
 # The candidate writes a Tcl dict, so reading it is a validity check.
@@ -233,6 +237,7 @@ proc af_run_batch { cands work } {
         AF_ASPECT [dict get $c aspect] \
         AF_MARGIN [dict get $c margin] \
         AF_ADDON [dict get $c addon] \
+        AF_DENSITY [dict get $c density_fixed] \
         AF_SEED [dict get $c seed] \
         AF_WORK [file join $work $tag] \
         AF_RESULT $result \
@@ -386,6 +391,17 @@ proc af_incumbent_addon { } {
   return [af_env PLACE_DENSITY_LB_ADDON ""]
 }
 
+# The density the design actually runs at when it states one directly.
+# Only meaningful when there is no incumbent addon: PLACE_DENSITY_LB_ADDON
+# overrides PLACE_DENSITY rather than adding to it, so a design that sets
+# both is already expressing the addon form.
+proc af_incumbent_density { } {
+  if { [af_incumbent_addon] ne "" } {
+    return ""
+  }
+  return [af_env PLACE_DENSITY ""]
+}
+
 # ---------------------------------------------------------------------
 # Evidence
 # ---------------------------------------------------------------------
@@ -513,10 +529,20 @@ proc af_run { } {
   af_log "incumbent: utilization $u0, aspect $a0, margin $m0, addon\
  [expr { $addon0 eq "" ? "(fixed PLACE_DENSITY)" : $addon0 }]"
 
-  # The addon the utilization phase holds constant. A design with a fixed
-  # PLACE_DENSITY has no incumbent headroom fraction, so the phase runs at
-  # the middle rung and the density phase then measures the real one.
-  set hold_addon [expr { $addon0 eq "" ? 0.10 : $addon0 }]
+  # What the utilization phase holds constant while it moves the core.
+  #
+  # A design stating a fixed PLACE_DENSITY has no incumbent headroom
+  # fraction. Substituting a ladder rung for it -- which this used to do --
+  # means the phase's 1.0 rung is not the incumbent at all but the design
+  # at a density it has never run, so the hysteresis guard compares the
+  # winner against a floorplan that does not exist. On aes_lvt that
+  # strawman read 9.3 ps pessimistic and accounted for most of an
+  # apparent win that the production flow scored as a lost closure.
+  #
+  # So hold the design's own density, in the design's own form. The
+  # density phase then races the addon from the winning area point.
+  set hold_density [af_incumbent_density]
+  set hold_addon [expr { $addon0 eq "" ? 0.0 : $addon0 }]
 
   # --- utilization ------------------------------------------------------
   set cands {}
@@ -525,7 +551,8 @@ proc af_run { } {
     if { $u >= 100.0 } {
       continue
     }
-    lappend cands [af_cand "u[string map {. p} $f]" $u $a0 $m0 $hold_addon 1]
+    lappend cands [af_cand "u[string map {. p} $f]" $u $a0 $m0 $hold_addon \
+      1 $hold_density]
   }
   set r_util [af_survivors [af_run_batch $cands $work]]
   if { [llength $r_util] == 0 } {

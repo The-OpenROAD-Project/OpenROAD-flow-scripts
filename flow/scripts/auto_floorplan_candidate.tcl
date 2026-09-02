@@ -87,9 +87,23 @@ set af_t0 [clock milliseconds]
 #
 # The resolved value is captured by wrapping the proc rather than recomputed
 # afterwards, so what is recorded is exactly the density production used.
-set ::env(PLACE_DENSITY_LB_ADDON) [af_env AF_ADDON 0.0]
-if { [info exists ::env(PLACE_DENSITY)] } {
-  unset ::env(PLACE_DENSITY)
+# AF_DENSITY, when set, means "run this candidate at a fixed
+# PLACE_DENSITY" -- the form the incumbent uses when the design states a
+# density directly. The two are not additive: place_density_with_lb_addon
+# returns the addon form whenever the addon is set and only falls back to
+# PLACE_DENSITY otherwise, so exactly one of them may be present or the
+# candidate silently runs at a density nobody asked for.
+set af_fixed_density [af_env AF_DENSITY ""]
+if { $af_fixed_density ne "" } {
+  set ::env(PLACE_DENSITY) $af_fixed_density
+  if { [info exists ::env(PLACE_DENSITY_LB_ADDON)] } {
+    unset ::env(PLACE_DENSITY_LB_ADDON)
+  }
+} else {
+  set ::env(PLACE_DENSITY_LB_ADDON) [af_env AF_ADDON 0.0]
+  if { [info exists ::env(PLACE_DENSITY)] } {
+    unset ::env(PLACE_DENSITY)
+  }
 }
 set ::af_used_density -1
 proc af_after_global_place { } {
