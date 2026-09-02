@@ -14,6 +14,10 @@ cd "${_script_dir}/../"
 
 # package versions
 klayoutVersion=0.30.7
+# pip 23.3 is the first release that matches an extras-bearing pin such as
+# googleapis-common-protos[grpc]==X against a plain request for the same
+# package. Older pip fails --require-hashes on requirements-common_lock.txt.
+pipVersion=25.2
 if [[ "$OSTYPE" == "darwin"* ]]; then
     numThreads=$(sysctl -n hw.logicalcpu)
 else
@@ -54,8 +58,10 @@ _installPipCommon() {
         fi
     else
         if [[ $(id -u) == 0 ]]; then
+            pip3 install --no-cache-dir --upgrade "pip==${pipVersion}"
             pip3 install --no-cache-dir -r "$lockfile"
         else
+            pip3 install --no-cache-dir --user --upgrade "pip==${pipVersion}"
             pip3 install --no-cache-dir --user -r "$lockfile"
         fi
     fi
