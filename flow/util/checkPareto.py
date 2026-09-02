@@ -136,7 +136,25 @@ def classify(base, new, direction, tie):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--metadata", "-m", required=True)
-    ap.add_argument("--rules", "-r", required=True)
+    src = ap.add_mutually_exclusive_group(required=True)
+    src.add_argument(
+        "--baseline",
+        "-b",
+        help="metadata.json measured on the unmodified design. Preferred: "
+        "both arms are then measured on the same toolchain on the same "
+        "day, which is the only comparison that isolates the change.",
+    )
+    src.add_argument(
+        "--rules",
+        "-r",
+        help="rules-base.json, using its 'golden' values as the baseline. "
+        "Only sound if the file was regenerated on the current toolchain: "
+        "checked-in rules lag the flow by however long since the last "
+        "'update rules', and that drift lands in the same diff as the "
+        "change under test. On asap7 the drift has been observed at 9 ps "
+        "of setup slack over six weeks, the same size as the effects "
+        "being measured.",
+    )
     ap.add_argument(
         "--require-improvement",
         action="store_true",
@@ -146,18 +164,44 @@ def main():
 
     with open(args.metadata) as f:
         meta = json.load(f)
-    with open(args.rules) as f:
-        rules = json.load(f)
+
+    # Both sources are reduced to the same two lookups, so the checks below
+    # do not care which one is in play: base_of() gives the baseline value
+    # for a metric, tie_of() its noise band and where that band came from.
+    if args.baseline:
+        with open(args.baseline) as f:
+            base_meta = json.load(f)
+        source = f"measured baseline {args.baseline}"
+
+        def base_of(field):
+            return num(base_meta.get(field))
+
+        def tie_of(field, default_tie):
+            return default_tie, "default"
+
+    else:
+        with open(args.rules) as f:
+            rules = json.load(f)
+        source = f"golden values in {args.rules}"
+
+        def base_of(field):
+            rule = rules.get(field)
+            if not rule or "golden" not in rule:
+                return None
+            return num(rule["golden"])
+
+        def tie_of(field, default_tie):
+            rule = rules.get(field) or {}
+            if "tie" in rule:
+                return rule["tie"], "measured"
+            return default_tie, "default"
 
     errors = []
     notes = []
 
     # --- hard constraints ------------------------------------------------
     for field in HARD:
-        rule = rules.get(field)
-        if not rule or "golden" not in rule:
-            continue
-        b, n = num(rule["golden"]), num(meta.get(field))
+        b, n = base_of(field), num(meta.get(field))
         if b is None or n is None:
             continue
         if n > b:
@@ -166,14 +210,12 @@ def main():
             notes.append(f"[ok]   {field:52s} {b:g} -> {n:g}")
 
     # --- timing closure --------------------------------------------------
-    rule = rules.get(CLOSURE)
-    if rule and "golden" in rule:
-        b, n = num(rule["golden"]), num(meta.get(CLOSURE))
-        if b is not None and n is not None and b >= 0 > n:
-            errors.append(
-                f"{CLOSURE}: {b:g} -> {n:g} (was meeting the constraint, now "
-                "missing it; that is a change in kind, not a Pareto cost)"
-            )
+    b, n = base_of(CLOSURE), num(meta.get(CLOSURE))
+    if b is not None and n is not None and b >= 0 > n:
+        errors.append(
+            f"{CLOSURE}: {b:g} -> {n:g} (was meeting the constraint, now "
+            "missing it; that is a change in kind, not a Pareto cost)"
+        )
 
     # --- Pareto axes -----------------------------------------------------
     improved, regressed, tied, missing = [], [], [], []
@@ -181,27 +223,20 @@ def main():
     for name, field, direction, default_tie in AXES:
         if name == "period":
             # Synthesised from the clock and WNS rather than read directly.
-            rule = rules.get(WNS)
-            if not rule or "golden" not in rule or period is None:
-                missing.append(name)
-                continue
-            gb, gn = num(rule["golden"]), num(meta.get(WNS))
-            if gb is None or gn is None:
+            gb, gn = base_of(WNS), num(meta.get(WNS))
+            if gb is None or gn is None or period is None:
                 missing.append(name)
                 continue
             b, n = period - gb, period - gn
+            tie_field = WNS
             field = f"{WNS} -> achieved period (clock {period:g})"
         else:
-            rule = rules.get(field)
-            if not rule or "golden" not in rule:
-                missing.append(name)
-                continue
-            b, n = num(rule["golden"]), num(meta.get(field))
+            b, n = base_of(field), num(meta.get(field))
             if b is None or n is None:
                 missing.append(name)
                 continue
-        tie = rule.get("tie", default_tie)
-        src = "measured" if "tie" in rule else "default"
+            tie_field = field
+        tie, src = tie_of(tie_field, default_tie)
         verdict, delta = classify(b, n, direction, tie)
         line = (
             f"{name:11s} {field:44s} {b:12.6g} -> {n:12.6g} "
@@ -213,10 +248,7 @@ def main():
         )
 
     for field in DIAGNOSTIC:
-        rule = rules.get(field)
-        if not rule or "golden" not in rule:
-            continue
-        b, n = num(rule["golden"]), num(meta.get(field))
+        b, n = base_of(field), num(meta.get(field))
         if b is None or n is None or b == 0:
             continue
         notes.append(
@@ -224,7 +256,7 @@ def main():
             f"{100 * (n - b) / abs(b):+7.2f}%"
         )
 
-    print("Pareto check against rules-base.json golden values")
+    print(f"Pareto check against {source}")
     print("-" * 78)
     for line in notes:
         print(line)
@@ -232,8 +264,8 @@ def main():
 
     if missing:
         print(
-            f"[WARN] no golden value for: {', '.join(missing)} — "
-            "run <design>_update to record them"
+            f"[WARN] no baseline value for: {', '.join(missing)} — "
+            "run <design>_update to record them, or pass --baseline"
         )
 
     # Dominated: nothing improved, something regressed.

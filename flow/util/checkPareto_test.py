@@ -45,6 +45,22 @@ def rules_from(base, tie=None):
     return out
 
 
+def run_baseline(metadata, baseline, extra=()):
+    """The measured-baseline mode: both arms are metadata.json files."""
+    with tempfile.TemporaryDirectory() as d:
+        m, b = os.path.join(d, "m.json"), os.path.join(d, "b.json")
+        with open(m, "w") as f:
+            json.dump(metadata, f)
+        with open(b, "w") as f:
+            json.dump(baseline, f)
+        p = subprocess.run(
+            [sys.executable, SCRIPT, "-m", m, "-b", b, *extra],
+            capture_output=True,
+            text=True,
+        )
+        return p.returncode, p.stdout + p.stderr
+
+
 def run(metadata, rules, extra=()):
     with tempfile.TemporaryDirectory() as d:
         m, r = os.path.join(d, "m.json"), os.path.join(d, "r.json")
@@ -166,7 +182,85 @@ class TestCheckPareto(unittest.TestCase):
         del rules["finish__design__core__area"]["golden"]
         rc, out = run(dict(BASE), rules)
         self.assertEqual(rc, 0, out)
-        self.assertIn("no golden value for", out)
+        self.assertIn("no baseline value for", out)
+
+
+
+class TestMeasuredBaseline(unittest.TestCase):
+    """--baseline takes the reference from a measured run, not from rules.
+
+    Checked-in rules-base.json lags the toolchain by however long since
+    the last regeneration, so its goldens describe a flow that may no
+    longer exist. On asap7 that drift has been seen at 9 ps of setup
+    slack over six weeks -- the same size as the effects being judged,
+    which is enough to invert a verdict. Both arms measured on the same
+    toolchain is the only comparison that isolates a change.
+    """
+
+    def test_agrees_with_rules_mode_on_identical_baselines(self):
+        new = dict(BASE, finish__design__core__area=900.0)
+        rc_r, out_r = run(new, rules_from(BASE))
+        rc_b, out_b = run_baseline(new, BASE)
+        self.assertEqual(rc_r, rc_b)
+        self.assertIn("improved", out_b)
+        self.assertEqual(rc_b, 0)
+
+    def test_lost_closure_fails(self):
+        # The aes_lvt shape: a much smaller core bought by spending all
+        # the setup margin and crossing zero.
+        new = dict(
+            BASE,
+            finish__timing__setup__ws=-0.5,
+            finish__design__core__area=700.0,
+        )
+        rc, out = run_baseline(new, BASE)
+        self.assertNotEqual(rc, 0)
+        self.assertIn("was meeting the constraint", out)
+
+    def test_a_stale_reference_can_invert_the_verdict(self):
+        # The aes_lvt numbers, scaled to this fixture's 1000 ps clock.
+        # A rules file generated weeks ago recorded ws = 0.0; the design
+        # has since drifted to ws = +9.0 on the current toolchain. The
+        # candidate lands at ws = +0.5, giving up the drift but still
+        # closing, so the closure check -- which only looks at the sign --
+        # stays quiet and the whole verdict rests on the period axis.
+        stale = dict(BASE, finish__timing__setup__ws=0.0)
+        fresh = dict(BASE, finish__timing__setup__ws=9.0)
+        new = dict(BASE, finish__timing__setup__ws=0.5)
+
+        rc_stale, out_stale = run_baseline(new, stale)
+        rc_fresh, out_fresh = run_baseline(new, fresh)
+
+        # Against the stale reference the design looks untouched...
+        self.assertEqual(rc_stale, 0)
+        self.assertIn("tied", out_stale)
+        # ...against the truth it gave up 0.86% of period for nothing.
+        self.assertNotEqual(rc_fresh, 0)
+        self.assertIn("dominated", out_fresh)
+
+    def test_baseline_and_rules_are_mutually_exclusive(self):
+        with tempfile.TemporaryDirectory() as d:
+            m = os.path.join(d, "m.json")
+            with open(m, "w") as f:
+                json.dump(BASE, f)
+            p = subprocess.run(
+                [sys.executable, SCRIPT, "-m", m, "-b", m, "-r", m],
+                capture_output=True,
+                text=True,
+            )
+        self.assertNotEqual(p.returncode, 0)
+
+    def test_one_of_them_is_required(self):
+        with tempfile.TemporaryDirectory() as d:
+            m = os.path.join(d, "m.json")
+            with open(m, "w") as f:
+                json.dump(BASE, f)
+            p = subprocess.run(
+                [sys.executable, SCRIPT, "-m", m],
+                capture_output=True,
+                text=True,
+            )
+        self.assertNotEqual(p.returncode, 0)
 
 
 if __name__ == "__main__":
