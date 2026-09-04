@@ -1,11 +1,11 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "66fec6fee76e4ead66050b0e535abf8f137c96a4",
+        "value": "09722ed7e143ceda685bf0922818e0ebf020a2aa",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "c9c049753309b3ba16e814e872c97d8544489abc",
+        "value": "1623b878eac2dbf9fb6c6b3ddc6965bd030ccfed",
         "compare": "==",
         "level": "warning"
     },
@@ -38,19 +38,19 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -1.0,
+        "value": -2.56,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -4.0,
+        "value": -7.76,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
-        "value": -1.0,
+        "value": -0.5,
         "compare": ">="
     },
     "cts__timing__hold__tns": {
-        "value": -4.0,
+        "value": -2.0,
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
@@ -58,19 +58,19 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1.0,
+        "value": -2.56,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -4.0,
+        "value": -7.72,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -1.0,
+        "value": -0.5,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -4.0,
+        "value": -2.0,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -90,19 +90,19 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -1.0,
+        "value": -2.55,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -4.0,
+        "value": -7.53,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -1.0,
+        "value": -0.5,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -4.0,
+        "value": -2.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
