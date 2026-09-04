@@ -1,6 +1,48 @@
 version: 2
+
+# MODULE.bazel is not covered: Dependabot has no Bazel ecosystem.
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "pip"
+    directories:
+      - "/.github/requirements"
+      - "/docs"
+      - "/etc"
+      - "/flow/util"
+      - "/tools/AutoTuner"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      python:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    directories:
+      - "/"
+      - "/docker"
+      - "/tools/codespace"
+      - "/tools/yosys_util"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      images:
+        patterns:
+          - "*"
