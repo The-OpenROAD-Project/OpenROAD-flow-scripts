@@ -6,6 +6,7 @@ on:
     paths:
       - 'etc/DependencyInstaller.sh'
       - 'etc/DockerHelper.sh'
+      - 'setup.sh'
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
       - 'env.sh'
@@ -14,6 +15,7 @@ on:
     paths:
       - 'etc/DependencyInstaller.sh'
       - 'etc/DockerHelper.sh'
+      - 'setup.sh'
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
       - 'env.sh'
@@ -56,3 +58,22 @@ jobs:
         run: |
           cmd="source ./env.sh ; yosys -help ; openroad -help ; make -C flow ;"
           docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "${cmd}"
+
+  testSetup:
+    name: Test setup.sh local installation
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      - name: Run setup.sh
+        run: sudo ./setup.sh
+      - name: Build OpenROAD locally
+        run: ./build_openroad.sh --local
+      - name: Verify local installation
+        run: |
+          source ./env.sh
+          yosys -help
+          openroad -help
