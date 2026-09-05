@@ -25,7 +25,7 @@ if $in_gds
 end
 
 if $report_file
-  report($report_file)
+  report_lvs($report_file)
 else
   report_lvs("lvs_report.lvsdb")
 end
@@ -211,8 +211,277 @@ connect(MET5, MET5TXT)
 # Global
 connect_global(SUB, "VNB")
 
+# Merge 0-ohm tie resistors in the schematic into direct net shorts,
+# so their structure matches the physical layout (which has no discrete
+# device for these ties, just a metal/contact short).
+schematic.each_circuit do |c|
+  next unless c.name == "SKY130_FD_SC_HD__CONB_1"
+  to_remove = []
+  c.each_device do |d|
+    dc = d.device_class
+    if dc.name == "RES" &amp;&amp; d.parameter("R") == 0.0
+      na = d.net_for_terminal(dc.terminal_id("A"))
+      nb = d.net_for_terminal(dc.terminal_id("B"))
+      c.join_nets(na, nb) if na &amp;&amp; nb &amp;&amp; na.name != nb.name
+      to_remove &lt;&lt; d
+    end
+  end
+  to_remove.each { |d| c.remove_device(d) }
+end
+
+same_circuits("sky130_fd_sc_hd__conb_1", "SKY130_FD_SC_HD__CONB_1")
+
+#
+# Required to match transistors properly
+#
+# NOTE: real GDS-extracted layout often ties 3+ transistor fingers to a single
+# shared internal diffusion node (interdigitated/folded layout), whereas the
+# idealized schematic CDL always has exactly 2 terminals per internal fold
+# node. The original version of this function required terms.size == 2,
+# which silently skipped any internal net with more fanout than that,
+# leaving some fingers permanently unmerged no matter how many convergence
+# iterations ran.
+#
+# This version builds a signature for EVERY qualifying terminal on a net
+# (any count), then requires the ENTIRE sorted multiset of a net's terminal
+# signatures to match another net's before considering them the same
+# electrical node and joining them. This generalizes cleanly to N-terminal
+# nodes while still refusing to conflate two nets that only partially
+# overlap in connectivity (e.g. two distinct internal series junctions in a
+# 3-stage stack) -- an earlier, more permissive per-terminal-match version
+# caused exactly that kind of incorrect over-merge.
+#
+# Signature keys go through net_key() (see above), not raw .name, because
+# on the layout side unnamed internal nets all key as "" until something
+# merges/labels them -- two genuinely different anonymous nets can
+# otherwise collide on that empty string and get incorrectly folded
+# together (observed: two separate 2-terminal PFET fold nodes merged into
+# one bogus 4-terminal net purely because their neighboring nets were
+# still unnamed at merge time).
+#
+#
+# Signature key for a net. On the SCHEMATIC side every net already has a
+# real, stable name pulled from the CDL, so using .name directly is safe.
+# On the LAYOUT side, internal nets extracted from raw geometry are
+# anonymous ("" name) until something merges/labels them -- which means
+# two genuinely DIFFERENT unnamed internal nets can both key as "" and
+# collide in the signature below, causing a false-positive merge between
+# structurally distinct nodes (observed: two separate 2-terminal PFET
+# fold nodes getting joined into one bogus 4-terminal net, purely because
+# their neighboring "opposite" and "gate" nets were both still unnamed at
+# merge time). Falling back to Ruby object identity for unnamed nets
+# guarantees distinct anonymous nets never share a key.
+#
+#
+# IMPORTANT: neither net.object_id NOR RBA::Net#== can be trusted as a
+# stable identity for the same underlying net across different retrieval
+# paths. Direct signature tracing proved BOTH broken in turn:
+#   1) object_id: a net's own terminal reported one object_id, while the
+#      SAME physical net, reached via a neighboring terminal's
+#      net_for_terminal(...) lookup, reported a DIFFERENT object_id.
+#   2) ==: even after switching to an ==-based cache, two independently
+#      -obtained wrapper references to the IDENTICAL physical net (PNDA,
+#      looked up separately from its two different neighbors) did not
+#      compare as == to each other, so each got assigned a distinct label
+#      instead of being recognized as the same net.
+# KLayout's RBA bindings evidently hand back a freshly-constructed Ruby
+# wrapper object on each indirect lookup, and neither Ruby-level identity
+# nor the RBA-level equality operator sees through that to the underlying
+# net for this API/version.
+#
+# The fix that actually works: give every unnamed net a real, PERSISTENT
+# name up front, via net.name=. Naming is stored as state on the
+# underlying net object itself (that's what makes a net's name durable at
+# all) -- so every subsequent lookup of that same net, through WHATEVER
+# retrieval path, reports the identical name string back. This sidesteps
+# wrapper identity entirely and puts anonymous nets on the same footing
+# as the schematic side, where real persisted names never had this
+# problem in the first place.
+#
+def merge_parallel_series_stacks(circuit, device_class_names)
+  synth_counter = 0
+  circuit.each_net do |n|
+    if n.name.nil? || n.name.empty?
+      synth_counter += 1
+      n.name = "synth_#{synth_counter}"
+    end
+  end
+
+  net_key = lambda do |net|
+    next "unconnected" if net.nil?
+    net.name
+  end
+
+  chains = []
+  circuit.each_net do |net|
+    next if net.each_pin.any? || net.each_subcircuit_pin.any?
+
+    # Build a signature for every qualifying S/D terminal on this net (any
+    # count -- not just exactly 2, since real GDS-extracted layout can tie
+    # 3+ fingers to one shared diffusion node). Two nets are only considered
+    # interchangeable if their ENTIRE terminal signature multisets match --
+    # not just one terminal in common -- otherwise nodes with genuinely
+    # different roles in the stack (e.g. two separate internal series
+    # junctions) can get incorrectly unioned just because one terminal
+    # happens to coincide.
+    # Hard guard: a genuine multi-finger diffusion fold node is purely an
+    # internal S/D connection and NEVER also drives a gate. A net that does
+    # double duty as both a drain/source AND a gate input elsewhere (e.g. a
+    # cross-coupled latch's storage node, which drives the gates of the
+    # opposite inverter) is a real, electrically distinct circuit node --
+    # not a layout-folding artifact -- even if its S/D signature happens to
+    # look symmetric with another node. Skip any net where any device (of
+    # ANY class, not just the merge-target classes) has a gate terminal here.
+    has_gate_terminal = net.each_terminal.any? do |t|
+      dc = t.device.device_class
+      begin
+        t.terminal_id == dc.terminal_id("G")
+      rescue
+        false
+      end
+    end
+    next if has_gate_terminal
+
+    term_sigs = []
+    net.each_terminal.each do |t|
+      d = t.device
+      dc = d.device_class
+      next unless device_class_names.any? { |n| n.downcase == dc.name.downcase }
+
+      tid_s = dc.terminal_id("S")
+      tid_g = dc.terminal_id("G")
+      tid_d = dc.terminal_id("D")
+      tid_b = dc.terminal_id("B")
+
+      role = t.terminal_id
+      next unless [tid_s, tid_d].include?(role)
+      opp = (role == tid_s) ? tid_d : tid_s
+
+      # NOTE: role is intentionally NOT included in the signature. MOSFETs
+      # are physically symmetric devices -- S and D are interchangeable for
+      # connectivity purposes. KLayout's raw device extraction can assign
+      # the S/D role oppositely between two structurally-identical devices
+      # that are simple mirror images of each other in the layout (e.g. two
+      # parallel drive-strength fingers of the same gate). Including role
+      # as a literal signature field caused exactly that: two electrically
+      # identical fold-node terminals differed only in role (S vs D) and so
+      # never matched, leaving genuinely parallel finger-doubled legs
+      # unmerged (observed: a two-leg B1-C1 pull-up in a211oi_4 where one
+      # leg's C1 PFET had opposite=Y via its D terminal and the other leg's
+      # via its S terminal -- same device topology, different raw role).
+      term_sigs &lt;&lt; [net_key.call(d.net_for_terminal(opp)), net_key.call(d.net_for_terminal(tid_g)), net_key.call(d.net_for_terminal(tid_b)), dc.name.downcase]
+    end
+    next if term_sigs.size &lt; 2
+
+    whole_net_sig = term_sigs.sort
+    chains &lt;&lt; [whole_net_sig, net]
+  end
+
+  groups = {}
+  chains.each { |sig, net| (groups[sig] ||= []) &lt;&lt; net }
+
+  # A net can appear only once here (one whole-net signature per net now,
+  # not one per terminal), but joining still mutates the netlist as we go,
+  # so guard against reusing a net object already consumed by an earlier
+  # join in this same pass -- reusing a stale reference corrupts KLayout's
+  # internal net registry and crashes the SPICE writer later. Anything left
+  # over is picked up cleanly on the next converge_merge iteration.
+  joined = {}
+  groups.each_value do |nets_in_group|
+    uniq_nets = nets_in_group.uniq.reject { |n| joined[n.object_id] }
+    next if uniq_nets.size &lt; 2
+    keep = uniq_nets[0]
+    uniq_nets.each { |n| joined[n.object_id] = true }
+    uniq_nets[1..-1].each { |other| circuit.join_nets(keep, other) }
+  end
+end
+
+#
+# Iteratively merge parallel/series stacks until the device count
+# stops shrinking (a single pass can leave multi-finger devices
+# partially folded, e.g. sky130 cells where a "wide" transistor is
+# laid out as several minimum-width fingers in parallel).
+#
+def converge_merge(circuit, nmos_classes, pmos_classes, max_iters = 10)
+  prev_count = -1
+  max_iters.times do
+    merge_parallel_series_stacks(circuit, nmos_classes)
+    merge_parallel_series_stacks(circuit, pmos_classes)
+    circuit.combine_devices
+    count = circuit.each_device.to_a.size
+    return if count == prev_count
+    prev_count = count
+  end
+  puts "WARNING: converge_merge did not stabilize for #{circuit.name} after #{max_iters} iterations"
+end
+
+#
+# Apply to all transistor types
+#
+nmos_classes = ["nfet_01v8", "nfet_01v8_lvt", "nfet_g5v0d10v5", "nfet_01v8_nvt"]
+pmos_classes = ["pfet_01v8", "pfet_01v8_hvt", "pfet_g5v0d10v5"]
+
+schematic.each_circuit do |c|
+  converge_merge(c, nmos_classes, pmos_classes)
+end
+
 # Actually performs the extraction
 netlist # ... not really required
+
+# Keep diode in both netlist and schematic, so it matches
+c1 = netlist.circuit_by_name("sky130_fd_sc_hd__conb_1")
+c1.dont_purge = true if c1
+c2 = schematic.circuit_by_name("SKY130_FD_SC_HD__CONB_1")
+c2.dont_purge = true if c2
+
+split_gates("nfet_01v8")
+split_gates("nfet_01v8_lvt")
+split_gates("nfet_g5v0d10v5")
+split_gates("nfet_01v8_nvt")
+split_gates("pfet_01v8")
+split_gates("pfet_01v8_hvt")
+split_gates("pfet_g5v0d10v5")
+
+#
+# Same multi-finger folding applies to the layout-extracted netlist.
+# Empirically this must run AFTER split_gates, not before: running it
+# earlier (against the raw, still-undecomposed extracted device
+# representation) produced MORE fragmented results, not fewer.
+#
+netlist.each_circuit do |c|
+  converge_merge(c, nmos_classes, pmos_classes)
+end
+
+
+# Ties VNB and VSS across all cells.
+#
+# NOTE: net_by_name("VSS") does an EXACT match. But KLayout's own
+# extraction can already merge the ground net together with tied-off
+# signal pins before this code runs -- e.g. constant-0 outputs like
+# alert_major_o/alert_minor_o/data_addr_o[0:1]/instr_addr_o[0:1] that RTL
+# wires directly to ground for a disabled feature or unused bit. Once
+# merged, KLayout renames the net to a concatenated string like
+# "VSS,data_addr_o[0],instr_addr_o[0],..." (the same convention that
+# produced "VNB,VSS" earlier), which no longer equals "VSS" exactly --
+# so net_by_name("VSS") silently returns nil, the VNB/VSS join never
+# fires, and VNB is left stranded on its own to fail comparison (observed
+# at the ibex_core top level: VNB unmatched by itself, VSS bundled into
+# a separate large tied-off-signal net). Find VSS by checking each net's
+# comma-separated name components instead of requiring an exact match.
+#
+def find_net_by_name_component(circuit, component)
+  circuit.each_net.find do |n|
+    nm = n.name
+    nm &amp;&amp; nm.split(",").include?(component)
+  end
+end
+
+netlist.each_circuit do |c|
+  next unless c.name == $top_cell
+  n_vnb = find_net_by_name_component(c, "VNB")
+  n_vss = find_net_by_name_component(c, "VSS")
+  c.join_nets(n_vnb, n_vss) if n_vnb &amp;&amp; n_vss &amp;&amp; n_vnb.name != n_vss.name
+end
 
 # Flatten cells which are present in one netlist only
 align
@@ -222,7 +491,7 @@ align
 #netlist.purge
 #netlist.purge_nets
 netlist.simplify
-#schematic.simplify
+schematic.simplify
 
 # Tolerances for the devices extracted parameters
 #  tolerance(device_class_name, parameter_name [, :absolute =&gt; absolute_tolerance] [, :relative =&gt; relative_tolerance])
@@ -245,6 +514,19 @@ equivalent_pins("*AND3_4", "A", "B", "C")
 equivalent_pins("*AND4_1", "A", "B", "C", "D")
 equivalent_pins("*AND4_2", "A", "B", "C", "D")
 equivalent_pins("*AND4_4", "A", "B", "C", "D")
+equivalent_pins("*A21OI_1", "A1", "A2")
+equivalent_pins("*A21OI_2", "A1", "A2")
+equivalent_pins("*A21OI_4", "A1", "A2")
+equivalent_pins("*A211OI_1", "A1", "A2")
+equivalent_pins("*A211OI_1", "B1", "C1")
+equivalent_pins("*A211OI_2", "A1", "A2")
+equivalent_pins("*A211OI_2", "B1", "C1")
+equivalent_pins("*A211OI_4", "A1", "A2")
+equivalent_pins("*A211OI_4", "B1", "C1")
+equivalent_pins("*A221OI_1", "A1", "A2")
+equivalent_pins("*A221OI_1", "B1", "B2")
+equivalent_pins("*A22OI_1", "A1", "A2")
+equivalent_pins("*A22OI_1", "B1", "B2")
 equivalent_pins("*NAND2_1", "A", "B")
 equivalent_pins("*NAND2_2", "A", "B")
 equivalent_pins("*NAND2_4", "A", "B")
@@ -254,6 +536,7 @@ equivalent_pins("*NAND3_4", "A", "B", "C")
 equivalent_pins("*NAND4_X1", "A", "B", "C", "D")
 equivalent_pins("*NAND4_2", "A", "B", "C", "D")
 equivalent_pins("*NAND4_4", "A", "B", "C", "D")
+
 equivalent_pins("*OR2_1", "A", "B")
 equivalent_pins("*OR2_2", "A", "B")
 equivalent_pins("*OR2_4", "A", "B")
