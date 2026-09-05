@@ -24,7 +24,7 @@ if { [env_var_exists_and_non_empty DEF_FILE] } {
       log_cmd read_lef $lef
     }
   }
-  set input_file $::env(V_FILE)
+  set input_file [orfs_input_path [file tail $::env(V_FILE)]]
   log_cmd read_verilog $input_file
   log_cmd link_design {*}[hier_options] $::env(DESIGN_NAME)
 } else {

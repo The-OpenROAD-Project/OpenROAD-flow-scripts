@@ -48,6 +48,20 @@ export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
+# Where a stage reads its inputs, as opposed to where it writes its
+# outputs. FLOW_INPUT_VARIANT names the variant a stage reads from;
+# defaulting it to FLOW_VARIANT makes every INPUT_*_DIR expand to a
+# string identical to its *_DIR counterpart, so nothing changes until a
+# variant is deliberately forked off another one. The INPUT_*_DIR are
+# ?= so a caller that repoints an output directory to something not
+# variant-shaped can repoint the matching input directory too.
+export FLOW_INPUT_VARIANT ?= $(FLOW_VARIANT)
+
+export INPUT_LOG_DIR     ?= $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_INPUT_VARIANT)
+export INPUT_OBJECTS_DIR ?= $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_INPUT_VARIANT)
+export INPUT_REPORTS_DIR ?= $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_INPUT_VARIANT)
+export INPUT_RESULTS_DIR ?= $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_INPUT_VARIANT)
+
 #-------------------------------------------------------------------------------
 ifeq (,$(strip $(NUM_CORES)))
   # Linux (utility program)

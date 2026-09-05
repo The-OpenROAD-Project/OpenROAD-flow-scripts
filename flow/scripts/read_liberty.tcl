@@ -23,7 +23,7 @@ if { [env_var_exists_and_non_empty CORNERS] } {
 # LIB_FILES. The _pre_layout variants (ideal clock) are for pre-CTS
 # consumers that select lib files themselves.
 if { [env_var_equals AUTO_MEMORIES 1] } {
-  foreach libFile [glob -nocomplain $::env(RESULTS_DIR)/memories/*.lib] {
+  foreach libFile [orfs_input_glob memories/*.lib] {
     if { [string match *_pre_layout.lib $libFile] } {
       continue
     }

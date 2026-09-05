@@ -73,6 +73,51 @@ proc recover_power_helper { } {
   report_power
 }
 
+# The results search path: this variant's own RESULTS_DIR first, then
+# the INPUT_RESULTS_DIR it was forked from. RESULTS_DIR comes first so
+# that a stage reading a file an earlier step of the same run just wrote
+# picks up the fresh one rather than the upstream variant's copy. The
+# two are the same directory unless FLOW_INPUT_VARIANT says otherwise.
+proc orfs_input_dirs { } {
+  set dirs [list $::env(RESULTS_DIR)]
+  if { $::env(INPUT_RESULTS_DIR) ne $::env(RESULTS_DIR) } {
+    lappend dirs $::env(INPUT_RESULTS_DIR)
+  }
+  return $dirs
+}
+
+# Resolve a result file by name against the results search path.
+proc orfs_input_path { name } {
+  foreach dir [orfs_input_dirs] {
+    set path [file join $dir $name]
+    if { [file exists $path] } {
+      return $path
+    }
+  }
+  # Nowhere on the path: return the RESULTS_DIR path so the caller
+  # reports the file missing where it would have been written.
+  return [file join $::env(RESULTS_DIR) $name]
+}
+
+# Glob a pattern across the results search path. Same precedence as
+# orfs_input_path: a basename present in more than one directory
+# resolves to the earliest one, and the later copies are dropped.
+proc orfs_input_glob { pattern } {
+  set result {}
+  set seen {}
+  foreach dir [orfs_input_dirs] {
+    foreach path [lsort [glob -nocomplain -directory $dir $pattern]] {
+      set name [file tail $path]
+      if { [lsearch -exact $seen $name] != -1 } {
+        continue
+      }
+      lappend seen $name
+      lappend result $path
+    }
+  }
+  return $result
+}
+
 proc extract_stage { input_file } {
   # Match the stage prefix on the basename, not the full path: an ancestor
   # dir like ".../4_something/3_place.odb" would otherwise match "4_" -> stage 4.
@@ -91,10 +136,10 @@ proc extract_stage { input_file } {
 
 proc find_sdc_file { input_file } {
   # canonicalize input file, sometimes it is called with an input
-  # file relative to $::env(RESULTS_DIR), other times with
+  # file relative to the results search path, other times with
   # an absolute path
   if { ![file exists $input_file] } {
-    set input_file [file join $::env(RESULTS_DIR) $input_file]
+    set input_file [orfs_input_path $input_file]
   }
   set input_file [file normalize $input_file]
 
@@ -102,14 +147,19 @@ proc find_sdc_file { input_file } {
   set design_stage [lindex $stage 0]
   set sdc_file ""
 
-  set exact_sdc [string map {.odb .sdc} $input_file]
-  set sdc_files \
-    [glob -nocomplain -directory $::env(RESULTS_DIR) -types f "\[1-9+\]_\[1-9_A-Za-z\]*\.sdc"]
-  set sdc_files [lsort -decreasing -dictionary $sdc_files]
-  set sdc_files [lmap file $sdc_files { file normalize $file }]
-  foreach name $sdc_files {
+  # Pick the latest .sdc at or before this stage. The ordering is on the
+  # basename, not the full path: candidates can come from either
+  # directory on the results search path and the directory prefix must
+  # not decide which one wins.
+  set exact_sdc [string map {.odb .sdc} [file tail $input_file]]
+  set candidates {}
+  foreach path [orfs_input_glob "\[1-9+\]_\[1-9_A-Za-z\]*\.sdc"] {
+    lappend candidates [list [file tail $path] [file normalize $path]]
+  }
+  foreach candidate [lsort -decreasing -dictionary -index 0 $candidates] {
+    set name [lindex $candidate 0]
     if { [lindex [lsort -decreasing -dictionary [list $name $exact_sdc]] 0] == $exact_sdc } {
-      set sdc_file $name
+      set sdc_file [lindex $candidate 1]
       break
     }
   }

@@ -362,6 +362,9 @@
       "place"
     ]
   },
+  "FLOW_INPUT_VARIANT": {
+    "description": "Flow variant a stage reads its inputs from, used in the INPUT_RESULTS_DIR/INPUT_LOG_DIR/INPUT_REPORTS_DIR/INPUT_OBJECTS_DIR directory names. Defaults to FLOW_VARIANT, i.e. a stage reads from the same variant directory it writes to. Set it to fork a variant off a shared upstream one: the forked variant reads the upstream results and writes only its own, so the shared stages are never re-run. Note: FLOW_VARIANT and genMetrics.py works only within a single variant, FLOW_INPUT_VARIANT different from FLOW_VARIANT is not supported.\n"
+  },
   "FLOW_VARIANT": {
     "default": "base",
     "description": "Flow variant to use, used in the flow variant directory name.\n"

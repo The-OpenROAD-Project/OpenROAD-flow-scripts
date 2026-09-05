@@ -13,8 +13,8 @@ set sdc_file [lindex $result 1]
 
 log_cmd load_design $stem.odb [file tail $sdc_file]
 
-if { $design_stage >= 6 && [file exists $::env(RESULTS_DIR)/$stem.spef] } {
-  log_cmd read_spef $::env(RESULTS_DIR)/$stem.spef
+if { $design_stage >= 6 && [file exists [orfs_input_path $stem.spef]] } {
+  log_cmd read_spef [orfs_input_path $stem.spef]
 } elseif { $design_stage >= 3 } {
   log_cmd estimate_parasitics -placement
 }
