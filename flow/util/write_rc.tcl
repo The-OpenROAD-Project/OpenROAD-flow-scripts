@@ -15,6 +15,4 @@ write_nets_rc_csv $::env(RESULTS_DIR)/6_nets_rc.csv grt_nets_rc rcx_nets_rc
 # Use RCX to compute and ODB APIs to fetch segments' parasitics.
 # We set up RCX parameters to avoid any parasitics segment merging.
 extract_parasitics -ext_model_file $::env(RCX_RULES) -max_res 0 -no_merge_via_res
-fetch_segments_rc segments_rc
-
-write_segments_rc_csv $::env(RESULTS_DIR)/6_segments_rc.csv segments_rc
+write_segments_rc_csv $::env(RESULTS_DIR)/6_segments_rc.csv
