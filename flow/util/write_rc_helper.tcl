@@ -83,6 +83,20 @@ proc write_nets_rc_csv { filename grt_var rcx_var } {
 proc write_segments_rc_csv { filename } {
   set stream [open $filename "w"]
 
+  # The walk is a separate proc so this one owns the file's lifetime: on any
+  # error the partial CSV is removed, so a failed run leaves no output rather
+  # than a truncated file that looks like a complete one.
+  set code [catch { write_segments_rc_rows $stream } msg opts]
+
+  close $stream
+
+  if { $code != 0 } {
+    file delete -force $filename
+    return -options $opts $msg
+  }
+}
+
+proc write_segments_rc_rows { stream } {
   # First, write a header naming the data and listing the routing layers in
   # stack order.
   puts -nonewline $stream "# Segment RC:"
@@ -144,6 +158,4 @@ proc write_segments_rc_csv { filename } {
       lappend seen_shape_ids $shape_id
     }
   }
-
-  close $stream
 }
