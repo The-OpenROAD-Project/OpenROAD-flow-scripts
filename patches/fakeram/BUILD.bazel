@@ -1,3 +1,0 @@
-"""FakeRAM2.0 patches carried for ORFS AUTO_MEMORIES support."""
-
-exports_files(glob(["*.patch"]))

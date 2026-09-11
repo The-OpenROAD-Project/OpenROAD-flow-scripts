@@ -130,10 +130,6 @@ clear error.
 ## Trying it
 
 ```shell
-# Unit tests (fast, no EDA tools):
-bazelisk test //flow:memories_tests
-
-# The demo design:
 make DESIGN_CONFIG=designs/asap7/tinyRocket/config.mk synth floorplan
 ```
 
@@ -148,15 +144,35 @@ python3 flow/scripts/memories/gen_memories.py \
 ## Consuming from bazel-orfs
 
 Everything downstream keys off generated files, so a build system can
-declare them as ordinary stage outputs and transitive dependencies. In
-bazel-orfs each stage runs in a sandbox where only declared outputs
-survive, so it additionally needs to declare `memories.json` plus the
-`memories/` directory (a directory artifact — the per-memory file
-names are only known at run time) as canonicalize outputs and stage
-them into every downstream stage's sandbox. The bazel-orfs change that
-does this is carried alongside this feature as
-`flow/scripts/memories/bazel-orfs-auto-memories.patch`, to be
-upstreamed to bazel-orfs once the feature lands here.
+declare them as ordinary stage outputs and transitive dependencies.
+
+A sandboxed build system, where only declared outputs survive a step and
+only declared inputs are present, needs three things:
+
+- `memories.json` and the `memories/` directory declared as outputs of
+  canonicalization. `memories/` has to be a directory rather than a file
+  list: the per-memory file names are only known once the RTL is
+  scanned.
+- both staged into every later step, because the flow reads them by
+  globbing the results dir (`load.tcl` takes `memories/*.lef`,
+  `read_liberty.tcl` takes `memories/*.lib`) rather than through a
+  variable.
+- `memories_inferred.json` staged into synthesis as well. Nothing reads
+  it there, but `make` walks the prerequisites of `yosys-dependencies`
+  before running it, and each one depends on the next:
+
+  ```make
+  yosys-dependencies:                     $(RESULTS_DIR)/memories.json
+  $(RESULTS_DIR)/memories.json:           $(RESULTS_DIR)/memories_inferred.json ...
+  $(RESULTS_DIR)/memories_inferred.json:  $(VERILOG_FILES) ...
+  ```
+
+  With the far end of that chain absent, make rebuilds
+  `memories_inferred.json` -- re-running detection at a point in the
+  flow where the design is no longer the original RTL -- and then tries
+  to rewrite `memories.json`.
+
+bazel-orfs implements this.
 
 ## Variables
 

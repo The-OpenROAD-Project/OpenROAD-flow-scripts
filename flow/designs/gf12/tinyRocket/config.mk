@@ -25,9 +25,7 @@ export WRAP_LIBS      = $(PLATFORM_DIR)/lib/gf12_1rf_lg6_w32_all_ffpg_sigcmin_0p
 export ADDITIONAL_GDS = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w32_all.gds2 \
                         $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w32_byte.gds2
 
-# These values must be multiples of placement site
-export DIE_AREA    = 0 0 400.008 399.84
-export CORE_AREA   = 19.992 20.16 380.016 380.16
+export CORE_UTILIZATION = 50
 
 export PLACE_DENSITY = 0.20
 

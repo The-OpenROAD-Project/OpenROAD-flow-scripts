@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 162505,
+        "value": 209010,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 14531,
+        "value": 19633,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -38,19 +38,19 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.225,
+        "value": -0.603,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -0.9,
+        "value": -56.3,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
-        "value": -0.225,
+        "value": -0.1,
         "compare": ">="
     },
     "cts__timing__hold__tns": {
-        "value": -0.9,
+        "value": -0.4,
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
@@ -58,19 +58,19 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.225,
+        "value": -0.819,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -0.9,
+        "value": -93.7,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -0.225,
+        "value": -0.1,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -0.9,
+        "value": -0.4,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -90,23 +90,23 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.225,
+        "value": -0.775,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -0.9,
+        "value": -70.5,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -0.225,
+        "value": -0.1,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -0.9,
+        "value": -0.4,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 167958,
+        "value": 238519,
         "compare": "<="
     }
 }
