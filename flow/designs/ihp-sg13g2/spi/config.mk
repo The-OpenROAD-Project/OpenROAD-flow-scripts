@@ -6,8 +6,6 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 
 export USE_FILL = 1
 
-#export PLACE_DENSITY_LB_ADDON = 0.8
-
 export PLACE_DENSITY = 0.9
 export CORE_UTILIZATION = 60
 export TNS_END_PERCENT = 100
