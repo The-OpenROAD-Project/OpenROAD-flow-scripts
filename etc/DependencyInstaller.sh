@@ -13,7 +13,7 @@ fi
 cd "${_script_dir}/../"
 
 # package versions
-klayoutVersion=0.30.7
+klayoutVersion=0.30.12
 if [[ "$OSTYPE" == "darwin"* ]]; then
     numThreads=$(sysctl -n hw.logicalcpu)
 else
@@ -262,11 +262,11 @@ _installUbuntuPackages() {
         fi
         else
             if [[ $1 == 20.04 ]]; then
-                klayoutChecksum=e95175a8053d3577375fbd3a7b3d7dbf
+                klayoutChecksum=146f51de7fcc760e51c7438998934d9d
             elif [[ $1 == 22.04 ]]; then
-                klayoutChecksum=202530d198b0c7b93aa5af0e8e438ccd
+                klayoutChecksum=6dfffa50f385881768dee30bdc759608
             elif [[ $1 == 24.04 ]]; then
-                klayoutChecksum=145adaa044101bb41179aa63ec6d7f86
+                klayoutChecksum=0181713e60891e461d6d1664c1b8e213
             else
                 echo "Unsupported Ubuntu version $1. Supported versions: 20.04, 22.04, 24.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
                 exit 1

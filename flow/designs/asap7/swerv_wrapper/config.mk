@@ -52,10 +52,10 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
 export ADDITIONAL_LEFS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lef/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lib/*.lib))
 
-export CORE_UTILIZATION = 30
+export CORE_UTILIZATION = 55
 
 export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/io.tcl
-export PLACE_DENSITY_LB_ADDON = 0.20
+export PLACE_DENSITY_LB_ADDON = 0.30
 
 export ROUTING_LAYER_ADJUSTMENT = 0.2
 

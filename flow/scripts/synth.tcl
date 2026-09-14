@@ -104,7 +104,7 @@ if { [env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS] } {
   set synth_full_args [concat $synth_full_args \
     "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
 }
-if { [env_var_exists_and_non_empty SYNTH_OPT_HIER] } {
+if { [env_var_equals SYNTH_OPT_HIER 1] } {
   set synth_full_args [concat $synth_full_args -hieropt]
 }
 
@@ -187,10 +187,10 @@ if { [env_var_exists_and_non_empty SYNTH_RETIME_MODULES] } {
 }
 
 if {
-  [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
-  [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+  [env_var_equals SYNTH_WRAPPED_OPERATORS 1] ||
+  [env_var_equals SWAP_ARITH_OPERATORS 1]
 } {
-  source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
+  log_cmd source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
 } else {
   synth -top $::env(DESIGN_NAME) -run fine: -noabc {*}$synth_full_args
 }
@@ -211,10 +211,10 @@ opt -purge
 if {
   [env_var_exists_and_non_empty ADDER_MAP_FILE] &&
   (
-    (![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
-      ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) ||
-    (([env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
-        [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) &&
+    (![env_var_equals SYNTH_WRAPPED_OPERATORS 1] &&
+      ![env_var_equals SWAP_ARITH_OPERATORS 1]) ||
+    (([env_var_equals SYNTH_WRAPPED_OPERATORS 1] ||
+        [env_var_equals SWAP_ARITH_OPERATORS 1]) &&
       ![design_has_extracted_operators])
   )
 } {
@@ -274,8 +274,8 @@ opt
 setundef -zero
 
 if {
-  ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
-  ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+  ![env_var_equals SYNTH_WRAPPED_OPERATORS 1] &&
+  ![env_var_equals SWAP_ARITH_OPERATORS 1]
 } {
   log_cmd abc {*}$abc_args
 } else {
@@ -311,8 +311,8 @@ tee -o $::env(REPORTS_DIR)/synth_stat.txt stat -hierarchy {*}$lib_args
 # check the design is composed exclusively of target cells, and
 # check for other problems
 if {
-  ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
-  ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+  ![env_var_equals SYNTH_WRAPPED_OPERATORS 1] &&
+  ![env_var_equals SWAP_ARITH_OPERATORS 1]
 } {
   check -assert -mapped
 } else {
