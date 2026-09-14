@@ -26,14 +26,6 @@ if { [find_macros] != "" } {
     }
   }
 
-  lassign $::env(MACRO_PLACE_HALO) halo_x halo_y
-  set halo_max [expr max($halo_x, $halo_y)]
-  set blockage_width $halo_max
-
-  if { [env_var_exists_and_non_empty MACRO_BLOCKAGE_HALO] } {
-    set blockage_width $::env(MACRO_BLOCKAGE_HALO)
-  }
-
   if { [env_var_exists_and_non_empty MACRO_PLACEMENT_TCL] } {
     log_cmd source $::env(MACRO_PLACEMENT_TCL)
   }
@@ -44,8 +36,16 @@ if { [find_macros] != "" } {
   append_env_var additional_rtlmp_args RTLMP_MIN_INST -min_num_inst 1
   append_env_var additional_rtlmp_args RTLMP_MAX_MACRO -max_num_macro 1
   append_env_var additional_rtlmp_args RTLMP_MIN_MACRO -min_num_macro 1
-  append additional_rtlmp_args " -halo_width $halo_x"
-  append additional_rtlmp_args " -halo_height $halo_y"
+
+  if {
+    [env_var_exists_and_non_empty RTLMP_MIN_CHANNEL_SIZE]
+    && ![env_var_exists_and_non_empty RTLMP_PIN_AWARE_CHANNELS]
+  } {
+    set ::env(RTLMP_PIN_AWARE_CHANNELS) 1
+  }
+  append_env_var additional_rtlmp_args RTLMP_MIN_CHANNEL_SIZE -min_channel_size 1
+  append_env_var additional_rtlmp_args RTLMP_PIN_AWARE_CHANNELS \
+    -pin_aware_channels 0
   append_env_var additional_rtlmp_args RTLMP_MIN_AR -min_ar 1
   append_env_var additional_rtlmp_args RTLMP_AREA_WT -area_weight 1
   append_env_var additional_rtlmp_args RTLMP_WIRELENGTH_WT -wirelength_weight 1
