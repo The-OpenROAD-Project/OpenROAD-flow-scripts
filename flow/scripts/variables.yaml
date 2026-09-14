@@ -181,6 +181,7 @@ SYNTH_HIERARCHICAL:
   stages:
     - synth
   default: 0
+  tunable: 1
 SYNTH_USE_SYN:
   description: >
     If set to 1, run synthesis using the "syn" tool built into OpenROAD
@@ -273,6 +274,7 @@ SYNTH_HDL_FRONTEND:
     command.
   stages:
     - synth
+  tunable: 1
 SYNTH_SLANG_ARGS:
   description: >
     Additional arguments passed to the slang frontend during synthesis.
@@ -468,6 +470,7 @@ SYNTH_WRAPPED_OPERATORS:
   stages:
     - All stages
   default: 0
+  tunable: 1
 SYNTH_WRAPPED_ADDERS:
   description: >
     Specify the adder modules that can be used for synthesis, separated by commas.
@@ -486,6 +489,7 @@ SWAP_ARITH_OPERATORS:
   stages:
     - All stages
   default: 0
+  tunable: 1
 FLOORPLAN_DEF:
   description: |
     Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.
@@ -1594,6 +1598,7 @@ OPENROAD_HIERARCHICAL:
     otherwise considered flat. Will eventually be the default and
     this option will be retired.
   default: 0
+  tunable: 1
   stages:
     - All stages
 NUM_CORES:

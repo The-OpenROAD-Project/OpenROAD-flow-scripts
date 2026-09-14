@@ -669,7 +669,8 @@
     "description": "Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.\n",
     "stages": [
       "All stages"
-    ]
+    ],
+    "tunable": 1
   },
   "OPT_POST_GRT_WNS": {
     "default": 1,
@@ -1284,7 +1285,8 @@
     "description": "Improve timing QoR by swapping ALU and MULT arithmetic operators.\n",
     "stages": [
       "All stages"
-    ]
+    ],
+    "tunable": 1
   },
   "SYNTH_ARGS": {
     "description": "Optional synthesis variables for yosys.\n",
@@ -1321,14 +1323,16 @@
     "description": "Select an alternative language frontend to ingest the design. Available option is \"slang\". If the variable is empty, design is read with the Yosys read_verilog command.\n",
     "stages": [
       "synth"
-    ]
+    ],
+    "tunable": 1
   },
   "SYNTH_HIERARCHICAL": {
     "default": 0,
     "description": "Enable to Synthesis hierarchically, otherwise considered flat synthesis.\n",
     "stages": [
       "synth"
-    ]
+    ],
+    "tunable": 1
   },
   "SYNTH_HIER_SEPARATOR": {
     "default": ".",
@@ -1448,7 +1452,8 @@
     "description": "Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.\n",
     "stages": [
       "All stages"
-    ]
+    ],
+    "tunable": 1
   },
   "TAPCELL_TCL": {
     "description": "Path to Endcap and Welltie cells file.\n",

@@ -190,7 +190,7 @@ if {
   [env_var_equals SYNTH_WRAPPED_OPERATORS 1] ||
   [env_var_equals SWAP_ARITH_OPERATORS 1]
 } {
-  source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
+  log_cmd source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
 } else {
   synth -top $::env(DESIGN_NAME) -run fine: -noabc {*}$synth_full_args
 }

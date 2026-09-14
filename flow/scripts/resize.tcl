@@ -18,8 +18,8 @@ if { [env_var_exists_and_non_empty EARLY_SIZING_CAP_RATIO] } {
 if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
   # Enable sanity checker until replace_arith_modules becomes stable
   set_debug_level ODB replace_design_check_sanity 1
-  replace_arith_modules
-  global_placement -incremental
+  log_cmd replace_arith_modules
+  log_cmd global_placement -incremental
 }
 
 repair_design_helper
