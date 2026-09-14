@@ -1,4 +1,4 @@
-@Library('utils@main') _
+@Library('utils@enforce-inline-check-local-log-only') _
 
 node {
     pipelineORFS(maxTimeout: 180)
