@@ -190,10 +190,37 @@ proc place_density_with_lb_addon { } {
     set place_density \
       [expr $place_density_lb + ((1.0 - $place_density_lb) * $::env(PLACE_DENSITY_LB_ADDON)) + 0.01]
     if { $place_density > 1.0 } {
-      utl::error FLW 24 \
-        "Place density exceeds 1.0 (current PLACE_DENSITY_LB_ADDON = \
-         $::env(PLACE_DENSITY_LB_ADDON)). Please check if the value of \
-         PLACE_DENSITY_LB_ADDON is between 0 and 0.99."
+      if { $place_density_lb >= 0.99 } {
+        set max_addon_str ""
+      } else {
+        set max_addon [expr { (0.99 - $place_density_lb) / (1.0 - $place_density_lb) }]
+        # Round down so the suggested value is guaranteed to pass the check.
+        set max_addon_str [format %.2f [expr { floor($max_addon * 100) / 100 }]]
+      }
+      set lb [format %.4f $place_density_lb]
+      set pd [format %.4f $place_density]
+      set addon $::env(PLACE_DENSITY_LB_ADDON)
+      set pad $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
+      set msg [list]
+      lappend msg "PLACE_DENSITY $pd exceeds the maximum of 1.0."
+      lappend msg "\tPLACE_DENSITY = lower_bound + (1.0 - lower_bound) *\
+                   PLACE_DENSITY_LB_ADDON + 0.01"
+      lappend msg "\t$pd = $lb + (1.0 - $lb) * $addon + 0.01"
+      lappend msg "\tlower_bound $lb is the uniform density calculated by gpl with\
+                   CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = $pad"
+      if { $place_density_lb > 1.0 } {
+        lappend msg "\tlower_bound exceeds 1.0 on its own: the padded cells need more\
+                     area than the core provides."
+        lappend msg "\tReduce CELL_PAD_IN_SITES_GLOBAL_PLACEMENT or increase the core area."
+      } elseif { $max_addon_str eq "" } {
+        lappend msg "\tlower_bound alone already reaches 1.0, so no PLACE_DENSITY_LB_ADDON\
+                     value works."
+        lappend msg "\tReduce CELL_PAD_IN_SITES_GLOBAL_PLACEMENT or increase the core area."
+      } else {
+        lappend msg "\tSet PLACE_DENSITY_LB_ADDON <= $max_addon_str, or reduce\
+                     CELL_PAD_IN_SITES_GLOBAL_PLACEMENT, or increase the core area."
+      }
+      utl::error FLW 24 [join $msg "\n"]
     }
     puts "Placement density is $place_density, computed from PLACE_DENSITY_LB_ADDON \
       $::env(PLACE_DENSITY_LB_ADDON) and lower bound $place_density_lb"
