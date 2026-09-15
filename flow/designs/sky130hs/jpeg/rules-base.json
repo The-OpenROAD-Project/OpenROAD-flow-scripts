@@ -1,11 +1,11 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "6660baf16fd6c667ca8bf42aa567887cf3dafef2",
+        "value": "17ce8750964fb8436a41017b022516bccfdd8f7a",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "49743a41e69cd9a8456f7f4c00f81ac94c36ab21",
+        "value": "b371b17cfe3008ecb19b852bfd2edeee7558a563",
         "compare": "==",
         "level": "warning"
     },
@@ -38,11 +38,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.528,
+        "value": -0.384,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -71.6,
+        "value": -32.8,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -54,15 +54,15 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 311,
+        "value": 100,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.761,
+        "value": -0.595,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -211.0,
+        "value": -141.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 1949870,
+        "value": 1774465,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -82,19 +82,19 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 0,
+        "value": 3,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 119,
+        "value": 100,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.694,
+        "value": -0.528,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -108.0,
+        "value": -44.9,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
