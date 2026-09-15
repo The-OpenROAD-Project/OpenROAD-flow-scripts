@@ -29,7 +29,7 @@ export ABC_AREA = 1
 
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export CORE_UTILIZATION       = 60
+export CORE_UTILIZATION       = 75
 export CORE_ASPECT_RATIO      = 1.3
 export CORE_MARGIN            = 2
 
