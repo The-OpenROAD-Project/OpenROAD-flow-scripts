@@ -21,9 +21,12 @@
 # DESIGN_CONFIG=./designs/nangate45/ibex/config.mk
 # DESIGN_CONFIG=./designs/nangate45/jpeg/config.mk
 # DESIGN_CONFIG=./designs/nangate45/mempool_group/config.mk
+# DESIGN_CONFIG=./designs/nangate45/picorv32/config.mk
 # DESIGN_CONFIG=./designs/nangate45/swerv/config.mk
 # DESIGN_CONFIG=./designs/nangate45/swerv_wrapper/config.mk
 # DESIGN_CONFIG=./designs/nangate45/tinyRocket/config.mk
+# DESIGN_CONFIG=./designs/nangate45/tpu/config.mk
+# DESIGN_CONFIG=./designs/nangate45/xiangshan_coupledl2/config.mk
 
 # DESIGN_CONFIG=./designs/gf12/aes/config.mk
 # DESIGN_CONFIG=./designs/gf12/ariane/config.mk
@@ -60,9 +63,12 @@
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
 # DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
 # DESIGN_CONFIG=./designs/asap7/megaboom/config.mk
+# DESIGN_CONFIG=./designs/asap7/picorv32/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
+# DESIGN_CONFIG=./designs/asap7/tpu/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
+# DESIGN_CONFIG=./designs/asap7/xiangshan_coupledl2/config.mk
 
 # DESIGN_CONFIG=./designs/intel16/aes/config.mk
 # DESIGN_CONFIG=./designs/intel16/gcd/config.mk

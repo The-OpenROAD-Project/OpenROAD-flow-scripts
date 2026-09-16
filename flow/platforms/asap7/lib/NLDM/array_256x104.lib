@@ -1,0 +1,474 @@
+library(array_256x104) {
+    technology (cmos);
+    delay_model : table_lookup;
+    revision : 1.0;
+    date : "2026-08-05 23:36:24Z";
+    comment : "SRAM";
+    time_unit : "1ns";
+    voltage_unit : "1V";
+    current_unit : "1uA";
+    leakage_power_unit : "1uW";
+    nom_process : 1;
+    nom_temperature : 25.000;
+    nom_voltage : 0.77;
+    capacitive_load_unit (1,pf);
+
+    pulling_resistance_unit : "1kohm";
+
+    operating_conditions(tt_1.0_25.0) {
+        process : 1;
+        temperature : 25.000;
+        voltage : 0.77;
+        tree_type : balanced_tree;
+    }
+
+    /* default attributes */
+    default_cell_leakage_power : 0;
+    default_fanout_load : 1;
+    default_inout_pin_cap : 0.0;
+    default_input_pin_cap : 0.0;
+    default_output_pin_cap : 0.0;
+    default_input_pin_cap : 0.0;
+    default_max_transition : 0.227;
+
+    default_operating_conditions : tt_1.0_25.0;
+    default_leakage_power_density : 0.0;
+
+    /* additional header data */
+    slew_derate_from_library : 1.000;
+    slew_lower_threshold_pct_fall : 20.000;
+    slew_upper_threshold_pct_fall : 80.000;
+    slew_lower_threshold_pct_rise : 20.000;
+    slew_upper_threshold_pct_rise : 80.000;
+    input_threshold_pct_fall : 50.000;
+    input_threshold_pct_rise : 50.000;
+    output_threshold_pct_fall : 50.000;
+    output_threshold_pct_rise : 50.000;
+
+
+    lu_table_template(array_256x104_mem_out_delay_template) {
+        variable_1 : input_net_transition;
+        variable_2 : total_output_net_capacitance;
+            index_1 ("1000, 1001");
+            index_2 ("1000, 1001");
+    }
+    lu_table_template(array_256x104_mem_out_slew_template) {
+        variable_1 : total_output_net_capacitance;
+            index_1 ("1000, 1001");
+    }
+    lu_table_template(array_256x104_constraint_template) {
+        variable_1 : related_pin_transition;
+        variable_2 : constrained_pin_transition;
+            index_1 ("1000, 1001");
+            index_2 ("1000, 1001");
+    }
+    power_lut_template(array_256x104_energy_template_clkslew) {
+        variable_1 : input_transition_time;
+            index_1 ("1000, 1001");
+    }
+    power_lut_template(array_256x104_energy_template_sigslew) {
+        variable_1 : input_transition_time;
+            index_1 ("1000, 1001");
+    }
+    library_features(report_delay_calculation);
+    type (array_256x104_DATA) {
+        base_type : array ;
+        data_type : bit ;
+        bit_width : 104;
+        bit_from : 103;
+        bit_to : 0 ;
+        downto : true ;
+    }
+    type (array_256x104_ADDRESS) {
+        base_type : array ;
+        data_type : bit ;
+        bit_width : 8;
+        bit_from : 7;
+        bit_to : 0 ;
+        downto : true ;
+    }
+    type (array_256x104_WMASK) {
+        base_type : array ;
+        data_type : bit ;
+        bit_width : 8;
+        bit_from : 7;
+        bit_to : 0 ;
+        downto : true ;
+    }
+cell(array_256x104) {
+    area : 734.420;
+    interface_timing : true;
+    memory() {
+        type : ram;
+        address_width : 8;
+        word_width : 104;
+    }
+    pin(RW0_clk)   {
+        direction : input;
+        capacitance : 0.025;
+        clock : true;
+        min_period           : 0.157 ;
+        internal_power(){
+            rise_power(array_256x104_energy_template_clkslew) {
+                index_1 ("0.009, 0.227");
+                values ("1.345, 1.345")
+            }
+            fall_power(array_256x104_energy_template_clkslew) {
+                index_1 ("0.009, 0.227");
+                values ("1.345, 1.345")
+            }
+        }
+    }
+
+    bus(RW0_rdata)   {
+        bus_type : array_256x104_DATA;
+        direction : output;
+        max_capacitance : 0.500;
+        memory_read() {
+            address : r0_addr_in;
+        }
+        timing() {
+            related_pin : "RW0_clk" ;
+            timing_type : rising_edge;
+            timing_sense : non_unate;
+            cell_rise(array_256x104_mem_out_delay_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.005, 0.500");
+                values ( \
+                  "0.218, 0.218", \
+                  "0.218, 0.218" \
+                )
+            }
+            cell_fall(array_256x104_mem_out_delay_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.005, 0.500");
+                values ( \
+                  "0.218, 0.218", \
+                  "0.218, 0.218" \
+                )
+            }
+            rise_transition(array_256x104_mem_out_slew_template) {
+                index_1 ("0.005, 0.500");
+                values ("0.009, 0.227")
+            }
+            fall_transition(array_256x104_mem_out_slew_template) {
+                index_1 ("0.005, 0.500");
+                values ("0.009, 0.227")
+            }
+        }
+    }
+    pin(RW0_wmode)   {
+        direction : input;
+        capacitance : 0.005;
+        timing() {
+            related_pin : RW0_clk;
+            timing_type : setup_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        timing() {
+            related_pin : RW0_clk;
+            timing_type : hold_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        internal_power(){
+            rise_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+    }
+    pin(RW0_en)   {
+        direction : input;
+        capacitance : 0.005;
+        timing() {
+            related_pin : RW0_clk;
+            timing_type : setup_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        timing() {
+            related_pin : RW0_clk;
+            timing_type : hold_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        internal_power(){
+            rise_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+    }
+    bus(RW0_addr)   {
+        bus_type : array_256x104_ADDRESS;
+        direction : input;
+        capacitance : 0.005;
+        timing() {
+            related_pin : RW0_clk;
+            timing_type : setup_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        timing() {
+            related_pin : RW0_clk;
+            timing_type : hold_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        internal_power(){
+            rise_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+    }
+    bus(RW0_wdata)   {
+        bus_type : array_256x104_DATA;
+        memory_write() {
+            address : RW0_addr;
+            clocked_on : "RW0_clk";
+        }
+        direction : input;
+        capacitance : 0.005;
+        timing() {
+            related_pin     : RW0_clk;
+            timing_type     : setup_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        timing() {
+            related_pin     : RW0_clk;
+            timing_type     : hold_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        internal_power(){
+            when : "(! (RW0_wmode) )";
+            rise_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+        internal_power(){
+            when : "(RW0_wmode)";
+            rise_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+    }
+    bus(RW0_wmask)   {
+        bus_type : array_256x104_WMASK;
+        memory_write() {
+            address : RW0_addr;
+            clocked_on : "RW0_clk";
+        }
+        direction : input;
+        capacitance : 0.005;
+        timing() {
+            related_pin     : RW0_clk;
+            timing_type     : setup_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        timing() {
+            related_pin     : RW0_clk;
+            timing_type     : hold_rising ;
+            rise_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(array_256x104_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        internal_power(){
+            when : "(! (RW0_wmode) )";
+            rise_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+        internal_power(){
+            when : "(RW0_wmode)";
+            rise_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(array_256x104_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+    }
+    cell_leakage_power : 128.900;
+  pg_pin (VDD) {
+    pg_type : primary_power;
+  }
+  pg_pin (VSS) {
+    pg_type : primary_ground;
+  }
+}
+
+}
