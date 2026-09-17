@@ -48,7 +48,7 @@ endif
 export IO_PLACER_H             ?= M4
 export IO_PLACER_V             ?= M5
 
-export MACRO_PLACE_HALO        ?= 10 10
+export RTLMP_MIN_CHANNEL_SIZE  ?= 20 20
 
 # the followings create a keep out / halo between
 # macro and core rows
