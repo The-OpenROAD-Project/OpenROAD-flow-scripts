@@ -1,11 +1,11 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "d8877e14f6cc83df1d67733f6bf3d9e8a9dac8bd",
+        "value": "6704e6c94c7144cc0173c4ee28141e43844b76a3",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "308043d4a1cccf693410f3548be8b367ee18ffa4",
+        "value": "620c41fd90203df1a4892ebc403705d51dbbd1fd",
         "compare": "==",
         "level": "warning"
     },
@@ -42,7 +42,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -185.0,
+        "value": -235.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
