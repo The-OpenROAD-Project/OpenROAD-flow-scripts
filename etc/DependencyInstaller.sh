@@ -339,8 +339,9 @@ Usage: $0 [-all|-base|-common] [-<ARGS>]
                                 #
        $0 -base
                                 # Installs OpenROAD's dependencies using
-                                #     package managers (-common must be
-                                #     executed in another command).
+                                #     package managers, including Bazel
+                                #     (bazelisk). -common must be executed
+                                #     in another command.
        $0 -common
                                 # Installs OpenROAD's common dependencies
                                 #     (-base must be executed in another
@@ -443,6 +444,12 @@ if [[ "${option}" == "none"  ]]; then
 fi
 
 OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
+# build_openroad.sh builds OpenROAD with Bazel, so bazelisk and its runtime
+# libraries are base dependencies. They need root, and -common may run
+# unprivileged, so they ride along with -base only.
+if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+    OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -bazel"
+fi
 
 platform="$(uname -s)"
 case "${platform}" in
