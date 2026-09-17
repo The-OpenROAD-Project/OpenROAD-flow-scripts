@@ -1423,6 +1423,7 @@ RTLMP_PIN_AWARE_CHANNELS:
     instead of using full channels. Requires RTLMP_MIN_CHANNEL_SIZE to also be set.
     Defaults to 1 whenever RTLMP_MIN_CHANNEL_SIZE is set and
     this variable is not explicitly set to 0.
+  default: 1
   stages:
     - floorplan
 RTLMP_MIN_AR:

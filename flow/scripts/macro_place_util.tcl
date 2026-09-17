@@ -37,11 +37,8 @@ if { [find_macros] != "" } {
   append_env_var additional_rtlmp_args RTLMP_MAX_MACRO -max_num_macro 1
   append_env_var additional_rtlmp_args RTLMP_MIN_MACRO -min_num_macro 1
 
-  if {
-    [env_var_exists_and_non_empty RTLMP_MIN_CHANNEL_SIZE]
-    && ![env_var_exists_and_non_empty RTLMP_PIN_AWARE_CHANNELS]
-  } {
-    set ::env(RTLMP_PIN_AWARE_CHANNELS) 1
+  if { ![env_var_exists_and_non_empty RTLMP_MIN_CHANNEL_SIZE] } {
+    set ::env(RTLMP_PIN_AWARE_CHANNELS) 0
   }
   append_env_var additional_rtlmp_args RTLMP_MIN_CHANNEL_SIZE -min_channel_size 1
   append_env_var additional_rtlmp_args RTLMP_PIN_AWARE_CHANNELS \
