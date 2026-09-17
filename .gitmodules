@@ -7,3 +7,7 @@
 [submodule "tools/kepler-formal"]
 	path = tools/kepler-formal
 	url = https://github.com/keplertech/kepler-formal
+[submodule "tools/YAP"]
+	path = tools/YAP
+	url = git@github.com:osamahammad21/YAP.git
+	branch = yap-stack-fix

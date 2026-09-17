@@ -151,6 +151,23 @@ ifeq ($(origin FLOW_HOME), undefined)
 endif
 export FLOW_HOME
 
+# ==============================================================================
+# Flow selection
+#
+# A design config opts into the 3D hybrid bonding yield flow by setting
+# FLOW_TYPE=3d. That flow has no platform, no synthesis and no place and route,
+# so it shares none of the setup or targets below - including variables.mk,
+# which errors out without a PLATFORM. Everything 3D lives in scripts/3d.mk and
+# scripts/3d/; see docs/user/ThreeDFlow.md.
+#
+# Designs that do not set FLOW_TYPE get the RTL-to-GDS flow, unchanged.
+# ==============================================================================
+ifeq ($(FLOW_TYPE),3d)
+
+include $(FLOW_HOME)/scripts/3d.mk
+
+else
+
 include $(FLOW_HOME)/scripts/variables.mk
 
 define GENERATE_ABSTRACT_RULE
@@ -927,3 +944,5 @@ run-yosys:
 include $(UTILS_DIR)/utils.mk
 export PRIVATE_DIR ?= ../../private_tool_scripts
 -include $(PRIVATE_DIR)/private.mk
+
+endif # FLOW_TYPE != 3d
