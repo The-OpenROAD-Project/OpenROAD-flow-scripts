@@ -322,5 +322,13 @@ if {
   check -assert
 }
 
+if { $::env(SYNTH_REPEATABLE_BUILD) } {
+  # techmap re-attaches src attributes that point into the techmap library,
+  # after synth_canonicalize.tcl stripped them; strip again so the netlist
+  # carries no build paths.
+  setattr -unset src *
+  setattr -mod -unset src *
+}
+
 # Write synthesized design
 write_verilog -nohex -nodec $::env(RESULTS_DIR)/1_2_yosys.v
