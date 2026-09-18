@@ -135,7 +135,7 @@ configuration file.
 | <a name="DETAILED_METRICS"></a>DETAILED_METRICS| If set, then calls report_metrics prior to repair operations in the CTS and global route stages| 0|
 | <a name="DETAILED_ROUTE_ARGS"></a>DETAILED_ROUTE_ARGS| Add additional arguments for debugging purposes during detail route.| |
 | <a name="DETAILED_ROUTE_END_ITERATION"></a>DETAILED_ROUTE_END_ITERATION| Maximum number of iterations.| 64|
-| <a name="DETAIL_PLACEMENT_ARGS"></a>DETAIL_PLACEMENT_ARGS| Specify arguments to the detailed_placement call during placement.| |
+| <a name="DETAIL_PLACEMENT_ARGS"></a>DETAIL_PLACEMENT_ARGS| Specify arguments to every detailed_placement call: the one in placement and the re-legalizations after clock tree synthesis, after repair in CTS and after the repairs in global route. A legalizer chosen here (-use_diamond_legalizer, -max_displacement) is therefore the one every stage uses.| |
 | <a name="DFF_LIB_FILE"></a>DFF_LIB_FILE| Single Liberty file for flip-flop technology mapping (dfflibmap) during synthesis. Takes precedence over DFF_MAP_FILE when set.| |
 | <a name="DFF_MAP_FILE"></a>DFF_MAP_FILE| Optional mapping file supplied to Yosys to map D flip-flops| |
 | <a name="DIE_AREA"></a>DIE_AREA| The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).| |
@@ -524,6 +524,7 @@ configuration file.
 - [CTS_SNAPSHOT](#CTS_SNAPSHOT)
 - [CTS_SNAPSHOTS](#CTS_SNAPSHOTS)
 - [DETAILED_METRICS](#DETAILED_METRICS)
+- [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
@@ -547,6 +548,7 @@ configuration file.
 
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [DETAILED_METRICS](#DETAILED_METRICS)
+- [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
 - [GLOBAL_ROUTE_USE_CUGR](#GLOBAL_ROUTE_USE_CUGR)
