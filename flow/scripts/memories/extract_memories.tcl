@@ -19,8 +19,10 @@ read_design_sources
 # Elaborate hierarchy
 hierarchy -top $::env(DESIGN_NAME)
 
-# Run process execution and memory collection
-proc
+# Run process execution and memory collection. `yosys proc` rather than
+# bare `proc`: yosys -import cannot shadow Tcl's proc keyword, so the
+# bare word would define a procedure instead of running the pass.
+yosys proc
 memory -nomap
 
 # Write netlist JSON containing inferred $mem_v2 primitives
