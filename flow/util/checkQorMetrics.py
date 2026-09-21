@@ -157,7 +157,7 @@ def load_metadata(path, only_prefix=None):
     try:
         with open(path, encoding="utf-8") as metadata_file:
             raw = json.load(metadata_file)
-    except (OSError, json.JSONDecodeError) as error:
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise MetadataError(f"could not read {path}: {error}") from error
     if not isinstance(raw, dict):
         raise MetadataError(f"{path} is not a JSON object")
