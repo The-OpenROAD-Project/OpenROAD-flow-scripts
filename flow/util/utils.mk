@@ -4,13 +4,11 @@
 metadata: finish metadata-generate metadata-check
 
 # Synthesis-only metadata: generate and check QoR after just the synth
-# stage, without running the full flow. The synthesis-stage subset of
-# the design's regular rules file gates the run, so no per-variant
-# rules file needs to be committed. Sequential sub-makes rather than
-# prerequisites: each step consumes the previous one's outputs, which
-# plain prerequisites would race under make -j.
+# stage, without running the full flow. Only the synthesis-stage metrics
+# are sent to the dashboard, which evaluates just those. Sequential
+# sub-makes rather than prerequisites: each step consumes the previous
+# one's outputs, which plain prerequisites would race under make -j.
 .PHONY: metadata-synth
-metadata-synth: export RULES_JSON = $(DESIGN_DIR)/rules-base.json
 metadata-synth:
 	$(MAKE) synth
 	$(MAKE) metadata-generate
@@ -29,24 +27,40 @@ metadata-generate:
 	    -o $(REPORTS_DIR)/metadata.json 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
 
-export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
-
+# The QoR gate: metadata.json against the latest master build on the QoR
+# dashboard, using the dashboard's rule configs. Set DASHBOARD_API_KEY for
+# a private platform and DASHBOARD_JOB_NAME when the baseline pipeline is
+# not OpenROAD-flow-scripts-Public. A failed rule fails the target; an
+# unreachable dashboard or a design without a baseline only warns.
+# The legacy rules-file check is `make metadata-check-rules`.
 .PHONY: metadata-check
 metadata-check:
+	$(PYTHON_EXE) $(UTILS_DIR)/checkQorMetrics.py \
+	    -m $(REPORTS_DIR)/metadata.json \
+	    -p $(PLATFORM) -d $(DESIGN_NICKNAME) --variant $(FLOW_VARIANT) 2>&1 \
+	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
+
+# Send only the synthesis-stage metrics, so a synthesis-only run is gated
+# by the rules the dashboard holds for those metrics.
+.PHONY: metadata-check-synth
+metadata-check-synth:
+	$(PYTHON_EXE) $(UTILS_DIR)/checkQorMetrics.py \
+	    -m $(REPORTS_DIR)/metadata.json \
+	    -p $(PLATFORM) -d $(DESIGN_NICKNAME) --variant $(FLOW_VARIANT) \
+	    --only-prefix synth__ constraints__ 2>&1 \
+	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
+
+# Legacy gate against the committed designs/<platform>/<design>/rules-
+# <variant>.json. Kept for bazel-orfs and for `update_rules`; not part of
+# `make metadata`.
+export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
+
+.PHONY: metadata-check-rules
+metadata-check-rules:
 	$(PYTHON_EXE) $(UTILS_DIR)/checkMetadata.py \
 	    -m $(REPORTS_DIR)/metadata.json \
 	    -r $(RULES_JSON) 2>&1 \
-	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
-
-# Check only the synthesis-stage subset of RULES_JSON, so a
-# synthesis-only run can be gated by the design's full-flow rules file.
-.PHONY: metadata-check-synth
-metadata-check-synth:
-	$(PYTHON_EXE) $(UTILS_DIR)/checkMetadata.py \
-	    -m $(REPORTS_DIR)/metadata.json \
-	    -r $(RULES_JSON) \
-	    --only-prefix synth__ constraints__ 2>&1 \
-	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
+	    | tee $(abspath $(REPORTS_DIR)/metadata-check-rules.log)
 
 .PHONY: clean_metadata
 clean_metadata:

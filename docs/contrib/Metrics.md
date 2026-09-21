@@ -5,57 +5,26 @@ repository contains source files (e.g., LEF/DEF, Verilog, SDC, Liberty,
 RC extraction) and configuration files (e.g. `config.mk`) that enable the user to run
 a small set of example designs through our complete RTL-to-GDS flow.
 
-To keep track of the quality of the results, each design directory holds a
-rules file that gates the flow:
-
-``` text
-flow/designs/<platform>/<design>/rules-base.json
-```
-
-The file name comes from `RULES_JSON`, defined in
-[`flow/util/utils.mk`](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/util/utils.mk):
-
-``` makefile
-export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
-```
-
-`FLOW_VARIANT` defaults to `base`, which is why the committed file is
-`rules-base.json`. A run with a non-default `FLOW_VARIANT` looks for
-`rules-<variant>.json`, or you can point `RULES_JSON` at any file explicitly.
-
-Each entry in the rules file is a metric name, a reference value, and a
-comparison operator. For example:
-
-``` json
-{
-    "synth__design__instance__area__stdcell": {
-        "value": 43.1,
-        "compare": "<="
-    },
-    "detailedplace__design__violations": {
-        "value": 0,
-        "compare": "=="
-    }
-}
-```
-
-An entry may also carry `"level": "warning"`, which reports a mismatch without
-failing the build.
+To keep track of the quality of the results, every CI run uploads its metrics
+to the [QoR dashboard](https://dashboard.precisioninno.com). The dashboard
+stores one rule per tracked metric and design (a comparison direction and a
+tolerance), and judges a run against a real baseline build: the latest
+`master` build by default. That check is the QoR gate in `make metadata`.
 
 The values a run is measured against are collected by
 `flow/util/genMetrics.py` into `$(REPORTS_DIR)/metadata.json`
 (`reports/<platform>/<design>/<variant>/metadata.json`). That file is generated
-output — it is not committed. `flow/util/checkMetadata.py` compares it against
-the rules file.
+output — it is not committed. `flow/util/checkQorMetrics.py` sends its numeric
+values to the dashboard and reports the verdict.
 
-## Checking against the rules
+## Checking against the dashboard
 
 The evaluation checks key metrics (e.g., worst slack, number of DRCs) to
 ensure that changes do not degrade the results.
 
 After you make a significant change — e.g., fixing a bug in a piece of code, or
 changing a configuration variable such as `PLACE_DENSITY` — review the results
-and compare them against the rules. To perform the check, run:
+and compare them against the baseline. To perform the check, run:
 
 ``` shell
 cd OpenROAD-flow-scripts/flow
@@ -64,56 +33,75 @@ make [clean_metadata] metadata
 ```
 
 `make metadata` runs three steps in order: `finish` (the full flow),
-`metadata-generate` (write `metadata.json`), and `metadata-check` (compare it
-against `RULES_JSON`). The check log is written to
-`$(REPORTS_DIR)/metadata-check.log`.
+`metadata-generate` (write `metadata.json`), and `metadata-check` (send it to
+the dashboard). The check log is written to
+`$(REPORTS_DIR)/metadata-check.log`. It lists every failed rule with the
+baseline value, the current value, the limit, and the delta, and ends with a
+`QoR check: PASS`, `FAIL`, or `INCONCLUSIVE` line.
 
-If you only changed synthesis, you can gate a synthesis-only run against the
-synthesis subset of the same rules file, without running the rest of the flow:
+A `FAIL` verdict fails the target. An `INCONCLUSIVE` verdict does not: the
+dashboard had no baseline for the design, evaluated nothing, or could not be
+reached, so the check did not run. Read the `[WARN]` lines to see which.
+Pass `--strict` to `checkQorMetrics.py` to get distinct exit codes instead
+(2 inconclusive, 3 unreachable).
+
+Two environment variables shape the comparison:
+
+- `DASHBOARD_API_KEY` grants access to private platforms. Without it, a
+  private design reports as inconclusive, not as an authentication error.
+- `DASHBOARD_JOB_NAME` names the Jenkins pipeline whose `master` builds are the
+  baseline. The default is `OpenROAD-flow-scripts-Public`.
+
+If you only changed synthesis, you can gate a synthesis-only run, without
+running the rest of the flow. Only the `synth__` and `constraints__` metrics
+are sent, so only their rules are evaluated:
 
 ``` shell
 make metadata-synth
 ```
 
-If the check reports any error, review it to make sure the change in metrics is
-expected and justifiable. If so, proceed to the next section to update the
-reference values.
-
-## Update process
-
-Updating the rules file is mandatory if a metric became worse than the value
-allowed by `rules-base.json` (see the previous section on how to perform the
-check). It is also a good idea to update it when your change improves a metric,
-so that the improvement is not silently lost later.
-
-To update the rules file for a design, from a tree that has just been measured
-(so `metadata.json` exists):
+To check every run under `reports/` at once, or to pin the baseline to a
+specific commit, call the script directly:
 
 ``` shell
 cd OpenROAD-flow-scripts/flow
-make update_ok
+./util/checkQorMetrics.py                     # sweep, log in reports/inline-check.log
+./util/checkQorMetrics.py --base-commit <sha> # pin the baseline build
+./util/checkQorMetrics.py --verbose           # show passing rules too
 ```
 
-`update_ok` is an alias for `update_rules`. It runs `flow/util/genRuleFile.py`
-with `--failing --tighten`, which:
+If the check reports a failed rule, review it to make sure the change in
+metrics is expected and justifiable. If so, say so in the pull request: the
+baseline moves with `master`, so a merged change becomes the new baseline
+without a file update. Rule tolerances live in the dashboard, not in this
+repository.
 
-- relaxes rules the current run fails, using the measured value plus a margin,
-  so that small run-to-run variation does not break the flow; and
-- tightens rules the current run passes by a wide margin, so improvements are
-  locked in.
+## Legacy rules files (`rules-<variant>.json`)
 
-The new file is written to `$(REPORTS_DIR)/rules.json` and then copied over
-`$(RULES_JSON)` — that copy is the file you commit.
+Before the dashboard check, each design directory held a rules file with
+absolute limits, regenerated by hand:
 
-If you need to overwrite every rule from the current run rather than only the
-failing and improved ones, use:
+``` text
+flow/designs/<platform>/<design>/rules-base.json
+```
+
+`flow/util/checkMetadata.py` compares `metadata.json` against that file.
+These files still exist and are still read by
+[bazel-orfs](https://github.com/The-OpenROAD-Project/bazel-orfs) test
+targets, but nothing in `make metadata` reads them. To run the legacy check
+or refresh a rules file:
 
 ``` shell
-make update_rules_force
+cd OpenROAD-flow-scripts/flow
+make metadata-check-rules   # compare against $(RULES_JSON), log in metadata-check-rules.log
+make update_ok              # rewrite $(RULES_JSON) from the current metadata.json
+make update_rules_force     # overwrite every rule, not only failing and improved ones
 ```
 
-This runs `genRuleFile.py --update`. Prefer `make update_ok`; use the forced
-variant only when the metric set itself changed.
+`RULES_JSON` defaults to `$(DESIGN_DIR)/rules-$(FLOW_VARIANT).json`.
+`update_ok` is an alias for `update_rules`; it runs `flow/util/genRuleFile.py`
+with `--failing --tighten`, which relaxes rules the current run fails and
+tightens rules it passes by a wide margin.
 
 ## Reference metadata (`metadata-<variant>-ok.json`)
 
@@ -128,5 +116,4 @@ This copies the current `metadata.json` next to the design as
 `metadata-$(FLOW_VARIANT)-ok.json`. It is **not** what gates the flow — nothing
 in `make metadata` reads it. It is consumed only by
 `flow/util/genReportTable.py` when building the golden-vs-current report table,
-and almost no design commits one. Update the rules file, not this one, unless
-you are specifically working on that report.
+and almost no design commits one.

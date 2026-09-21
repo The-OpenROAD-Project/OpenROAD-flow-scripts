@@ -1,27 +1,34 @@
 #!/usr/bin/env python3
 """
-Checks every design under ./reports against the QoR dashboard's rules
+Checks flow metrics against the QoR dashboard's rules
 (https://dashboard.precisioninno.com).
 
-This is the CI inline check, run against a local flow: it sweeps
-reports/<platform>/<design>/<variant>/metadata.json, POSTs each run's numeric
-metrics to the dashboard, and reports which rules a local change would fail.
+The check POSTs a run's numeric metrics from metadata.json to the dashboard,
+which compares them against a real baseline build -- the latest master build
+by default -- using the thresholds it stores in rule_configs. This is the QoR
+gate behind `make metadata`. It replaced checkMetadata.py, which compared
+against committed designs/<platform>/<design>/rules-<variant>.json goldens:
+absolute values a human regenerated at some point, so a metric moving with
+master showed up as a failure against a stale golden.
 
-It differs from checkMetadata.py in what it compares against. checkMetadata.py
-uses the committed designs/<platform>/<design>/rules-<variant>.json goldens,
-which are absolute values a human regenerated at some point. This uses the
-metric values of a real baseline build -- the latest master build by default --
-and the thresholds the dashboard stores in rule_configs. So a metric moving with
-master does not show up here, while it does against a stale golden.
+Two modes:
 
-Run it via:
+    # One run, as `make metadata-check` calls it. --platform and --design name
+    # the run for the dashboard; --variant defaults to base.
+    ./util/checkQorMetrics.py --metadata reports/asap7/gcd/base/metadata.json \
+        -p asap7 -d gcd
+
+    # Sweep every reports/<platform>/<design>/<variant>/metadata.json.
     export DASHBOARD_API_KEY=plt_...       # optional; needed for private platforms
-    make metadata                         # or make DESIGN_CONFIG=... metadata
     ./util/checkQorMetrics.py
 
-Exit status is always 0. This reports, it does not gate: it talks to a network
-service whose availability is not the developer's problem, and a QoR opinion
-from a remote baseline should not be able to break a local build.
+Exit status: 1 when the dashboard reports a failed rule for any checked run,
+0 otherwise. A run the dashboard could not judge -- no baseline, nothing
+evaluated, or the service unreachable -- is reported as a warning and does not
+fail the check: the check did not run, which is not the same as failing it.
+--strict turns those into exit 2 (inconclusive) and 3 (unreachable) for a CI
+caller that wants to tell them apart. A missing or unreadable --metadata file
+is a usage error and exits 1.
 """
 
 import argparse
@@ -133,8 +140,13 @@ def find_runs(reports_dir):
     return runs, missing
 
 
-def load_metadata(path):
-    """Returns (metrics, commit_sha). Metrics is empty if the file is unusable."""
+def load_metadata(path, only_prefix=None):
+    """Returns (metrics, commit_sha). Metrics is empty if the file is unusable.
+
+    only_prefix keeps just the metrics whose name starts with one of the given
+    prefixes. The dashboard evaluates only the metrics it receives, so sending
+    the synth__ subset gates a synthesis-only run without a separate rule set.
+    """
     try:
         with open(path, encoding="utf-8") as metadata_file:
             raw = json.load(metadata_file)
@@ -159,6 +171,13 @@ def load_metadata(path):
     # them and the dashboard discards them server-side. Dropping them here keeps the
     # reported metric count honest.
     metrics = {key: value for key, value in metrics.items() if "__iter__" not in key}
+
+    if only_prefix:
+        metrics = {
+            key: value
+            for key, value in metrics.items()
+            if any(key.startswith(prefix) for prefix in only_prefix)
+        }
 
     commit = str(raw.get(COMMIT_KEY, ""))
     return metrics, commit if SHA_RE.match(commit) else ""
@@ -204,7 +223,7 @@ def post_check(endpoint, api_key, payload):
     return None, f"{error_message} (after {RETRY_ATTEMPTS} attempts)"
 
 
-def check_run(run, endpoint, api_key, base_commit, job_name):
+def check_run(run, endpoint, api_key, base_commit, job_name, only_prefix=None):
     """Checks one (platform, design, variant) and returns a result dict."""
     platform, design, variant, metadata_path = run
     result = {
@@ -219,10 +238,10 @@ def check_run(run, endpoint, api_key, base_commit, job_name):
 
     # One run's surprise must not take down the sweep: this is called from a
     # thread pool, so an escaping exception would surface out of pool.map and
-    # break the always-0 exit the module docstring promises. Report it as this
-    # run's error and let the other runs finish.
+    # skip the report for every other run. Report it as this run's error and let
+    # the other runs finish; exit_code() turns it into the documented status.
     try:
-        metrics, commit = load_metadata(metadata_path)
+        metrics, commit = load_metadata(metadata_path, only_prefix)
         if not metrics:
             result["error"] = f"no numeric metrics in {metadata_path}"
             return result
@@ -378,7 +397,44 @@ def summarize(results):
         lines.append(f"[ERROR] Failing runs: {', '.join(sorted(failing))}")
     else:
         lines.append("[INFO] No run failed a QoR dashboard rule.")
+
+    # Last line, fixed vocabulary: a log classifier (Jenkins reads
+    # metadata-check.log) matches this instead of the counts above.
+    lines.append(f"QoR check: {verdict(results)}")
     return lines
+
+
+def verdict(results):
+    """Overall verdict for a set of runs: FAIL, PASS, or INCONCLUSIVE.
+
+    FAIL wins over everything: one failed rule is a regression no matter how the
+    other runs did. PASS needs every run to have passed. Anything else -- no
+    baseline, nothing evaluated, a request that never got an answer -- is
+    INCONCLUSIVE: the check did not run for at least one run.
+    """
+    statuses = {result["status"] for result in results}
+    if "fail" in statuses:
+        return "FAIL"
+    if statuses == {"pass"}:
+        return "PASS"
+    return "INCONCLUSIVE"
+
+
+def exit_code(results, strict):
+    """Maps the results to the process exit status.
+
+    1 on FAIL. 0 on PASS. INCONCLUSIVE is 0 unless strict, where a run the
+    service never answered (status 'error') is 3 and any other inconclusive
+    outcome is 2, matching the contract the Jenkins inline check uses.
+    """
+    overall = verdict(results)
+    if overall == "FAIL":
+        return 1
+    if overall == "PASS" or not strict:
+        return 0
+    if any(result["status"] == "error" for result in results):
+        return 3
+    return 2
 
 
 def write_log(lines):
@@ -422,18 +478,39 @@ def parse_args(argv):
         "OpenROAD-flow-scripts-Private.",
     )
     parser.add_argument(
+        "--metadata",
+        "-m",
+        help="Check this one metadata.json instead of sweeping reports/. "
+        "Requires --platform and --design to name the run for the dashboard.",
+    )
+    parser.add_argument(
+        "--only-prefix",
+        nargs="+",
+        default=None,
+        metavar="PREFIX",
+        help="Send only metrics whose name starts with one of these prefixes, "
+        "e.g. synth__ constraints__ to gate a synthesis-only run.",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Exit 2 when a run is inconclusive and 3 when the dashboard was "
+        "unreachable, instead of 0 with a warning.",
+    )
+    parser.add_argument(
         "--platform",
         "-p",
-        help="Only check this platform.",
+        help="Only check this platform. With --metadata: the run's platform.",
     )
     parser.add_argument(
         "--design",
         "-d",
-        help="Only check this design.",
+        help="Only check this design. With --metadata: the run's design.",
     )
     parser.add_argument(
         "--variant",
-        help="Only check this flow variant.",
+        help="Only check this flow variant. With --metadata: the run's variant "
+        "(default: base).",
     )
     parser.add_argument(
         "--jobs",
@@ -447,19 +524,23 @@ def parse_args(argv):
         action="store_true",
         help="Report every rule-checked metric, not only the failing ones.",
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.metadata and not (args.platform and args.design):
+        parser.error("--metadata requires --platform and --design")
+    return args
 
 
-def run_check(argv=None):
-    args = parse_args(argv)
+def sweep_runs(args):
+    """Returns (runs, header) for sweep mode, or (None, header) with nothing to do.
 
-    endpoint = (BETA_API_URL if args.beta else API_URL) + CHECK_PATH
-    api_key = os.environ.get("DASHBOARD_API_KEY", "")
-
+    The header carries the warnings for run directories without a metadata.json,
+    built after the --platform/--design/--variant filter so a scoped sweep does
+    not warn about designs it was never asked to check.
+    """
     reports_dir = REPORTS_FOLDER
     if not os.path.isdir(reports_dir):
         print(f"[ERROR] No reports directory at {reports_dir}. Run the flow first.")
-        return 0
+        return None, []
 
     runs, missing = find_runs(reports_dir)
 
@@ -475,9 +556,6 @@ def run_check(argv=None):
     runs = [run for run in runs if selected(run)]
     missing = [entry for entry in missing if selected(entry)]
 
-    # Built after filtering, so a scoped run does not warn about designs it was
-    # never asked to check, and carried in the header rather than printed in the
-    # walk, so the saved report also shows what could not be checked.
     header = [
         f"[WARN] No {METADATA_FILENAME} for {platform} {design} {variant}."
         for platform, design, variant in missing
@@ -491,7 +569,31 @@ def run_check(argv=None):
         for line in header:
             print(line)
         write_log(header)
-        return 0
+        return None, header
+
+    return runs, header
+
+
+def run_check(argv=None):
+    args = parse_args(argv)
+
+    endpoint = (BETA_API_URL if args.beta else API_URL) + CHECK_PATH
+    api_key = os.environ.get("DASHBOARD_API_KEY", "")
+
+    if args.metadata:
+        # Single-run mode: the caller (make metadata-check) names the run and
+        # tees stdout into its own log, so no sweep log is written here.
+        if not os.path.isfile(args.metadata):
+            print(f"[ERROR] No {args.metadata}. Run `make metadata-generate` first.")
+            return 1
+        runs = [(args.platform, args.design, args.variant or "base", args.metadata)]
+        header = []
+    else:
+        runs, header = sweep_runs(args)
+        if runs is None:
+            # Nothing to check is not a failed check. Strict callers get the
+            # inconclusive code so CI can tell "no reports" from a pass.
+            return 2 if args.strict else 0
 
     # Printed now so a long sweep is not silent, and kept for the log file: a
     # saved report is unreadable without knowing which deployment answered it and
@@ -504,6 +606,9 @@ def run_check(argv=None):
         )
     if args.base_commit:
         header.append(f"[INFO] Baseline pinned to commit {args.base_commit}")
+    if args.only_prefix:
+        prefixes = " ".join(args.only_prefix)
+        header.append(f"[INFO] Sending only metrics prefixed {prefixes}")
     for line in header:
         print(line)
 
@@ -514,7 +619,12 @@ def run_check(argv=None):
         results = list(
             pool.map(
                 lambda run: check_run(
-                    run, endpoint, api_key, args.base_commit, args.job_name
+                    run,
+                    endpoint,
+                    api_key,
+                    args.base_commit,
+                    args.job_name,
+                    args.only_prefix,
                 ),
                 runs,
             )
@@ -528,10 +638,10 @@ def run_check(argv=None):
     for line in body:
         print(line)
 
-    write_log(header + body)
+    if not args.metadata:
+        write_log(header + body)
 
-    # Always 0. See the module docstring.
-    return 0
+    return exit_code(results, args.strict)
 
 
 if __name__ == "__main__":
