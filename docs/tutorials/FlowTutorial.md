@@ -251,7 +251,7 @@ underlying files are organized.
     platform and other files for autotuner and metrics.
 
 ```
-autotuner.json config.mk constraint_doe.sdc constraint.sdc metadata-base-ok.json rules.json
+autotuner.json config.mk constraint_doe.sdc constraint.sdc metadata-base-ok.json
 ```
 
 -   `platforms`

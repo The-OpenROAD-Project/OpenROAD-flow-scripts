@@ -32,7 +32,6 @@ metadata-generate:
 # a private platform and DASHBOARD_JOB_NAME when the baseline pipeline is
 # not OpenROAD-flow-scripts-Public. A failed rule fails the target; an
 # unreachable dashboard or a design without a baseline only warns.
-# The legacy rules-file check is `make metadata-check-rules`.
 .PHONY: metadata-check
 metadata-check:
 	$(PYTHON_EXE) $(UTILS_DIR)/checkQorMetrics.py \
@@ -50,64 +49,36 @@ metadata-check-synth:
 	    --only-prefix synth__ constraints__ 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
 
-# Legacy gate against the committed designs/<platform>/<design>/rules-
-# <variant>.json. Kept for bazel-orfs and for `update_rules`; not part of
-# `make metadata`.
-export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
+# The rules-file check (checkMetadata.py against a committed
+# designs/<platform>/<design>/rules-<variant>.json) was removed. The QoR
+# dashboard holds the rules now. These stubs warn callers that still use
+# the old targets or RULES_JSON, and exit 0 so a wrapper script keeps
+# running; drop them once bazel-orfs and the CI scripts have moved.
+ifdef RULES_JSON
+$(warning [WARN] RULES_JSON is deprecated and ignored. The QoR gate is the \
+  dashboard check in `make metadata`; rules files are no longer read.)
+endif
 
-.PHONY: metadata-check-rules
-metadata-check-rules:
-	$(PYTHON_EXE) $(UTILS_DIR)/checkMetadata.py \
-	    -m $(REPORTS_DIR)/metadata.json \
-	    -r $(RULES_JSON) 2>&1 \
-	    | tee $(abspath $(REPORTS_DIR)/metadata-check-rules.log)
+LEGACY_RULES_TARGETS := metadata-check-rules update_ok update_rules \
+                        update_rules_force do-update_rules \
+                        do-update_rules_force do-copy_update_rules
+.PHONY: $(LEGACY_RULES_TARGETS)
+$(LEGACY_RULES_TARGETS):
+	@echo "[WARN] make $@ is deprecated and does nothing. The rules files" \
+	      "(rules-<variant>.json), checkMetadata.py, and genRuleFile.py" \
+	      "were removed. The QoR gate is now the dashboard check in" \
+	      "\`make metadata\` (see docs/contrib/Metrics.md). Rule tolerances" \
+	      "live in the dashboard, so there is nothing to update locally."
 
 .PHONY: clean_metadata
 clean_metadata:
 	rm -f $(REPORTS_DIR)/design-dir.txt
 	rm -f $(REPORTS_DIR)/metadata*.*
 
-.PHONY: update_ok
-update_ok: update_rules
-
 .PHONY: update_metadata
 update_metadata:
 	cp -f $(REPORTS_DIR)/metadata.json \
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
-
-.PHONY: do-update_rules
-do-update_rules:
-	mkdir -p $(REPORTS_DIR)
-	$(PYTHON_EXE) $(UTILS_DIR)/genRuleFile.py \
-	    --rules $(RULES_JSON) \
-	    --new-rules $(REPORTS_DIR)/rules.json \
-	    --reference $(REPORTS_DIR)/metadata.json \
-	    --variant $(FLOW_VARIANT) \
-	    --failing \
-	    --tighten
-
-.PHONY: do-copy_update_rules
-do-copy_update_rules:
-	cp -f $(REPORTS_DIR)/rules.json \
-	      $(RULES_JSON)
-
-.PHONY: update_rules
-update_rules: do-update_rules do-copy_update_rules
-
-.PHONY: do-update_rules_force
-do-update_rules_force:
-	mkdir -p $(REPORTS_DIR)
-	$(PYTHON_EXE) $(UTILS_DIR)/genRuleFile.py \
-	    --rules $(RULES_JSON) \
-	    --new-rules $(REPORTS_DIR)/rules.json \
-	    --reference $(REPORTS_DIR)/metadata.json \
-	    --variant $(FLOW_VARIANT) \
-	    --update
-
-.PHONY: update_rules_force
-update_rules_force: do-update_rules_force
-	cp -f $(REPORTS_DIR)/rules.json \
-	      $(RULES_JSON)
 
 .PHONY: update_metadata_autotuner
 update_metadata_autotuner:

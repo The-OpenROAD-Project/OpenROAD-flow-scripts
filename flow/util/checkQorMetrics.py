@@ -6,10 +6,9 @@ Checks flow metrics against the QoR dashboard's rules
 The check POSTs a run's numeric metrics from metadata.json to the dashboard,
 which compares them against a real baseline build -- the latest master build
 by default -- using the thresholds it stores in rule_configs. This is the QoR
-gate behind `make metadata`. It replaced checkMetadata.py, which compared
-against committed designs/<platform>/<design>/rules-<variant>.json goldens:
-absolute values a human regenerated at some point, so a metric moving with
-master showed up as a failure against a stale golden.
+gate behind `make metadata`. Rule tolerances live in the dashboard, not in
+this repository, and the baseline moves with master, so a merged change
+becomes the new baseline without a file update.
 
 Two modes:
 
