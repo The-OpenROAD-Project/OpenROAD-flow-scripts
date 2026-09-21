@@ -35,7 +35,7 @@ metadata-generate:
 .PHONY: metadata-check
 metadata-check:
 	$(PYTHON_EXE) $(UTILS_DIR)/checkQorMetrics.py \
-	    -m $(REPORTS_DIR)/metadata.json \
+	    -m $(abspath $(REPORTS_DIR)/metadata.json) \
 	    -p $(PLATFORM) -d $(DESIGN_NICKNAME) --variant $(FLOW_VARIANT) 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
 
@@ -44,7 +44,7 @@ metadata-check:
 .PHONY: metadata-check-synth
 metadata-check-synth:
 	$(PYTHON_EXE) $(UTILS_DIR)/checkQorMetrics.py \
-	    -m $(REPORTS_DIR)/metadata.json \
+	    -m $(abspath $(REPORTS_DIR)/metadata.json) \
 	    -p $(PLATFORM) -d $(DESIGN_NICKNAME) --variant $(FLOW_VARIANT) \
 	    --only-prefix synth__ constraints__ 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)

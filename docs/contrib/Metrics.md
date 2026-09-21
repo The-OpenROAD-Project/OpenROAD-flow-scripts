@@ -37,13 +37,15 @@ make [clean_metadata] metadata
 the dashboard). The check log is written to
 `$(REPORTS_DIR)/metadata-check.log`. It lists every failed rule with the
 baseline value, the current value, the limit, and the delta, and ends with a
-`QoR check: PASS`, `FAIL`, or `INCONCLUSIVE` line.
+`QoR check: PASS`, `FAIL`, `INCONCLUSIVE`, or `ERROR` line.
 
-A `FAIL` verdict fails the target. An `INCONCLUSIVE` verdict does not: the
-dashboard had no baseline for the design, evaluated nothing, or could not be
-reached, so the check did not run. Read the `[WARN]` lines to see which.
-Pass `--strict` to `checkQorMetrics.py` to get distinct exit codes instead
-(2 inconclusive, 3 unreachable).
+A `FAIL` verdict fails the target. So does `ERROR`, which means
+`metadata.json` was missing, malformed, or held no numeric metric. An
+`INCONCLUSIVE` verdict does not fail the target: the dashboard had no
+baseline for the design, evaluated nothing, or could not be reached, so the
+check did not run. Read the `[WARN]` lines to see which. Pass `--strict` to
+`checkQorMetrics.py` to get distinct exit codes instead (2 inconclusive,
+3 unreachable).
 
 Two environment variables shape the comparison:
 

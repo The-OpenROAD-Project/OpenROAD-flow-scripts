@@ -22,12 +22,13 @@ Two modes:
     ./util/checkQorMetrics.py
 
 Exit status: 1 when the dashboard reports a failed rule for any checked run,
+or when a metadata.json is missing, malformed, or holds no numeric metric.
 0 otherwise. A run the dashboard could not judge -- no baseline, nothing
 evaluated, or the service unreachable -- is reported as a warning and does not
 fail the check: the check did not run, which is not the same as failing it.
 --strict turns those into exit 2 (inconclusive) and 3 (unreachable) for a CI
-caller that wants to tell them apart. A missing or unreadable --metadata file
-is a usage error and exits 1.
+caller that wants to tell them apart. The last line of the report is
+`QoR check: PASS`, `FAIL`, `INCONCLUSIVE`, or `ERROR`.
 """
 
 import argparse
@@ -42,6 +43,9 @@ import urllib.request
 
 # Run from flow/ the way the other report scripts do (genReport.py,
 # genReportTable.py, uploadMetadata.py), so the walk root below is theirs.
+# A path the caller passed on the command line is relative to where the
+# caller was, not to flow/, so keep that directory to resolve it.
+INVOCATION_DIR = os.getcwd()
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 REPORTS_FOLDER = "reports"
@@ -139,8 +143,12 @@ def find_runs(reports_dir):
     return runs, missing
 
 
+class MetadataError(Exception):
+    """metadata.json is missing, unreadable, or holds no numeric metric."""
+
+
 def load_metadata(path, only_prefix=None):
-    """Returns (metrics, commit_sha). Metrics is empty if the file is unusable.
+    """Returns (metrics, commit_sha). Raises MetadataError if the file is unusable.
 
     only_prefix keeps just the metrics whose name starts with one of the given
     prefixes. The dashboard evaluates only the metrics it receives, so sending
@@ -150,8 +158,9 @@ def load_metadata(path, only_prefix=None):
         with open(path, encoding="utf-8") as metadata_file:
             raw = json.load(metadata_file)
     except (OSError, json.JSONDecodeError) as error:
-        print(f"[WARN] Could not read {path}: {error}")
-        return {}, ""
+        raise MetadataError(f"could not read {path}: {error}") from error
+    if not isinstance(raw, dict):
+        raise MetadataError(f"{path} is not a JSON object")
 
     # The API takes a name -> number map, so every string value is dropped. That
     # includes constraints__clocks__details, which is a list and is the clock
@@ -177,6 +186,9 @@ def load_metadata(path, only_prefix=None):
             for key, value in metrics.items()
             if any(key.startswith(prefix) for prefix in only_prefix)
         }
+
+    if not metrics:
+        raise MetadataError(f"no numeric metrics in {path}")
 
     commit = str(raw.get(COMMIT_KEY, ""))
     return metrics, commit if SHA_RE.match(commit) else ""
@@ -240,9 +252,13 @@ def check_run(run, endpoint, api_key, base_commit, job_name, only_prefix=None):
     # skip the report for every other run. Report it as this run's error and let
     # the other runs finish; exit_code() turns it into the documented status.
     try:
-        metrics, commit = load_metadata(metadata_path, only_prefix)
-        if not metrics:
-            result["error"] = f"no numeric metrics in {metadata_path}"
+        # A bad local file is the caller's problem, not the service's: it gets
+        # its own status so it exits 1 instead of passing as inconclusive.
+        try:
+            metrics, commit = load_metadata(metadata_path, only_prefix)
+        except MetadataError as error:
+            result["status"] = "invalid"
+            result["error"] = str(error)
             return result
         result["metric_count"] = len(metrics)
 
@@ -286,8 +302,15 @@ def render_run(result, verbose):
     identity = f"{result['platform']}/{result['design']}/{result['variant']}"
     lines = [BANNER]
 
-    if result["status"] == "error":
+    if result["status"] == "invalid":
         lines.append(f"[ERROR] {identity}: {result['error']}")
+        return lines
+
+    if result["status"] == "error":
+        # genReport.py counts [ERROR] lines in metadata-check.log as a failed
+        # design. An unreachable service does not fail the check, so it must
+        # not read as one.
+        lines.append(f"[WARN] {identity}: dashboard not reached: {result['error']}")
         return lines
 
     response = result["response"]
@@ -390,7 +413,8 @@ def summarize(results):
         f"{counts.get('fail', 0)} failed, "
         f"{counts.get('inconclusive', 0)} inconclusive, "
         f"{counts.get('no_baseline', 0)} without a baseline, "
-        f"{counts.get('error', 0)} not reached"
+        f"{counts.get('error', 0)} not reached, "
+        f"{counts.get('invalid', 0)} with unusable metadata"
     )
     if failing:
         lines.append(f"[ERROR] Failing runs: {', '.join(sorted(failing))}")
@@ -404,14 +428,18 @@ def summarize(results):
 
 
 def verdict(results):
-    """Overall verdict for a set of runs: FAIL, PASS, or INCONCLUSIVE.
+    """Overall verdict for a set of runs: ERROR, FAIL, PASS, or INCONCLUSIVE.
 
-    FAIL wins over everything: one failed rule is a regression no matter how the
-    other runs did. PASS needs every run to have passed. Anything else -- no
-    baseline, nothing evaluated, a request that never got an answer -- is
-    INCONCLUSIVE: the check did not run for at least one run.
+    ERROR means a metadata.json could not be used, so the check could not even
+    be attempted for that run. FAIL wins over the rest: one failed rule is a
+    regression no matter how the other runs did. PASS needs every run to have
+    passed. Anything else -- no baseline, nothing evaluated, a request that
+    never got an answer -- is INCONCLUSIVE: the check did not run for at least
+    one run.
     """
     statuses = {result["status"] for result in results}
+    if "invalid" in statuses:
+        return "ERROR"
     if "fail" in statuses:
         return "FAIL"
     if statuses == {"pass"}:
@@ -422,12 +450,13 @@ def verdict(results):
 def exit_code(results, strict):
     """Maps the results to the process exit status.
 
-    1 on FAIL. 0 on PASS. INCONCLUSIVE is 0 unless strict, where a run the
-    service never answered (status 'error') is 3 and any other inconclusive
-    outcome is 2, matching the contract the Jenkins inline check uses.
+    1 on FAIL and on ERROR. 0 on PASS. INCONCLUSIVE is 0 unless strict, where
+    a run the service never answered (status 'error') is 3 and any other
+    inconclusive outcome is 2, matching the contract the Jenkins inline check
+    uses.
     """
     overall = verdict(results)
-    if overall == "FAIL":
+    if overall in ("FAIL", "ERROR"):
         return 1
     if overall == "PASS" or not strict:
         return 0
@@ -582,10 +611,11 @@ def run_check(argv=None):
     if args.metadata:
         # Single-run mode: the caller (make metadata-check) names the run and
         # tees stdout into its own log, so no sweep log is written here.
-        if not os.path.isfile(args.metadata):
-            print(f"[ERROR] No {args.metadata}. Run `make metadata-generate` first.")
+        metadata_path = os.path.join(INVOCATION_DIR, args.metadata)
+        if not os.path.isfile(metadata_path):
+            print(f"[ERROR] No {metadata_path}. Run `make metadata-generate` first.")
             return 1
-        runs = [(args.platform, args.design, args.variant or "base", args.metadata)]
+        runs = [(args.platform, args.design, args.variant or "base", metadata_path)]
         header = []
     else:
         runs, header = sweep_runs(args)
