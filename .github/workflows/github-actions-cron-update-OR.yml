@@ -36,9 +36,7 @@ jobs:
           delete-branch: true
           title: 'Update OpenROAD submodule'
           body: |
-            Automated action to update tools/OpenROAD submodule and tighten CI rule checking.
-            [ci:rules-tighten]
-          labels: UpdateRules
+            Automated action to update tools/OpenROAD submodule.
           reviewers: |
             vvbandeira
             maliberty
