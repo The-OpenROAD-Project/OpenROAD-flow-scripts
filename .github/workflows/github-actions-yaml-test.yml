@@ -3,6 +3,9 @@ name: ORFS variables.yaml tester and linter
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   docs-test-job:
     name: 'Tests for variables.yaml'

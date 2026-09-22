@@ -328,16 +328,31 @@ def add_image(path, platform, view):
 """
 
 
+# save_images.tcl asks OpenROAD for .webp, but the GUI silently falls back to
+# .png when the Qt build has no webp writer, which used to leave the gallery
+# empty. Accept either, and derive the view name by stripping whatever image
+# extensions the file ended up with rather than a fixed number of characters.
+IMAGE_EXTENSIONS = (".webp", ".png")
+
+
+def image_view_name(file):
+    view, ext = os.path.splitext(file)
+    while ext.lower() in IMAGE_EXTENSIONS:
+        file = view
+        view, ext = os.path.splitext(file)
+    return file
+
+
 platforms = set()
 designs = set()
 views = set()
 images = defaultdict(lambda: defaultdict(dict))
 for parents, dirs, files in sorted(os.walk("reports", topdown=False)):
     for file in files:
-        if file.endswith(".webp"):
+        if file.lower().endswith(IMAGE_EXTENSIONS):
             path = os.path.join(parents, file).replace("reports", ".")
             platform, design = path.split(os.sep)[1:3]
-            view = file[:-5]
+            view = image_view_name(file)
             designs.add(design)
             platforms.add(platform)
             views.add(view)

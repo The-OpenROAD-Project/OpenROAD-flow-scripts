@@ -1,5 +1,5 @@
 @Library('utils@main') _
 
 node {
-    pipelineORFS()
+    pipelineORFS(maxTimeout: 180)
 }

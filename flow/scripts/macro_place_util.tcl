@@ -53,6 +53,8 @@ if { [find_macros] != "" } {
   append_env_var additional_rtlmp_args RTLMP_BOUNDARY_WT -boundary_weight 1
   append_env_var additional_rtlmp_args RTLMP_NOTCH_WT -notch_weight 1
   append_env_var additional_rtlmp_args RTLMP_RPT_DIR -report_directory 1
+  append_env_var additional_rtlmp_args RTLMP_KEEP_CLUSTERING \
+    -keep_clustering_data 0
   append_env_var additional_rtlmp_args RTLMP_FENCE_LX -fence_lx 1
   append_env_var additional_rtlmp_args RTLMP_FENCE_LY -fence_ly 1
   append_env_var additional_rtlmp_args RTLMP_FENCE_UX -fence_ux 1

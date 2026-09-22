@@ -25,6 +25,10 @@ on:
       - tools/codespace/scripts/**
       - tools/codespace/Dockerfile-lxqt
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   buildCodespaceImage:
     runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}

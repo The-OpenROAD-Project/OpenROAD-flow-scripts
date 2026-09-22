@@ -79,6 +79,25 @@ git_override(
     remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
 )
 
+# icu is transitive (qt-bazel -> icu). The BCR overlay patches
+# u_getDataDirectory() to locate icudt*.dat via
+# rules_cc::cc::runfiles::Runfiles::Rlocation(), but Runfiles::Create()
+# returns nullptr whenever no runfiles tree is reachable and the overlay
+# dereferences it unconditionally. A binary that a bazel/install.sh-style
+# step copies out of bazel-bin loses its .runfiles directory, so the first
+# locale-aware compare (QCollator, std::locale, ...) anywhere in the process
+# segfaults -- e.g. QFileDialog listing a directory, or a sortable Qt list/
+# table. Mirrors tools/OpenROAD's fixed-version override (single_version_
+# override is root-honored only); drop when tools/OpenROAD drops its copy.
+single_version_override(
+    module_name = "icu",
+    patch_strip = 1,
+    patches = [
+        "//patches/icu:0001-putil-null-check-bazel-runfiles-before-dereference.patch",
+    ],
+    version = "76.1.bcr.3",
+)
+
 # Exception to the dev-only rule above: flow/BUILD has
 # load("@bazel-orfs//:openroad.bzl", "orfs_pdk"), so @bazel-orfs must stay
 # visible from @orfs even at non-root consumption; a dev-only bazel_dep
