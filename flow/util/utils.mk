@@ -113,6 +113,14 @@ write_rc: $(RESULTS_DIR)/6_nets_rc.csv $(RESULTS_DIR)/6_segments_rc.csv
 # A pattern rule to write both files with a single run, as the grouped target
 # syntax requires GNU Make 4.3.
 %_nets_rc.csv %_segments_rc.csv:
+	$(UNSET_AND_MAKE) do-write_rc
+
+# The do- sibling, following do-synth-report and the do-step/do-copy
+# families: the file target above decides *whether* to run and delegates
+# here, and this rule is the only place the invocation lives. A caller
+# doing its own dependency checking asks for this one directly.
+.PHONY: do-write_rc
+do-write_rc:
 	$(RUN_CMD) --log $(LOG_DIR)/6_write_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_rc.tcl
 
 .PHONY: correlate_rc
