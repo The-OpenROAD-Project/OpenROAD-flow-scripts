@@ -248,10 +248,10 @@ underlying files are organized.
 
 -   `designs/sky130hd/ibex`
     Files include: designs make file and SDC file for the `sky130hd`
-    platform and other files for autotuner and metrics.
+    platform and other files for autotuner and routing.
 
 ```
-autotuner.json config.mk constraint_doe.sdc constraint.sdc metadata-base-ok.json
+autotuner.json config.mk constraint_doe.sdc constraint.sdc fastroute.tcl
 ```
 
 -   `platforms`

@@ -90,17 +90,12 @@ and do nothing, so an old wrapper script does not break. Rule tolerances
 live in the dashboard, so there is nothing to regenerate locally after an
 accepted QoR change.
 
-## Reference metadata (`metadata-<variant>-ok.json`)
+## Removed: golden metadata (`metadata-<variant>-ok.json`)
 
-There is a second, optional file per design:
-
-``` shell
-# writes flow/designs/<platform>/<design>/metadata-base-ok.json
-make update_metadata
-```
-
-This copies the current `metadata.json` next to the design as
-`metadata-$(FLOW_VARIANT)-ok.json`. It is **not** what gates the flow — nothing
-in `make metadata` reads it. It is consumed only by
-`flow/util/genReportTable.py` when building the golden-vs-current report table,
-and almost no design commits one.
+A design directory could also hold a `metadata-<variant>-ok.json` copy of a
+known-good `metadata.json`, written by `make update_metadata`. Only
+`flow/util/genReportTable.py` read it, to color a golden-versus-current
+metrics table in the CI report. That table and the golden files were
+removed; the script now writes only the per-design image galleries.
+`make update_metadata` is a stub that prints a deprecation warning. The
+baseline for a run is the `master` build on the dashboard.

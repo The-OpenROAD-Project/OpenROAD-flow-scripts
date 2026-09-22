@@ -75,10 +75,14 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/design-dir.txt
 	rm -f $(REPORTS_DIR)/metadata*.*
 
+# The golden designs/<platform>/<design>/metadata-<variant>-ok.json files
+# were removed with the report table that compared runs against them.
 .PHONY: update_metadata
 update_metadata:
-	cp -f $(REPORTS_DIR)/metadata.json \
-	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
+	@echo "[WARN] make update_metadata is deprecated and does nothing." \
+	      "The golden metadata-<variant>-ok.json files and the report table" \
+	      "that read them were removed. Baselines live in the QoR dashboard" \
+	      "(see docs/contrib/Metrics.md)."
 
 .PHONY: update_metadata_autotuner
 update_metadata_autotuner:
