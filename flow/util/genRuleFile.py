@@ -102,6 +102,12 @@ def gen_rule_file(
             "compare": "==",
         },
         # place
+        "globalplace__route__wirelength__estimated": {
+            "mode": "padding",
+            "padding": 15,
+            "round_value": True,
+            "compare": "<=",
+        },
         "placeopt__design__instance__area": {
             "mode": "padding",
             "padding": 15,
