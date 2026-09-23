@@ -82,7 +82,7 @@ args = parser.parse_args()
 MAX_PUBSUB_BYTES = 8 * 1024 * 1024
 
 
-def build_design_record(dataFile, platform, design, variant, rules):
+def build_design_record(dataFile, platform, design, variant):
     """Return a dict for one design to be included in the pipeline-level payload."""
     with open(dataFile) as f:
         data = json.load(f)
@@ -91,7 +91,6 @@ def build_design_record(dataFile, platform, design, variant, rules):
         "platform": platform,
         "design": design,
         "variant": variant,
-        "rules": rules,
         "metrics": metrics,
     }
 
@@ -271,7 +270,6 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
             "commit_sha": args.commitSHA,
             "jenkins_url": args.jenkinsURL,
             "jenkins_env": args.jenkinsEnv,
-            "rules": d["rules"],
         }
         if provenance:
             payload.update(provenance)
@@ -306,15 +304,6 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
 
 
 # --- END PUBSUB ---
-
-
-def get_rules(dataFile):
-    data = {}
-    if os.path.exists(dataFile):
-        with open(dataFile) as f:
-            data = json.load(f)
-
-    return data
 
 
 # --- PUBSUB init ---
@@ -358,16 +347,9 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
     if platform == "sky130hd_fakestack" or platform == "src":
         print(f"[WARN] Skiping upload {platform} {design} {variant}.")
         continue
-    print(f"[INFO] Get rules for {platform} {design} {variant}.")
-    rules = get_rules(
-        os.path.join("designs", platform, design, f"rules-{variant}.json")
-    )
-
     # --- PUBSUB ---
     if publisher:
-        design_records.append(
-            build_design_record(dataFile, platform, design, variant, rules)
-        )
+        design_records.append(build_design_record(dataFile, platform, design, variant))
     # --- END PUBSUB ---
 
 # --- PUBSUB ---
