@@ -283,6 +283,56 @@ class TestRunCommand(unittest.TestCase):
             genElapsedTime.scan_logs(["--logDir", log_dir, "--noHeader"])
         output = mock_out.getvalue()
         self.assertIn("1_test", output)
+        # The elapsed column is the point of the table; a line that
+        # parses to nothing drops the whole row, exit status 0.
+        self.assertRegex(output, r"1_test\s+\S*\s+\d+\s+\d+")
+
+    def test_genElapsedTime_parses_prefixed_output(self):
+        """Verify genElapsedTime.py can parse a timing line behind a log prefix."""
+        sys.path.insert(
+            0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "util")
+        )
+        import genElapsedTime
+        from io import StringIO
+        from unittest.mock import patch
+
+        # A RUN_CMD wrapper may stamp every log line -- an elapsed-seconds
+        # prefix, say -- so the timing line is not at the start of its line.
+        log_dir = self.tmp_dir.name
+        log_file = os.path.join(log_dir, "1_test.log")
+        with open(log_file, "w") as f:
+            f.write("[    0.001] some output\n")
+            f.write(
+                "[  123.456] Elapsed time: 0:04.26[h:]min:sec. "
+                "CPU time: user 4.08 sys 0.17 (99%). Peak memory: 671508KB.\n"
+            )
+        with patch("sys.stdout", new_callable=StringIO) as mock_out:
+            genElapsedTime.scan_logs(["--logDir", log_dir, "--noHeader"])
+        output = mock_out.getvalue()
+        # 0:04.26 is 4 seconds, and 671508KB is 655MB; the prefix is not
+        # part of either.
+        self.assertRegex(output, r"1_test\s+\S*\s+4\s+655")
+
+    def test_genElapsedTime_parses_hours(self):
+        """Verify genElapsedTime.py understands the optional hours field."""
+        sys.path.insert(
+            0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "util")
+        )
+        import genElapsedTime
+        from io import StringIO
+        from unittest.mock import patch
+
+        log_dir = self.tmp_dir.name
+        log_file = os.path.join(log_dir, "1_test.log")
+        with open(log_file, "w") as f:
+            f.write(
+                "Elapsed time: 1:01:01.00[h:]min:sec. "
+                "CPU time: user 4.08 sys 0.17 (99%). Peak memory: 671508KB.\n"
+            )
+        with patch("sys.stdout", new_callable=StringIO) as mock_out:
+            genElapsedTime.scan_logs(["--logDir", log_dir, "--noHeader"])
+        output = mock_out.getvalue()
+        self.assertRegex(output, r"1_test\s+\S*\s+3661\s+655")
 
 
 if __name__ == "__main__":
