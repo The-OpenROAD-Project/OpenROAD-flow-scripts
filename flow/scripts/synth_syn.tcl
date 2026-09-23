@@ -1,5 +1,6 @@
 utl::set_metrics_stage "synth__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
+source $::env(SCRIPTS_DIR)/formal_check.tcl
 erase_non_stage_variables synth
 
 source_env_var_if_exists PLATFORM_TCL
@@ -76,11 +77,10 @@ orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # 1_synth.sdc.
 orfs_write_sdc $::env(RESULTS_DIR)/1_synth.sdc
 
-# Gate-level netlist for LEC (write_lec_verilog strips physical-only
-# masters, matching the CTS-stage LEC convention) and any other netlist
-# consumer. The Bazel synthesis action declares this file as an output,
-# so it must be written unconditionally. write_lec_verilog takes a bare
-# filename and prefixes $::env(RESULTS_DIR) itself, like the cts.tcl
-# call sites.
-source $::env(SCRIPTS_DIR)/lec_check.tcl
+# Gate-level netlist for downstream consumers. The Bazel synthesis action
+# declares this file as an output, so it must be written unconditionally.
 write_lec_verilog 1_synth.v
+
+if { $::env(LEC_CHECK) || $::env(SEC_CHECK) } {
+  write_lec_verilog 1_synth_lec.v
+}

@@ -13,7 +13,7 @@ fi
 cd "${_script_dir}/../"
 
 # package versions
-klayoutVersion=0.30.7
+klayoutVersion=0.30.12
 if [[ "$OSTYPE" == "darwin"* ]]; then
     numThreads=$(sysctl -n hw.logicalcpu)
 else
@@ -262,11 +262,11 @@ _installUbuntuPackages() {
         fi
         else
             if [[ $1 == 20.04 ]]; then
-                klayoutChecksum=e95175a8053d3577375fbd3a7b3d7dbf
+                klayoutChecksum=146f51de7fcc760e51c7438998934d9d
             elif [[ $1 == 22.04 ]]; then
-                klayoutChecksum=202530d198b0c7b93aa5af0e8e438ccd
+                klayoutChecksum=6dfffa50f385881768dee30bdc759608
             elif [[ $1 == 24.04 ]]; then
-                klayoutChecksum=145adaa044101bb41179aa63ec6d7f86
+                klayoutChecksum=0181713e60891e461d6d1664c1b8e213
             else
                 echo "Unsupported Ubuntu version $1. Supported versions: 20.04, 22.04, 24.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
                 exit 1
@@ -339,8 +339,9 @@ Usage: $0 [-all|-base|-common] [-<ARGS>]
                                 #
        $0 -base
                                 # Installs OpenROAD's dependencies using
-                                #     package managers (-common must be
-                                #     executed in another command).
+                                #     package managers, including Bazel
+                                #     (bazelisk). -common must be executed
+                                #     in another command.
        $0 -common
                                 # Installs OpenROAD's common dependencies
                                 #     (-base must be executed in another
@@ -443,6 +444,12 @@ if [[ "${option}" == "none"  ]]; then
 fi
 
 OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
+# build_openroad.sh builds OpenROAD with Bazel, so bazelisk and its runtime
+# libraries are base dependencies. They need root, and -common may run
+# unprivileged, so they ride along with -base only.
+if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+    OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -bazel"
+fi
 
 platform="$(uname -s)"
 case "${platform}" in
