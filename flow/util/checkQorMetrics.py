@@ -366,15 +366,21 @@ def render_run(result, verbose):
                 )
             )
 
+    # A design can have hundreds of absent metrics, so name them only on request.
     absent = sorted(
         metric.get("metricName", "?")
         for metric in metrics
         if metric.get("status") == "missing_from_baseline"
     )
-    if absent:
+    if absent and verbose:
         lines.append(
             "[WARN] Rules not evaluated, metric absent from the baseline build: "
             + ", ".join(absent)
+        )
+    elif absent:
+        lines.append(
+            f"[WARN] Rules not evaluated for {len(absent)} metric(s) absent from "
+            "the baseline build. Use --verbose to list them."
         )
 
     # A rule that fell back reports a different threshold than the one it was
@@ -550,7 +556,8 @@ def parse_args(argv):
     parser.add_argument(
         "--verbose",
         action="store_true",
-        help="Report every rule-checked metric, not only the failing ones.",
+        help="Report every rule-checked metric, not only the failing ones, "
+        "and name the metrics absent from the baseline build.",
     )
     args = parser.parse_args(argv)
     if args.metadata and not (args.platform and args.design):

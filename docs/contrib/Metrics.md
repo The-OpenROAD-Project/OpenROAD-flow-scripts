@@ -69,7 +69,7 @@ specific commit, call the script directly:
 cd OpenROAD-flow-scripts/flow
 ./util/checkQorMetrics.py                     # sweep, log in reports/inline-check.log
 ./util/checkQorMetrics.py --base-commit <sha> # pin the baseline build
-./util/checkQorMetrics.py --verbose           # show passing rules too
+./util/checkQorMetrics.py --verbose           # show passing rules and absent metrics
 ```
 
 If the check reports a failed rule, review it to make sure the change in
