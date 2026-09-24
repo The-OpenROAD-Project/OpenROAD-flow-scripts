@@ -1,0 +1,362 @@
+#### ==================================================================== ####
+#### Simulation parameters for Die-to-Wafer (W2W) hybrid bonding simulation.
+#### ==================================================================== ####
+d2w_simulation:
+  # === General Settings ===
+  MODE: "D2W_Hybrid_Bonding_Simulation" # Name of the simulation
+  DEBUG: false                          # Enable debug mode
+  OUTPUT_DIR: "output/"
+  INPUT_DIR: "input/"          # Output directory for simulation results
+  INTERFACE: None                      # Interface name  
+ # === Die Settings ===
+  NUM_DIE_STACKS: 10000            # Number of die stacks used in simulation
+  SIM_BATCH_SIZE: 10                            # Number of Dies samples simulated in one batch (a way to 
+  PITCH_r_um: None                            # Row pad pitch (µm) (In checkerboard layout, this is sqrt(2)/2 times of the real pitch)
+  PITCH_c_um: None                            # Column pad pitch (µm)  (In checkerboard layout, this is sqrt(2)/2 times of the real pitch)
+  DIE_W_um: None                          # Die width (µm)
+  DIE_L_um: None                          # Die length (µm)
+  PAD_ARR_ROW: None
+  PAD_ARR_COL: None
+  PAD_BOT_R_um: None                      # Bottom Cu pad radius (um)
+  PAD_TOP_R_um: None                      # Top Cu pad radius (um)
+  VOID_SHAPE: "circle"                  # Void shape: "circle" or "square"
+  dice_width: 100                      # Width of one die (µm)
+  pad_yield_flag: True
+  pad_yield_map_sub_factor: 1          # Subsampling factor for pad yield map (1: no subsampling, 10: rows/10 and cols/10)
+  PAD_ARRANGE_PATTERN: "rectangular"
+  # === Die Warpage Peeling Stress Mdodel ===
+  # === Bottom Wafer Settings ===
+  B_Chip_Cu_V: 0.40                     # Efficient chip layer Cu volume density
+  B_Chip_Sio2_V: 0.60                   # Efficient chip layer Sio2 volume density
+  B_Chip_Si_V: 0.00                     # Efficient chip layer Si volume density
+  B_Chip_T: 3.2e-6                      # Efficient chip layer thickness (m)
+  B_Sub_Cu_V: 0.10                      # Efficient substrate layer Cu volume density
+  B_Sub_Sio2_V: 0.00                    # Efficient substrate layer Sio2 volume density
+  B_Sub_Si_V: 0.90                      # Efficient substrate layer si volume density
+  B_Sub_T: 775e-6                       # Efficient substrate layer thickness (m)
+  S_INIT_A_M: 300e-9                     # Pre-anneal warpages (m)
+  # === Top Wafer Settings ===
+  T_Chip_Cu_V: 0.30                     # Efficient chip layer Cu volume density
+  T_Chip_Sio2_V: 0.70                   # Efficient chip layer Sio2 volume density
+  T_Chip_Si_V: 0.00                     # Efficient chip layer Si volume density
+  T_Chip_T: 3.2e-6                      # Efficient chip layer thickness (m)
+  T_Sub_Cu_V: 0.10                      # Efficient substrate layer Cu volume density
+  T_Sub_Sio2_V: 0.00                    # Efficient substrate layer Sio2 volume density
+  T_Sub_Si_V: 0.90                      # Efficient substrate layer si volume density
+  T_Sub_T: 775e-6                       # Efficient substrate layer thickness (m)
+  S_INIT_B_M: 0.0e-6                    # Pre-anneal warpages (m)
+
+ 
+
+  CONTACT_AREA_CONSTRAINT: 0.75         # Minimum allowed contact area ratio
+  CRITICAL_DIST_CONSTRAINT: 0.75        # Minimum distance constraint for critical pads
+
+  # === Misalignment Parameters ===
+  RANDOM_MISALIGNMENT_MEAN_um: 0        # Random misalignment mean (µm)
+  RANDOM_MISALIGNMENT_STD_um: 2e-2         # Random misalignment standard deviation (µm)
+  SYSTEM_TRANSLATION_X_MEAN_um: 0       # Systematic X translation mean (µm)
+  SYSTEM_TRANSLATION_X_STD_um: 2e-2        # Systematic X translation std (µm)
+  SYSTEM_TRANSLATION_Y_MEAN_um: 0       # Systematic Y translation mean (µm)
+  SYSTEM_TRANSLATION_Y_STD_um: 2e-2        # Systematic Y translation std (µm)
+  SYSTEM_ROTATION_MEAN_rad: 6e-5            # Systematic rotation mean (rad)
+  SYSTEM_ROTATION_STD_rad: 1e-5             # Systematic rotation std (rad)
+
+  # === Bowing and Magnification ===
+  TOP_INI_BOW_MEAN_um: 10.0                  # Initial top die bow mean (µm)
+  TOP_INI_BOW_STD_um: 5.0                    # Initial top die bow std (µm)
+  BOT_INI_BOW_MEAN_um: 10.0                  # Initial bottom stack/die bow mean (µm)
+  BOT_INI_BOW_STD_um: 5.0                    # Initial bottom stack/die bow std (µm)
+  k_mag: 0.1                           # Magnification slope coefficient
+  M_0: 0                                # Magnification offset
+  STACK_WARPAGE_TH: 20                                # Total stack warpage threshold (um)
+  ANNEAL_MODE: "batch"                # batch: all layers anneal once after stacking; sequential: anneal after each bond
+
+  # === Defect Parameters ===
+  first_contact: 'center'            # First contact location: 'center' or 'edge' or 'corner (left-top)'
+  D0: 1e-9                              # Particle density (1/µm²)
+  D1: 5e-9                              # Edge peak particle density (1/µm²)
+  EDGE_REGION_WIDTH_um: 300.0           # Width of the edge region for elevated particle density (µm)
+  z: 3                                  # Particle thickness distribution exponent
+  t_0: 0.1                                # Minimum particle thickness (µm)
+  k_r: 1.8e-4
+  k_r0: 230
+  k_L: 6.2e-2
+  k_n: 9e-5
+  k_S: 2.7
+
+  # === Cu Dishing Parameters ===
+  CU_RECESS_PAD_FAIL_RATIO: 0.0        # Ratio of pads with Cu recess > threshold to consider die as failed
+  TOP_DISH_MEAN_nm: -4.0                  # Top pad height mean (nm)
+  TOP_DISH_STD_nm: 0.493761                  # One-level Cu dishing std (nm)
+  BOT_DISH_MEAN_nm: -4.0                  # Bottom pad height mean (nm)
+  BOT_DISH_STD_nm: 0.493761                  # One-level Cu dishing std (nm)
+  k_et: 0.053                           # Top Cu expansion coefficient (nm/K)
+  k_eb: 0.053                           # Bottom Cu expansion coefficient (nm/K)
+  T_R: 25                               # Room temperature (°C)
+  T_anl: 300                            # Annealing temperature (°C)
+  CU_E_GPA: 91.8                        # Cu Young’s modulus (GPa)
+  CU_NU: 0.34                           # Cu Poisson’s ratio 
+  CU_ALPHA_PPM: 17.6                    # Cu coefficient of thermal expansion (CTE) (ppm/°C)
+  OX_E_GPA: 73.0                        # Sio2 Young’s modulus (GPa)
+  OX_NU: 0.17                           # Sio2 Poisson’s ratio
+  OX_ALPHA_PPM: 0.5                     # Sio2 coefficient of thermal expansion (CTE) (ppm/°C)
+  SI_E_GPA: 131.0                        # Si Young’s modulus (GPa)
+  SI_NU: 0.28                           # Si Poisson’s ratio
+  SI_ALPHA_PPM: 2.6                     # Si coefficient of thermal expansion (CTE) (ppm/°C)
+
+  # === Cu & Sio2 peeling stress model Parameters ===
+  # === heat up and dwell stage ===
+  SIGMA_Y_MPA: 321.0                    # Elastic yield point (MPa)
+  C_HEAT_E: 1.005319e-12                       # Eq.(29) coefficient for sigma_e
+  C_HEAT_P: 6.088622e-6                       # Eq.(29) coefficient for sigma_p
+  C_COOL_E: 3.375203e-6                       # Eq.(35) coefficient for sigma_e,cool
+  C_COOL_P: 3.721387e-6                       # Eq.(35) coefficient for sigma_p,cool
+  EXP_PHI: 0.206576                          # Eq.(30)
+  BAUSCHINGER: 0.208455                      # Eq.(33)
+  EXP_INVPHI: 0.1                       # Eq.(36)
+  EXP_AREA: 0.0465                         # Eq.(36)
+  KN_DEN_M: 17.310513e-6                         # Eq.(31) denominator length in meters
+
+  # === Roughness Parameters ===
+  Asperity_R_m: 2e-6                      # Asperity curvature radius (m)
+  Roughness_sigma_m: 0.5e-9                 # Surface roughness std (m)
+  eta_s: 40e12                          # Asperity density (1/m²)
+  Roughness_constant: 0.07
+  Adhesion_energy: 1.2                  # Adhesion energy (J/m²)
+  Dielectric_Young_modulus_Pa: 7.3e10                 # Young's modulus (Pa)
+  Dielectric_thickness: 1.5e-6          # Dielectric thickness (m)
+  DISH_0_m: 26e-9                         # Reference dish depth (m)
+  k_peel: 1.76e16                       # Peel force constant (N/m³)
+
+  # === Adhesion_energy to Critical Peeling Stress Model Parameters ===
+  # σ = Effective_Contact_Area * ((Gc_Jpm2 * E_GPa) / (CRIT_aY2_UM * (1.0 - NU**2)))^(1/2)
+  CRIT_aY2_UM: 1.90                    # Geometric/Compliance factor (µm)
+  GC_SIO2_JPM2: 2.0                     # Sio2 Adhesion energy (J/m²)
+  GC_CU_JPM2: 25.0                      # Cu Adhesion energy (J/m²)
+  Effective_Contact_Area: 1.0           # Fraction of pad area effectively bearing normal load
+
+  # === ESD Parameters ===
+  TILT_X_MEAN_DEG: 0.000
+  TILT_X_STD_DEG: 1e-5
+  TILT_Y_MEAN_DEG: 0.000
+  TILT_Y_STD_DEG: 1e-5
+
+  V_CDM: 5.0
+  ESD_Z_TOP_UM: 0.1                     # Nominal top-die z gap used by ESD first-touch geometry (um)
+  ESD_ARC_SMALL_GAP_SLOPE_V_PER_UM: 97.0
+  ESD_ARC_PLATEAU_V: 337.0
+  ESD_ARC_PLATEAU_UPPER_GAP_UM: 7.0
+  ESD_ARC_LARGE_GAP_OFFSET_V: 170.0
+  ESD_ARC_LARGE_GAP_LINEAR_COEFF: 2.48
+  ESD_ARC_LARGE_GAP_SQRT_COEFF: 58.0
+  ESD_MIN_GEFF_um: 1.0e-3               # Numerical floor for capacitance gap (um)
+  ESD_ANALYTICAL_INNER_Q: 48
+  ESD_ANALYTICAL_OUTER_QX: 5
+  ESD_ANALYTICAL_OUTER_QY: 5
+  ESD_ANALYTICAL_VOLTAGE_Q: 5
+  ESD_ANALYTICAL_TAIL_SIGMA: 8.0
+  ESD_ANALYTICAL_CHUNK_SIZE: 100000
+  ESD_ANALYTICAL_FILL_RESIDUAL_UNIFORMLY: True
+  ESD_ANALYTICAL_CANDIDATE_SIGMA_WINDOW: 8.0
+  ESD_ANALYTICAL_CANDIDATE_MIN_PADS: 4096
+  ESD_ANALYTICAL_CANDIDATE_DISABLE_FRACTION: 0.8
+
+  WEIBULL_K: 4.44985
+  WEIBULL_LAMBDA: 0.0621816
+  CUTOFF_MIN_A: 0.0
+  
+  # Modified floating-stack CDM LC model.
+  Cf_die: 0.904                           # Die self-capacitance geometry factor
+  Cf_wafer: 0.900                         # Wafer/root self-capacitance geometry factor
+  epsr: 1.0                             # Effective relative permittivity
+  Kc: 9.67230332132e-06                            # Close-proximity coupling participation factor
+  L0: 1.01907739978e-12                               # Baseline local discharge inductance (nH)
+  Kl: 1.0                               # Calibrated effective current-path coefficient
+  l0: 0.0197457261531                               # Reference length for sub-linear inductance scaling (mm)
+  m: 0.155397388889                                # Sub-linear size-scaling exponent, 0 <= m < 1
+
+  # === Simulation Control ===
+  simulation_times: 1                  # Number of simulation iterations
+  approximate_set: 1                   # 1: enable overlay simulation approximation, 0: disable
+
+  # === Miscellaneous Parameters ===
+  plot_flag: False                      # Enable plotting of results
+ 
+
+#### ==================================================================== ####
+#### Modeling parameters for Die-to-Wafer (W2W) hybrid bonding simulation.
+#### ==================================================================== ####
+d2w_modeling:
+  # === General Settings ===
+  MODE: "D2W_Hybrid_Bonding_Modeling"   # Name of the modeling
+  DEBUG: false                          # Enable debug mode
+  OUTPUT_DIR: "output/"
+  INPUT_DIR: "input/"          # Output directory for simulation results
+  INTERFACE: "CPU_From_interposer"                      # Design name  
+  # === Per Wafer Parameters ===
+  PITCH_r_um: None                            # Row pad pitch (µm) (In checkerboard layout, this is sqrt(2)/2 times of the real pitch)
+  PITCH_c_um: None                            # Column pad pitch (µm) (In checkerboard layout, this is sqrt(2)/2 times of the real pitch)
+  DIE_W_um: None                          # Die width (µm)
+  DIE_L_um: None                          # Die length (µm)
+  PAD_ARR_ROW: None
+  PAD_ARR_COL: None
+  PAD_BOT_R_um: None                      # Bottom Cu pad radius (um)
+  PAD_TOP_R_um: None                      # Top Cu pad radius (um)
+  VOID_SHAPE: "circle"                  # Shape of void: "circle" or "square"
+  dice_width: 100                      # Dice width to separate dies (µm)
+  pad_yield_flag: True                  # Enable pad yield map generation
+  pad_yield_map_sub_factor: 1          # Subsampling factor for pad yield map (1: no subsampling, 10: rows/10 and cols/10)
+  PAD_ARRANGE_PATTERN: "rectangular"
+  # === Die Warpage Peeling Stress Mdodel ===
+  # === Bottom Wafer Settings ===
+  B_Chip_Cu_V: 0.40                     # Efficient chip layer Cu volume density
+  B_Chip_Sio2_V: 0.60                   # Efficient chip layer Sio2 volume density
+  B_Chip_Si_V: 0.00                     # Efficient chip layer Si volume density
+  B_Chip_T: 3.2e-6                      # Efficient chip layer thickness (m)
+  B_Sub_Cu_V: 0.10                      # Efficient substrate layer Cu volume density
+  B_Sub_Sio2_V: 0.00                    # Efficient substrate layer Sio2 volume density
+  B_Sub_Si_V: 0.90                      # Efficient substrate layer si volume density
+  B_Sub_T: 775e-6                       # Efficient substrate layer thickness (m)
+  S_INIT_A_M: 100e-9                   # Pre-anneal warpages (m)
+  # === Top Wafer Settings ===
+  T_Chip_Cu_V: 0.30                     # Efficient chip layer Cu volume density
+  T_Chip_Sio2_V: 0.70                   # Efficient chip layer Sio2 volume density
+  T_Chip_Si_V: 0.00                     # Efficient chip layer Si volume density
+  T_Chip_T: 3.2e-6                      # Efficient chip layer thickness (m)
+  T_Sub_Cu_V: 0.10                      # Efficient substrate layer Cu volume density
+  T_Sub_Sio2_V: 0.00                    # Efficient substrate layer Sio2 volume density
+  T_Sub_Si_V: 0.90                      # Efficient substrate layer si volume density
+  T_Sub_T: 775e-6                       # Efficient substrate layer thickness (m)
+  S_INIT_B_M: 0.0e-6                    # Pre-anneal warpages (m)
+
+ 
+
+  CONTACT_AREA_CONSTRAINT: 0.75         # Minimum allowed contact area ratio
+  CRITICAL_DIST_CONSTRAINT: 0.75        # Minimum distance constraint for critical pads
+
+  # === Overlay Parameters ===
+  num_samples: 10000                    # Number of samples for misalignment input parameters
+  RANDOM_MISALIGNMENT_MEAN_um: 0        # Mean of random overlay error (µm)
+  RANDOM_MISALIGNMENT_STD_um: 2e-2         # Std of random overlay error (µm)
+  SYSTEM_TRANSLATION_X_MEAN_um: 0       # Mean of systematic X translation (µm)
+  SYSTEM_TRANSLATION_X_STD_um: 2e-2        # Std of systematic X translation (µm)
+  SYSTEM_TRANSLATION_Y_MEAN_um: 0       # Mean of systematic Y translation (µm)
+  SYSTEM_TRANSLATION_Y_STD_um: 2e-2        # Std of systematic Y translation (µm)
+  SYSTEM_ROTATION_MEAN_rad: 6e-5            # Systematic rotation mean (rad)
+  SYSTEM_ROTATION_STD_rad: 1e-5             # Systematic rotation std (rad)
+  TOP_INI_BOW_MEAN_um: 10.0                  # Initial top die bow mean (µm)
+  TOP_INI_BOW_STD_um: 5.0                    # Initial top die bow std (µm)
+  BOT_INI_BOW_MEAN_um: 10.0                  # Initial bottom stack/die bow mean (µm)
+  BOT_INI_BOW_STD_um: 5.0                    # Initial bottom stack/die bow std (µm)
+  k_mag: 0.1                           # Magnification slope coefficient
+  M_0: 0                                # Magnification offset
+  STACK_WARPAGE_TH: 20                                # Total stack warpage threshold (um)
+  ANNEAL_MODE: "batch"                # batch: all layers anneal once after stacking; sequential: anneal after each bond
+
+  # === Defect Parameters ===
+  first_contact: 'center'            # First contact location: 'center' or 'vertical-edge' or 'horizontal-edge' or 'corner' (left-bottom)
+  D0: 1e-9                              # Particle density (1/µm²)
+  D1: 5e-9                              # Edge peak particle density (1/µm²)
+  EDGE_REGION_WIDTH_um: 300.0           # Width of the edge region for elevated particle density (µm)
+  z: 3                                  # Thickness distribution exponent factor
+  t_0: 0.1                              # Minimum particle thickness (µm)
+  k_r: 1.8e-4
+  k_r0: 230
+  k_L: 6.2e-2
+  k_n: 9e-5
+  k_S: 2.7
+
+  # === Cu Expansion / Dishing Parameters ===
+  CU_RECESS_PAD_FAIL_RATIO: 0.0        # Ratio of pads with Cu recess > threshold to consider die as failed
+  TOP_DISH_MEAN_nm: -4.0                  # Top pad height mean (nm)
+  TOP_DISH_STD_nm: 0.493761                  # One-level Cu dishing std (nm)
+  BOT_DISH_MEAN_nm: -4.0                  # Bottom pad height mean (nm)
+  BOT_DISH_STD_nm: 0.493761                  # One-level Cu dishing std (nm)
+  k_et: 0.053                           # Top Cu expansion coef (nm/K)
+  k_eb: 0.053                           # Bottom Cu expansion coef (nm/K)
+  T_R: 25                               # Room temperature (°C)
+  T_anl: 300                            # Annealing temperature (°C)
+  CU_E_GPA: 91.8                        # Cu Young’s modulus (GPa)
+  CU_NU: 0.34                           # Cu Poisson’s ratio 
+  CU_ALPHA_PPM: 17.6                    # Cu coefficient of thermal expansion (CTE) (ppm/°C)
+  OX_E_GPA: 73.0                        # Sio2 Young’s modulus (GPa)
+  OX_NU: 0.17                           # Sio2 Poisson’s ratio
+  OX_ALPHA_PPM: 0.5                     # Sio2 coefficient of thermal expansion (CTE) (ppm/°C)
+  SI_E_GPA: 131.0                        # Si Young’s modulus (GPa)
+  SI_NU: 0.28                           # Si Poisson’s ratio
+  SI_ALPHA_PPM: 2.6                     # Si coefficient of thermal expansion (CTE) (ppm/°C)
+
+  # === Cu & Sio2 peeling stress model Parameters ===
+  # === heat up and dwell stage ===
+  SIGMA_Y_MPA: 321.0                    # Elastic yield point (MPa)
+  C_HEAT_E: 1.005319e-12                       # Eq.(29) coefficient for sigma_e
+  C_HEAT_P: 6.088622e-6                       # Eq.(29) coefficient for sigma_p
+  C_COOL_E: 3.375203e-6                       # Eq.(35) coefficient for sigma_e,cool
+  C_COOL_P: 3.721387e-6                       # Eq.(35) coefficient for sigma_p,cool
+  EXP_PHI: 0.206576                          # Eq.(30)
+  BAUSCHINGER: 0.208455                      # Eq.(33)
+  EXP_INVPHI: 0.1                       # Eq.(36)
+  EXP_AREA: 0.0465                         # Eq.(36)
+  KN_DEN_M: 17.310513e-6                         # Eq.(31) denominator length in meters
+
+  # === Roughness Parameters ===
+  Asperity_R_m: 2e-6                      # Asperity curvature radius (m)
+  Roughness_sigma_m: 0.5e-9               # Roughness standard deviation (m)
+  eta_s: 40e12                          # Asperity density (1/m²)
+  Roughness_constant: 0.07
+  Adhesion_energy: 1.2                  # Adhesion energy (J/m²)
+  Dielectric_Young_modulus_Pa: 73e9                   # Dielectric Young's modulus (Pa)
+  Dielectric_thickness: 1.5e-6          # Dielectric layer thickness (m)
+  DISH_0_m: 26e-9                         # Reference dish height (m)
+  k_peel: 1.76e16                       # Peel force coefficient (N/m³)
+
+  # === Adhesion_energy to Critical Peeling Stress Model Parameters ===
+  # σ = Effective_Contact_Area * ((Gc_Jpm2 * E_GPa) / (CRIT_aY2_UM * (1.0 - NU**2)))^(1/2)
+  CRIT_aY2_UM: 1.90                    # Geometric/Compliance factor (µm)
+  GC_SIO2_JPM2: 2.0                     # Sio2 Adhesion energy (J/m²)
+  GC_CU_JPM2: 25.0                      # Cu Adhesion energy (J/m²)
+  Effective_Contact_Area: 1.0           # Fraction of pad area effectively bearing normal load
+
+  # === ESD Parameters ===
+  TILT_X_MEAN_DEG: 0.000
+  TILT_X_STD_DEG: 1e-5
+  TILT_Y_MEAN_DEG: 0.000
+  TILT_Y_STD_DEG: 1e-5
+
+  V_CDM: 5.0
+  ESD_Z_TOP_UM: 0.1                     # Nominal top-die z gap used by ESD first-touch geometry (um)
+  ESD_ARC_SMALL_GAP_SLOPE_V_PER_UM: 97.0
+  ESD_ARC_PLATEAU_V: 337.0
+  ESD_ARC_PLATEAU_UPPER_GAP_UM: 7.0
+  ESD_ARC_LARGE_GAP_OFFSET_V: 170.0
+  ESD_ARC_LARGE_GAP_LINEAR_COEFF: 2.48
+  ESD_ARC_LARGE_GAP_SQRT_COEFF: 58.0
+  ESD_MIN_GEFF_um: 1.0e-3               # Numerical floor for capacitance gap (um)
+  ESD_ANALYTICAL_INNER_Q: 48
+  ESD_ANALYTICAL_OUTER_QX: 5
+  ESD_ANALYTICAL_OUTER_QY: 5
+  ESD_ANALYTICAL_VOLTAGE_Q: 5
+  ESD_ANALYTICAL_TAIL_SIGMA: 8.0
+  ESD_ANALYTICAL_CHUNK_SIZE: 100000
+  ESD_ANALYTICAL_FILL_RESIDUAL_UNIFORMLY: True
+  ESD_ANALYTICAL_CANDIDATE_SIGMA_WINDOW: 8.0
+  ESD_ANALYTICAL_CANDIDATE_MIN_PADS: 4096
+  ESD_ANALYTICAL_CANDIDATE_DISABLE_FRACTION: 0.8
+
+  WEIBULL_K: 4.44985
+  WEIBULL_LAMBDA: 0.0621816
+  CUTOFF_MIN_A: 0.0
+
+  # Modified floating-stack CDM LC model.
+  Cf_die: 0.904                           # Die self-capacitance geometry factor
+  Cf_wafer: 0.900                         # Wafer/root self-capacitance geometry factor
+  epsr: 1.0                             # Effective relative permittivity
+  Kc: 9.67230332132e-06                            # Close-proximity coupling participation factor
+  L0: 1.01907739978e-12                               # Baseline local discharge inductance (nH)
+  Kl: 1.0                               # Calibrated effective current-path coefficient
+  l0: 0.0197457261531                               # Reference length for sub-linear inductance scaling (mm)
+  m: 0.155397388889                                # Sub-linear size-scaling exponent, 0 <= m < 1
+
+  # === Miscellaneous Parameters ===
+  plot_flag: False                      # Enable plotting of results
+ 

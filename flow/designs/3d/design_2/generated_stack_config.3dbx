@@ -1,0 +1,59 @@
+Header:
+  version: 2.0
+  unit: micron
+  precision: 2000
+  include:
+  - generated_chiplet_definitions.3dbv
+Design:
+  name: Generated_Design_2
+ChipletInst:
+  Substrate_Organic_0:
+    reference: Substrate_Organic
+    is_master: true
+  Compute_Large_0_1:
+    reference: Compute_Large_0
+    is_master: true
+  Compute_Large_1_2:
+    reference: Compute_Large_1
+    is_master: true
+  Compute_Large_2_3:
+    reference: Compute_Large_2
+    is_master: true
+  Compute_Large_3_4:
+    reference: Compute_Large_3
+    is_master: true
+Stack:
+  Substrate_Organic_0:
+    loc: [0.0, 0.0]
+    z: 0.0
+    orient: R0
+    root: true
+  Compute_Large_0_1:
+    loc: [0.0, 0.0]
+    z: 100.0
+    orient: MZ_MX
+  Compute_Large_1_2:
+    loc: [15831.3885, 0.0]
+    z: 100.0
+    orient: MZ_MX
+  Compute_Large_2_3:
+    loc: [0.0, 15831.3885]
+    z: 100.0
+    orient: MZ_MX
+  Compute_Large_3_4:
+    loc: [15831.3885, 15831.3885]
+    z: 100.0
+    orient: MZ_MX
+Connection:
+  Conn1:
+    top: Compute_Large_0_1.regions.From_Substrate_Organic
+    bot: Substrate_Organic_0.regions.To_Compute_Large_0
+  Conn2:
+    top: Compute_Large_1_2.regions.From_Substrate_Organic
+    bot: Substrate_Organic_0.regions.To_Compute_Large_1
+  Conn3:
+    top: Compute_Large_2_3.regions.From_Substrate_Organic
+    bot: Substrate_Organic_0.regions.To_Compute_Large_2
+  Conn4:
+    top: Compute_Large_3_4.regions.From_Substrate_Organic
+    bot: Substrate_Organic_0.regions.To_Compute_Large_3
