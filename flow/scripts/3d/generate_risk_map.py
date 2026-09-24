@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """
-Generate per-pad risk heatmap CSV files from YAP W2W simulation output.
+Generate per-pad risk heatmap CSV files from YAP W2W or D2W simulation output.
 
-Reads the assembly_fail_map_per_interface_dict.npz, per-interface
-bitmap_collection.npy, per-interface YAML configs, and the .3dbx stack
-config to produce CSV heatmap files with format:
+Reads the assembly_fail_map_per_interface_dict<tag>.npz, per-interface
+bitmap_collection.npy, per-interface <interface><tag>.yaml configs, and the
+.3dbx stack config to produce CSV heatmap files with format:
     <chiplet_instance>,<connection_name>_<mechanism>
     x0,y0,x1,y1,value
 
 Pad coordinates are in the chiplet's pre-transform local frame.
 
+<tag> is empty for W2W. D2W appends __<config name>__<criticality profile>.
+
 Usage:
     generate_risk_map.py --results_dir <results_dir> --objects_dir <objects_dir>
+                         [--file_tag <tag>]
 """
 
 import argparse
@@ -59,8 +62,10 @@ def build_interface_mapping(dbx_path: str) -> dict:
     return mapping
 
 
-def generate_risk_maps(results_dir: str, objects_dir: str):
-    npz_path = os.path.join(results_dir, "assembly_fail_map_per_interface_dict.npz")
+def generate_risk_maps(results_dir: str, objects_dir: str, file_tag: str = ""):
+    npz_path = os.path.join(
+        results_dir, f"assembly_fail_map_per_interface_dict{file_tag}.npz"
+    )
     if not os.path.exists(npz_path):
         raise FileNotFoundError(f"Fail map not found: {npz_path}")
 
@@ -81,7 +86,7 @@ def generate_risk_maps(results_dir: str, objects_dir: str):
             print(f"Skipping {itf_name}: bitmap collection not found")
             continue
 
-        itf_cfg_path = os.path.join(objects_dir, f"{itf_name}.yaml")
+        itf_cfg_path = os.path.join(objects_dir, f"{itf_name}{file_tag}.yaml")
         if not os.path.exists(itf_cfg_path):
             print(f"Skipping {itf_name}: interface config not found at {itf_cfg_path}")
             continue
@@ -132,7 +137,7 @@ def generate_risk_maps(results_dir: str, objects_dir: str):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate risk heatmap CSVs from YAP W2W simulation output"
+        description="Generate risk heatmap CSVs from YAP W2W or D2W simulation output"
     )
     parser.add_argument(
         "--results_dir",
@@ -144,8 +149,13 @@ def main():
         required=True,
         help="Objects directory holding the staged .3dbx and per-interface YAMLs",
     )
+    parser.add_argument(
+        "--file_tag",
+        default="",
+        help="Suffix YAP appended to its output names (empty for W2W)",
+    )
     args = parser.parse_args()
-    generate_risk_maps(args.results_dir, args.objects_dir)
+    generate_risk_maps(args.results_dir, args.objects_dir, args.file_tag)
 
 
 if __name__ == "__main__":

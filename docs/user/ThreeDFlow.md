@@ -2,8 +2,9 @@
 
 A Makefile-driven flow for 3D hybrid bonding yield analysis. It combines
 OpenROAD for 3D stack validation with [YAP](https://github.com/osamahammad21/YAP)
-(Yield Analysis Platform) for wafer-to-wafer (W2W) hybrid bonding yield
-simulation, and visualizes per-pad risk heatmaps in the OpenROAD GUI.
+(Yield Analysis Platform) for wafer-to-wafer (W2W) or die-to-wafer (D2W) hybrid
+bonding yield simulation, and visualizes per-pad risk heatmaps in the OpenROAD
+GUI.
 
 This flow shares the ORFS directory layout and `make` entry point with the
 RTL-to-GDS flow, but nothing else: there is no platform, no synthesis and no
@@ -57,17 +58,17 @@ make DESIGN_CONFIG=./designs/3d/design_6/config.mk yap_simulate
 
 Two designs ship with the flow, and they differ in where their inputs live:
 
-| Design | Stack | Inputs |
-| --- | --- | --- |
-| `design_6` | A four high DRAM stack on a TSV interconnect die, four interfaces bonded vertically | In the YAP checkout, under `$(YAP_HOME)/W2W/input/design_6` |
-| `design_2` | Four `Compute_Large` chiplets side by side on an organic substrate, four interfaces at the same z | Next to `config.mk`, in the design directory |
+| Design | Stack | Simulator | Inputs |
+| --- | --- | --- | --- |
+| `design_6` | A four high DRAM stack on a TSV interconnect die, four interfaces bonded vertically | W2W | In the YAP checkout, under `$(YAP_HOME)/W2W/input/design_6` |
+| `design_2` | Four `Compute_Large` chiplets side by side on an organic substrate, four interfaces at the same z | D2W | Next to `config.mk`, in the design directory |
 
 | Step | Target | Description | Output |
 | --- | --- | --- | --- |
 | 1 | `check_3dblox` | Reads the 3D stack config into OpenROAD, validates the design, writes an ODB | `results/3d/<design>/<design>.odb` |
-| 2 | `prepare` | Stages the design files into `objects/`, patching the YAP config copy with the output path and `NUM_WAFERS` | `objects/3d/<design>/` |
+| 2 | `prepare` | Stages the design files into `objects/`, patching the YAP config copy with the output path and sample count, and optionally assigning bump names | `objects/3d/<design>/` |
 | 3 | `generate_criticality` | Generates a default criticality file for any `.bmap` missing one | `objects/3d/<design>/*_criticality.txt` |
-| 4 | `yap_simulate` | Runs the YAP Monte Carlo W2W hybrid bonding simulation | `results/3d/<design>/**/*.npz` |
+| 4 | `yap_simulate` | Runs the YAP Monte Carlo W2W or D2W hybrid bonding simulation | `results/3d/<design>/**/*.npz` |
 | 5 | `generate_risk_map` | Converts the YAP fail maps into per-pad risk CSVs, one per failure mechanism | `results/3d/<design>/**/*_risk.csv` |
 | 6 | `view_heatmaps` | Opens the OpenROAD web viewer with the risk heatmaps attached to their chiplets | Interactive viewer |
 
@@ -90,6 +91,42 @@ Per-step logs land in `logs/3d/<design>/`.
 > **Note:** `view_heatmaps` calls `web_load_chiplet_heatmap`, which is not in
 > every OpenROAD build. If the command is missing, the viewer reports an unknown
 > command; steps 1 to 5 are unaffected.
+
+## Choosing W2W or D2W
+
+YAP has two simulators, and a design picks one with `YAP_FLOW`:
+
+- `W2W` (default): wafer-to-wafer, whole wafers bonded to each other.
+- `D2W`: die-to-wafer, individual dies placed onto a base wafer or substrate.
+
+| Variable | Applies to | Default | Description |
+| --- | --- | --- | --- |
+| `YAP_FLOW` | both | `W2W` | `W2W` or `D2W`; selects `$(YAP_HOME)/W2W` or `$(YAP_HOME)/D2W` |
+| `YAP_MODE` | both | `w2w_simulation` / `d2w_simulation` | Section of `YAP_CONFIG` to run |
+| `NUM_WAFERS` | W2W | `1` | Written to `NUM_WAFER_STACKS` in the staged config |
+| `NUM_DIE_STACKS` | D2W | `1000` | Written to `NUM_DIE_STACKS` in the staged config |
+| `YAP_CRITICALITY_PROFILE` | D2W | `default` | `default` or `esd_strict`, see YAP's `D2W/utils/generate_criticality.py` |
+| `YAP_ASSIGN_BUMP_NAMES_ARGS` | both | empty | Arguments to YAP's `D2W/utils/assign_bump_names.py`, for `.bmap` files without port/net names |
+
+The two simulators take different configs: a W2W `YAP_CONFIG` has
+`w2w_simulation`/`w2w_modeling` sections, a D2W one `d2w_simulation`/
+`d2w_modeling`. `$(YAP_HOME)/D2W/configs/GOLDEN.yaml` is a D2W starting point.
+
+D2W names its outputs with a `__<config name>__<profile>` suffix, for example
+`assembly_fail_map_per_interface_dict__design_2_d2w__default.npz`. The flow
+accounts for this.
+
+Some `.bmap` files ship with `-` in place of every port and net name, which
+YAP would read as one net shared by every bump. Setting
+`YAP_ASSIGN_BUMP_NAMES_ARGS` names them by ratio during `prepare`, for example:
+
+```makefile
+export YAP_ASSIGN_BUMP_NAMES_ARGS = --critical-ratio 0.30 --redundant-ratio 0 \
+                                    --pg-ratio 0.50 --dummy-ratio 0.20
+```
+
+Only the staged copies in `objects/` are renamed. Changing this variable does
+not re-run `prepare` on its own; run `make clean` first.
 
 ## Directory layout
 
@@ -147,8 +184,9 @@ Create `flow/designs/3d/<design>/config.mk`:
 export FLOW_TYPE        = 3d
 
 export DESIGN           = <design>
+export YAP_FLOW         = W2W               # or D2W, see "Choosing W2W or D2W"
 export YAP_MODE         = w2w_simulation    # or w2w_modeling
-export NUM_WAFERS       = 1
+export NUM_WAFERS       = 1                 # NUM_DIE_STACKS for D2W
 
 export YAP_CONFIG       = $(DESIGN_DIR)/<design>.yaml
 export STACK_CONFIG     = $(DESIGN_DIR)/generated_stack_config.3dbx
@@ -171,8 +209,8 @@ so a `*_To_*.bmap` that is not staged is simply not simulated.
 `<design>.yaml` holds the YAP simulation parameters: wafer geometry, material
 properties, misalignment distributions and so on. Use an existing design's YAML
 as a starting point. The flow never modifies it - `prepare` copies it into
-`objects/` and patches the copy, so `OUTPUT_DIR` and `NUM_WAFER_STACKS` in the
-original are ignored.
+`objects/` and patches the copy, so `OUTPUT_DIR` and `NUM_WAFER_STACKS` (or
+`NUM_DIE_STACKS` for D2W) in the original are ignored.
 
 Then run:
 

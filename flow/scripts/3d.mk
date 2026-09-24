@@ -6,7 +6,8 @@
 # from variables.mk is available here.
 #
 # The flow drives OpenROAD for 3D stack validation and YAP (tools/YAP) for
-# wafer-to-wafer hybrid bonding yield simulation, then renders the resulting
+# wafer-to-wafer (W2W) or die-to-wafer (D2W) hybrid bonding yield simulation,
+# selected per design with YAP_FLOW, then renders the resulting
 # per-pad risk maps as heatmaps in the OpenROAD GUI.
 #
 # See docs/user/ThreeDFlow.md.
@@ -60,8 +61,17 @@ OPENROAD_CMD     = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_WEB_CMD = $(OPENROAD_EXE) -web $(OPENROAD_ARGS)
 
 YAP_HOME             ?= $(abspath $(FLOW_HOME)/../tools/YAP)
-YAP_W2W_DIR           = $(YAP_HOME)/W2W
-GENERATE_CRITICALITY  = $(YAP_W2W_DIR)/utils/generate_criticality.py
+
+# Which YAP simulator the design runs through: W2W (wafer-to-wafer, whole
+# wafers bonded) or D2W (die-to-wafer, dies placed onto a base).
+YAP_FLOW ?= W2W
+ifeq ($(filter W2W D2W,$(YAP_FLOW)),)
+  $(error YAP_FLOW must be W2W or D2W, got '$(YAP_FLOW)')
+endif
+YAP_FLOW_DIR          = $(YAP_HOME)/$(YAP_FLOW)
+GENERATE_CRITICALITY  = $(YAP_FLOW_DIR)/utils/generate_criticality.py
+# Only D2W ships the bump naming script, but it works on any .bmap.
+ASSIGN_BUMP_NAMES     = $(YAP_HOME)/D2W/utils/assign_bump_names.py
 
 # Checked here rather than per target: every step of this flow either runs YAP
 # or consumes something YAP produced, and design configs are free to name their
@@ -73,8 +83,28 @@ endif
 
 #-------------------------------------------------------------------------------
 # Design defaults
-YAP_MODE   ?= w2w_simulation
-NUM_WAFERS ?= 1
+ifeq ($(YAP_FLOW),D2W)
+  YAP_MODE       ?= d2w_simulation
+  NUM_DIE_STACKS ?= 1000
+  # The YAP config key that `prepare` patches with the Monte Carlo sample count
+  YAP_SAMPLES_KEY = NUM_DIE_STACKS
+  YAP_SAMPLES     = $(NUM_DIE_STACKS)
+  # default: replicated nets tolerate R-1 ESD and mechanical failures.
+  # esd_strict: replicated signal nets tolerate no ESD failures.
+  YAP_CRITICALITY_PROFILE ?= default
+else
+  YAP_MODE       ?= w2w_simulation
+  NUM_WAFERS     ?= 1
+  YAP_SAMPLES_KEY = NUM_WAFER_STACKS
+  YAP_SAMPLES     = $(NUM_WAFERS)
+endif
+
+# Optional arguments to D2W's assign_bump_names.py, for .bmap files that come
+# without port/net names (all "-"), e.g.
+#   --critical-ratio 0.30 --redundant-ratio 0 --pg-ratio 0.50 --dummy-ratio 0.20
+# When set, it renames the staged copies in place; the design inputs are never
+# modified. Left empty, the .bmap names are used as is.
+YAP_ASSIGN_BUMP_NAMES_ARGS ?=
 
 # Files staged into OBJECTS_DIR for YAP to consume. YAP writes alongside its
 # inputs, so it gets a private copy instead of the design directory.
@@ -87,7 +117,22 @@ DB_FILE = $(RESULTS_DIR)/$(DESIGN).odb
 # the design directory is never modified.
 YAP_CONFIG_STAGED = $(OBJECTS_DIR)/$(notdir $(YAP_CONFIG))
 
-YAP_FAIL_MAP = $(RESULTS_DIR)/assembly_fail_map_per_interface_dict.npz
+# D2W tags its fail map and per-interface configs with the config name and
+# criticality profile, reads the profile's criticality files, and only writes
+# the fail map when asked to.
+ifeq ($(YAP_FLOW),D2W)
+  YAP_FILE_TAG         = __$(basename $(notdir $(YAP_CONFIG)))__$(YAP_CRITICALITY_PROFILE)
+  CRITICALITY_SUFFIX   = $(if $(filter esd_strict,$(YAP_CRITICALITY_PROFILE)),_criticality_esd_strict.txt,_criticality.txt)
+  CRITICALITY_ARGS     = --profiles $(YAP_CRITICALITY_PROFILE)
+  YAP_SIMULATE_ARGS    = --criticality-profile $(YAP_CRITICALITY_PROFILE) --save-failure-maps
+else
+  YAP_FILE_TAG         =
+  CRITICALITY_SUFFIX   = _criticality.txt
+  CRITICALITY_ARGS     =
+  YAP_SIMULATE_ARGS    =
+endif
+
+YAP_FAIL_MAP = $(RESULTS_DIR)/assembly_fail_map_per_interface_dict$(YAP_FILE_TAG).npz
 
 # Both of these steps write a set of files whose names are only known after the
 # preceding step has run, so a stamp stands in for them as the make target.
@@ -119,8 +164,10 @@ $(DB_FILE): $(STACK_CONFIG) $(CHIPLET_DEFS) $(THREEDBF_FILES) | check-openroad
 
 # Step 2: stage the design inputs into OBJECTS_DIR
 #
-# The staged YAP config is patched with the absolute output path and the wafer
-# stack count from the design config.
+# The staged YAP config is patched with the absolute output path and the Monte
+# Carlo sample count from the design config (NUM_WAFERS for W2W,
+# NUM_DIE_STACKS for D2W). If YAP_ASSIGN_BUMP_NAMES_ARGS is set, the staged
+# .bmap files get port/net names assigned.
 # ==============================================================================
 .PHONY: prepare
 prepare: $(YAP_CONFIG_STAGED)
@@ -128,9 +175,15 @@ prepare: $(YAP_CONFIG_STAGED)
 $(YAP_CONFIG_STAGED): $(THREE_D_INPUTS)
 	@mkdir -p $(OBJECTS_DIR) $(RESULTS_DIR) $(LOG_DIR)
 	cp $(THREE_D_INPUTS) $(OBJECTS_DIR)/
+ifneq ($(strip $(YAP_ASSIGN_BUMP_NAMES_ARGS)),)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/2_assign_bump_names.log) --tee -- \
+		$(PYTHON_EXE) $(ASSIGN_BUMP_NAMES) \
+		--files $(addprefix $(abspath $(OBJECTS_DIR))/,$(notdir $(BMAP_FILES))) \
+		$(YAP_ASSIGN_BUMP_NAMES_ARGS)
+endif
 	sed -i.bak \
 		-e 's|OUTPUT_DIR:.*|OUTPUT_DIR: "$(abspath $(RESULTS_ROOT))/"|' \
-		-e 's|NUM_WAFER_STACKS:.*|NUM_WAFER_STACKS: $(NUM_WAFERS)|' \
+		-e 's|$(YAP_SAMPLES_KEY):.*|$(YAP_SAMPLES_KEY): $(YAP_SAMPLES)|' \
 		$@
 	rm -f $@.bak
 
@@ -143,33 +196,34 @@ $(CRITICALITY_STAMP): $(YAP_CONFIG_STAGED)
 	@mkdir -p $(LOG_DIR)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/3_generate_criticality.log) --tee -- \
 		bash -c 'set -e; for bmap in $(abspath $(OBJECTS_DIR))/*_From_*.bmap; do \
-			crit="$${bmap%.bmap}_criticality.txt"; \
+			crit="$${bmap%.bmap}$(CRITICALITY_SUFFIX)"; \
 			if [ -f "$$crit" ]; then \
 				echo "Exists: $$crit"; \
 			else \
 				echo "Generating $$crit"; \
-				$(PYTHON_EXE) $(GENERATE_CRITICALITY) "$$bmap" --force; \
+				$(PYTHON_EXE) $(GENERATE_CRITICALITY) "$$bmap" --force $(CRITICALITY_ARGS); \
 			fi; \
 		done'
 	touch $@
 
-# Step 4: run the YAP Monte Carlo W2W hybrid bonding simulation
+# Step 4: run the YAP Monte Carlo hybrid bonding simulation (W2W or D2W)
 #
-# YAP resolves its relative paths against W2W/, hence the cd.
+# YAP resolves its relative paths against W2W/ or D2W/, hence the cd.
 # ==============================================================================
 .PHONY: yap_simulate
 yap_simulate: $(YAP_FAIL_MAP)
 
 $(YAP_FAIL_MAP): $(CRITICALITY_STAMP)
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR)
-	cd $(YAP_W2W_DIR) && \
+	cd $(YAP_FLOW_DIR) && \
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/4_yap_simulate.log) --tee -- \
 		$(PYTHON_EXE) simulator_main.py \
 		--config $(abspath $(YAP_CONFIG_STAGED)) \
 		--mode $(YAP_MODE) \
 		--ds_name $(DESIGN) \
 		--ds_dir $(abspath $(OBJECTS_DIR)) \
-		--verbose
+		--verbose $(YAP_SIMULATE_ARGS)
+	@test -f $@ || { echo "Error: YAP did not write $@"; exit 1; }
 
 # Step 5: turn the YAP fail maps into per-pad risk CSVs
 # ==============================================================================
@@ -181,7 +235,8 @@ $(RISK_MAP_STAMP): $(YAP_FAIL_MAP)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/5_generate_risk_map.log) --tee -- \
 		$(PYTHON_EXE) $(THREE_D_SCRIPTS_DIR)/generate_risk_map.py \
 		--results_dir $(abspath $(RESULTS_DIR)) \
-		--objects_dir $(abspath $(OBJECTS_DIR))
+		--objects_dir $(abspath $(OBJECTS_DIR)) \
+		--file_tag "$(YAP_FILE_TAG)"
 	touch $@
 
 # Step 6: overlay the risk maps in the OpenROAD web viewer
