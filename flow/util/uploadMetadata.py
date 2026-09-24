@@ -51,6 +51,21 @@ parser.add_argument(
     "pinned commit rather than the built one. When supplied alongside "
     "--jobName the payload is emitted as schema v4.",
 )
+parser.add_argument(
+    "--buildUserEmail",
+    type=str,
+    default=None,
+    help="Email of the Jenkins user who started the build by hand "
+    "(BUILD_USER_EMAIL). Omitted for SCM, timer and branch-scan triggers. "
+    "The dashboard attributes the build to this user.",
+)
+parser.add_argument(
+    "--changeAuthorEmail",
+    type=str,
+    default=None,
+    help="Email of the pull request's author on a PR build "
+    "(CHANGE_AUTHOR_EMAIL). Empty when the author's GitHub email is private.",
+)
 
 # --- PUBSUB args ---
 parser.add_argument(
@@ -193,6 +208,23 @@ def resolve_schema_version(args, provenance):
     return 4 if provenance else 3
 
 
+def resolve_requester(args):
+    """Who asked for the build, as the payload keys the backend reads.
+
+    Blank values are left out rather than sent empty. The keys ride on every
+    schema version: the backend reads them by presence, and they describe the
+    build rather than the payload's shape, so they do not bump the version.
+    """
+    requester = {}
+    for key, value in (
+        ("build_user_email", args.buildUserEmail),
+        ("change_author_email", args.changeAuthorEmail),
+    ):
+        if value and value.strip():
+            requester[key] = value.strip()
+    return requester
+
+
 def build_pipeline_payload(design_records, args, provenance=None):
     """Return the pipeline-level payload dict.
 
@@ -220,6 +252,7 @@ def build_pipeline_payload(design_records, args, provenance=None):
     # the payload.
     if schema_version == 4:
         payload.update(provenance)
+    payload.update(resolve_requester(args))
     return payload
 
 
@@ -261,6 +294,7 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
     key presence rather than by version.
     """
     futures = []
+    requester = resolve_requester(args)
     for d in design_records:
         payload = {
             "build_id": args.buildID,
@@ -273,6 +307,7 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
         }
         if provenance:
             payload.update(provenance)
+        payload.update(requester)
         payload.update(d["metrics"])
 
         message_data = json.dumps(payload, default=str).encode("utf-8")
