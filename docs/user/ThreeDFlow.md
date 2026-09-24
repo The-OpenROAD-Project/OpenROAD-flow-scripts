@@ -35,7 +35,9 @@ installed by default, since the RTL-to-GDS flow has no use for them:
 ```
 
 This is additive - it does everything a normal `./build_openroad.sh` does, plus
-the `pip install` of `tools/YAP/requirements.txt`.
+installing `tools/YAP/requirements.txt` into a venv at `tools/install/yap-venv`
+The flow uses that venv's Python by default; set `PYTHON_EXE` to use
+another interpreter.
 
 `YAP_HOME` defaults to `tools/YAP` and can be pointed at a YAP checkout
 elsewhere.

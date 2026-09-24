@@ -454,8 +454,10 @@ __common_setup()
 # RTL-to-GDS build does not pull them into the user's environment.
 __setup_3d()
 {
-        echo "[INFO FLW-0032] Installing YAP Python requirements for the 3D flow."
-        ${PYTHON_EXE:-python3} -m pip install -r tools/YAP/requirements.txt
+        local venv="${DIR}/tools/install/yap-venv"
+        echo "[INFO FLW-0032] Installing YAP Python requirements for the 3D flow into ${venv}."
+        ${PYTHON_EXE:-python3} -m venv "${venv}"
+        "${venv}/bin/python" -m pip install -r tools/YAP/requirements.txt
 }
 
 __logging()

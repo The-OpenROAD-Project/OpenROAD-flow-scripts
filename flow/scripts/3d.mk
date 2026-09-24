@@ -38,7 +38,9 @@ export OBJECTS_DIR      = $(WORK_HOME)/objects/3d/$(DESIGN)
 #
 # HERE BE DRAGONS: bare `export VAR`, never `export VAR := $(VAR)`. See the
 # matching comment in variables.mk for why.
-PYTHON_EXE ?= $(shell command -v python3)
+# Prefer the venv that `build_openroad.sh --3d` installs YAP's requirements into.
+YAP_VENV_PYTHON = $(abspath $(FLOW_HOME)/../tools/install/yap-venv/bin/python)
+PYTHON_EXE ?= $(if $(wildcard $(YAP_VENV_PYTHON)),$(YAP_VENV_PYTHON),$(shell command -v python3))
 export PYTHON_EXE
 
 RUN_CMD = $(PYTHON_EXE) $(FLOW_HOME)/scripts/run_command.py
