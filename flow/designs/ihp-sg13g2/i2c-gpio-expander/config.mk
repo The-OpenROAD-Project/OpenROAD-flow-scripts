@@ -24,7 +24,7 @@ export MAX_ROUTING_LAYER = TopMetal2
 
 export TNS_END_PERCENT = 100
 export PLACE_DENSITY = 0.75
-export MACRO_PLACE_HALO = 20 20
+export RTLMP_MIN_CHANNEL_SIZE = 40 40
 export CORNERS = slow fast
 
 export IO_NORTH_PINS = sg13g2_IOPad_io_gpio_3 \

@@ -90,7 +90,7 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constr
 
 export CORE_UTILIZATION       = 70
 export CORE_MARGIN            = 2
-export MACRO_PLACE_HALO       = 5 5
+export RTLMP_MIN_CHANNEL_SIZE = 10 10
 export PLACE_DENSITY          = 0.69
 
 # a smoketest for this option, there are a
