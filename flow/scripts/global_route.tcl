@@ -15,9 +15,9 @@ proc global_route_helper { } {
   append_env_var use_cugr GLOBAL_ROUTE_USE_CUGR -use_cugr 0
 
   # The flow's choice to accept congestion, from GLOBAL_ROUTE_ARGS, passed
-  # to every incremental reroute: each global_route call decides for itself,
-  # and one without -allow_congestion reroutes a congested route harder and
-  # then fails on it.
+  # to every incremental reroute and to repair_antennas: each call decides
+  # for itself, and one without -allow_congestion reroutes a congested route
+  # harder and then fails on it.
   set allow_congestion ""
   if { [lsearch -exact $::env(GLOBAL_ROUTE_ARGS) -allow_congestion] >= 0 } {
     set allow_congestion -allow_congestion
@@ -163,7 +163,8 @@ proc global_route_helper { } {
     [env_var_exists_and_non_empty MAX_REPAIR_ANTENNAS_ITER_GRT]
   } {
     puts "Repair antennas..."
-    repair_antennas -iterations $::env(MAX_REPAIR_ANTENNAS_ITER_GRT)
+    repair_antennas -iterations $::env(MAX_REPAIR_ANTENNAS_ITER_GRT) \
+      {*}$allow_congestion
     # repair antennas calls DPL internally
     check_placement -verbose
     check_antennas -report_file $::env(REPORTS_DIR)/grt_antennas.log
