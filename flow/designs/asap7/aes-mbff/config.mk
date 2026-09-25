@@ -3,6 +3,9 @@ export PLATFORM               = asap7
 export DESIGN_NAME            = aes_cipher_top
 export DESIGN_NICKNAME        = aes-mbff
 
+# ignore unsynthesizable timing controls
+export SYNTH_SLANG_ARGS += --ignore-timing
+
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/aes/*.v))
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/aes/constraint.sdc
 
