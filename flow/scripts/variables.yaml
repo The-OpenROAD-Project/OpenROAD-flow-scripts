@@ -627,9 +627,15 @@ CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
   tunable: 1
 DETAIL_PLACEMENT_ARGS:
   description: >
-    Specify arguments to the detailed_placement call during placement.
+    Specify arguments to every detailed_placement call: the one in placement
+    and the re-legalizations after clock tree synthesis, after repair in
+    CTS and after the repairs in global route. A legalizer chosen here
+    (-use_diamond_legalizer, -max_displacement) is therefore the one every
+    stage uses.
   stages:
     - place
+    - cts
+    - grt
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability in detail
