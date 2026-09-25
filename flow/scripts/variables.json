@@ -1104,12 +1104,6 @@
       "floorplan"
     ]
   },
-  "RULES_JSON": {
-    "description": "json files with the metrics baseline regression rules. In the ORFS Makefile, this defaults to $DESIGN_DIR/rules-base.json, but ORFS does not mandate the users source directory layout and this can be placed elsewhere when the user sets up an ORFS config.mk or from bazel-orfs.\n",
-    "stages": [
-      "test"
-    ]
-  },
   "RUN_LOG_NAME_STEM": {
     "default": "run",
     "description": "Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.\n"
