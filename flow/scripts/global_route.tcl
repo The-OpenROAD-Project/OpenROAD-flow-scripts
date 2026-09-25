@@ -94,7 +94,7 @@ proc global_route_helper { } {
     # Running DPL to fix overlapped instances
     # Run to get modified net by DPL
     log_cmd global_route -start_incremental {*}$allow_congestion
-    log_cmd detailed_placement
+    detailed_placement_helper
     # Route only the modified net by DPL
     if {
       ![run_global_route_and_catch_failures -end_incremental {*}$res_aware \
@@ -115,7 +115,7 @@ proc global_route_helper { } {
     }
 
     log_cmd global_route -start_incremental {*}$allow_congestion
-    log_cmd detailed_placement
+    detailed_placement_helper
     log_cmd check_placement -verbose
     # Route only the modified net by DPL
     if {
