@@ -2,9 +2,9 @@
 
 The maintainers' QoR signal comes from Jenkins runs published at
 <https://dashboard.precisioninno.com/>. The targets described here are
-its local counterpart: the same designs, gated by the same
-`rules-base.json` files with the same `checkMetadata.py`, but built
-locally through Bazel so the loop can be sharpened onto exactly the
+its local counterpart: the same designs, judged by the same dashboard
+rules through `make metadata-check` (see `docs/contrib/Metrics.md`), but
+built locally through Bazel so the loop can be sharpened onto exactly the
 design, engine, and stage being worked on — fast enough for an agent
 (e.g. Claude) to iterate against.
 
@@ -16,10 +16,11 @@ Every design gets manual forced-engine flow variants (see
 - `<name>_yosys_*` pins the yosys engine, so the baseline stays
   reproducible after a design switches (asap7/gcd today).
 
-Designs with a `rules-base.json` get two QoR tiers per variant:
+CI-tested designs get two QoR tiers per variant:
 
 - `<name>_<engine>_synth_test` — the fast tier: synthesis only,
-  checked against the `synth__`/`constraints__` subset of the rules.
+  checked against the `synth__`/`constraints__` subset of the rules
+  (`make metadata-synth`).
   Minutes. QoR-only — without LEC it cannot prove correctness, so use
   it to iterate, not to conclude.
 - `<name>_<engine>_test` — the full flow against all rules: the real,
@@ -49,20 +50,10 @@ bazelisk test --keep_going //flow/designs/asap7:syn_synth_test
 bazelisk test --keep_going //flow/designs/asap7:syn_test
 ```
 
-Then display what you have — deliberately a separate concern from
-deciding what to test or build:
-
-```sh
-bazelisk run //flow/designs:syn-dashboard
-```
-
-It prints a GitHub-markdown TL;DR table of every forced-engine test
-result already in `bazel-testlogs` — pass/fail per tier and engine,
-failing rule fields, result age — without building anything. Paste it
-into a PR or issue as-is. Because the display reads whatever exists,
-the loop stays fast: iterate on the one target you care about, and the
-dashboard aggregates across everything you (or earlier sessions) have
-built so far.
+The `syn-dashboard` target that summarised these results as a markdown
+table read the output of the removed rules-file check, so it was removed
+with it. Read the `QoR check:` line in each test's `metadata-check.log`
+instead.
 
 The suites include designs that fail OpenROAD-SYN today on purpose —
 they are a status signal, not a green-only gate. A build failure (e.g.
