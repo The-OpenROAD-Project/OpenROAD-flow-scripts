@@ -277,7 +277,7 @@ configuration file.
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| |
 | <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| |
-| <a name="SEC_CHECK"></a>SEC_CHECK| Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. If this fails, report an issue to OpenROAD.| 0|
+| <a name="SEC_CHECK"></a>SEC_CHECK| Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. If this fails, report an issue to OpenROAD.| $(if $(wildcard $(KEPLER_FORMAL_EXE)),1,0)|
 | <a name="SETUP_MOVE_SEQUENCE"></a>SETUP_MOVE_SEQUENCE| Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas.| |
 | <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). See HOLD_SLACK_MARGIN for more details.| 0|
 | <a name="SET_RC_TCL"></a>SET_RC_TCL| Metal & Via RC definition file path.| |
