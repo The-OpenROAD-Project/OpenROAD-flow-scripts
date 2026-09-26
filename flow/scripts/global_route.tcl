@@ -14,6 +14,15 @@ proc global_route_helper { } {
   set use_cugr ""
   append_env_var use_cugr GLOBAL_ROUTE_USE_CUGR -use_cugr 0
 
+  # The flow's choice to accept congestion, from GLOBAL_ROUTE_ARGS, passed
+  # to every incremental reroute and to repair_antennas: each call decides
+  # for itself, and one without -allow_congestion reroutes a congested route
+  # harder and then fails on it.
+  set allow_congestion ""
+  if { [lsearch -exact $::env(GLOBAL_ROUTE_ARGS) -allow_congestion] >= 0 } {
+    set allow_congestion -allow_congestion
+  }
+
   proc set_grt_seed { } {
     set seed_arg [env_var_or_empty GRT_SEED]
     if { $seed_arg ne "" } {
@@ -84,11 +93,12 @@ proc global_route_helper { } {
 
     # Running DPL to fix overlapped instances
     # Run to get modified net by DPL
-    log_cmd global_route -start_incremental
+    log_cmd global_route -start_incremental {*}$allow_congestion
     detailed_placement_helper
     # Route only the modified net by DPL
     if {
       ![run_global_route_and_catch_failures -end_incremental {*}$res_aware \
+        {*}$allow_congestion \
         -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt]
     } {
       return
@@ -104,12 +114,13 @@ proc global_route_helper { } {
       report_metrics 5 "global route post repair timing"
     }
 
-    log_cmd global_route -start_incremental
+    log_cmd global_route -start_incremental {*}$allow_congestion
     detailed_placement_helper
     log_cmd check_placement -verbose
     # Route only the modified net by DPL
     if {
       ![run_global_route_and_catch_failures -end_incremental {*}$res_aware \
+        {*}$allow_congestion \
         -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt]
     } {
       return
@@ -135,11 +146,12 @@ proc global_route_helper { } {
   }
 
   if { !$::env(OPT_POST_GRT_WNS) } {
-    log_cmd global_route -start_incremental
+    log_cmd global_route -start_incremental {*}$allow_congestion
     recover_power_helper
     # Route the modified nets by rsz journal restore
     if {
       ![run_global_route_and_catch_failures -end_incremental {*}$res_aware \
+        {*}$allow_congestion \
         -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt]
     } {
       return
@@ -151,7 +163,8 @@ proc global_route_helper { } {
     [env_var_exists_and_non_empty MAX_REPAIR_ANTENNAS_ITER_GRT]
   } {
     puts "Repair antennas..."
-    repair_antennas -iterations $::env(MAX_REPAIR_ANTENNAS_ITER_GRT)
+    repair_antennas -iterations $::env(MAX_REPAIR_ANTENNAS_ITER_GRT) \
+      {*}$allow_congestion
     # repair antennas calls DPL internally
     check_placement -verbose
     check_antennas -report_file $::env(REPORTS_DIR)/grt_antennas.log
