@@ -1,4 +1,4 @@
-set clk_period 1.8
+set clk_period 1.62
 create_clock [get_ports clk_i] -name CLK -period $clk_period
 create_clock -name vclk -period $clk_period
 set_clock_latency 0.355 [get_clocks {CLK}]

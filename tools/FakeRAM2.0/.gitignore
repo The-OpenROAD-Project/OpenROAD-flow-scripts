@@ -1,0 +1,6 @@
+utils/__pycache__
+results
+*~
+.coverage
+htmlcov
+__pycache__

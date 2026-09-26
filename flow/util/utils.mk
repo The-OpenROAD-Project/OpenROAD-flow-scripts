@@ -3,6 +3,17 @@
 .PHONY: metadata
 metadata: finish metadata-generate metadata-check
 
+# Synthesis-only metadata: generate and check QoR after just the synth
+# stage, without running the full flow. Only the synthesis-stage metrics
+# are sent to the dashboard, which evaluates just those. Sequential
+# sub-makes rather than prerequisites: each step consumes the previous
+# one's outputs, which plain prerequisites would race under make -j.
+.PHONY: metadata-synth
+metadata-synth:
+	$(MAKE) synth
+	$(MAKE) metadata-generate
+	$(MAKE) metadata-check-synth
+
 .PHONY: metadata-generate
 metadata-generate:
 	mkdir -p $(REPORTS_DIR)
@@ -16,61 +27,62 @@ metadata-generate:
 	    -o $(REPORTS_DIR)/metadata.json 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
 
-export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
-
+# The QoR gate: metadata.json against the latest master build on the QoR
+# dashboard, using the dashboard's rule configs. Set DASHBOARD_API_KEY for
+# a private platform and DASHBOARD_JOB_NAME when the baseline pipeline is
+# not OpenROAD-flow-scripts-Public. A failed rule fails the target; an
+# unreachable dashboard or a design without a baseline only warns.
 .PHONY: metadata-check
 metadata-check:
-	$(PYTHON_EXE) $(UTILS_DIR)/checkMetadata.py \
-	    -m $(REPORTS_DIR)/metadata.json \
-	    -r $(RULES_JSON) 2>&1 \
+	$(PYTHON_EXE) $(UTILS_DIR)/checkQorMetrics.py \
+	    -m $(abspath $(REPORTS_DIR)/metadata.json) \
+	    -p $(PLATFORM) -d $(DESIGN_NICKNAME) --variant $(FLOW_VARIANT) 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
+
+# Send only the synthesis-stage metrics, so a synthesis-only run is gated
+# by the rules the dashboard holds for those metrics.
+.PHONY: metadata-check-synth
+metadata-check-synth:
+	$(PYTHON_EXE) $(UTILS_DIR)/checkQorMetrics.py \
+	    -m $(abspath $(REPORTS_DIR)/metadata.json) \
+	    -p $(PLATFORM) -d $(DESIGN_NICKNAME) --variant $(FLOW_VARIANT) \
+	    --only-prefix synth__ constraints__ 2>&1 \
+	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
+
+# The rules-file check (checkMetadata.py against a committed
+# designs/<platform>/<design>/rules-<variant>.json) was removed. The QoR
+# dashboard holds the rules now. These stubs warn callers that still use
+# the old targets or RULES_JSON, and exit 0 so a wrapper script keeps
+# running; drop them once bazel-orfs and the CI scripts have moved.
+ifdef RULES_JSON
+$(warning [WARN] RULES_JSON is deprecated and ignored. The QoR gate is the \
+  dashboard check in `make metadata`; rules files are no longer read.)
+endif
+
+LEGACY_RULES_TARGETS := metadata-check-rules update_ok update_rules \
+                        update_rules_force do-update_rules \
+                        do-update_rules_force do-copy_update_rules
+.PHONY: $(LEGACY_RULES_TARGETS)
+$(LEGACY_RULES_TARGETS):
+	@echo "[WARN] make $@ is deprecated and does nothing. The rules files" \
+	      "(rules-<variant>.json), checkMetadata.py, and genRuleFile.py" \
+	      "were removed. The QoR gate is now the dashboard check in" \
+	      "\`make metadata\` (see docs/contrib/Metrics.md). Rule tolerances" \
+	      "live in the dashboard, so there is nothing to update locally."
 
 .PHONY: clean_metadata
 clean_metadata:
 	rm -f $(REPORTS_DIR)/design-dir.txt
 	rm -f $(REPORTS_DIR)/metadata*.*
 
-.PHONY: update_ok
-update_ok: update_rules
-
+# The golden designs/<platform>/<design>/metadata-<variant>-ok.json files
+# were removed with the report table that compared runs against them.
 .PHONY: update_metadata
 update_metadata:
-	cp -f $(REPORTS_DIR)/metadata.json \
-	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
-
-.PHONY: do-update_rules
-do-update_rules:
-	mkdir -p $(REPORTS_DIR)
-	$(PYTHON_EXE) $(UTILS_DIR)/genRuleFile.py \
-	    --rules $(RULES_JSON) \
-	    --new-rules $(REPORTS_DIR)/rules.json \
-	    --reference $(REPORTS_DIR)/metadata.json \
-	    --variant $(FLOW_VARIANT) \
-	    --failing \
-	    --tighten
-
-.PHONY: do-copy_update_rules
-do-copy_update_rules:
-	cp -f $(REPORTS_DIR)/rules.json \
-	      $(RULES_JSON)
-
-.PHONY: update_rules
-update_rules: do-update_rules do-copy_update_rules
-
-.PHONY: do-update_rules_force
-do-update_rules_force:
-	mkdir -p $(REPORTS_DIR)
-	$(PYTHON_EXE) $(UTILS_DIR)/genRuleFile.py \
-	    --rules $(RULES_JSON) \
-	    --new-rules $(REPORTS_DIR)/rules.json \
-	    --reference $(REPORTS_DIR)/metadata.json \
-	    --variant $(FLOW_VARIANT) \
-	    --update
-
-.PHONY: update_rules_force
-update_rules_force: do-update_rules_force
-	cp -f $(REPORTS_DIR)/rules.json \
-	      $(RULES_JSON)
+	@echo "[WARN] make update_metadata is deprecated and does nothing." \
+	      "The golden metadata-<variant>-ok.json files and the report table" \
+	      "that read them were removed. Baselines live in the QoR dashboard" \
+	      "(see docs/contrib/Metrics.md)."
 
 .PHONY: update_metadata_autotuner
 update_metadata_autotuner:
@@ -84,33 +96,40 @@ update_metadata_autotuner:
 
 #-------------------------------------------------------------------------------
 
-.PHONY: write_net_rc
-write_net_rc: $(RESULTS_DIR)/6_net_rc.csv
+.PHONY: write_rc
+write_rc: $(RESULTS_DIR)/6_nets_rc.csv $(RESULTS_DIR)/6_segments_rc.csv
 
-#$(RESULTS_DIR)/6_net_rc.csv: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/6_final.spef
-$(RESULTS_DIR)/6_net_rc.csv:
-	$(RUN_CMD) --log $(LOG_DIR)/6_write_net_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_net_rc_script.tcl
+# A pattern rule to write both files with a single run, as the grouped target
+# syntax requires GNU Make 4.3.
+%_nets_rc.csv %_segments_rc.csv:
+	$(UNSET_AND_MAKE) do-write_rc
 
-.PHONY: write_segment_rc
-write_segment_rc: $(RESULTS_DIR)/6_segment_rc.csv
-
-$(RESULTS_DIR)/6_segment_rc.csv:
-	$(RUN_CMD) --log $(LOG_DIR)/6_write_segment_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_segment_rc_script.tcl
+# The do- sibling, following do-synth-report and the do-step/do-copy
+# families: the file target above decides *whether* to run and delegates
+# here, and this rule is the only place the invocation lives. A caller
+# doing its own dependency checking asks for this one directly.
+.PHONY: do-write_rc
+do-write_rc:
+	$(RUN_CMD) --log $(LOG_DIR)/6_write_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_rc.tcl
 
 .PHONY: correlate_rc
-correlate_rc: $(RESULTS_DIR)/6_net_rc.csv
-	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py $(RESULTS_DIR)/6_net_rc.csv
+correlate_rc: $(RESULTS_DIR)/6_segments_rc.csv
+	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
+	    -segments_rc_file $(RESULTS_DIR)/6_segments_rc.csv
 
 # TODO Make always wants to redo designs with this rule, regardless of which variations are tried.
-#	$(MAKE) DESIGN_CONFIG=$$config write_net_rc; \
-#$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_net_rc; )
+#	$(MAKE) DESIGN_CONFIG=$$config write_rc; \
+#$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_rc; )
 .PHONY: correlate_platform_rc
 correlate_platform_rc:
 	for config in designs/$(PLATFORM)/*/config.mk; do \
 	  design=$$(basename $$(dirname $$config)); \
-	  make DESIGN_CONFIG=./$$config results/$(PLATFORM)/$$design/base/6_net_rc.csv; \
+	  make DESIGN_CONFIG=./$$config \
+	    results/$(PLATFORM)/$$design/base/6_nets_rc.csv \
+	    results/$(PLATFORM)/$$design/base/6_segments_rc.csv; \
 	done
-	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py $$(find results/$(PLATFORM)/*/base -name 6_net_rc.csv)
+	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
+	    -segments_rc_file $$(find results/$(PLATFORM)/*/base -name 6_segments_rc.csv)
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------

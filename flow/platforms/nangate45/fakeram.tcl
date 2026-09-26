@@ -5,6 +5,7 @@ set design_rams {
   black_parrot {64x7 64x96 512x64 256x95 64x15}
   bp_multi_top {64x7 32x64 64x96 512x64 256x96 64x15}
   bp_fe_top {64x7 64x96 512x64}
+  cva6 {64x25 64x28 64x256 128x64}
 }
 
 set results_dir "~/import/fakeram/results"

@@ -45,6 +45,13 @@ proc repair_timing_helper { args } {
   log_cmd repair_timing {*}$additional_args
 }
 
+# Every detailed_placement in the flow goes through here, so the design's
+# DETAIL_PLACEMENT_ARGS (the legalizer and its window, say) apply to the
+# placement stage and to every re-legalization after it alike.
+proc detailed_placement_helper { args } {
+  log_cmd detailed_placement {*}[env_var_or_empty DETAIL_PLACEMENT_ARGS] {*}$args
+}
+
 proc repair_design_helper { } {
   puts "Perform buffer insertion and gate resizing..."
 
@@ -214,8 +221,8 @@ proc source_env_var_if_exists { env_var } {
 # will be default and this code will be deleted.
 proc hier_options { } {
   if {
-    ([env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
-      [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) &&
+    ([env_var_equals SYNTH_WRAPPED_OPERATORS 1] ||
+      [env_var_equals SWAP_ARITH_OPERATORS 1]) &&
     !$::env(OPENROAD_HIERARCHICAL)
   } {
     error "SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS require OPENROAD_HIERARCHICAL to be set."
@@ -307,6 +314,22 @@ proc orfs_write_sdc { output_file } {
     return
   }
   log_cmd write_sdc -no_timestamp $output_file
+}
+
+# For a stage that leaves the design unchanged, copying the input .odb
+# forward is much faster than serializing the in-memory database again
+# with write_db. Gated like orfs_write_db: in a single-process flow
+# (WRITE_ODB_AND_SDC_EACH_STAGE=0) the input file may not exist and no
+# stage file should be produced.
+#
+# exec cp rather than Tcl's file copy: file copy sets the destination
+# mtime with second resolution, which breaks make's timestamp-based
+# up-to-date checks for fast builds.
+proc orfs_copy_db { input_file output_file } {
+  if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
+    return
+  }
+  log_cmd exec cp $input_file $output_file
 }
 
 proc source_step_tcl { hook_type step_name } {

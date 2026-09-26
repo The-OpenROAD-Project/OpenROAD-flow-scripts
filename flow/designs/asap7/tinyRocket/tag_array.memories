@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "memories": [
+    {
+      "name": "tag_array",
+      "rows": 4,
+      "bits": 25,
+      "addr_w": 2,
+      "read_ports": 0,
+      "write_ports": 0,
+      "rw_ports": 1,
+      "mask_lanes": 0,
+      "pins": [
+        {
+          "name": "RW0_addr",
+          "direction": "input",
+          "width": 2,
+          "port_id": "RW0",
+          "function": "addr"
+        },
+        {
+          "name": "RW0_en",
+          "direction": "input",
+          "width": 1,
+          "port_id": "RW0",
+          "function": "en"
+        },
+        {
+          "name": "RW0_clk",
+          "direction": "input",
+          "width": 1,
+          "port_id": "RW0",
+          "function": "clk"
+        },
+        {
+          "name": "RW0_wmode",
+          "direction": "input",
+          "width": 1,
+          "port_id": "RW0",
+          "function": "wmode"
+        },
+        {
+          "name": "RW0_wdata_0",
+          "direction": "input",
+          "width": 25,
+          "port_id": "RW0",
+          "function": "data_in"
+        },
+        {
+          "name": "RW0_rdata_0",
+          "direction": "output",
+          "width": 25,
+          "port_id": "RW0",
+          "function": "data_out"
+        }
+      ],
+      "idiomatic": true,
+      "reason": "forced: the RTL provides no behavioral fallback for this wrapper"
+    }
+  ]
+}

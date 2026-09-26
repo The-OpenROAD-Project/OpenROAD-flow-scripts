@@ -192,9 +192,12 @@ def git_head_commit(git_exe, folder):
 
 
 def file_sha1(path):
-    """SHA-1 of `path`, or "N/A" if absent. Read in chunks so large
+    """SHA-1 of `path`, or "N/A" if absent or empty. Empty counts as
+    absent so Bazel's touched placeholder files (e.g. the canonicalize
+    RTLIL under SYNTH_USE_SYN or SYNTH_NETLIST_FILES) hash the same as
+    a make run that never wrote the file. Read in chunks so large
     netlists don't blow the heap."""
-    if not os.path.isfile(path):
+    if not os.path.isfile(path) or os.path.getsize(path) == 0:
         return "N/A"
     hasher = hashlib.sha1()
     with open(path, "rb") as f:
@@ -248,9 +251,8 @@ def extract_metrics(
     merge_jsons(logPath, metrics_dict, "1_*.json")
 
     # Netlist hashes: fingerprints of the canonical RTLIL (pre-ABC) and
-    # the final post-synthesis Verilog so the rules-base.json check
-    # (level=warning) flags when bazel-built vs make-built yosys
-    # disagree for the same RTL.
+    # the final post-synthesis Verilog, so a QoR check can flag when
+    # bazel-built vs make-built yosys disagree for the same RTL.
     metrics_dict["synth__canonical_netlist__hash"] = file_sha1(
         resultPath + "/1_1_yosys_canonicalize.rtlil"
     )
@@ -258,7 +260,13 @@ def extract_metrics(
 
     # Clocks
     # =========================================================================
-    clk_list = read_sdc(resultPath + "/2_floorplan.sdc")
+    # Prefer the floorplan SDC; on a synthesis-only tree (e.g. the "syn"
+    # flow variant stops after 1_synth) fall back to the canonicalized
+    # synthesis SDC, which carries the same create_clock lines.
+    sdc_file = resultPath + "/2_floorplan.sdc"
+    if not os.path.isfile(sdc_file):
+        sdc_file = resultPath + "/1_synth.sdc"
+    clk_list = read_sdc(sdc_file)
     metrics_dict["constraints__clocks__count"] = len(clk_list)
     metrics_dict["constraints__clocks__details"] = clk_list
 
@@ -277,29 +285,34 @@ def extract_metrics(
     # Global Route
     # =========================================================================
     merge_jsons(logPath, metrics_dict, "5_*.json")
-    extractTagFromFile(
-        "globalroute__timing__clock__slack",
-        metrics_dict,
-        "^\\[INFO FLW-....\\] Clock .* slack (\\S+)",
-        logPath + "/5_1_grt.log",
-    )
+    # Guarded so a synthesis-only tree doesn't pollute the metadata with
+    # "ERR" values for stages that never ran.
+    if os.path.isfile(logPath + "/5_1_grt.log"):
+        extractTagFromFile(
+            "globalroute__timing__clock__slack",
+            metrics_dict,
+            "^\\[INFO FLW-....\\] Clock .* slack (\\S+)",
+            logPath + "/5_1_grt.log",
+        )
 
     # Finish
     # =========================================================================
     merge_jsons(logPath, metrics_dict, "6_*.json")
-    extractTagFromFile(
-        "finish__timing__wns_percent_delay",
-        metrics_dict,
-        baseRegEx.format("finish slack div critical path delay", "(\\S+)"),
-        rptPath + "/6_finish.rpt",
-    )
+    if os.path.isfile(rptPath + "/6_finish.rpt"):
+        extractTagFromFile(
+            "finish__timing__wns_percent_delay",
+            metrics_dict,
+            baseRegEx.format("finish slack div critical path delay", "(\\S+)"),
+            rptPath + "/6_finish.rpt",
+        )
 
     extractGnuTime("finish", metrics_dict, logPath + "/6_report.log")
 
     # Accumulate time
     # =========================================================================
 
-    extractGnuTime("synth", metrics_dict, logPath + "/1_2_yosys.log")
+    extractGnuTime("synth", metrics_dict, logPath + "/1_synth.log")  # syn
+    extractGnuTime("synth", metrics_dict, logPath + "/1_2_yosys.log")  # yosys
     extractGnuTime("floorplan", metrics_dict, logPath + "/2_1_floorplan.log")
     extractGnuTime("floorplan_io", metrics_dict, logPath + "/2_2_floorplan_io.log")
     extractGnuTime(

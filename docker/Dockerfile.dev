@@ -9,6 +9,7 @@ WORKDIR /tmp/installer/etc
 
 COPY DependencyInstaller.sh .
 COPY requirements-common_lock.txt .
+COPY requirements-pip_lock.txt .
 
 COPY InstallerOpenROAD.sh \
        /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh

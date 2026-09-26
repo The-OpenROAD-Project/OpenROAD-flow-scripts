@@ -4,9 +4,11 @@ set_max_fanout 8 [current_design]
 set_max_capacitance 0.5 [current_design]
 set_max_transition 3 [current_design]
 set_max_area 0
+set clk_period 10.0
 
-create_clock [get_ports clock] -name clock -period 20.0 -waveform {0 10.0}
-create_clock -name vclk -period 20.0
+create_clock [get_ports clock] -name clock -period $clk_period \
+  -waveform [list 0 [expr { $clk_period / 2.0 }]]
+create_clock -name vclk -period $clk_period
 set input_delay_value_clock 4.0
 set output_delay_value_clock 4.0
 set_clock_latency [expr $input_delay_value_clock * 0.5] [get_clocks {clock}]

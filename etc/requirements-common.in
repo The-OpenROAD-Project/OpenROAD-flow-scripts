@@ -1,6 +1,6 @@
 pandas
 numpy
-firebase_admin
+google-cloud-pubsub
 click
 pyyaml
 yamlfix

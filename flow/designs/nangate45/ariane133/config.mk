@@ -27,3 +27,5 @@ export RTLMP_MAX_MACRO = 30
 export RTLMP_MIN_MACRO = 10
 export RTLMP_MAX_INST = 80000
 export RTLMP_MIN_INST = 8000
+
+export GPL_RANDOM_SEED = 3

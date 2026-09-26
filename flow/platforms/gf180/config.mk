@@ -97,6 +97,8 @@ export MIN_ROUTING_LAYER                     ?= Metal2
 export MAX_ROUTING_LAYER                     ?= Metal5
 export DISABLE_VIA_GEN                       ?= 1
 
+export OPT_POST_GRT_WNS                      ?= 0
+
 # Define fastRoute tcl
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 

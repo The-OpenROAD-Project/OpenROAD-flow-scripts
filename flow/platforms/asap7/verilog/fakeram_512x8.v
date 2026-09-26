@@ -39,7 +39,7 @@ module fakeram_512x8
          end
          else if (we_in)
          begin
-            mem[addr_in] <= (wd_in) | (mem[addr_in]);
+            mem[addr_in] <= wd_in;
          end
          // read
          rd_out <= mem[addr_in];
@@ -54,9 +54,6 @@ module fakeram_512x8
    // Timing check placeholders (will be replaced during SDF back-annotation)
    reg notifier;
    specify
-      // Delay from clk to rd_out
-      (posedge clk *> rd_out) = (0, 0);
-
       // Timing checks
       $width     (posedge clk,            0, 0, notifier);
       $width     (negedge clk,            0, 0, notifier);

@@ -20,7 +20,7 @@ export CORE_MARGIN      = 5
 export PLACE_DENSITY_LB_ADDON = 0.10
 
 export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
-export MACRO_PLACE_HALO    = 2 2
+export MACRO_PLACE_HALO    = 4 4
 
 export TNS_END_PERCENT   = 100
 

@@ -33,7 +33,7 @@ export PLACE_DENSITY_LB_ADDON = 0.05
 
 export MACRO_PLACEMENT_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/macro_placement.tcl
 
-export MACRO_PLACE_HALO    = 10 10
+export MACRO_PLACE_HALO    = 15 15
 
 export TNS_END_PERCENT     = 100
 

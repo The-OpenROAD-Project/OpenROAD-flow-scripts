@@ -4942,8 +4942,8 @@ MI5 Y A net35 VNB nfet_01v8 m=1 w=0.55 l=0.15 mult=1 sa=0.265 sb=0.265
 
 .SUBCKT sky130_fd_sc_hd__conb_1 VGND VNB VPB VPWR HI LO
 *.PININFO VGND:I VNB:I VPB:I VPWR:I HI:O LO:O
-rI12 VGND LO short
-rI11 HI VPWR short
+rI12 VGND LO 0
+rI11 HI VPWR 0
 .ENDS sky130_fd_sc_hd__conb_1
 
 
@@ -11166,13 +11166,13 @@ M1021 VPWR a_714_47# a_620_911# VPB pfet_01v8_hvt w=790000u l=150000u
 
 .SUBCKT sky130_fd_sc_hd__macro_sparecell VGND VNB VPB VPWR LO
 *.PININFO VGND:I VNB:I VPB:I VPWR:I LO:O
-XI1 VGND VNB VPB VPWR net59 LO / sky130_fd_sc_hd__conb_1
-XI2 LO LO VGND VNB VPB VPWR nd2right / sky130_fd_sc_hd__nand2_2
-XI3 LO LO VGND VNB VPB VPWR nd2left / sky130_fd_sc_hd__nand2_2
-XI4 nd2right nd2right VGND VNB VPB VPWR nor2right / sky130_fd_sc_hd__nor2_2
-XI5 nd2left nd2left VGND VNB VPB VPWR nor2left / sky130_fd_sc_hd__nor2_2
-XI6 nor2right VGND VNB VPB VPWR invright / sky130_fd_sc_hd__inv_2
-XI7 nor2left VGND VNB VPB VPWR invleft / sky130_fd_sc_hd__inv_2
+XI1 VGND VNB VPB VPWR net59 LO sky130_fd_sc_hd__conb_1
+XI2 LO LO VGND VNB VPB VPWR nd2right sky130_fd_sc_hd__nand2_2
+XI3 LO LO VGND VNB VPB VPWR nd2left sky130_fd_sc_hd__nand2_2
+XI4 nd2right nd2right VGND VNB VPB VPWR nor2right sky130_fd_sc_hd__nor2_2
+XI5 nd2left nd2left VGND VNB VPB VPWR nor2left sky130_fd_sc_hd__nor2_2
+XI6 nor2right VGND VNB VPB VPWR invright sky130_fd_sc_hd__inv_2
+XI7 nor2left VGND VNB VPB VPWR invleft sky130_fd_sc_hd__inv_2
 .ENDS sky130_fd_sc_hd__macro_sparecell
 
 
@@ -17409,7 +17409,7 @@ MMIN1 Ab A VGND VNB nfet_01v8 m=3 w=0.65 l=0.15 mult=1 sa=0.265
 + sb=0.265 sd=0.28 topography=normal area=0.063 perim=1.14
 MMIN2 net29 Ab VGND VNB nfet_01v8 m=8 w=0.65 l=0.15 mult=1 sa=0.265
 + sb=0.265 sd=0.28 topography=normal area=0.063 perim=1.14
-rI112 net29 X short
+rI112 net29 X 0
 .ENDS sky130_fd_sc_hd__probe_p_8
 
 
@@ -17441,9 +17441,9 @@ MMIN1 Ab A VGND VNB nfet_01v8 m=3 w=0.65 l=0.15 mult=1 sa=0.265
 + sb=0.265 sd=0.28 topography=normal area=0.063 perim=1.14
 MMIN2 net33 Ab VGND VNB nfet_01v8 m=8 w=0.65 l=0.15 mult=1 sa=0.265
 + sb=0.265 sd=0.28 topography=normal area=0.063 perim=1.14
-rI112 net33 X short
-rI120 VGND met5vgnd short
-rI119 VPWR met5vpwr short
+rI112 net33 X 0
+rI120 VGND met5vgnd 0
+rI119 VPWR met5vpwr 0
 .ENDS sky130_fd_sc_hd__probec_p_8
 
 

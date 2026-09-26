@@ -45,19 +45,23 @@ export SYNTH_KEEP_MODULES ?= \
 export LIB_MODEL = CCS
 
 export VERILOG_FILES = $(DESIGN_HOME)/src/swerv/swerv_wrapper.sv2v.v \
-                       $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/macros.v
+                       $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/macros.v \
+                       $(CLKGATE_MAP_FILE)
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
 
 export ADDITIONAL_LEFS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lef/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lib/*.lib))
 
-export CORE_UTILIZATION = 30
+export CORE_UTILIZATION = 55
 
 export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/io.tcl
-export PLACE_DENSITY_LB_ADDON = 0.20
+export PLACE_DENSITY_LB_ADDON = 0.30
 
 export ROUTING_LAYER_ADJUSTMENT = 0.2
 
-export SWAP_ARITH_OPERATORS = 1
+# Use OpenROAD-native synthesis (SYN) instead of Yosys. SWAP_ARITH_OPERATORS
+# removed: its wrapped-operator flow is Yosys-only and unsupported by SYN.
+export SYNTH_USE_SYN = 1
 export OPENROAD_HIERARCHICAL = 1
 
+export GPL_RANDOM_SEED = 2
