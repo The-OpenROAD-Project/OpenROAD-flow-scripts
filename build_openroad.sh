@@ -400,7 +400,7 @@ __local_build()
         echo "[INFO FLW-0031] Compiling kepler-formal"
         ${NICE} cmake -B tools/kepler-formal/build tools/kepler-formal \
                 -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
+                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=x86-64-v3 -ffast-math -flto" \
                 -DCMAKE_EXE_LINKER_FLAGS="-flto" \
                 -DCMAKE_BUILD_RPATH="${DIR}/tools/kepler-formal/build/thirdparty/naja/src/dnl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/optimization" \
                 -DCMAKE_INSTALL_RPATH="${INSTALL_PATH}/kepler-formal/lib" \

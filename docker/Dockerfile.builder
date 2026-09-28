@@ -38,6 +38,10 @@ fi
                     --local \
                     --threads ${numThreads} \
                     ${verificArgs}
+if [ ! -x tools/install/OpenROAD/bin/openroad ]; then
+    echo "Error: tools/install/OpenROAD/bin/openroad is missing or not executable." >&2
+    exit 1
+fi
 if [ -n "${verificPath}" ]; then
     rm -rf "${verificPath}"
 fi

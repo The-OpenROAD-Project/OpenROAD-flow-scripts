@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import pathlib
 import os
+import re
 import sys
 
 # Parse and validate arguments
@@ -19,6 +20,15 @@ import sys
 # emit .odb (and often .def / .sdc); routing emits .spef; finish
 # emits .gds.
 RESULT_EXTS = [".v", ".rtlil", ".odb", ".def", ".spef", ".gds", ".sdc"]
+
+
+# The timing line run_command.py emits, matched wherever it appears in
+# the line rather than from its start.  A RUN_CMD wrapper is free to
+# prefix every log line -- a per-line elapsed stamp, "[  123.45] " --
+# and such a prefix must not change what this reports.  Hours are
+# optional, as _format_elapsed only emits them past an hour, and the
+# fraction of a second is matched so it can be discarded.
+ELAPSED_RE = re.compile(r"Elapsed time: (?:(\d+):)?(\d+):(\d+)(?:\.\d+)?\[h:\]min:sec")
 
 
 def get_hashes(f):
@@ -77,24 +87,15 @@ def print_log_dir_times(logdir, args):
                 # Elapsed time: 0:04.26[h:]min:sec. CPU time: user 4.08 sys 0.17 (99%). Peak memory: 671508KB.
                 if "Elapsed time" in line:
                     found = True
-                    # Extract the portion that has the time
-                    timePor = line.strip().replace("Elapsed time: ", "")
-                    # Remove the units from the time portion
-                    timePor = timePor.split("[h:]", 1)[0]
-                    # Remove any fraction of a second
-                    timePor = timePor.split(".", 1)[0]
-                    # Calculate elapsed time that has this format 'h:m:s'
-                    timeList = timePor.split(":")
-                    if len(timeList) == 2:
-                        # Only minutes and seconds are present
-                        elapsedTime = int(timeList[0]) * 60 + int(timeList[1])
-                    elif len(timeList) == 3:
-                        # Hours, minutes, and seconds are present
-                        elapsedTime = (
-                            int(timeList[0]) * 3600
-                            + int(timeList[1]) * 60
-                            + int(timeList[2])
-                        )
+                    # Match the 'h:m:s' time against the known format,
+                    # so anything the line is prefixed with is ignored.
+                    timeMatch = ELAPSED_RE.search(line)
+                    if timeMatch:
+                        hours, minutes, seconds = timeMatch.groups()
+                        # Any fraction of a second is dropped.
+                        elapsedTime = int(minutes) * 60 + int(seconds)
+                        if hours is not None:
+                            elapsedTime += int(hours) * 3600
                     else:
                         print(
                             "Elapsed time not understood in", str(line), file=sys.stderr

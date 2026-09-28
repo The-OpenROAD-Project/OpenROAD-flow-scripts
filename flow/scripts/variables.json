@@ -276,9 +276,11 @@
     ]
   },
   "DETAIL_PLACEMENT_ARGS": {
-    "description": "Specify arguments to the detailed_placement call during placement.\n",
+    "description": "Specify arguments to every detailed_placement call: the one in placement and the re-legalizations after clock tree synthesis, after repair in CTS and after the repairs in global route. A legalizer chosen here (-use_diamond_legalizer, -max_displacement) is therefore the one every stage uses.\n",
     "stages": [
-      "place"
+      "place",
+      "cts",
+      "grt"
     ]
   },
   "DFF_LIB_FILE": {
