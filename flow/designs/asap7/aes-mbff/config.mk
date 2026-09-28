@@ -7,7 +7,7 @@ export DESIGN_NICKNAME        = aes-mbff
 export SYNTH_SLANG_ARGS += --ignore-timing
 
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/aes/*.v))
-export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/aes/constraint.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/aes-mbff/constraint.sdc
 
 export ABC_AREA               = 1
 
