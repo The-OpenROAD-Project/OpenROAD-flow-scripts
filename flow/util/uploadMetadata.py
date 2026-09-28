@@ -376,7 +376,9 @@ if publisher and design_records:
             publisher, topic_path, design_records, args, provenance
         )
         if failed:
-            print(f"[ERROR] {failed} of {len(design_records)} designs were not published.")
+            print(
+                f"[ERROR] {failed} of {len(design_records)} designs were not published."
+            )
             sys.exit(1)
     else:
         try:
