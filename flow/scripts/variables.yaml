@@ -507,15 +507,6 @@ BUFFER_PORTS_ARGS:
     Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.
   stages:
     - place
-REMOVE_ABC_BUFFERS:
-  description: >
-    Remove abc buffers from the netlist. If timing repair in floorplanning is
-    taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early
-    instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.
-  stages:
-    - floorplan
-  deprecated: 1
-  default: 0
 BALANCE_ROWS:
   description: |
     Balance rows during placement.
