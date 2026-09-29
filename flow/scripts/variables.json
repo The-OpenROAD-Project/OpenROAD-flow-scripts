@@ -941,7 +941,7 @@
   "REMOVE_ABC_BUFFERS": {
     "default": 0,
     "deprecated": 1,
-    "description": "Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1. The designs that still set it lose QoR without it.\n",
+    "description": "Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1. Some designs still need it to reach their QoR targets.\n",
     "stages": [
       "floorplan"
     ]
