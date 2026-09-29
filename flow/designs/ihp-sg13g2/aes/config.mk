@@ -13,6 +13,4 @@ export TNS_END_PERCENT = 100
 
 export USE_FILL = 1
 
-export REMOVE_ABC_BUFFERS = 1
-
 export SYNTH_USE_SYN = 1
