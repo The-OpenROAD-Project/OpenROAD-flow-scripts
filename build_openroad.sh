@@ -251,13 +251,11 @@ echo "[INFO FLW-0028] Compiling with ${PROC} threads."
 
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" -DCMAKE_INSTALL_PREFIX=\"${INSTALL_PATH}/yosys\""
-# -lto selects Bazel --config=opt (-O3 and LTO). The default Bazel build is
-# -O2 without LTO, which produces a slower binary with different QoR than the
-# previous CMake RELEASE build.
+# Build.sh always builds with Bazel --config=release, which includes
+# --config=opt (-O3 and ThinLTO).
 OPENROAD_APP_ARGS=(
         "-prefix=${INSTALL_PATH}/OpenROAD"
         "-threads=${PROC}"
-        "-lto"
 )
 
 __args_setup() {
