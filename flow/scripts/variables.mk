@@ -178,20 +178,6 @@ export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
 export YOSYS_DEPENDENCIES=$(LIB_FILES) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
-# Ubuntu 22.04 ships with older than 0.28.11, so support older versions
-# for a while still.
-export KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
-export KLAYOUT_VERSION := $(if $(KLAYOUT_CMD),$(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2),)
-
-export KLAYOUT_ENV_VAR_IN_PATH = $(shell \
-	if [ -z "$(KLAYOUT_VERSION)" ]; then \
-		echo "not_found"; \
-	elif [ "$$(echo -e "$(KLAYOUT_VERSION)\n$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" | sort -V | head -n1)" = "$(KLAYOUT_VERSION)" ] && [ "$(KLAYOUT_VERSION)" != "$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" ]; then \
-		echo "invalid"; \
-	else \
-		echo "valid"; \
-	fi)
-
 export GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 export RESULTS_ODB = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.odb)))
 export RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
