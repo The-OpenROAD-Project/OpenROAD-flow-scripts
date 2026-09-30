@@ -71,3 +71,5 @@ export RTLMP_MIN_CHANNEL_SIZE = 42 42
 
 export OPT_POST_GRT_WNS = 0
 
+# Kepler Formal on the final netlist needs more memory than the CI VM has
+export LEC_CHECK = 0
