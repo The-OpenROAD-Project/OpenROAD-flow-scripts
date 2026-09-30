@@ -216,17 +216,6 @@ if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
 set abc_args [list -script $abc_script \
   {*}$lib_args {*}$lib_dont_use_args -constr $::env(OBJECTS_DIR)/abc.constr]
 
-if { [env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD] } {
-  puts "Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
-  set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
-  set clock_period [string trim [read $fp]]
-  if { $clock_period != "" } {
-    puts "Setting clock period to $clock_period"
-    lappend abc_args -D $clock_period
-  }
-  close $fp
-}
-
 set constr [open $::env(OBJECTS_DIR)/abc.constr w]
 puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
 puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
