@@ -28,8 +28,8 @@ usage: $0 [CMD] [OPTIONS]
                                              copy source code and build app
   -threads=N                    Max number of threads to use if compiling.
                                   Default = \$(nproc)
-  -tag=TAG                      Use as the image tag. Default includes the
-                                OpenROAD version and image content hash.
+  -tag=TAG                      Use as the image tag. Default is a hash of
+                                the files that define the image.
   -username=USERNAME            Username to loging at the docker registry.
   -password=PASSWORD            Password to loging at the docker registry.
   -ci                           Install CI tools in image
