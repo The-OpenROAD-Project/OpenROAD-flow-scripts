@@ -337,13 +337,23 @@ Usage: $0 [-all|-base|-common] [-<ARGS>]
                                 #
        $0 -base
                                 # Installs OpenROAD's dependencies using
-                                #     package managers, including Bazel
-                                #     (bazelisk). -common must be executed
-                                #     in another command.
+                                #     package managers. -common must be
+                                #     executed in another command.
        $0 -common
                                 # Installs OpenROAD's common dependencies
                                 #     (-base must be executed in another
                                 #     command).
+       $0 -bazel
+                                # Default. Installs Bazel (bazelisk) and
+                                #     its runtime libraries with -base or
+                                #     -all. build_openroad.sh builds
+                                #     OpenROAD with Bazel.
+       $0 -cmake
+                                # Skips Bazel and installs only the CMake
+                                #     dependencies. Use it to build
+                                #     OpenROAD with CMake, e.g.
+                                #     build_openroad.sh --openroad-args
+                                #     -cmake-build (deprecated upstream).
        $0 -prefix=DIR
                                 # Installs common dependencies in an existing
                                 #     user-specified directory. Only used
@@ -378,6 +388,8 @@ option="none"
 isLocal="false"
 constantBuildDir="false"
 CI="no"
+# OpenROAD build system to install dependencies for: bazel or cmake
+buildSystem="bazel"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -402,6 +414,12 @@ while [ "$#" -gt 0 ]; do
                 echo "WARNING: previous argument -${option} will be overwritten with -common." >&2
             fi
             option="common"
+            ;;
+        -bazel)
+            buildSystem="bazel"
+            ;;
+        -cmake)
+            buildSystem="cmake"
             ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
@@ -442,10 +460,11 @@ if [[ "${option}" == "none"  ]]; then
 fi
 
 OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
-# build_openroad.sh builds OpenROAD with Bazel, so bazelisk and its runtime
-# libraries are base dependencies. They need root, and -common may run
-# unprivileged, so they ride along with -base only.
-if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+# build_openroad.sh builds OpenROAD with Bazel by default, so bazelisk and
+# its runtime libraries are base dependencies unless -cmake is given. They
+# need root, and -common may run unprivileged, so they ride along with -base
+# only.
+if [[ "${buildSystem}" == "bazel" ]] && [[ "${option}" == "base" || "${option}" == "all" ]]; then
     OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -bazel"
 fi
 
