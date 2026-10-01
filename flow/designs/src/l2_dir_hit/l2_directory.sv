@@ -5,8 +5,9 @@
 //
 // What is left out, because it is not on the path: the replacer's own
 // SRAM (its choice arrives as repl_way_oh_s3, as io.replResp does), the
-// refill-retry free-way mask (:274-300), CMO by-way requests and the
-// tag ECC check, which feeds only error_s3 (:259-268, :321), never the hit.
+// refill-retry free-way mask (:274-300) and CMO by-way requests. The tag
+// ECC check is kept: its error on the hit way goes to MainPipe's snoop
+// decision the same cycle (errorOnSNP_s3, :259-268, :315-319).
 module l2_directory #(
     parameter int SETS = 1024,
     parameter int WAYS = 8,
@@ -34,7 +35,8 @@ module l2_directory #(
     output logic                        hit_s3,
     output logic [$clog2(WAYS)-1:0]     way_s3,
     output logic [METABITS-1:0]         meta_s3,
-    output logic [METABITS-1:0]         meta_on_hit_s3
+    output logic [METABITS-1:0]         meta_on_hit_s3,
+    output logic                        err_on_snp_s3
 );
   localparam int ENCTAG = TAGBITS + 7;  // SECDED(32): 39 bits
   localparam int HALF = WAYS / 2;  // waySplit = 2 (:173)
@@ -58,6 +60,14 @@ module l2_directory #(
     c = '0;
     for (int p = 1; p <= 38; p++) for (int b = 0; b < 6; b++) if (p[b]) c[b] ^= h[p-1];
     return {^{c, d}, c, d};
+  endfunction
+
+  // the code's error flag, as dataCode.decode(tag).error: the check bits
+  // recomputed from the stored tag, against the stored ones and the parity
+  function automatic logic secded_err(input logic [ENCTAG-1:0] e);
+    logic [ENCTAG-1:0] r;
+    r = secded(e[TAGBITS-1:0]);
+    return r[ENCTAG-2:TAGBITS] != e[ENCTAG-2:TAGBITS] || ^e;
   endfunction
 
   // s1: one read of both arrays, writes when there is no read (single port)
@@ -109,13 +119,15 @@ module l2_directory #(
 
   // s3: hit and way, "in stage 3, Cuz SRAM latency is high under high
   // frequency" (:209-213, :270-272, :295-312)
-  logic [WAYS-1:0] hit_vec, inv_vec, inv_oh, chosen_oh, way_oh;
+  logic [WAYS-1:0] hit_vec, inv_vec, inv_oh, chosen_oh, way_oh, err_vec;
   for (genvar w = 0; w < WAYS; w++) begin : g_way
     logic [METABITS-1:0] m;
     assign m          = meta_all_s3[w*METABITS+:METABITS];
     assign inv_vec[w] = m[1:0] == INVALID;
     assign hit_vec[w] = tag_read_s3[w*ENCTAG+:TAGBITS] == tag_s3 && !inv_vec[w];
+    assign err_vec[w] = secded_err(tag_read_s3[w*ENCTAG+:ENCTAG]);
   end
+  assign err_on_snp_s3 = |(hit_vec & err_vec);  // Mux1H(hitOH, errorAll_s3)
   assign inv_oh    = inv_vec & -inv_vec;  // invalid_way_sel: the first invalid way
   assign chosen_oh = |inv_vec ? inv_oh : repl_way_oh_s3;
   assign hit_s3    = |hit_vec;
