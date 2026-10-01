@@ -384,7 +384,12 @@ module l2_dir_hit #(
   end
 
   // s5: the read data, two cycles after the read edge ("s3 read, s4 pass
-  // and s5 to destination", DataStorage.scala:119-121)
-  always_ff @(posedge clock)
-    for (int b = 0; b < BANKS; b++) ds_rdata[b*BANKBITS+:BANKBITS] <= bank_rdata[b];
+  // and s5 to destination", DataStorage.scala:119-121). Its destinations
+  // are inside the slice, so s5 is too, and the port takes it a cycle
+  // later: an output register is drawn to its pin.
+  logic [BANKS*BANKBITS-1:0] rdata_s5;
+  always_ff @(posedge clock) begin
+    for (int b = 0; b < BANKS; b++) rdata_s5[b*BANKBITS+:BANKBITS] <= bank_rdata[b];
+    ds_rdata <= rdata_s5;
+  end
 endmodule
