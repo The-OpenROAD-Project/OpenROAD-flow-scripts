@@ -157,7 +157,8 @@ module tage_update #(
   logic use_provider;
   assign use_provider = has_provider && !(provider_weak && has_alt);
   always_ff @(posedge clock) begin
-    pred_taken    <= use_provider ? provider_ctr[2] : alt_ctr[2];
+    // no table hits: not taken, the base prediction's job in XiangShan
+    pred_taken    <= use_provider ? provider_ctr[2] : has_alt && alt_ctr[2];
     pred_provider <= provider;
     t1_valid      <= s2_valid && has_provider;
     t1_table      <= provider;

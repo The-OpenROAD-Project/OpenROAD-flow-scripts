@@ -75,13 +75,24 @@ module tage_table #(
     end
   end
 
-  // enqueue into the first free slot; a full buffer overwrites slot 0
+  // A write to a set and way already in the buffer updates that entry,
+  // so an older write never lands after a newer one; any other write
+  // takes the first free slot, and a full buffer overwrites slot 0
+  // (WriteBuffer.scala: hitMask, then PriorityEncoder of the clean slots).
+  // The drain is the lowest dirty slot, PriorityEncoder(dirty), as above.
   always_ff @(posedge clock) begin
     for (int b = 0; b < BANKS; b++) begin
       if (drain[b]) wb_valid[b][head[b]] <= 1'b0;
       if (wr_valid && wr_bank == BW'(b)) begin
         automatic int slot = 0;
-        for (int i = WB_SIZE - 1; i >= 0; i--) if (!wb_valid[b][i]) slot = i;
+        automatic logic hit = 1'b0;
+        for (int i = WB_SIZE - 1; i >= 0; i--) begin
+          if (wb_valid[b][i] && wb_set[b][i] == wr_set && wb_way[b][i] == wr_way) begin
+            hit  = 1'b1;
+            slot = i;
+          end
+        end
+        if (!hit) for (int i = WB_SIZE - 1; i >= 0; i--) if (!wb_valid[b][i]) slot = i;
         wb_valid[b][slot] <= 1'b1;
         wb_set[b][slot]   <= wr_set;
         wb_way[b][slot]   <= wr_way;
