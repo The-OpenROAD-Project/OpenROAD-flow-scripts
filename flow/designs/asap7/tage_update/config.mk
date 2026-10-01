@@ -22,7 +22,7 @@ export CORE_UTILIZATION       = 35
 export CORE_MARGIN            = 2
 # Channels between macros, as tinyRocket keeps them: room for the power
 # grid to reach every SRAM.
-export RTLMP_MIN_CHANNEL_SIZE = 4 4
+export RTLMP_MIN_CHANNEL_SIZE = 8 8
 
 # A ladder, FLOW_VARIANT=small|medium|large: small to iterate on, large
 # at the size of XiangShan's TAGE. base, ORFS's default variant, is
