@@ -437,13 +437,6 @@ MIN_BUF_CELL_AND_PORTS:
     Used to insert a buffer cell to pass through wires. Used in synthesis.
   stages:
     - synth
-ABC_CLOCK_PERIOD_IN_PS:
-  description: >
-    Not used: Yosys and ABC do not use a clock period. Timing is handled by
-    the steps after synthesis, using the clock in the SDC file.
-  stages:
-    - synth
-  deprecated: 1
 ABC_DRIVER_CELL:
   description: |
     Default driver cell used during ABC synthesis.

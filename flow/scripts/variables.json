@@ -6,13 +6,6 @@
       "synth"
     ]
   },
-  "ABC_CLOCK_PERIOD_IN_PS": {
-    "deprecated": 1,
-    "description": "Not used: Yosys and ABC do not use a clock period. Timing is handled by the steps after synthesis, using the clock in the SDC file.\n",
-    "stages": [
-      "synth"
-    ]
-  },
   "ABC_DRIVER_CELL": {
     "description": "Default driver cell used during ABC synthesis.\n",
     "stages": [
