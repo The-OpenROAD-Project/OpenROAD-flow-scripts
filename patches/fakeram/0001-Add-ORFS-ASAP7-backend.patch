@@ -28,10 +28,10 @@ index 0000000..edcf578
 +# ORFS ASAP7 package
 diff --git a/orfs_asap7/generate.py b/orfs_asap7/generate.py
 new file mode 100644
-index 0000000..58fef20
+index 0000000..6361c8c
 --- /dev/null
 +++ b/orfs_asap7/generate.py
-@@ -0,0 +1,83 @@
+@@ -0,0 +1,92 @@
 +import json
 +import sys
 +from pathlib import Path
@@ -57,6 +57,15 @@ index 0000000..58fef20
 +    "column_mux_factor": 1,
 +    "snap_width_nm": 190,
 +    "snap_height_nm": 1400,
++    # A macro's power pins are horizontal M4 rails, which the platform's
++    # macro grid connects to the core's vertical M5 straps
++    # (openRoad/pdn/grid_strategy-M1-M2-M5-M6.tcl: each net every 5.4 um,
++    # 0.12 um wide). A narrower macro can sit between two straps of a
++    # net, its grid gets no shapes and pdngen fails the whole design
++    # (PDN-0233). One pitch plus a strap, plus the rails' 0.048 um inset
++    # at both edges, puts a strap of each net across the rails wherever
++    # the macro lands.
++    "min_width_um": 5.4 + 0.12 + 2 * 0.048,
 +}
 +
 +ASAP7_TIMING_CONFIG = {
@@ -116,7 +125,7 @@ index 0000000..58fef20
 +    (out_dir / "blackboxes.txt").write_text("".join(f"{m['name']}\n" for m in converted))
 +    return 0
 diff --git a/run.py b/run.py
-index f525c5f..06ae626 100755
+index a89ce07..8257419 100755
 --- a/run.py
 +++ b/run.py
 @@ -8,6 +8,7 @@ from utils.class_process import Process
@@ -127,7 +136,7 @@ index f525c5f..06ae626 100755
  
  
  def get_args() -> argparse.Namespace:
-@@ -28,10 +29,19 @@ def get_args() -> argparse.Namespace:
+@@ -26,10 +27,19 @@ def get_args() -> argparse.Namespace:
          required=False,
          default="results",
      )
@@ -147,22 +156,58 @@ index f525c5f..06ae626 100755
      json_data = RunUtils.get_config(args.config)
      # Create a process object (shared by all srams)
      process = Process(json_data)
-@@ -52,4 +62,4 @@ def main(args: argparse.Namespace):
+@@ -50,4 +60,4 @@ def main(args: argparse.Namespace):
  ### Entry point
  if __name__ == "__main__":
      args = get_args()
 -    main(args)
 +    sys.exit(main(args))
+diff --git a/test/macro_dim_test.py b/test/macro_dim_test.py
+index 849fc04..be7040e 100755
+--- a/test/macro_dim_test.py
++++ b/test/macro_dim_test.py
+@@ -71,6 +71,20 @@ class MacroDimTest(unittest.TestCase):
+             self.assertAlmostEqual(height, exp_height, delta=self._delta)
+             self.assertAlmostEqual(width, exp_width, delta=self._delta)
+ 
++    def test_macro_dim_min_width(self):
++        """A narrow macro is widened to min_width_um; a wide one is not"""
++
++        process_data = TestUtils.get_base_process_data().copy()
++        process_data["min_width_um"] = 10.0
++        process = Process(process_data)
++        # 39 bits at 2048 deep is 5.054 um wide, below the floor
++        width, height = process.get_macro_dimensions(39, 2048, 1, 0)
++        self.assertAlmostEqual(width, 10.0, delta=self._delta)
++        self.assertAlmostEqual(height, 663.552, delta=self._delta)
++        # four banks make it 20.216 um wide, above the floor
++        width, _ = process.get_macro_dimensions(39, 2048, 4, 0)
++        self.assertAlmostEqual(width, 5.054 * 4, delta=self._delta)
++
+     def test_macro_dim_invalid_banks(self):
+         """Tests detection that an invalid bank value was given"""
+ 
 diff --git a/utils/class_process.py b/utils/class_process.py
-index e1cfac3..745285c 100644
+index 487a853..a5bafcf 100644
 --- a/utils/class_process.py
 +++ b/utils/class_process.py
-@@ -119,6 +119,9 @@ class Process:
+@@ -60,6 +60,9 @@ class Process:
+         self._calc_y_step()
+         self.bitcell_width_um = json_data.get("bitcell_width_um", None)
+         self.bitcell_height_um = json_data.get("bitcell_height_um", None)
++        # The narrowest macro the platform's power grid can reach; 0 for
++        # no floor. See ASAP7_PROCESS_CONFIG in orfs_asap7/generate.py.
++        self.min_width_um = json_data.get("min_width_um", 0.0)
+ 
+         # Set to True when we want to use the process parameters or bitcell
+         # sizes to calculate the macro dimensions. Set to False for spreadsheet
+@@ -119,6 +122,10 @@ class Process:
  
          total_height += additional_height
  
 +        min_height = max(3.5, self.snap_height_nm / 1000.0 if self.snap_height_nm else 0)
 +        total_height = max(total_height, min_height)
++        total_width = max(total_width, self.min_width_um)
 +
          return (total_width, total_height)
  
