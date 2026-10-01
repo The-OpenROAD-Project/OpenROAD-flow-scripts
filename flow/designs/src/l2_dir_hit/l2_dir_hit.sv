@@ -212,6 +212,11 @@ module l2_dir_hit #(
     if (v_s2) task_s3 <= task_s2;
   end
 
+  // the refill buffer, read at s2 and its response registered for s3, so
+  // it holds with the task (RequestArb.scala:235-238)
+  logic [BANKS*BANKBITS-1:0] refill_s3;
+  always_ff @(posedge clock) if (v_s2) refill_s3 <= in_m_refill_data;
+
   // ---- the directory: read in s1 for a channel task, written by MainPipe
   // at s3 ----
   logic hit, dir_valid;
@@ -252,12 +257,15 @@ module l2_dir_hit #(
   assign dir_read_ready = !meta_wen && !tag_wen && !replacer_wen;
 
   // ---- s3: MainPipe's decision (MainPipe.scala:244-262) ----
+  // As MainPipe does, the decision is made on the task's bits, which hold
+  // for two cycles, and the valid is applied where each consumer takes it
+  // (:309, :499-504, :605): the data array's request must hold for both.
   logic chn_s3, a_s3, c_s3, m_s3;
   logic req_get, req_acquire_block, req_acquire, has_clients;
-  assign chn_s3            = v_s3 && !task_s3.mshr;
+  assign chn_s3            = !task_s3.mshr;
   assign a_s3              = chn_s3 && task_s3.from_a;
   assign c_s3              = chn_s3 && task_s3.from_c;
-  assign m_s3              = v_s3 && task_s3.mshr;
+  assign m_s3              = task_s3.mshr;
   assign req_get           = task_s3.opcode == GET;
   assign req_acquire_block = task_s3.opcode == ACQUIRE_BLOCK;
   assign req_acquire       = task_s3.opcode == ACQUIRE_BLOCK || task_s3.opcode == ACQUIRE_PERM;
@@ -284,10 +292,10 @@ module l2_dir_hit #(
     meta_w_m      = '0;
     meta_w_m[1:0] = TIP;
   end
-  assign meta_wen     = a_s3 && !need_mshr && !req_get || c_s3 && hit || m_s3;
+  assign meta_wen     = v_s3 && (a_s3 && !need_mshr && !req_get || c_s3 && hit || m_s3);
   assign meta_wmeta   = a_s3 ? meta_w_a : c_s3 ? meta_w_c : meta_w_m;
   assign meta_wway_oh = m_s3 ? WAYS'(1) << task_s3.way : WAYS'(1) << dir_way;
-  assign tag_wen      = m_s3;
+  assign tag_wen      = v_s3 && m_s3;
   assign tag_wway_oh  = WAYS'(1) << task_s3.way;
 
   // ---- s3: MSHR allocation (MainPipe.scala:309, 1021-1059;
@@ -308,7 +316,7 @@ module l2_dir_hit #(
   ) u_mshr_ctl (
       .clock       (clock),
       .reset       (reset),
-      .alloc_valid (need_mshr),
+      .alloc_valid (v_s3 && need_mshr),
       .alloc_state (alloc_state),
       .alloc_tag   (task_s3.tag),
       .free        (in_mshr_free),
@@ -322,7 +330,7 @@ module l2_dir_hit #(
   logic [2:0] d_opcode;
   assign sink_resp = a_s3 && !need_mshr;
   assign d_opcode = req_get ? ACCESS_ACK_DATA : req_acquire_block ? GRANT_DATA : GRANT;
-  assign enq_s3 = sink_resp && (d_opcode == GRANT || d_opcode == GRANT_DATA ||
+  assign enq_s3 = v_s3 && sink_resp && (d_opcode == GRANT || d_opcode == GRANT_DATA ||
                                 d_opcode == ACCESS_ACK_DATA);
   assign enq_has_data = d_opcode != GRANT;
 
@@ -363,7 +371,7 @@ module l2_dir_hit #(
   logic [BANKBITS-1:0] bank_rdata[BANKS];
   for (genvar b = 0; b < BANKS; b++) begin : g_bank
     logic [BANKBITS-1:0] wdata;
-    assign wdata = m_s3 ? in_m_refill_data[b*BANKBITS+:BANKBITS] :
+    assign wdata = m_s3 ? refill_s3[b*BANKBITS+:BANKBITS] :
                           secded128(buf_resp_s3[b*128+:128]);
     l2_data_sram u_sram (
         .RW0_clk  (clock),
