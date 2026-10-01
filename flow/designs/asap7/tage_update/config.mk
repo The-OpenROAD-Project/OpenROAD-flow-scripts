@@ -1,5 +1,5 @@
-# tage_update: gather, decide, scatter across a branch predictor's tables
-# in one cycle. README.md says what it is for and where it comes from.
+# tage_update: a branch predictor's stage-2 decision between two sets of
+# SRAMs, and back. README.md says what it is for and where it comes from.
 export PLATFORM               = asap7
 export DESIGN_NAME            = tage_update
 export DESIGN_NICKNAME        = tage_update
@@ -18,21 +18,22 @@ export AUTO_MEMORIES          = 1
 # speed per path, as a 3 GHz-class core does.
 export ASAP7_USE_VT           = RVT LVT SLVT
 
-export CORE_UTILIZATION       = 35
+export CORE_UTILIZATION       = 30
 export CORE_MARGIN            = 2
 # Channels between macros, as tinyRocket keeps them: room for the power
 # grid to reach every SRAM.
 export RTLMP_MIN_CHANNEL_SIZE = 8 8
 
 # A ladder, FLOW_VARIANT=small|medium|large: small to iterate on, large
-# at the size of XiangShan's TAGE. base, ORFS's default variant, is
-# large: the smallest size that shows the effect (README.md, Variants).
+# at the size of XiangShan's TAGE and main BTB. base, ORFS's default
+# variant, is medium: the smallest size that shows the effect (README.md,
+# Variants).
 ifeq ($(FLOW_VARIANT),small)
-export VERILOG_TOP_PARAMS     = TABLES 2 BANKS 1 WAYS 1
+export VERILOG_TOP_PARAMS     = TABLES 2 BANKS 1 WAYS 1 MBTB_BANKS 1 MBTB_WAYS 1
 else ifeq ($(FLOW_VARIANT),medium)
-export VERILOG_TOP_PARAMS     = TABLES 4 BANKS 2 WAYS 2
+export VERILOG_TOP_PARAMS     = TABLES 4 BANKS 2 WAYS 2 MBTB_BANKS 2 MBTB_WAYS 2
 else ifeq ($(FLOW_VARIANT),large)
-export VERILOG_TOP_PARAMS     = TABLES 8 BANKS 4 WAYS 2
+export VERILOG_TOP_PARAMS     = TABLES 8 BANKS 4 WAYS 2 MBTB_BANKS 4 MBTB_WAYS 4
 else
-export VERILOG_TOP_PARAMS     = TABLES 8 BANKS 4 WAYS 2
+export VERILOG_TOP_PARAMS     = TABLES 4 BANKS 2 WAYS 2 MBTB_BANKS 2 MBTB_WAYS 2
 endif
