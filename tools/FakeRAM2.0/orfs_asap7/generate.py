@@ -33,6 +33,7 @@ ASAP7_TIMING_CONFIG = {
     "leakage": 0.001,
 }
 
+
 def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
     if platform != "asap7":
         sys.stderr.write(f"FakeRAM2.0 orfs_asap7: unsupported platform {platform}\n")
@@ -46,7 +47,9 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
         return 1
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    converted = sorted((m for m in memories if m.get("idiomatic")), key=lambda m: m["name"])
+    converted = sorted(
+        (m for m in memories if m.get("idiomatic")), key=lambda m: m["name"]
+    )
 
     process = Process(ASAP7_PROCESS_CONFIG)
     timing_data = TimingData(ASAP7_TIMING_CONFIG)
@@ -79,5 +82,7 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
         with open(lef_path, "w") as f:
             LefExporter(ram).export(f)
 
-    (out_dir / "blackboxes.txt").write_text("".join(f"{m['name']}\n" for m in converted))
+    (out_dir / "blackboxes.txt").write_text(
+        "".join(f"{m['name']}\n" for m in converted)
+    )
     return 0

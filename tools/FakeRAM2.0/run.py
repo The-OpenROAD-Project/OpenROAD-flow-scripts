@@ -38,7 +38,10 @@ def get_args() -> argparse.Namespace:
 def main(args: argparse.Namespace):
     if args.orfs_asap7_backend:
         from pathlib import Path
-        return run_orfs_asap7(platform="asap7", out_dir=Path(args.output_dir), json_path=Path(args.config))
+
+        return run_orfs_asap7(
+            platform="asap7", out_dir=Path(args.output_dir), json_path=Path(args.config)
+        )
 
     json_data = RunUtils.get_config(args.config)
     # Create a process object (shared by all srams)
