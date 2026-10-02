@@ -3,6 +3,7 @@
 import json
 import argparse
 import os
+import sys
 
 # --- PUBSUB ---
 from google.cloud import pubsub_v1
@@ -281,7 +282,7 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
 
     Emits one v1-format message per design (no payload_schema_version, metrics
     flattened at the root), matching the legacy schema the ingestion service
-    still supports.
+    still supports. Returns the number of designs that failed to publish.
 
     Provenance is mirrored onto every message: all of them resolve to the same
     build, and the backend upserts components by path, so N copies converge on
@@ -295,6 +296,7 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
     """
     futures = []
     requester = resolve_requester(args)
+    failed = 0
     for d in design_records:
         payload = {
             "build_id": args.buildID,
@@ -319,8 +321,9 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
             )
             futures.append((d, future))
         except Exception as e:
+            failed += 1
             print(
-                f"[WARN] Pub/Sub v1 fallback publish failed for "
+                f"[ERROR] Pub/Sub v1 fallback publish failed for "
                 f"{d['platform']} {d['design']} {d['variant']}: {e}"
             )
 
@@ -332,10 +335,12 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
                 f"{d['platform']} {d['design']} {d['variant']}."
             )
         except Exception as e:
+            failed += 1
             print(
-                f"[WARN] Pub/Sub v1 fallback publish failed for "
+                f"[ERROR] Pub/Sub v1 fallback publish failed for "
                 f"{d['platform']} {d['design']} {d['variant']}: {e}"
             )
+    return failed
 
 
 # --- END PUBSUB ---
@@ -388,6 +393,9 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
     # --- END PUBSUB ---
 
 # --- PUBSUB ---
+# A failed publish exits non-zero. A warning alone let CI builds pass while the
+# QoR dashboard stopped receiving results, which froze the baseline that later
+# builds are compared against.
 if publisher and design_records:
     provenance = load_provenance(args.provenanceFile)
     payload = build_pipeline_payload(design_records, args, provenance)
@@ -399,7 +407,14 @@ if publisher and design_records:
             f"{MAX_PUBSUB_BYTES // 1024} KB cap. Falling back to v1 per-design publish "
             f"({len(design_records)} messages)."
         )
-        publish_v1_per_design(publisher, topic_path, design_records, args, provenance)
+        failed = publish_v1_per_design(
+            publisher, topic_path, design_records, args, provenance
+        )
+        if failed:
+            print(
+                f"[ERROR] {failed} of {len(design_records)} designs were not published."
+            )
+            sys.exit(1)
     else:
         try:
             publish_pipeline_report(
@@ -411,7 +426,8 @@ if publisher and design_records:
                 provenance,
             )
         except Exception as e:
-            print(f"[WARN] Pub/Sub publish failed for pipeline report: {e}")
+            print(f"[ERROR] Pub/Sub publish failed for pipeline report: {e}")
+            sys.exit(1)
 elif publisher and not design_records:
     print("[WARN] Pub/Sub publisher initialized but no design records were collected.")
 # --- END PUBSUB ---

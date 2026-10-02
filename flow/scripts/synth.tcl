@@ -143,6 +143,11 @@ if {
   synth -flatten -run coarse:fine {*}$synth_full_args
 }
 
+# Resolve internal tristates left by the slang frontend ---
+if { [env_var_equals SYNTH_HDL_FRONTEND slang] } {
+  tribuf -logic
+  opt_clean
+}
 
 if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
   memory_collect

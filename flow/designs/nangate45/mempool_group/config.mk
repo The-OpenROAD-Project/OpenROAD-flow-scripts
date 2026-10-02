@@ -75,6 +75,6 @@ export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_256x32.lib \
 export DIE_AREA    = 0 0 1100 1100
 export CORE_AREA   = 10 12 1090 1090
 
-export MACRO_PLACE_HALO = 10 10
+export RTLMP_MIN_CHANNEL_SIZE = 20 20
 
 export SYNTH_HDL_FRONTEND = slang

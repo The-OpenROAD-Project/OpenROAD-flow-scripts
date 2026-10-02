@@ -101,7 +101,7 @@ export CORE_MARGIN ?= 17.5
 # `cut_rows` has to be called from the tapcell script.
 export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
-export MACRO_PLACE_HALO ?= 40 40
+export RTLMP_MIN_CHANNEL_SIZE ?= 80 80
 
 # Will be placed left to right
 export IO_NORTH_PINS ??=

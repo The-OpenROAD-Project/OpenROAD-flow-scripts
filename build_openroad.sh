@@ -251,13 +251,11 @@ echo "[INFO FLW-0028] Compiling with ${PROC} threads."
 
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" -DCMAKE_INSTALL_PREFIX=\"${INSTALL_PATH}/yosys\""
-# -lto selects Bazel --config=opt (-O3 and LTO). The default Bazel build is
-# -O2 without LTO, which produces a slower binary with different QoR than the
-# previous CMake RELEASE build.
+# Build.sh always builds with Bazel --config=release, which includes
+# --config=opt (-O3 and ThinLTO).
 OPENROAD_APP_ARGS=(
         "-prefix=${INSTALL_PATH}/OpenROAD"
         "-threads=${PROC}"
-        "-lto"
 )
 
 __args_setup() {
@@ -400,7 +398,7 @@ __local_build()
         echo "[INFO FLW-0031] Compiling kepler-formal"
         ${NICE} cmake -B tools/kepler-formal/build tools/kepler-formal \
                 -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
+                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=x86-64-v3 -ffast-math -flto" \
                 -DCMAKE_EXE_LINKER_FLAGS="-flto" \
                 -DCMAKE_BUILD_RPATH="${DIR}/tools/kepler-formal/build/thirdparty/naja/src/dnl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/optimization" \
                 -DCMAKE_INSTALL_RPATH="${INSTALL_PATH}/kepler-formal/lib" \

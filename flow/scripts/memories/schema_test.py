@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -114,6 +115,47 @@ class SchemaTest(unittest.TestCase):
         ]
         with self.assertRaises(schema.SchemaError):
             schema.validate_emittable(dataless)
+
+
+FLOW_DIR = Path(__file__).resolve().parents[2]
+
+
+def module_ports(verilog: Path, module: str) -> dict[str, tuple[str, int]]:
+    """{name: (direction, width)} from an ANSI-style module header."""
+    ports = {}
+    in_header = False
+    for line in verilog.read_text().splitlines():
+        if line.startswith(f"module {module}("):
+            in_header = True
+            continue
+        if in_header:
+            if line.startswith(");"):
+                return ports
+            m = re.match(r"\s*(input|output)\s+(?:\[(\d+):0\])?\s*(\w+)", line)
+            if m:
+                direction, msb, name = m.groups()
+                ports[name] = (direction, int(msb) + 1 if msb else 1)
+    raise AssertionError(f"module {module} not found in {verilog}")
+
+
+class TinyRocketTagArrayTest(unittest.TestCase):
+    """tinyRocket's tag_array wrapper has no inferred memory for detection
+    to find, so its override is taken whole and must be emittable on its
+    own, with the pins of the module it replaces."""
+
+    def setUp(self):
+        path = FLOW_DIR / "designs/asap7/tinyRocket/tag_array.memories"
+        (self.mem,) = schema.merge([], schema.load(path))
+
+    def test_override_is_emittable(self):
+        schema.validate_emittable(self.mem)
+
+    def test_pins_match_the_rtl(self):
+        rtl = (
+            FLOW_DIR / "designs/src/tinyRocket/freechips.rocketchip.system.TinyConfig.v"
+        )
+        pins = {p.name: (p.direction, p.width) for p in self.mem.pins}
+        self.assertEqual(pins, module_ports(rtl, "tag_array"))
 
 
 if __name__ == "__main__":
