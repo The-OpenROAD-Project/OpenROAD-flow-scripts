@@ -95,37 +95,39 @@ option and the design forces conversion.
 
 ## Generated views
 
-The `.lib` mirrors the structural shape OpenROAD's abstract writer
-produces for hardened blocks: `bus()` groups **with per-bit `pin()`
-records** (a bus without per-bit siblings makes yosys silently drop bit
-connections at parent instances), per-port clock pins with
-`min/max_clock_tree_path` arcs, setup/hold constraints on inputs,
-clock-to-out arcs on outputs, and `internal_power()` records under a
-`power_lut_template` so SAIF-driven power reporting is non-zero.
+The views come from FakeRAM2.0's asap7 backend
+(`tools/FakeRAM2.0/orfs_asap7/generate.py`), which `gen_memories.py` runs
+as `run.py --orfs_asap7_backend`.
+Every converted memory becomes a FakeRAM2.0 single-port RAM of its depth
+and width. Its other ports and write-mask lanes are not modelled, and the
+views use FakeRAM2.0's pin names, not the memory's own.
 
-The `.lef` is an abstract following the conventions of the platform's
-fakeram abstracts: `CLASS BLOCK`, per-bit signal pin pads stacked along
-the macro edge, interleaved horizontal power/ground straps the
-platform's PDN macro grid connects to, and a full-footprint multi-layer
-`OBS`.
+The `.lib` has `bus()` groups `addr_in`, `wd_in` and `rd_out` and pins
+`clk`, `we_in` and `ce_in`. Inputs have setup/hold constraints, `rd_out`
+has a clock-to-out arc, and pins have `internal_power()` records under a
+`power_lut_template`. `<m>_pre_layout.lib` has the same content as
+`<m>.lib`.
 
-Timing and area come from simple parametric models
-(`scripts/memories/liberty.py`, `scripts/memories/sram_area_model.py`):
-log2(rows) decode depth and √bits bit-line scaling for timing; an area
-model anchored to published 7 nm SP-SRAM figures (Suzuki et al., ISSCC
-2018). These are budgetary models — good enough to make floorplanning,
-placement, and timing behave representatively; not sign-off numbers.
+Timing, power and leakage are FakeRAM2.0's built-in asap7 defaults,
+the same for every memory. Only area and bus widths depend on the
+memory. Each bit is 2 contacted poly pitches by 10 fin pitches, and the
+bit array gets 20% extra in each direction: that is the `.lib` area.
+The `.lef` size is at least that array, rounded up to a multiple of
+0.19 µm in width and 1.4 µm in height; a shallow memory is made taller
+to leave room for its pins.
+
+The `.lef` is a `CLASS BLOCK` abstract with signal pins on M4 stacked up
+the left edge, alternating horizontal M4 `VDD`/`VSS` straps across the
+macro (which the platform's PDN macro grid connects to M5), and an `OBS`
+covering M1 to M4.
 
 ## Platform support
 
-**asap7 only.** The emitters are split into general structure
-(`liberty.py`, `lef.py`, parameterized by a `PdkParams`) and platform
-constants (`pdk_asap7.py`: pins and power straps on M4 — where the
-platform's PDN macro grid connects — pin pad/pitch, strap geometry,
-OBS layers, nominal voltage). Generalizing to other PDKs means
-providing their `PdkParams` — the code seam exists, the calibration
-work does not. `AUTO_MEMORIES=1` on any other platform fails with a
-clear error.
+**asap7 only.** `gen_memories.py` rejects any other platform. The
+asap7 process parameters (layers, pin pitch, poly and fin pitch, snap grid)
+are constants in `ASAP7_PROCESS_CONFIG` in
+`tools/FakeRAM2.0/orfs_asap7/generate.py`, not read from the platform.
+Another PDK would need its own backend there.
 
 ## Trying it
 
