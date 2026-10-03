@@ -174,9 +174,8 @@ export WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
 export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
 
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
-export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
-export YOSYS_DEPENDENCIES=$(LIB_FILES) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
+export YOSYS_DEPENDENCIES=$(LIB_FILES) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 
 export GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 export RESULTS_ODB = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.odb)))
@@ -199,13 +198,6 @@ define newline
 endef
 export ISSUE_VARIABLES := $(foreach V, $(ISSUE_VARIABLES_NAMES), $(if $($V),$V=$($V),$V='')$(newline))
 export COMMAND_LINE_ARGS := $(foreach V,$(.VARIABLES),$(if $(filter command% line, $(origin $V)),$(V)))
-
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
-   ifneq ($(wildcard $(SDC_FILE)),)
-      export ABC_CLOCK_PERIOD_IN_PS := $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
-   endif
-endif
 
 .PHONY: vars
 vars:

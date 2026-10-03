@@ -437,12 +437,6 @@ MIN_BUF_CELL_AND_PORTS:
     Used to insert a buffer cell to pass through wires. Used in synthesis.
   stages:
     - synth
-ABC_CLOCK_PERIOD_IN_PS:
-  description: >
-    Clock period to be used by STA during synthesis. Default value read from
-    `constraint.sdc`.
-  stages:
-    - synth
 ABC_DRIVER_CELL:
   description: |
     Default driver cell used during ABC synthesis.

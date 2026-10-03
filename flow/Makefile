@@ -258,14 +258,6 @@ memory:
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
 
-$(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
-	$(UNSET_AND_MAKE) do-sdc-clock-period
-
-.PHONY: do-sdc-clock-period
-do-sdc-clock-period:
-	mkdir -p $(dir $(SDC_FILE_CLOCK_PERIOD))
-	echo $(ABC_CLOCK_PERIOD_IN_PS) > $(SDC_FILE_CLOCK_PERIOD)
-
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
@@ -319,7 +311,6 @@ clean_synth:
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STATS)
-	rm -f $(SDC_FILE_CLOCK_PERIOD)
 
 # ==============================================================================
 #  _____ _     ___   ___  ____  ____  _        _    _   _

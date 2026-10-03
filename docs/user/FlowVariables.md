@@ -91,7 +91,6 @@ configuration file.
 | Variable | Description | Default |
 | --- | --- | --- |
 | <a name="ABC_AREA"></a>ABC_AREA| Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.| 0|
-| <a name="ABC_CLOCK_PERIOD_IN_PS"></a>ABC_CLOCK_PERIOD_IN_PS| Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.| |
 | <a name="ABC_DRIVER_CELL"></a>ABC_DRIVER_CELL| Default driver cell used during ABC synthesis.| |
 | <a name="ABC_LOAD_IN_FF"></a>ABC_LOAD_IN_FF| During synthesis set_load value used.| |
 | <a name="ABSTRACT_SOURCE"></a>ABSTRACT_SOURCE| Which .odb file to use to create abstract| |
@@ -342,7 +341,6 @@ configuration file.
 ## synth variables
 
 - [ABC_AREA](#ABC_AREA)
-- [ABC_CLOCK_PERIOD_IN_PS](#ABC_CLOCK_PERIOD_IN_PS)
 - [ABC_DRIVER_CELL](#ABC_DRIVER_CELL)
 - [ABC_LOAD_IN_FF](#ABC_LOAD_IN_FF)
 - [ADDER_MAP_FILE](#ADDER_MAP_FILE)
