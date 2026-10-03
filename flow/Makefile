@@ -361,11 +361,11 @@ endef
 define OPEN_GUI
 .PHONY: open_$(1) gui_$(1) web_$(1)
 open_$(1):
-	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/open.tcl
+	$(2)=$(RESULTS_DIR)/$(1) $$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/open.tcl
 gui_$(1):
-	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/open.tcl
+	$(2)=$(RESULTS_DIR)/$(1) $$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/open.tcl
 web_$(1):
-	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_WEB_CMD) $(SCRIPTS_DIR)/open.tcl
+	$(2)=$(RESULTS_DIR)/$(1) $$(OPENROAD_WEB_CMD) $(SCRIPTS_DIR)/open.tcl
 endef
 
 # Enables "make gui_5_1_grt-failed"
