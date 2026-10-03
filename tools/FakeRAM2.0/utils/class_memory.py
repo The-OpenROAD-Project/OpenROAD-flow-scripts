@@ -42,11 +42,18 @@ class Memory(NamedObject):
             width_um, height_um = self.process.get_macro_dimensions(
                 self.width_in_bits, self.depth, self.num_banks, self.additional_height
             )
+            # Signal pins are stacked one per track up the left edge, inset
+            # by y_offset at both ends, so the macro must be at least that
+            # tall; a shallow memory with many pins is otherwise too short
+            num_pins = self.get_num_pins()
+            height_um = max(
+                height_um,
+                2 * self.process.y_offset + num_pins * self.process.pin_pitch_um,
+            )
             self.physical.set_extents(width_um, height_um)
             self.physical.snap_to_grid(
                 self.process.snap_width_nm, self.process.snap_height_nm
             )
-            num_pins = self.get_num_pins()
             self.physical.set_pin_pitches(
                 self.get_name(),
                 num_pins,
