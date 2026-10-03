@@ -4,8 +4,8 @@ Checks flow metrics against the QoR dashboard's rules
 (https://dashboard.precisioninno.com).
 
 The check POSTs a run's numeric metrics from metadata.json to the dashboard,
-which compares them against a real baseline build -- the latest master build
-by default -- using the thresholds it stores in rule_configs. This is the QoR
+which compares them against a real baseline build -- the master build at the
+run's merge base, by default -- using the thresholds it stores in rule_configs. This is the QoR
 gate behind `make metadata`. Rule tolerances live in the dashboard, not in
 this repository, and the baseline moves with master, so a merged change
 becomes the new baseline without a file update.
@@ -21,6 +21,19 @@ Two modes:
     export DASHBOARD_API_KEY=plt_...       # optional; needed for private platforms
     ./util/checkQorMetrics.py
 
+Each run is checked as the commit metadata.json records (--commit overrides
+it). The dashboard searches its default baseline pipelines in order and takes
+a master build that has the design: the one at the commit's merge base with
+master, else the latest one before the commit. A commit on master is its own
+merge base, so a master run is compared against that commit's own build.
+Without a commit the run is compared against the latest master build.
+
+--job-name (DASHBOARD_JOB_NAME) checks as a build of that pipeline instead, with
+its CI rules for the branch checked out here (--branch overrides it): the
+previous build on a trunk branch, the merge base on any other branch. CI
+passes --branch and --commit (or DASHBOARD_BRANCH and DASHBOARD_COMMIT), since
+its checkout has no branch.
+
 Exit status: 1 when the dashboard reports a failed rule for any checked run,
 or when a metadata.json is missing, malformed, or holds no numeric metric.
 0 otherwise. A run the dashboard could not judge -- no baseline, nothing
@@ -34,8 +47,10 @@ caller that wants to tell them apart. The last line of the report is
 import argparse
 import concurrent.futures
 import json
+import math
 import os
 import re
+import subprocess
 import sys
 import time
 import urllib.error
@@ -64,8 +79,6 @@ REQUEST_TIMEOUT = 60
 RETRY_ATTEMPTS = 3
 RETRY_BACKOFF_SECONDS = 1.0
 RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
-
-DEFAULT_JOB_NAME = "OpenROAD-flow-scripts-Public"
 
 # metadata.json records the ORFS commit, but genMetrics.py writes the strings
 # "git not on PATH" / "not a git repo" / "N/A" there when it cannot resolve one.
@@ -148,7 +161,9 @@ class MetadataError(Exception):
 
 
 def load_metadata(path, only_prefix=None):
-    """Returns (metrics, commit_sha). Raises MetadataError if the file is unusable.
+    """Returns (metrics, commit_sha, dropped). Raises MetadataError if the file is unusable.
+
+    dropped names the metrics left out because their value is not finite.
 
     only_prefix keeps just the metrics whose name starts with one of the given
     prefixes. The dashboard evaluates only the metrics it receives, so sending
@@ -180,6 +195,14 @@ def load_metadata(path, only_prefix=None):
     # reported metric count honest.
     metrics = {key: value for key, value in metrics.items() if "__iter__" not in key}
 
+    # ORFS writes inf/-inf/NaN for a metric it could not compute (an unconstrained
+    # timing path reports -inf TNS). json.dumps renders those as bare Infinity/NaN
+    # tokens, which are not JSON: the dashboard rejects the whole request with
+    # HTTP 400, so one unusable metric would cost the run its verdict. A value
+    # that is not finite has nothing to compare against, so leave it out.
+    dropped = sorted(key for key, value in metrics.items() if not math.isfinite(value))
+    metrics = {key: value for key, value in metrics.items() if key not in dropped}
+
     if only_prefix:
         metrics = {
             key: value
@@ -191,7 +214,27 @@ def load_metadata(path, only_prefix=None):
         raise MetadataError(f"no numeric metrics in {path}")
 
     commit = str(raw.get(COMMIT_KEY, ""))
-    return metrics, commit if SHA_RE.match(commit) else ""
+    return metrics, commit if SHA_RE.match(commit) else "", dropped
+
+
+def current_branch():
+    """The branch checked out in this repository, or "" when git cannot say.
+
+    A detached HEAD reads as "HEAD", which the dashboard treats as any other
+    non-trunk branch: it compares against the merge base, which is the right
+    baseline for a detached checkout too.
+    """
+    try:
+        output = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=True,
+        ).stdout
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    return output.strip()
 
 
 def post_check(endpoint, api_key, payload):
@@ -234,8 +277,22 @@ def post_check(endpoint, api_key, payload):
     return None, f"{error_message} (after {RETRY_ATTEMPTS} attempts)"
 
 
-def check_run(run, endpoint, api_key, base_commit, job_name, only_prefix=None):
-    """Checks one (platform, design, variant) and returns a result dict."""
+def check_run(
+    run,
+    endpoint,
+    api_key,
+    base_commit,
+    job_name,
+    only_prefix=None,
+    commit="",
+    branch="",
+):
+    """Checks one (platform, design, variant) and returns a result dict.
+
+    commit replaces the one metadata.json records. branch is sent only with a
+    job_name: without one the dashboard ignores it and resolves the baseline
+    from the commit alone.
+    """
     platform, design, variant, metadata_path = run
     result = {
         "platform": platform,
@@ -245,6 +302,7 @@ def check_run(run, endpoint, api_key, base_commit, job_name, only_prefix=None):
         "response": None,
         "error": None,
         "metric_count": 0,
+        "dropped": [],
     }
 
     # One run's surprise must not take down the sweep: this is called from a
@@ -255,24 +313,33 @@ def check_run(run, endpoint, api_key, base_commit, job_name, only_prefix=None):
         # A bad local file is the caller's problem, not the service's: it gets
         # its own status so it exits 1 instead of passing as inconclusive.
         try:
-            metrics, commit = load_metadata(metadata_path, only_prefix)
+            metrics, recorded_commit, dropped = load_metadata(
+                metadata_path, only_prefix
+            )
         except MetadataError as error:
             result["status"] = "invalid"
             result["error"] = str(error)
             return result
         result["metric_count"] = len(metrics)
+        result["dropped"] = dropped
+        commit = commit or recorded_commit
+        result["commit"] = commit
 
+        # No JobName and no PipelineId makes this a checkout to the dashboard:
+        # it picks the pipeline itself, the first of its default baseline
+        # pipelines with a build of this design. A JobName makes it a build of
+        # that pipeline, resolved by that pipeline's rules for BranchName.
         payload = {
             "CommitSha": commit,
-            "BranchName": "",
+            "BranchName": branch if job_name else "",
             "PipelineId": "",
-            "JobName": job_name,
             "PlatformName": platform,
             "DesignName": design,
             "VariantName": variant,
             "Metrics": metrics,
-            "IsLocal": True,
         }
+        if job_name:
+            payload["JobName"] = job_name
         if base_commit:
             payload["BaseCommitSha"] = base_commit
 
@@ -334,10 +401,22 @@ def render_run(result, verbose):
         f"{passed} passed, {failed} failed, {missing} missing "
         f"({result['metric_count']} metrics sent)"
     )
+    pipeline = response.get("baselinePipeline")
     lines.append(
         f"[INFO] baseline build {response.get('baseBuildId')} "
-        f"({(response.get('baseCommitSha') or '?')[:12]}, {strategy})"
+        f"({(response.get('baseCommitSha') or '?')[:12]}, {strategy}"
+        f"{', ' + pipeline if pipeline else ''})"
     )
+    if not result.get("commit") and strategy == "latest-master":
+        lines.append(
+            "[WARN] metadata.json records no commit, so this was compared "
+            "against the latest master build."
+        )
+    if result["dropped"]:
+        lines.append(
+            f"[WARN] Left out {len(result['dropped'])} non-finite metric(s): "
+            + ", ".join(result["dropped"])
+        )
 
     if result["status"] == "inconclusive":
         lines.append(
@@ -501,15 +580,34 @@ def parse_args(argv):
     )
     parser.add_argument(
         "--base-commit",
-        help="Pin the baseline to this commit's build instead of latest master.",
+        help="Pin the baseline to this commit's build instead of resolving one.",
+    )
+    parser.add_argument(
+        "--api-url",
+        default=os.environ.get("DASHBOARD_API_URL") or None,
+        help="Dashboard API base URL, e.g. a staging deployment. Takes "
+        "precedence over --beta. Env: DASHBOARD_API_URL.",
+    )
+    parser.add_argument(
+        "--commit",
+        default=os.environ.get("DASHBOARD_COMMIT", ""),
+        help="Full commit SHA to check as, instead of the one metadata.json "
+        "records. Env: DASHBOARD_COMMIT.",
+    )
+    parser.add_argument(
+        "--branch",
+        default=os.environ.get("DASHBOARD_BRANCH") or None,
+        help="With --job-name: the branch to check as, instead of the one "
+        "checked out here, e.g. the PR branch in CI. "
+        "Env: DASHBOARD_BRANCH.",
     )
     parser.add_argument(
         "--job-name",
-        default=os.environ.get("DASHBOARD_JOB_NAME", DEFAULT_JOB_NAME),
-        help="Canonical Jenkins job-folder name the dashboard uses to scope the master "
-        f"baseline to a pipeline. Default: {DEFAULT_JOB_NAME}. Override for a "
-        "secure/private branch whose master-equivalent builds elsewhere, e.g. "
-        "OpenROAD-flow-scripts-Private.",
+        default=os.environ.get("DASHBOARD_JOB_NAME") or None,
+        help="Check as a build of this CI pipeline, with its rules for the "
+        "branch. Default: the dashboard searches its default baseline "
+        "pipelines and takes the first with a build of the design. "
+        "Env: DASHBOARD_JOB_NAME.",
     )
     parser.add_argument(
         "--metadata",
@@ -612,8 +710,21 @@ def sweep_runs(args):
 def run_check(argv=None):
     args = parse_args(argv)
 
-    endpoint = (BETA_API_URL if args.beta else API_URL) + CHECK_PATH
+    api_url = args.api_url or (BETA_API_URL if args.beta else API_URL)
+    endpoint = api_url.rstrip("/") + CHECK_PATH
     api_key = os.environ.get("DASHBOARD_API_KEY", "")
+    # The dashboard matches the commit exactly and silently falls back to the
+    # latest master build on a miss, so anything but a full SHA is an error.
+    commit = args.commit.strip().lower()
+    if commit and not SHA_RE.match(commit):
+        print(
+            f"[ERROR] --commit {args.commit.strip()!r} is not a full 40-character SHA."
+        )
+        return 1
+    # Only a pipeline run uses the branch; a checkout is resolved from the commit.
+    branch = ""
+    if args.job_name:
+        branch = (args.branch if args.branch is not None else current_branch()).strip()
 
     if args.metadata:
         # Single-run mode: the caller (make metadata-check) names the run and
@@ -642,6 +753,21 @@ def run_check(argv=None):
         )
     if args.base_commit:
         header.append(f"[INFO] Baseline pinned to commit {args.base_commit}")
+    elif args.job_name and branch:
+        header.append(
+            f"[INFO] Checking as a build of {args.job_name}, branch {branch}"
+            + (f", commit {commit}" if commit else "")
+        )
+    elif args.job_name:
+        header.append(
+            f"[WARN] Checking as a build of {args.job_name} with no branch (git "
+            "could not name one, and no --branch): resolved as a feature branch."
+        )
+    else:
+        header.append(
+            "[INFO] Baseline from the dashboard's default pipelines, resolved "
+            "from " + (f"commit {commit}" if commit else "each run's recorded commit")
+        )
     if args.only_prefix:
         prefixes = " ".join(args.only_prefix)
         header.append(f"[INFO] Sending only metrics prefixed {prefixes}")
@@ -661,6 +787,8 @@ def run_check(argv=None):
                     args.base_commit,
                     args.job_name,
                     args.only_prefix,
+                    commit,
+                    branch,
                 ),
                 runs,
             )
