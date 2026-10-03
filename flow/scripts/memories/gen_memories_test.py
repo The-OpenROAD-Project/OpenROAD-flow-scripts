@@ -163,6 +163,22 @@ class GenMemoriesTest(unittest.TestCase):
         with self.assertRaises(json.JSONDecodeError):
             self.run_generator(memories_files=[bad])
 
+    def test_missing_yosys_json_fails(self):
+        d = Path(self.tmp.name)
+        with self.assertRaises(FileNotFoundError):
+            gen_memories.main(
+                [
+                    "--platform",
+                    "asap7",
+                    "--out-dir",
+                    str(d / "memories"),
+                    "--json",
+                    str(d / "memories.json"),
+                    "--yosys-json",
+                    str(d / "missing.json"),
+                ]
+            )
+
     def test_no_memories_still_writes_contract_files(self):
         d = Path(self.tmp.name)
         empty_netlist = d / "empty.json"

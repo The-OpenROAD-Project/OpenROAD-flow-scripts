@@ -285,7 +285,6 @@ do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	  --yosys-json $(RESULTS_DIR)/memories_inferred.json \
 	  --out-dir $(RESULTS_DIR)/memories \
 	  --json $(RESULTS_DIR)/memories.json \
-	  $(foreach file,$(VERILOG_FILES),--verilog $(file)) \
 	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file))
 
 $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \

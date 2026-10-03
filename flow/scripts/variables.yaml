@@ -192,9 +192,9 @@ SYNTH_USE_SYN:
   default: 0
 AUTO_MEMORIES:
   description: >
-    Experimental. When set to 1, memory-shaped modules in the RTL
-    (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only)
-    are detected pre-synthesis, inventoried in
+    Experimental. When set to 1, memories that yosys infers in the RTL
+    (`$mem_v2` cells, module boundary only) are detected
+    pre-synthesis, inventoried in
     `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM
     macro — given generated .lib/.lef views under
     `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and

@@ -14,8 +14,10 @@ itself a welcome signal that someone is using it.
 
 ## What it does
 
-With `AUTO_MEMORIES=1`, a pre-synthesis step runs
-`scripts/memories/gen_memories.py` over `VERILOG_FILES` and writes:
+With `AUTO_MEMORIES=1`, a pre-synthesis yosys pass
+(`scripts/memories/extract_memories.tcl`) elaborates `VERILOG_FILES`
+into `$(RESULTS_DIR)/memories_inferred.json`, and
+`scripts/memories/gen_memories.py` reads that netlist and writes:
 
 | File | Content |
 | --- | --- |
@@ -39,23 +41,26 @@ flip-flops, like any other RTL.
 
 ## How memories are detected
 
-Detection is a fast Python scan (`scripts/memories/detect.py`) for
-modules whose entire port list follows the firtool (CIRCT) memory port
-convention: every port named `<R|W|RW><n>_<function>`, e.g. `R0_addr`,
-`W0_en`, `RW0_wdata`, including the subword-split forms `RW0_wdata_3` /
-`W0_mask_2`. This is what Chisel/firtool emits for module-separated
-memories, and what the rocket-chip generation of Chisel emitted (the
-in-tree tinyRocket design).
+Yosys infers the memories. `scripts/memories/extract_memories.tcl`
+reads the design sources with the design's frontend, runs `hierarchy`,
+`proc` and `memory -nomap`, and writes the netlist as JSON.
+`scripts/memories/detect.py` then takes each `$mem_v2` cell in it:
+
+- depth and width from `SIZE` and `WIDTH`, read and write port counts
+  from `RD_PORTS` and `WR_PORTS`, and write-mask lanes from the width
+  of `WR_EN`. Read-write ports are not inferred; a `.memories` override
+  can describe them (see below).
+- pins named `R<n>_clk/addr/en/data` and `W<n>_clk/addr/en/data`, plus
+  `W<n>_mask` when there are mask lanes.
+- the module's name when the `$mem_v2` is the only cell in its module,
+  otherwise the cell's name.
 
 Two consequences, documented as deliberate scope:
 
-- **Module boundary only.** A memory embedded inside a larger module
-  (a bare `reg [7:0] mem [0:255]` next to other logic) is not detected.
-  Yosys's memory-inference pass sees those; FPGA tools extract them
-  into block RAMs. Wiring yosys up as the detector — or growing such a
-  pass in OpenROAD SYN, which currently has no memory inference and
-  therefore cannot be leaned on here either — is future work; this
-  feature punts on it with the simple scanner.
+- **Module boundary only.** Synthesis blackboxes converted memories by
+  module name, so only a memory alone in its module is replaced by a
+  macro. A memory inferred next to other logic is named after its
+  cell, which matches no module.
 - **No banking.** Each detected memory maps to exactly one macro. A
   memory too wide, too deep, or too ported for a single sensible macro
   is not decomposed across several macros — a future extension.
@@ -133,12 +138,14 @@ clear error.
 make DESIGN_CONFIG=designs/asap7/tinyRocket/config.mk synth floorplan
 ```
 
-The generator can also be run standalone to inspect what it would do:
+The generator can also be run standalone, on the
+`memories_inferred.json` that run leaves in the results directory, to
+inspect what it would do:
 
 ```shell
 python3 flow/scripts/memories/gen_memories.py \
   --platform asap7 --out-dir /tmp/mems --json /tmp/memories.json \
-  --verilog flow/designs/src/tinyRocket/freechips.rocketchip.system.TinyConfig.v
+  --yosys-json flow/results/asap7/tinyRocket/base/memories_inferred.json
 ```
 
 ## Consuming from bazel-orfs

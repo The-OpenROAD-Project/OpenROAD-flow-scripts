@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """AUTO_MEMORIES driver: detect memories, judge them, emit macro views.
 
-Run pre-synthesis (before canonicalization). Scans the design's Verilog
-for memory-shaped modules, merges user-supplied `.memories` files
+Run pre-synthesis (before canonicalization). Reads the netlist JSON
+that extract_memories.tcl writes after yosys `proc; memory -nomap`,
+collects its $mem_v2 cells, merges user-supplied `.memories` files
 (ADDITIONAL_MEMORIES), applies the idiomatic-macro gate, then writes:
 
   <json>                 full inventory, converted or not (memories.json)
@@ -45,21 +46,17 @@ def find_fakeram_run() -> str | None:
 
 
 def run(
-    verilog: list[Path],
+    yosys_json: Path,
     memories_files: list[Path],
     platform: str,
     out_dir: Path,
     json_path: Path,
-    yosys_json: Path | None = None,
 ) -> int:
     if platform != "asap7":
         sys.stderr.write(f"gen_memories: unsupported platform {platform}\n")
         return 1
 
-    if yosys_json and yosys_json.is_file():
-        found = detect.scan_yosys_json(yosys_json)
-    else:
-        found = detect.scan_files(verilog)
+    found = detect.scan_yosys_json(yosys_json)
 
     idiomatic.apply(found)
 
@@ -109,16 +106,9 @@ def run(
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
-        "--verilog",
-        action="append",
-        default=[],
-        type=Path,
-        help="Verilog source file to scan (repeatable).",
-    )
-    p.add_argument(
         "--yosys-json",
+        required=True,
         type=Path,
-        default=None,
         help="Yosys netlist JSON file containing $mem_v2 primitives.",
     )
     p.add_argument(
@@ -144,12 +134,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = p.parse_args(argv)
     return run(
-        args.verilog,
+        args.yosys_json,
         args.memories,
         args.platform,
         args.out_dir,
         args.json,
-        args.yosys_json,
     )
 
 
