@@ -25,23 +25,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import subprocess
-import os
 
 import detect  # noqa: E402
 import idiomatic  # noqa: E402
 import schema  # noqa: E402
 
-
-def find_fakeram_run() -> str | None:
-    fakeram_run = os.environ.get("FAKERAM_RUN_PY")
-    if fakeram_run and os.path.isfile(fakeram_run):
-        return fakeram_run
-    runfiles_dir = os.environ.get("RUNFILES_DIR")
-    if runfiles_dir:
-        for p in Path(runfiles_dir).rglob("run.py"):
-            if "fakeram" in p.parts[-2]:
-                return str(p)
-    return None
+FAKERAM_RUN_PY = Path(__file__).resolve().parents[3] / "tools/FakeRAM2.0/run.py"
 
 
 def run(
@@ -76,17 +65,10 @@ def run(
     for mem in converted:
         schema.validate_emittable(mem)
 
-    fakeram_run = find_fakeram_run()
-    if not fakeram_run:
-        sys.stderr.write(
-            "gen_memories: FAKERAM_RUN_PY not set and FakeRAM run.py not found.\n"
-        )
-        return 1
-
     subprocess.check_call(
         [
             sys.executable,
-            fakeram_run,
+            str(FAKERAM_RUN_PY),
             "--orfs_asap7_backend",
             "--output_dir",
             str(out_dir),
