@@ -119,11 +119,6 @@ class Process:
 
         total_height += additional_height
 
-        min_height = max(
-            3.5, self.snap_height_nm / 1000.0 if self.snap_height_nm else 0
-        )
-        total_height = max(total_height, min_height)
-
         return (total_width, total_height)
 
     def get_tech_nm(self):
