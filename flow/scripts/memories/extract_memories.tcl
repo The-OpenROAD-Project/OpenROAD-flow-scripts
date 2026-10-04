@@ -23,11 +23,46 @@ hierarchy -top $::env(DESIGN_NAME)
 # bare `proc`: yosys -import cannot shadow Tcl's proc keyword, so the
 # bare word would define a procedure instead of running the pass.
 yosys proc
-memory -nomap
 
-# Write netlist JSON containing inferred $mem_v2 primitives
+# The memory passes, on the modules that hold memory cells only. Every
+# pass in `memory -nomap` walks every selected module, and memory_dff
+# builds its per-bit driver and consumer index (ModWalker) for a module
+# before it asks whether the module has a memory at all; opt_mem_priority
+# and opt_mem_feedback scan every module's cells the same way. On a design
+# whose memories sit in small generated modules and whose logic sits in
+# large ones -- a firtool core keeps every memory in its own ram_* module
+# -- that index over the memory-less modules is nearly the whole cost of
+# this step. Scoping the passes to the modules with memory cells changes
+# nothing in the result: a pass finds nothing to do in a module without
+# them. memory_bmux2rom runs first and unscoped, since it is what turns a
+# module's constant muxes into a memory. The module list comes from the
+# cells' names (module before the first slash) rather than the selection's
+# `%m` expansion, which leaves a module partially selected when its name
+# carries a `$`, as slang's uniquified names do, and the passes then skip it.
+memory_bmux2rom
+set mem_modules [dict create]
+set mem_cells {t:$mem_v2 t:$memrd_v2 t:$memwr_v2 t:$meminit_v2}
+foreach line [tee -q -s result.string select -list {*}$mem_cells] {
+  set line [string trim $line]
+  if { $line ne "" } {
+    dict set mem_modules [lindex [split $line "/"] 0] 1
+  }
+}
+set mem_modules [dict keys $mem_modules]
+log "extract_memories: [llength $mem_modules] modules hold memory cells"
 set out_json "$::env(RESULTS_DIR)/memories_inferred.json"
 file mkdir [file dirname $out_json]
-write_json $out_json
+if { [llength $mem_modules] > 0 } {
+  yosys select {*}$mem_modules
+  memory -nomap
+  # The JSON is read by gen_memories.py's detector, which looks at the
+  # $mem_v2 cells of each module and nothing across modules, so the
+  # memory modules are all it needs; the rest of the design is most of
+  # the bytes.
+  write_json -selected $out_json
+  select -clear
+} else {
+  write_json $out_json
+}
 
 exit
