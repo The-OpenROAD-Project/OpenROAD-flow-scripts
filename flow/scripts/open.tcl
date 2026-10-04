@@ -50,6 +50,10 @@ proc read_timing { input_file } {
   } else {
     log_cmd source $::env(PLATFORM_DIR)/setRC.tcl
   }
+  if { $design_stage < 3 } {
+    # Before placement: no net has parasitics to estimate.
+    apply_wire_load_model
+  }
   if { $design_stage >= 4 } {
     # CTS has run, so propagate clocks
     set_propagated_clock [all_clocks]

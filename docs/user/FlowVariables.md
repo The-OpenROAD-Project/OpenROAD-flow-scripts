@@ -336,6 +336,8 @@ configuration file.
 | <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist). Passed in as a list of key value pairs in tcl syntax; separated by spaces: PARAM1 VALUE1 PARAM2 VALUE2| |
 | <a name="VIA_IN_PIN_MAX_LAYER"></a>VIA_IN_PIN_MAX_LAYER| Passed as -via_in_pin_top_layer to pin_access and detailed_route.| |
 | <a name="VIA_IN_PIN_MIN_LAYER"></a>VIA_IN_PIN_MIN_LAYER| Passed as -via_in_pin_bottom_layer to pin_access and detailed_route.| |
+| <a name="WIRE_LOAD_LIB"></a>WIRE_LOAD_LIB| Liberty file read before applying WIRE_LOAD_MODEL, for a platform whose libraries define no wire_load group of their own. Optional.| |
+| <a name="WIRE_LOAD_MODEL"></a>WIRE_LOAD_MODEL| Name of a Liberty wire_load group applied with set_wire_load_model when timing is read before placement (open.tcl on a synth or floorplan result), where no net has parasitics yet and paths otherwise carry no wire delay. OpenSTA applies a wire-load model only to nets without parasitics, so placed and routed timing is unaffected. An unknown name is an error. Empty, the default, applies none.| |
 | <a name="WRITE_ODB_AND_SDC_EACH_STAGE"></a>WRITE_ODB_AND_SDC_EACH_STAGE| Save out .sdc and .odb file after each stage, useful to disable when using a single OpenROAD instance to run all stages of the flow.| 1|
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3|
 ## synth variables
@@ -679,4 +681,6 @@ configuration file.
 - [TAP_CELL_NAME](#TAP_CELL_NAME)
 - [TECH_LEF](#TECH_LEF)
 - [USE_FILL](#USE_FILL)
+- [WIRE_LOAD_LIB](#WIRE_LOAD_LIB)
+- [WIRE_LOAD_MODEL](#WIRE_LOAD_MODEL)
 

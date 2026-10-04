@@ -533,6 +533,20 @@ LAYER_PARASITICS_FILE:
   description: |
     Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.
   type: string
+WIRE_LOAD_MODEL:
+  description: |
+    Name of a Liberty wire_load group applied with set_wire_load_model when
+    timing is read before placement (open.tcl on a synth or floorplan
+    result), where no net has parasitics yet and paths otherwise carry no
+    wire delay. OpenSTA applies a wire-load model only to nets without
+    parasitics, so placed and routed timing is unaffected. An unknown name
+    is an error. Empty, the default, applies none.
+  type: string
+WIRE_LOAD_LIB:
+  description: |
+    Liberty file read before applying WIRE_LOAD_MODEL, for a platform whose
+    libraries define no wire_load group of their own. Optional.
+  type: string
 TAPCELL_TCL:
   description: |
     Path to Endcap and Welltie cells file.
