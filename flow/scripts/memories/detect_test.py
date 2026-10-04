@@ -197,6 +197,13 @@ class FirtoolConventionTest(unittest.TestCase):
         self.assertEqual(detect._clock_enable_bits(2, 2), "10")
         self.assertEqual(detect._clock_enable_bits("0", 1), "0")
 
+    def test_clock_enable_that_is_not_one_bit_per_port_is_refused(self):
+        # yosys writes exactly RD_PORTS binary digits; padding a short value
+        # or reading "2" as decimal would miscount combinational reads.
+        for val, ports in (("0", 2), ("011", 2), ("2", 2), (4, 2), (-1, 1)):
+            with self.assertRaises(ValueError, msg=(val, ports)):
+                detect._clock_enable_bits(val, ports)
+
     def test_ports_outside_the_convention_keep_synthesized_pins(self):
         module = _firtool_rw_module()
         module["ports"]["ce_in"] = {"direction": "input", "bits": [40]}

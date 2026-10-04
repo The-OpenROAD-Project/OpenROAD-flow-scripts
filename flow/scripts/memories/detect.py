@@ -95,11 +95,21 @@ def firtool_pins(mod_info: dict):
 
 
 def _clock_enable_bits(val, ports: int) -> str:
-    """RD_CLK_ENABLE as a string of `ports` bits, most significant first."""
+    """RD_CLK_ENABLE as a string of `ports` bits, most significant first.
+
+    yosys writes it as a binary string of exactly RD_PORTS digits. Anything
+    else is refused rather than padded, truncated or read as decimal: a
+    miscounted bit is a combinational read let through as a macro.
+    """
     if isinstance(val, int):
-        return format(val, "0{}b".format(max(ports, 1)))
-    s = str(val)
-    return s[-ports:] if ports else s
+        if not 0 <= val < 1 << ports:
+            raise ValueError(f"RD_CLK_ENABLE {val} does not fit {ports} read ports")
+        return format(val, f"0{ports}b")
+    if not isinstance(val, str) or len(val) != ports or set(val) - {"0", "1"}:
+        raise ValueError(
+            f"RD_CLK_ENABLE {val!r} is not {ports} binary digits, one per read port"
+        )
+    return val
 
 
 def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
