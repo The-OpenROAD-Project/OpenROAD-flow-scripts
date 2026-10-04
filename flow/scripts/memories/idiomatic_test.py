@@ -21,6 +21,22 @@ def mem(rows, bits, read_ports=1, write_ports=1, rw_ports=0):
 
 
 class IdiomaticTest(unittest.TestCase):
+    def test_rejects_memory_inside_a_larger_module(self):
+        # An inline array has no module of its own to blackbox: converting
+        # it would generate a macro nothing instantiates.
+        m = mem(64, 32)
+        m.behavioral_model = {"module": "picorv32"}
+        ok, reason = idiomatic.judge(m)
+        self.assertFalse(ok)
+        self.assertIn("inside module picorv32", reason)
+
+    def test_accepts_memory_that_is_its_module(self):
+        m = mem(64, 32)
+        m.name = "ram_64x32"
+        m.behavioral_model = {"module": "$paramod$abc123\\ram_64x32"}
+        ok, reason = idiomatic.judge(m)
+        self.assertTrue(ok, reason)
+
     def test_accepts_macro_sized_memory(self):
         ok, reason = idiomatic.judge(mem(64, 32))
         self.assertTrue(ok, reason)

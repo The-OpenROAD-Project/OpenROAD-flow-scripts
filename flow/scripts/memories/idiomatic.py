@@ -23,8 +23,38 @@ MIN_BITS_TOTAL = 256
 MAX_TOTAL_PORTS = 4
 
 
+def enclosing_module(mem: schema.Memory) -> str | None:
+    """The module whose body simulates this memory, demangled.
+
+    yosys writes a parameterized module as "$paramod$<hash>\\<name>" or
+    "$paramod\\<name>\\<param>=<value>"; the module is the component after
+    the first backslash in both forms.
+    """
+    model = mem.behavioral_model or {}
+    module = model.get("module")
+    if not module:
+        return None
+    if module.startswith("$paramod"):
+        parts = module.split("\\")
+        return parts[1] if len(parts) > 1 else None
+    return module.lstrip("\\")
+
+
 def judge(mem: schema.Memory) -> tuple[bool, str]:
     """Return (idiomatic, reason)."""
+    # Only a memory that *is* a module can be converted: conversion works
+    # by blackboxing the module so the generated liberty view replaces its
+    # behavioral body. A memory inferred inside a larger module has no
+    # module to blackbox, so converting it would generate a macro nothing
+    # instantiates and report a conversion that did not happen.
+    enclosing = enclosing_module(mem)
+    if enclosing is not None and enclosing != mem.name:
+        return (
+            False,
+            f"inferred inside module {enclosing} rather than being one; "
+            "an inline array is the design asking for flip-flops. "
+            "Instantiate the memory as its own module to convert it",
+        )
     if mem.bits < 1:
         return False, "no data pins"
     if mem.rows < MIN_ROWS:
