@@ -10,6 +10,7 @@ ports share a single clock domain.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import schema
@@ -29,6 +30,78 @@ def parse_param_int(val) -> int:
     return int(val)
 
 
+# firtool names a memory module's ports by port and function -- R0_addr,
+# W1_mask, RW0_wmode -- and this is the one convention read here. A module
+# whose every port fits it is a memory at the module boundary, and three
+# things follow that the yosys view alone gets wrong: the pins the macro
+# must expose are the module's own ports, not names synthesized from port
+# indices; a read-write port is one port, where yosys reports a read plus
+# a write; and the write mask is as wide as the port says, not the per-bit
+# enable yosys expands it into.
+_FIRTOOL_PORT = re.compile(
+    r"^(RW|R|W)(\d+)_(addr|en|clk|data|rdata|wdata|wmode|wmask|mask)$"
+)
+_FIRTOOL_FUNCTION = {
+    "addr": "addr",
+    "en": "en",
+    "clk": "clk",
+    "wmode": "wmode",
+    "wmask": "mask",
+    "mask": "mask",
+    "wdata": "data_in",
+    "rdata": "data_out",
+}
+
+
+def firtool_pins(mod_info: dict):
+    """Pins of a module whose ports all follow firtool's memory convention.
+
+    Returns (pins, read_ports, write_ports, rw_ports, mask_lanes), or None
+    when the module has no ports or any port does not fit the convention.
+    """
+    ports = mod_info.get("ports", {})
+    if not ports:
+        return None
+    pins: list[schema.Pin] = []
+    kinds: dict[str, str] = {}
+    mask_lanes = 0
+    for name, info in ports.items():
+        clean = name[1:] if name.startswith("\\") else name
+        m = _FIRTOOL_PORT.match(clean)
+        if not m:
+            return None
+        kind, index, field = m.groups()
+        port_id = kind + index
+        kinds[port_id] = kind
+        direction = info.get("direction", "input")
+        if field == "data":
+            function = "data_out" if direction == "output" else "data_in"
+        else:
+            function = _FIRTOOL_FUNCTION[field]
+        width = len(info.get("bits", [])) or 1
+        if function == "mask":
+            mask_lanes = max(mask_lanes, width)
+        pins.append(
+            schema.Pin(
+                name=clean,
+                direction=direction,
+                width=width,
+                port_id=port_id,
+                function=function,
+            )
+        )
+    found = list(kinds.values())
+    return pins, found.count("R"), found.count("W"), found.count("RW"), mask_lanes
+
+
+def _clock_enable_bits(val, ports: int) -> str:
+    """RD_CLK_ENABLE as a string of `ports` bits, most significant first."""
+    if isinstance(val, int):
+        return format(val, "0{}b".format(max(ports, 1)))
+    s = str(val)
+    return s[-ports:] if ports else s
+
+
 def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
     """Extract memory modules from a Yosys netlist JSON output ($mem_v2 cells)."""
     if isinstance(data, (str, Path)):
@@ -40,6 +113,9 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
     for mod_name, mod_info in modules.items():
         clean_mod_name = mod_name[1:] if mod_name.startswith("\\") else mod_name
         cells = mod_info.get("cells", {})
+        mem_cells = [
+            n for n, c in cells.items() if c.get("type", "") in ("$mem_v2", "$mem")
+        ]
         for cell_name, cell_info in cells.items():
             cell_type = cell_info.get("type", "")
             if cell_type not in ("$mem_v2", "$mem"):
@@ -71,6 +147,12 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
             mask_lanes = 0
             if wr_ports > 0 and len(wr_en_bits) > wr_ports:
                 mask_lanes = len(wr_en_bits) // wr_ports
+            # A read port without a clock is a combinational read. An
+            # absent parameter is yosys saying every read is clocked.
+            rd_clk_enable = params.get("RD_CLK_ENABLE")
+            comb_read_ports = 0
+            if rd_ports and rd_clk_enable is not None:
+                comb_read_ports = _clock_enable_bits(rd_clk_enable, rd_ports).count("0")
 
             pins: list[schema.Pin] = []
 
@@ -154,8 +236,31 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
                         )
                     )
 
+            # The module's own ports beat the synthesized pin list when
+            # they follow firtool's convention: those are the names the
+            # generated liberty view has to carry for the blackboxed
+            # module to link at all.
+            rw_ports = 0
+            port_convention = ""
+            convention = firtool_pins(mod_info)
+            if convention is not None:
+                pins, rd_ports, wr_ports, rw_ports, mask_lanes = convention
+                port_convention = "firtool"
+            # A module that holds nothing but one memory *is* that memory
+            # and takes the module's name -- which is the name the flow
+            # blackboxes. So does a firtool memory module, whatever glue
+            # surrounds its array: its ports say what it is, and every one
+            # calls its array `Memory`, so naming by cell would fold them
+            # all into one entry. Any other memory is named per cell,
+            # qualified so the names stay distinct across modules: an
+            # array inside a module that also does something else is the
+            # design asking for flip-flops, and idiomatic.judge refuses a
+            # memory that is not named for its module.
             clean_cell = cell_name[1:] if cell_name.startswith("\\") else cell_name
-            mem_name = clean_mod_name if len(cells) == 1 else clean_cell
+            if len(mem_cells) == 1 and (port_convention or len(cells) == 1):
+                mem_name = clean_mod_name
+            else:
+                mem_name = f"{clean_mod_name}.{clean_cell}"
 
             mem = schema.Memory(
                 name=mem_name,
@@ -164,8 +269,10 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
                 addr_w=addr_w,
                 read_ports=rd_ports,
                 write_ports=wr_ports,
-                rw_ports=0,
+                rw_ports=rw_ports,
                 mask_lanes=mask_lanes,
+                comb_read_ports=comb_read_ports,
+                port_convention=port_convention,
                 pins=pins,
                 behavioral_model={"module": clean_mod_name},
                 reason=f"Yosys inferred $mem_v2 ({'single-clock' if single_clock else 'multi-clock'})",
