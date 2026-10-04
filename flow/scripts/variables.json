@@ -314,7 +314,10 @@
   },
   "DPO_MAX_DISPLACEMENT": {
     "default": "5 1",
-    "description": "Specifies how far an instance can be moved when optimizing.\n"
+    "description": "Specifies how far an instance can be moved when optimizing.\n",
+    "stages": [
+      "place"
+    ]
   },
   "EARLY_SIZING_CAP_RATIO": {
     "description": "Ratio between the input pin capacitance and the output pin load during initial gate sizing.\n",
@@ -324,7 +327,10 @@
   },
   "ENABLE_DPO": {
     "default": 1,
-    "description": "Enable detail placement with improve_placement feature.\n"
+    "description": "Enable detail placement with improve_placement feature.\n",
+    "stages": [
+      "place"
+    ]
   },
   "ENABLE_PLACE_REPAIR_TIMING": {
     "default": 0,
