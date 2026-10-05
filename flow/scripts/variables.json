@@ -228,12 +228,6 @@
       "cts"
     ]
   },
-  "CTS_SNAPSHOT": {
-    "description": "Creates ODB/SDC files prior to clock net and setup/hold repair.\n",
-    "stages": [
-      "cts"
-    ]
-  },
   "CTS_SNAPSHOTS": {
     "default": 0,
     "description": "Create ODB/SDC files at different stages of CTS.\n",

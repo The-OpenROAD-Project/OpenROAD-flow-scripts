@@ -1172,11 +1172,6 @@ CTS_LIB_NAME:
     Name of the Liberty library to use in selecting the clock buffers.
   stages:
     - cts
-CTS_SNAPSHOT:
-  description: |
-    Creates ODB/SDC files prior to clock net and setup/hold repair.
-  stages:
-    - cts
 POST_CTS_TCL:
   description: |
     Specifies a Tcl script with commands to run after CTS is completed.
