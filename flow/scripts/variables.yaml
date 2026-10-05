@@ -942,9 +942,6 @@ OR_SEED:
 RCX_RULES:
   description: |
     RC Extraction rules file path.
-SET_RC_TCL:
-  description: |
-    Metal & Via RC definition file path.
 FILL_CONFIG:
   description: |
     JSON rule file for metal fill during chip finishing.

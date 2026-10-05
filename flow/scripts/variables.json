@@ -1153,9 +1153,6 @@
     ],
     "tunable": 1
   },
-  "SET_RC_TCL": {
-    "description": "Metal & Via RC definition file path.\n"
-  },
   "SKIP_ANTENNA_REPAIR": {
     "default": 0,
     "description": "Skips antenna repair entirely.\n",
