@@ -24,6 +24,10 @@ export CORE_MARGIN            = 2
 # grid to reach every SRAM.
 export RTLMP_MIN_CHANNEL_SIZE = 8 8
 
+# The full metal stack, as XiangShan's own configs route: asap7's power
+# grid uses M1, M2, M5 and M6 only, so M8 and M9 are free for signals.
+export MAX_ROUTING_LAYER      = M9
+
 # A ladder, FLOW_VARIANT=small|medium|large: small to iterate on, large
 # at the size of XiangShan's TAGE and main BTB. base, ORFS's default
 # variant, is medium: the smallest size that shows the effect (README.md,
