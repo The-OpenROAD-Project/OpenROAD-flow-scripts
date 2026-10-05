@@ -197,6 +197,7 @@ class Stage:
         self.stem = stem
         self.status = status
         self.script = None
+        self.log_dir = log_dir
         self.log = read_text(os.path.join(log_dir, stem + ".log"))
         self.metrics = load_metrics(os.path.join(log_dir, stem + ".json"))
         self.reports_dir = reports_dir
@@ -714,14 +715,17 @@ PANEL_MODULES = [
     "stage_art_drt",
     "stage_art_timing",
     "stage_art_cts",
+    "stage_art_final",
 ]
 
 
-def panel(stems=(), tools=()):
+def panel(stems=(), tools=(), always=False):
     """Register a panel for stages (log stems) and for failures raised by
-    tools (message ID prefixes)."""
+    tools (message ID prefixes). A panel is drawn when the stage failed or
+    a panel gave a reason, or always, for a summary like the final one."""
 
     def register(fn):
+        fn.always = always
         for stem in stems:
             PANELS.setdefault(stem, []).append(fn)
         for tool in tools:
@@ -789,6 +793,7 @@ def render(st, rich, full=False):
         panels = FAILURE_PANELS.get(tool) or PANELS.get(st.stem, [])
     else:
         panels = PANELS.get(st.stem, [])
+    always = any(p.always for p in panels)
     for panel in panels:
         reason, hint = panel(body, st)
         if reason:
@@ -813,7 +818,7 @@ def render(st, rich, full=False):
             doc.add((" why: ", "bold"), reasons[0])
     elif reasons:
         doc.add((" why: ", "bold"), "; ".join(reasons))
-    if st.failed or reasons or full:
+    if st.failed or reasons or full or always:
         doc.extend(body.lines)
     footer(doc, st, gui)
     return doc

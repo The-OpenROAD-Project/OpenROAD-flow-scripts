@@ -415,6 +415,60 @@ class StageArtTest(unittest.TestCase):
         text = self.render(d, "4_1_cts", 0).plain()
         self.assertIn("why: hold repair added 60 buffers, 14% of instances", text)
 
+    # -- final report -------------------------------------------------------
+
+    def test_final_report_tells_the_story_of_the_run(self):
+        """Always drawn: the signoff numbers, each key metric through the
+        flow with the stage that moved it the wrong way most, and the
+        stages that took the time."""
+
+        def elapsed(seconds):
+            return (
+                "Elapsed time: 0:%05.2f[h:]min:sec. CPU time: user 1 sys 0 "
+                "(99%%). Peak memory: 2048KB.\n" % seconds
+            )
+
+        stages = [
+            ("2_1_floorplan", "floorplan", 300, -60.0, 2),
+            ("3_3_place_gp", "globalplace", 400, -30.0, 4),
+            ("4_1_cts", "cts", 420, -45.0, 3),
+            ("5_1_grt", "globalroute", 425, -40.0, 5),
+            ("5_2_route", "detailedroute", 425, None, 30),
+        ]
+        files = {}
+        for stem, prefix, inst, ws, secs in stages:
+            metrics = {prefix + "__design__instance__count": inst}
+            if ws is not None:
+                metrics[prefix + "__timing__setup__ws"] = ws
+            files[stem + ".json"] = metrics
+            files[stem + ".log"] = elapsed(secs)
+        files["5_2_route.json"]["detailedroute__route__drc_errors"] = 0
+        files["6_report.json"] = {
+            "finish__design__instance__count": 745,
+            "finish__design__instance__count__class:fill_cell": 318,
+            "finish__timing__setup__ws": -41.0,
+            "finish__timing__hold__ws": 41.0,
+            "finish__timing__fmax": 3.04e9,
+            "finish__power__total": 0.00137,
+            "finish__flow__platform__time_units": "1ps",
+        }
+        files["6_report.log"] = elapsed(3)
+        d = self.stage_dir(files)
+        text = self.render(d, "6_report", 0).plain()
+        self.assertIn("6_report OK", text)
+        self.assertIn(
+            "signoff: setup ws -41  hold ws 41  fmax 3.04GHz  power 1.37mW  DRC 0", text
+        )
+        # Filler cells are not design growth: 745 - 318 fill = 427.
+        self.assertRegex(text, r"inst -fill +\S+ +300 > 427")
+        # CTS cost the most setup slack (-30 -> -45).
+        self.assertRegex(text, r"setup ws +\S+ +-60 > -41  4_1_cts -15ps")
+        runtime = text[text.index("runtime") :].splitlines()
+        self.assertIn("runtime 47s", runtime[0])
+        self.assertIn("5_2_route", runtime[1])
+        self.assertIn("64%", runtime[1])
+        self.assert_plain(text)
+
 
 if __name__ == "__main__":
     unittest.main()
