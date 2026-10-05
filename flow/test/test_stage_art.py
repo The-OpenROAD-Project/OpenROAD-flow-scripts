@@ -284,6 +284,28 @@ class StageArtTest(unittest.TestCase):
         self.assertTrue(framed and all(l.count("|") == 4 for l in framed))
         self.assert_plain(text)
 
+    # -- global route ------------------------------------------------------
+
+    def test_congestion_failure_is_drawn_and_traced_back(self):
+        """GRT-0116 on gcd with 85% of routing capacity taken away: the
+        overflow is everywhere, and placement density at the hotspot is
+        average, so the cause is capacity, not a pile of cells."""
+        text = self.fixture("grt_fail", "5_1_grt", 2, "global_route").plain()
+        self.assertIn("5_1_grt FAIL GRT-0116", text)
+        self.assertIn("why: 135 gcells overflow, worst 117% on M5", text)
+        self.assertIn("widespread, not one spot", text)
+        self.assertIn("make gui_5_1_grt-failed", text)
+        rows = self.frame_rows(text)
+        # Overflowing gcells are marked, and the three hotspots numbered
+        # on the map and listed beside it, worst first.
+        self.assertTrue(any("X" in r for r in rows))
+        for k in "123":
+            self.assertEqual(sum(r.count(k) for r in rows), 1)
+        self.assertRegex(text, r"1 M5 117% at \(7, 2\)um")
+        for layer in ["M2", "M3", "M4", "M5", "M6", "M7"]:
+            self.assertRegex(text, r"\|\s+%s +[HV] " % layer)
+        self.assert_plain(text)
+
 
 if __name__ == "__main__":
     unittest.main()

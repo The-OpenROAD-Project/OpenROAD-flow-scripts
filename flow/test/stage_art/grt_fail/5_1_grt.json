@@ -1,0 +1,12 @@
+{
+ "globalroute__route__net": 399,
+ "globalroute__route__net__special": 2,
+ "globalroute__global_route__vias": 4688,
+ "globalroute__global_route__wirelength": 13246,
+ "globalroute__flow__warnings__count": 13,
+ "globalroute__flow__errors__count": 1,
+ "globalroute__flow__warnings__count:GRT-0273": 2,
+ "globalroute__flow__warnings__count:GRT-0704": 1,
+ "globalroute__flow__warnings__count:STA-1212": 1001,
+ "globalroute__flow__warnings__type_count": 3
+}

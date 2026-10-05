@@ -25,7 +25,7 @@ set ::stage_art_probes [dict create \
   3_4_place_resized {timing} \
   3_5_place_dp {die macros density timing} \
   4_1_cts {timing} \
-  5_1_grt {timing} \
+  5_1_grt {die macros congestion timing} \
   5_2_route {} \
   5_3_fillcell {} \
   6_1_fill {} \
@@ -205,6 +205,103 @@ proc stage_art_rudy { } {
     set rudy($key) [expr { $rudy($key) / $bin_area * $dbu }]
   }
   return [stage_art_grid_json rudy $cols $rows %.3f]
+}
+
+# Routing usage/capacity from the gcell grid grt saves in odb: totals per
+# layer, the worst gcells, and a die map of all-layer usage/capacity with
+# the count of overflowing gcell-layers per bin.
+proc stage_art_congestion { } {
+  set block [ord::get_db_block]
+  set grid [$block getGCellGrid]
+  if { $grid == "NULL" } {
+    return null
+  }
+  set xs [$grid getGridX]
+  set ys [$grid getGridY]
+  set nx [llength $xs]
+  set ny [llength $ys]
+  set cols [expr { min($::stage_art_cols, $nx) }]
+  set rows [expr { min($::stage_art_rows, $ny) }]
+  for { set i 0 } { $i < $cols } { incr i } {
+    for { set j 0 } { $j < $rows } { incr j } {
+      set bin_cap($i,$j) 0.0
+      set bin_use($i,$j) 0.0
+      set bin_over($i,$j) 0
+    }
+  }
+  # Visit at most ~2M gcell-layer pairs: on huge grids sample every
+  # stride-th gcell, which still finds wide hotspots.
+  set routing_layers {}
+  foreach layer [[ord::get_db_tech] getLayers] {
+    if { [$layer getType] == "ROUTING" } {
+      lappend routing_layers $layer
+    }
+  }
+  set stride [expr { max(1, int(ceil(sqrt(double($nx) * $ny * [llength $routing_layers] / 2e6)))) }]
+  set layers {}
+  set hotspots {}
+  foreach layer $routing_layers {
+    set cap 0.0
+    set use 0.0
+    set over 0
+    set hot 0
+    set sampled 0
+    set worst 0.0
+    for { set x 0 } { $x < $nx } { incr x $stride } {
+      set i [expr { $x * $cols / $nx }]
+      for { set y 0 } { $y < $ny } { incr y $stride } {
+        set c [$grid getCapacity $layer $x $y]
+        set u [$grid getUsage $layer $x $y]
+        set cap [expr { $cap + $c }]
+        set use [expr { $use + $u }]
+        set j [expr { $y * $rows / $ny }]
+        set bin_cap($i,$j) [expr { $bin_cap($i,$j) + $c }]
+        set bin_use($i,$j) [expr { $bin_use($i,$j) + $u }]
+        if { $u > $c } {
+          incr over
+          incr bin_over($i,$j)
+        }
+        if { $c > 0 } {
+          incr sampled
+          set ratio [expr { $u / $c }]
+          if { $ratio >= 0.8 } {
+            incr hot
+          }
+          if { $ratio > $worst } {
+            set worst $ratio
+          }
+          if { $ratio >= 0.8 } {
+            lappend hotspots [list $ratio [$layer getName] \
+              [stage_art_um [lindex $xs $x]] [stage_art_um [lindex $ys $y]]]
+          }
+        }
+      }
+    }
+    if { $cap == 0 && $use == 0 } {
+      continue
+    }
+    set fmt "{\"name\": %s, \"dir\": %s, \"capacity\": %.0f, \"usage\": %.0f, "
+    append fmt "\"gcells\": %d, \"overflow_gcells\": %d, \"hot_gcells\": %d, \"worst\": %.3f}"
+    lappend layers [format $fmt \
+      [stage_art_json_str [$layer getName]] [stage_art_json_str [$layer getDirection]] \
+      $cap $use $sampled $over $hot $worst]
+  }
+  set top {}
+  # The worst 50; the renderer picks distinct spots among them.
+  foreach h [lrange [lsort -real -decreasing -index 0 $hotspots] 0 49] {
+    lassign $h ratio layer x y
+    lappend top [format {{"ratio": %.3f, "layer": %s, "x": %.1f, "y": %.1f}} \
+      $ratio [stage_art_json_str $layer] $x $y]
+  }
+  # Map: demand over capacity summed over all layers in each bin, and
+  # the number of overflowing gcell-layers in it.
+  foreach key [array names bin_cap] {
+    set map($key) [expr { $bin_cap($key) > 0 ? $bin_use($key) / $bin_cap($key) : 0.0 }]
+  }
+  return [format {{"gcells": [%d, %d], "stride": %d, "layers": [%s], "hotspots": [%s], %s}} \
+    $nx $ny $stride [join $layers {, }] [join $top {, }] \
+    "\"map\": [stage_art_grid_json map $cols $rows %.3f],\
+     \"overflow_map\": [stage_art_grid_json bin_over $cols $rows %d]"]
 }
 
 proc stage_art_timing { } {

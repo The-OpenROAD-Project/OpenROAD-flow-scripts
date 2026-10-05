@@ -1,0 +1,3 @@
+global_route -congestion_report_file ./reports/asap7/gcd/grtfail/congestion.rpt -congestion_iterations 30 -congestion_report_iter_step 5 -verbose -resistance_aware
+[ERROR GRT-0116] Global routing finished with congestion. Check the congestion regions in the DRC Viewer.
+Elapsed time: 0:04.47[h:]min:sec. CPU time: user 16.18 sys 0.34 (369%). Peak memory: 302496KB.

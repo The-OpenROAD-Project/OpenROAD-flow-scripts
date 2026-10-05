@@ -237,6 +237,17 @@ class Stage:
             return None
         return value
 
+    def earlier_probe(self, name):
+        """(probe data, stem) from the most recent earlier stage snapshot
+        that has it, e.g. placement density when explaining congestion."""
+        for stem, _ in reversed(self.history):
+            snap = load_json(os.path.join(self.reports_dir, stem + ".art.json"))
+            if isinstance(snap, dict):
+                value = snap.get(name)
+                if value and not (isinstance(value, dict) and "probe_error" in value):
+                    return value, stem
+        return None, None
+
     def latest(self, key):
         """(value, stem) of the most recent stage that reported key."""
         if key in self.metrics:
@@ -699,6 +710,7 @@ FAILURE_PANELS = {}  # tool, e.g. "MPL" -> panels that explain its errors
 PANEL_MODULES = [
     "stage_art_macros",
     "stage_art_gpl",
+    "stage_art_grt",
 ]
 
 
@@ -719,6 +731,22 @@ def panel(stems=(), tools=()):
 def load_panels():
     for name in PANEL_MODULES:
         importlib.import_module(name)
+
+
+def heat_legend(doc, what, unit_max):
+    """One line explaining the map shading."""
+    if doc.rich:
+        ramp = [(" ", "on " + hexcolor(ramp_color(i / 7.0))) for i in range(8)]
+        return (
+            [(" %s 0 " % what, "dim")]
+            + ramp
+            + [
+                (" %s " % unit_max, "dim"),
+                ("\u2580", "#ff3030"),
+                (" over", "dim"),
+            ]
+        )
+    return [(" %s '%s' 0..%s, X over" % (what, PLAIN_RAMP, unit_max), "dim")]
 
 
 SPARK_PLAIN = "_.-=*#"
