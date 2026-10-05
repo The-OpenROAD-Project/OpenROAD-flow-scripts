@@ -324,6 +324,57 @@ class StageArtTest(unittest.TestCase):
         self.assertIn("DRC Viewer; start with Lef58EolKeepOut", text)
         self.assert_plain(text)
 
+    # -- timing ------------------------------------------------------------
+
+    def timing_dir(self, ws_before, ws_after, hold_violators=None):
+        """gcd's CTS snapshot, with the setup slack before and after."""
+        src = os.path.join(FIXTURES, "cts_timing")
+        with open(os.path.join(src, "4_1_cts.art.json")) as f:
+            snapshot = json.load(f)
+        if hold_violators is not None:
+            snapshot["timing"]["hold"]["violators"] = hold_violators
+        with open(os.path.join(src, "4_1_cts.log")) as f:
+            log = f.read()
+        return self.stage_dir(
+            {
+                "3_5_place_dp.json": {"detailedplace__timing__setup__ws": ws_before},
+                "4_1_cts.json": {"cts__timing__setup__ws": ws_after},
+                "4_1_cts.art.json": snapshot,
+                "4_1_cts.log": log,
+            }
+        )
+
+    def test_timing_flags_the_stage_that_cost_slack(self):
+        """CTS on gcd takes setup slack from 0 to -43ps with a 310ps clock:
+        more than a tenth of the period, so this is where to look."""
+        d = self.timing_dir(0.0, -43.2)
+        text = self.render(d, "4_1_cts", 0).plain()
+        self.assertIn("4_1_cts WARN", text)
+        self.assertIn(
+            "this stage cost 43.2ps setup slack, 14% of the 310ps clock", text
+        )
+        self.assertIn("setup slack, 52 endpoints, 4 < 0", text)
+        self.assertIn("hold slack, 52 endpoints", text)
+        # Zero is marked on the setup axis, with the violators left of it.
+        axis = next(
+            l for l in text.splitlines() if l.lstrip().startswith("-") and "|" in l
+        )
+        bars = text.splitlines()[text.splitlines().index(axis) - 1]
+        zero = axis.index("|")
+        self.assertIn("#", bars[:zero])
+        self.assertIn("Endpoint Slack", text)
+        self.assert_plain(text)
+
+    def test_timing_is_quiet_when_a_stage_keeps_its_slack(self):
+        d = self.timing_dir(-40.0, -43.2)
+        text = self.render(d, "4_1_cts", 0).plain()
+        self.assertNotIn("slack, 52 endpoints", text)
+
+    def test_timing_flags_hold_violations_after_cts(self):
+        d = self.timing_dir(-40.0, -43.2, hold_violators=3)
+        text = self.render(d, "4_1_cts", 0).plain()
+        self.assertIn("why: 3 hold violations after CTS", text)
+
 
 if __name__ == "__main__":
     unittest.main()

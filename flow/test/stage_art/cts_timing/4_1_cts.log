@@ -1,0 +1,16 @@
+[INFO CTS-0007] Net "clk" found for clock "core_clock".
+[INFO CTS-0010]  Clock net "clk" has 34 sinks.
+[INFO CTS-0027] Generating H-Tree topology for net clk.
+[INFO CTS-0028]  Total number of sinks: 34.
+[INFO CTS-0018]     Created 5 clock buffers.
+[INFO CTS-0012]     Minimum number of buffers in the clock path: 2.
+[INFO CTS-0013]     Maximum number of buffers in the clock path: 2.
+[INFO CTS-0016]     Fanout distribution for the current clock = 8:3, 10:1..
+[INFO CTS-0017]     Max level of the clock tree: 2.
+[INFO CTS-0098] Clock net "clk"
+[INFO CTS-0099]  Sinks 37
+[INFO CTS-0100]  Leaf buffers 0
+[INFO CTS-0101]  Average sink wire length 12.22 um
+[INFO CTS-0102]  Path depth 2 - 2
+Elapsed time: 0:03.64[h:]min:sec. CPU time: user 3.53 sys 0.15 (100%). Peak memory: 205736KB.
+Log                       Ext     Elapsed/s Peak Memory/MB sha1sum result [0:20)

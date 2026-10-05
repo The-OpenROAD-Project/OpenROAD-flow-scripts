@@ -304,6 +304,34 @@ proc stage_art_congestion { } {
      \"overflow_map\": [stage_art_grid_json bin_over $cols $rows %d]"]
 }
 
+# Endpoint slack histogram, binned on multiples of a 1/2/5 step so that
+# zero is a bin edge and the negative bins are exactly the violators.
+proc stage_art_histogram { min_max } {
+  # with_output_to_variable evaluates its body in its own scope: pass the
+  # command with this proc's variables already substituted.
+  with_output_to_variable out [list report_timing_histogram -num_bins 1 $min_max]
+  if { ![regexp {\[\s*(\S+),\s*(\S+)\]} $out -> lo hi] } {
+    return null
+  }
+  set span [expr { max(abs($hi - $lo), 1e-6) }]
+  set raw [expr { $span / 16.0 }]
+  set mag [expr { pow(10, floor(log10($raw))) }]
+  foreach mult {1 2 5 10} {
+    set step [expr { $mult * $mag }]
+    if { $step >= $raw } {
+      break
+    }
+  }
+  with_output_to_variable out [list report_timing_histogram -bin_size $step $min_max]
+  set bins {}
+  foreach line [split $out \n] {
+    if { [regexp {\[\s*(\S+),\s*(\S+)[\)\]]:\s*\**\s*\((\d+)\)} $line -> b0 b1 n] } {
+      lappend bins [format {[%s, %s, %s]} $b0 $b1 $n]
+    }
+  }
+  return "\[[join $bins {, }]\]"
+}
+
 proc stage_art_timing { } {
   if { [llength [all_clocks]] == 0 } {
     return null
@@ -311,11 +339,12 @@ proc stage_art_timing { } {
   set fields {}
   foreach {name min_max} {setup max hold min} {
     lappend fields [format \
-      {%s: {"ws": %s, "tns": %s, "violators": %d}} \
+      {%s: {"ws": %s, "tns": %s, "violators": %d, "histogram": %s}} \
       [stage_art_json_str $name] \
       [stage_art_json_num [sta::time_sta_ui [sta::worst_slack_cmd $min_max]]] \
       [stage_art_json_num [sta::time_sta_ui [sta::total_negative_slack_cmd $min_max]]] \
-      [sta::endpoint_violation_count $min_max]]
+      [sta::endpoint_violation_count $min_max] \
+      [stage_art_histogram -[expr { $name == "setup" ? "setup" : "hold" }]]]
   }
   set periods [lmap clk [all_clocks] { get_property $clk period }]
   lappend fields "\"period\": [stage_art_json_num [tcl::mathfunc::min {*}$periods]]"

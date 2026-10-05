@@ -712,6 +712,7 @@ PANEL_MODULES = [
     "stage_art_gpl",
     "stage_art_grt",
     "stage_art_drt",
+    "stage_art_timing",
 ]
 
 
