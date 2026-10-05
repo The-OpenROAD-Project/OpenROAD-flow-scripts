@@ -1,0 +1,56 @@
+# Code owners for openroad-flow-scripts.
+#
+# There is no "*" rule.
+# TODO: add more codeowners to other paths
+
+# CI workflows, dependabot config, and pinned CI Python packages.
+/.github/                       @The-OpenROAD-Project/openroad-devops
+
+# Jenkins pipelines.
+/Jenkinsfile                    @The-OpenROAD-Project/openroad-devops
+/jenkins/                       @The-OpenROAD-Project/openroad-devops
+
+# Dependency installers, Docker helpers, and pinned Python packages.
+/etc/                           @The-OpenROAD-Project/openroad-devops
+
+# Container images and container tooling.
+/Dockerfile                     @The-OpenROAD-Project/openroad-devops
+/.dockerignore                  @The-OpenROAD-Project/openroad-devops
+/docker/                        @The-OpenROAD-Project/openroad-devops
+/tools/.dockerignore            @The-OpenROAD-Project/openroad-devops
+/tools/codespace/               @The-OpenROAD-Project/openroad-devops
+/tools/yosys_util/              @The-OpenROAD-Project/openroad-devops
+/tools/AutoTuner/docker-compose.yml @The-OpenROAD-Project/openroad-devops
+
+# Bazel build support.
+/bazel/                         @The-OpenROAD-Project/openroad-devops
+/.bazelversion                  @The-OpenROAD-Project/openroad-devops
+/.bazelignore                   @The-OpenROAD-Project/openroad-devops
+
+# Nix build environment.
+/flake.nix                      @The-OpenROAD-Project/openroad-devops
+/flake.lock                     @The-OpenROAD-Project/openroad-devops
+
+# Build and environment entry points.
+/setup.sh                       @The-OpenROAD-Project/openroad-devops
+/build_openroad.sh              @The-OpenROAD-Project/openroad-devops
+/dev_env.sh                     @The-OpenROAD-Project/openroad-devops
+/env.sh                         @The-OpenROAD-Project/openroad-devops
+/claude.sh                      @The-OpenROAD-Project/openroad-devops
+
+# License covering the build and run scripts above.
+/LICENSE_BUILD_RUN_SCRIPTS      @The-OpenROAD-Project/openroad-devops
+
+# Submodule set and submodule URLs. Routine version bumps are not covered.
+/.gitmodules                    @The-OpenROAD-Project/openroad-devops
+
+# Documentation build configuration and its pinned packages.
+/.readthedocs.yaml              @The-OpenROAD-Project/openroad-devops
+/docs/requirements.in           @The-OpenROAD-Project/openroad-devops
+/docs/requirements_lock.txt     @The-OpenROAD-Project/openroad-devops
+
+# Other pinned Python package sets that dependabot updates.
+/flow/util/requirements.in      @The-OpenROAD-Project/openroad-devops
+/flow/util/requirements_lock.txt @The-OpenROAD-Project/openroad-devops
+/tools/AutoTuner/requirements.txt @The-OpenROAD-Project/openroad-devops
+/tools/AutoTuner/requirements-dev.txt @The-OpenROAD-Project/openroad-devops
