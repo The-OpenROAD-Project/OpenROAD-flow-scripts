@@ -1,12 +1,18 @@
 # tage_update
 
+This design adds to the variety, relevance and fast turnaround of the
+ORFS tests: generated SRAMs at scale (6 / 40 / 160 macros through
+`AUTO_MEMORIES`) on ORFS's default flow settings, the structure of a
+TAGE branch predictor as in XiangShan, and a size ladder whose
+10-minute base variant already shows the effect.
+
 One cycle of a branch predictor's second stage: the TAGE's tables and
 the main BTB are read from the same pc, and their responses decide the
 fetch block's prediction. When that prediction overrides the first
 stage's, the next fetch starts from its target, and the TAGE and main
-BTB banks that pc hashes to are read again. A bank being read cannot
-drain its write buffer, so the path ends at a write-buffer register
-beside one table's SRAMs.
+BTB banks that pc hashes to are read again, so the path ends at the
+bank being read: its SRAM's read address or enable, or the write
+buffer beside a TAGE table, which cannot drain while the bank is read.
 
 The decision logic needs both sets of SRAMs' outputs, so placement
 puts it between them, and a path from one TAGE table back to a TAGE
@@ -37,8 +43,9 @@ flowchart LR
 The critical path starts at a stage-2 register, decides the TAGE's
 direction, combines it with the main BTB's slots into the block's
 prediction, compares that with the first stage's, picks the next pc,
-hashes it to a bank, and ends at that bank's write buffer: the bank is
-read, so it does not drain.
+hashes it to a bank, and ends at that bank: the SRAM's read address or
+enable, or the write buffer, which does not drain while the bank is
+read.
 
 ```mermaid
 sequenceDiagram
@@ -84,35 +91,43 @@ just-predicted branch's metadata to training and here is one wire.
 large is XiangShan's size for both. base, the variant ORFS runs when
 FLOW_VARIANT is not set, is the smallest that shows the effect.
 
-## Results
+## What it shows
 
-The worst register-to-register path of each variant against the 473 ps
-clock. The split is of the path at global route, with the clock
-latencies taken out; the detour is the length of the path, cell to
-cell, over the distance between its two ends.
+The worst path in every variant leaves stage 2's pc and ends at an
+SRAM's read address or enable: the override has decided where the next
+fetch starts, and the banks that pc hashes to have to be read. The
+decision needs both the TAGE's and the main BTB's outputs, so it sits
+between the two groups of SRAMs, and the path back from it to a bank
+grows with the field of SRAMs around it.
 
-| FLOW_VARIANT | reg2reg, grt | reg2reg, final | logic | repeaters | wire | detour | flow time |
-|---|---|---|---|---|---|---|---|
-| small | 470 ps | 455 ps | 409 ps, 21 cells | none | 15 ps | none | 3 min |
-| medium | 534 ps | 522 ps | 414 ps, 25 cells | 52 ps, 4 cells | 18 ps | 6.2x | 10 min |
-| large | 829 ps | 849 ps | 501 ps, 32 cells | 190 ps, 15 cells | 94 ps | 13.9x | 46 min |
+- small is logic. The decision sits next to everything it reads, and
+  repeaters and wire are a small part of the path.
+- medium starts to travel: a few repeaters appear, and the path is
+  longer than the distance between its ends.
+- large is the size of XiangShan's predictor. The main BTB's SRAMs sit
+  along one side of the die and the TAGE's along the other, the path is
+  about a millimetre long, and close to half of its delay is repeaters
+  and wire. That half is what this design is for.
 
-In every variant the worst path ends at a TAGE write buffer, as
-XiangShan's does. With four macros the decision logic sits next to
-everything it reads and the path is logic. With 40 it already travels
-six times the distance between its ends; with 160 fourteen times, and a
-third of its delay is repeaters and wire. On large the main BTB's SRAMs
-sit along one side of the die and the TAGE's along the other, with the
-decision between them.
+Two things decide how much of that half is paid:
 
-The same path in XiangShan's Frontend at global route (same platform,
-clock and flow settings) is 1,717 ps: 537 ps of logic in 28 cells,
-530 ps of repeaters in 30 and 592 ps of wire, travelling 2,730 µm
-between ends 460 µm apart. The logic and the detour are the same here;
-the absolute delay is not, because XiangShan's Frontend die is 955 µm
-across and large's is 403 µm, the rest of the Frontend being around
-the predictor. Flow time is the sum of the stages' elapsed times on one
-machine.
+- The metal stack. With resistance-aware global routing (asap7's
+  default) the critical nets go to M8 and M9, which this design routes
+  to, as XiangShan does.
+- Detailed routing. It makes the long nets longer than global route
+  estimated, so large is worse at final than at global route.
+
+A change to the flow for this class of path shows on large as a shorter
+path or a smaller repeater and wire share. Look at the worst path after
+global route:
+
+```sh
+make DESIGN_CONFIG=./designs/asap7/tage_update/config.mk FLOW_VARIANT=large gui_grt
+```
+
+XiangShan's Frontend has the same structure on a die 2.4 times wider,
+the rest of the Frontend surrounding the predictor, so the effect is
+larger there.
 
 ## Constraints
 
