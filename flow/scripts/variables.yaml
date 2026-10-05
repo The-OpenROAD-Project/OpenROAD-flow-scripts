@@ -668,10 +668,14 @@ ENABLE_DPO:
   description: |
     Enable detail placement with improve_placement feature.
   default: 1
+  stages:
+    - place
 DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
+  stages:
+    - place
 GPL_RANDOM_SEED:
   description: |
     Specifies a random seed for global placement.  Useful for perturbation studies.
