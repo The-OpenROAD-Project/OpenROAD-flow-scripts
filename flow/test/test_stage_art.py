@@ -267,6 +267,23 @@ class StageArtTest(unittest.TestCase):
         self.assertIn("█", drawn)  # std cells that do not fit
         self.assertIn("▒", drawn)  # std cells that do
 
+    # -- global placement --------------------------------------------------
+
+    def test_global_place_flags_a_too_low_target_density(self):
+        """asap7/gcd asks global placement for density 0.35, below what
+        the design can reach (GPL-0302): a QoR prompt, not a failure."""
+        text = self.fixture("gpl_low_density", "3_3_place_gp", 0).plain()
+        self.assertIn("3_3_place_gp WARN", text)
+        self.assertIn("target density 0.35 is below the design's minimum", text)
+        self.assertIn("cell density", text)
+        self.assertIn("RUDY", text)
+        # Overflow falls from the start to the end of placement.
+        self.assertRegex(text, r"overflow 0.58 \S+ 0.100 after 323 iterations")
+        # Two maps of the same die, side by side.
+        framed = [l for l in text.splitlines() if l.startswith(" |")]
+        self.assertTrue(framed and all(l.count("|") == 4 for l in framed))
+        self.assert_plain(text)
+
 
 if __name__ == "__main__":
     unittest.main()

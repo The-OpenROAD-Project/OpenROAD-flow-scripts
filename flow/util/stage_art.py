@@ -666,6 +666,10 @@ LOOKS = {
 }
 
 
+def mean(values):
+    return sum(values) / len(values)
+
+
 def side_by_side(left, right, gap=2):
     """Join two segment-line lists into columns."""
     lw = max((sum(len(t) for t, _ in l) for l in left), default=0)
@@ -694,6 +698,7 @@ FAILURE_PANELS = {}  # tool, e.g. "MPL" -> panels that explain its errors
 
 PANEL_MODULES = [
     "stage_art_macros",
+    "stage_art_gpl",
 ]
 
 
@@ -714,6 +719,28 @@ def panel(stems=(), tools=()):
 def load_panels():
     for name in PANEL_MODULES:
         importlib.import_module(name)
+
+
+SPARK_PLAIN = "_.-=*#"
+SPARK_RICH = "\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588"
+
+
+def sparkline(values, rich, width=32, lo=None, hi=None):
+    """values resampled to width characters, scaled lo..hi."""
+    if not values:
+        return ""
+    if len(values) > width:
+        values = [values[i * len(values) // width] for i in range(width - 1)] + [
+            values[-1]
+        ]
+    lo = min(values) if lo is None else lo
+    hi = max(values) if hi is None else hi
+    glyphs = SPARK_RICH if rich else SPARK_PLAIN
+    span = (hi - lo) or 1.0
+    return "".join(
+        glyphs[min(len(glyphs) - 1, max(0, int((v - lo) / span * len(glyphs))))]
+        for v in values
+    )
 
 
 # ---------------------------------------------------------------------------
