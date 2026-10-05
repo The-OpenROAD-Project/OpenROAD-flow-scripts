@@ -1261,7 +1261,7 @@
   },
   "SKIP_STAGE_ART": {
     "default": 0,
-    "description": "If set to 1, stages do not snapshot the design for, or print, the summary picture at the end of each stage log (util/stage_art.py).\n",
+    "description": "If set to 1, stages do not snapshot the design for, or print, the summary at the end of each stage log; see docs/user/StageArt.md.\n",
     "stages": [
       "synth",
       "floorplan",

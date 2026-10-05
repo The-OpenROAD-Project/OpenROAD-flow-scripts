@@ -293,7 +293,7 @@ configuration file.
 | <a name="SKIP_PIN_SWAP"></a>SKIP_PIN_SWAP| Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).| |
 | <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT| Skip repair_tie_fanout at floorplan step.| 0|
 | <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.| 0|
-| <a name="SKIP_STAGE_ART"></a>SKIP_STAGE_ART| If set to 1, stages do not snapshot the design for, or print, the summary picture at the end of each stage log (util/stage_art.py).| 0|
+| <a name="SKIP_STAGE_ART"></a>SKIP_STAGE_ART| If set to 1, stages do not snapshot the design for, or print, the summary at the end of each stage log; see docs/user/StageArt.md.| 0|
 | <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP| Do not perform VT swap to improve QoR (default: do VT swap).| |
 | <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.| |
 | <a name="SWAP_ARITH_OPERATORS"></a>SWAP_ARITH_OPERATORS| Improve timing QoR by swapping ALU and MULT arithmetic operators.| 0|

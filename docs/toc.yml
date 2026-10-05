@@ -23,6 +23,8 @@ entries:
     title: Flow Variables
   - file: user/AutoMemories.md
     title: Generated Memory Macros (AUTO_MEMORIES)
+  - file: user/StageArt.md
+    title: Stage Summaries in the Log
   - file: user/LargeDesigns.md
     title: Tips on building large design
   - file: contrib/Metrics.md
