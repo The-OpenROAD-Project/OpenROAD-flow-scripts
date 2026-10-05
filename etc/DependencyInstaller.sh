@@ -31,6 +31,12 @@ _installORDependencies() {
         YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
     fi
     ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS} -yosys-ver="${YOSYS_VER}"
+    # bazelisk goes to /usr/local in the privileged step, because the -common
+    # prefix is not on PATH. A bare -bazel installs it and its runtime
+    # libraries.
+    if [[ "${buildSystem}" == "bazel" ]] && [[ "${option}" == "base" || "${option}" == "all" ]]; then
+        ./tools/OpenROAD/etc/DependencyInstaller.sh -bazel
+    fi
 }
 
 _installPipCommon() {
@@ -459,14 +465,10 @@ if [[ "${option}" == "none"  ]]; then
         _help
 fi
 
-OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
-# build_openroad.sh builds OpenROAD with Bazel by default, so bazelisk and
-# its runtime libraries are base dependencies unless -cmake is given. They
-# need root, and -common may run unprivileged, so they ride along with -base
-# only.
-if [[ "${buildSystem}" == "bazel" ]] && [[ "${option}" == "base" || "${option}" == "all" ]]; then
-    OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -bazel"
-fi
+# Yosys, EQY and kepler-formal need the OpenROAD CMake dependency set for
+# both build systems. build_openroad.sh builds OpenROAD with Bazel by default,
+# so _installORDependencies also installs the Bazel set unless -cmake is given.
+OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -cmake -${option}"
 
 platform="$(uname -s)"
 case "${platform}" in
