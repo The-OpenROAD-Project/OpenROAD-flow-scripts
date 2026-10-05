@@ -1,0 +1,9 @@
+{"stage": "5_2_route",
+ "design": "gcd",
+ "platform": "asap7",
+ "variant": "drtfail",
+ "error": "",
+ "openroad": "bazel-nostamp",
+ "threads": 16,
+ "die": {"die": [0.000, 0.000, 8.889, 8.889], "core": [0.540, 0.540, 8.370, 8.370]},
+ "drc": [{"name": "Lef58EolKeepOut", "count": 9, "at": [[1.19, 3.96], [1.19, 3.97], [1.19, 3.98], [3.46, 7.63], [3.46, 7.64], [3.46, 7.65], [7.02, 3.08], [7.02, 3.09], [7.02, 3.10]]}, {"name": "Metal Spacing", "count": 1, "at": [[3.46, 7.64]]}]}

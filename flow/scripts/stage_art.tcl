@@ -26,7 +26,7 @@ set ::stage_art_probes [dict create \
   3_5_place_dp {die macros density timing} \
   4_1_cts {timing} \
   5_1_grt {die macros congestion timing} \
-  5_2_route {} \
+  5_2_route {die drc} \
   5_3_fillcell {} \
   6_1_fill {} \
   6_report {timing}]
@@ -321,6 +321,24 @@ proc stage_art_timing { } {
   lappend fields "\"period\": [stage_art_json_num [tcl::mathfunc::min {*}$periods]]"
   lappend fields "\"time_unit\": [stage_art_json_str [sta::unit_scale_abbrev_suffix time]]"
   return "{[join $fields {, }]}"
+}
+
+proc stage_art_drc { } {
+  set block [ord::get_db_block]
+  set categories {}
+  foreach category [$block getMarkerCategories] {
+    foreach sub [$category getMarkerCategories] {
+      set boxes {}
+      foreach marker [lrange [$sub getMarkers] 0 199] {
+        set box [$marker getBBox]
+        lappend boxes [format {[%.2f, %.2f]} \
+          [stage_art_um [$box xCenter]] [stage_art_um [$box yCenter]]]
+      }
+      lappend categories [format {{"name": %s, "count": %d, "at": [%s]}} \
+        [stage_art_json_str [$sub getName]] [$sub getMarkerCount] [join $boxes {, }]]
+    }
+  }
+  return "\[[join $categories {, }]\]"
 }
 
 proc stage_art_version { } {

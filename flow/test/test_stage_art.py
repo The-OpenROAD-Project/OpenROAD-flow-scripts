@@ -306,6 +306,24 @@ class StageArtTest(unittest.TestCase):
             self.assertRegex(text, r"\|\s+%s +[HV] " % layer)
         self.assert_plain(text)
 
+    # -- detailed route ----------------------------------------------------
+
+    def test_detail_route_shows_what_is_left_and_where(self):
+        """gcd stopped after DETAILED_ROUTE_END_ITERATION=1 with 10 DRCs:
+        the per-iteration counts, the DRCs by type, and where they are on
+        the global route congestion map."""
+        text = self.fixture("drt_drcs", "5_2_route", 0).plain()
+        self.assertIn("5_2_route WARN", text)
+        self.assertIn("why: 10 DRC violations left after 2 iterations", text)
+        self.assertRegex(text, r"it0 +#+ 43\n +it1 +#+ 10\n")
+        self.assertIn("by type: Lef58EolKeepOut x9, Metal Spacing x1", text)
+        rows = self.frame_rows(text)
+        # Three clusters of markers, over the shaded congestion map.
+        self.assertEqual(sum(r.count("x") for r in rows), 3)
+        self.assertTrue(any(c in "".join(rows) for c in "-=+*"))
+        self.assertIn("DRC Viewer; start with Lef58EolKeepOut", text)
+        self.assert_plain(text)
+
 
 if __name__ == "__main__":
     unittest.main()
