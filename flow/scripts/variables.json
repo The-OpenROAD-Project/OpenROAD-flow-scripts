@@ -6,12 +6,6 @@
       "synth"
     ]
   },
-  "ABC_CLOCK_PERIOD_IN_PS": {
-    "description": "Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.\n",
-    "stages": [
-      "synth"
-    ]
-  },
   "ABC_DRIVER_CELL": {
     "description": "Default driver cell used during ABC synthesis.\n",
     "stages": [
@@ -72,7 +66,7 @@
   },
   "AUTO_MEMORIES": {
     "default": 0,
-    "description": "Experimental. When set to 1, memory-shaped modules in the RTL (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and \u2014 when idiomatic as an SRAM macro \u2014 given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.\n"
+    "description": "Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and \u2014 when idiomatic as an SRAM macro \u2014 given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.\n"
   },
   "BALANCE_ROWS": {
     "default": 0,
@@ -320,7 +314,10 @@
   },
   "DPO_MAX_DISPLACEMENT": {
     "default": "5 1",
-    "description": "Specifies how far an instance can be moved when optimizing.\n"
+    "description": "Specifies how far an instance can be moved when optimizing.\n",
+    "stages": [
+      "place"
+    ]
   },
   "EARLY_SIZING_CAP_RATIO": {
     "description": "Ratio between the input pin capacitance and the output pin load during initial gate sizing.\n",
@@ -330,7 +327,10 @@
   },
   "ENABLE_DPO": {
     "default": 1,
-    "description": "Enable detail placement with improve_placement feature.\n"
+    "description": "Enable detail placement with improve_placement feature.\n",
+    "stages": [
+      "place"
+    ]
   },
   "ENABLE_PLACE_REPAIR_TIMING": {
     "default": 0,
@@ -941,7 +941,7 @@
   "REMOVE_ABC_BUFFERS": {
     "default": 0,
     "deprecated": 1,
-    "description": "Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.\n",
+    "description": "Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1. Some designs still need it to reach their QoR targets.\n",
     "stages": [
       "floorplan"
     ]
@@ -1158,9 +1158,6 @@
       "grt"
     ],
     "tunable": 1
-  },
-  "SET_RC_TCL": {
-    "description": "Metal & Via RC definition file path.\n"
   },
   "SKIP_ANTENNA_REPAIR": {
     "default": 0,

@@ -32,10 +32,7 @@ def parse_param_int(val) -> int:
 def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
     """Extract memory modules from a Yosys netlist JSON output ($mem_v2 cells)."""
     if isinstance(data, (str, Path)):
-        p = Path(data)
-        if not p.is_file():
-            return []
-        data = json.loads(p.read_text())
+        data = json.loads(Path(data).read_text())
 
     out: list[schema.Memory] = []
     modules = data.get("modules", {})
@@ -176,12 +173,3 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
             out.append(mem)
 
     return out
-
-
-def scan_files(paths: list[Path]) -> list[schema.Memory]:
-    """Scan Yosys netlist JSON files; later definitions of a name win."""
-    found: dict[str, schema.Memory] = {}
-    for path in paths:
-        for memory in scan_yosys_json(path):
-            found[memory.name] = memory
-    return list(found.values())

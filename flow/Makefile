@@ -21,9 +21,11 @@
 # DESIGN_CONFIG=./designs/nangate45/ibex/config.mk
 # DESIGN_CONFIG=./designs/nangate45/jpeg/config.mk
 # DESIGN_CONFIG=./designs/nangate45/mempool_group/config.mk
+# DESIGN_CONFIG=./designs/nangate45/picorv32/config.mk
 # DESIGN_CONFIG=./designs/nangate45/swerv/config.mk
 # DESIGN_CONFIG=./designs/nangate45/swerv_wrapper/config.mk
 # DESIGN_CONFIG=./designs/nangate45/tinyRocket/config.mk
+# DESIGN_CONFIG=./designs/nangate45/tpu/config.mk
 
 # DESIGN_CONFIG=./designs/gf12/aes/config.mk
 # DESIGN_CONFIG=./designs/gf12/ariane/config.mk
@@ -60,8 +62,10 @@
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
 # DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
 # DESIGN_CONFIG=./designs/asap7/megaboom/config.mk
+# DESIGN_CONFIG=./designs/asap7/picorv32/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
+# DESIGN_CONFIG=./designs/asap7/tpu/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
 
 # DESIGN_CONFIG=./designs/intel16/aes/config.mk
@@ -254,14 +258,6 @@ memory:
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
 
-$(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
-	$(UNSET_AND_MAKE) do-sdc-clock-period
-
-.PHONY: do-sdc-clock-period
-do-sdc-clock-period:
-	mkdir -p $(dir $(SDC_FILE_CLOCK_PERIOD))
-	echo $(ABC_CLOCK_PERIOD_IN_PS) > $(SDC_FILE_CLOCK_PERIOD)
-
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
@@ -281,7 +277,6 @@ do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	  --yosys-json $(RESULTS_DIR)/memories_inferred.json \
 	  --out-dir $(RESULTS_DIR)/memories \
 	  --json $(RESULTS_DIR)/memories.json \
-	  $(foreach file,$(VERILOG_FILES),--verilog $(file)) \
 	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file))
 
 $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \
@@ -316,7 +311,6 @@ clean_synth:
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STATS)
-	rm -f $(SDC_FILE_CLOCK_PERIOD)
 
 # ==============================================================================
 #  _____ _     ___   ___  ____  ____  _        _    _   _

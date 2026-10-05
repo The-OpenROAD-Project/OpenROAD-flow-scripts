@@ -192,9 +192,9 @@ SYNTH_USE_SYN:
   default: 0
 AUTO_MEMORIES:
   description: >
-    Experimental. When set to 1, memory-shaped modules in the RTL
-    (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only)
-    are detected pre-synthesis, inventoried in
+    Experimental. When set to 1, memories that yosys infers in the RTL
+    (`$mem_v2` cells, module boundary only) are detected
+    pre-synthesis, inventoried in
     `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM
     macro — given generated .lib/.lef views under
     `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and
@@ -437,12 +437,6 @@ MIN_BUF_CELL_AND_PORTS:
     Used to insert a buffer cell to pass through wires. Used in synthesis.
   stages:
     - synth
-ABC_CLOCK_PERIOD_IN_PS:
-  description: >
-    Clock period to be used by STA during synthesis. Default value read from
-    `constraint.sdc`.
-  stages:
-    - synth
 ABC_DRIVER_CELL:
   description: |
     Default driver cell used during ABC synthesis.
@@ -512,6 +506,7 @@ REMOVE_ABC_BUFFERS:
     Remove abc buffers from the netlist. If timing repair in floorplanning is
     taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early
     instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.
+    Some designs still need it to reach their QoR targets.
   stages:
     - floorplan
   deprecated: 1
@@ -673,10 +668,14 @@ ENABLE_DPO:
   description: |
     Enable detail placement with improve_placement feature.
   default: 1
+  stages:
+    - place
 DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
+  stages:
+    - place
 GPL_RANDOM_SEED:
   description: |
     Specifies a random seed for global placement.  Useful for perturbation studies.
@@ -947,9 +946,6 @@ OR_SEED:
 RCX_RULES:
   description: |
     RC Extraction rules file path.
-SET_RC_TCL:
-  description: |
-    Metal & Via RC definition file path.
 FILL_CONFIG:
   description: |
     JSON rule file for metal fill during chip finishing.

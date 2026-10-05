@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """AUTO_MEMORIES driver: detect memories, judge them, emit macro views.
 
-Run pre-synthesis (before canonicalization). Scans the design's Verilog
-for memory-shaped modules, merges user-supplied `.memories` files
+Run pre-synthesis (before canonicalization). Reads the netlist JSON
+that extract_memories.tcl writes after yosys `proc; memory -nomap`,
+collects its $mem_v2 cells, merges user-supplied `.memories` files
 (ADDITIONAL_MEMORIES), applies the idiomatic-macro gate, then writes:
 
   <json>                 full inventory, converted or not (memories.json)
@@ -25,41 +26,26 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import subprocess
-import os
 
 import detect  # noqa: E402
 import idiomatic  # noqa: E402
 import schema  # noqa: E402
 
-
-def find_fakeram_run() -> str | None:
-    fakeram_run = os.environ.get("FAKERAM_RUN_PY")
-    if fakeram_run and os.path.isfile(fakeram_run):
-        return fakeram_run
-    runfiles_dir = os.environ.get("RUNFILES_DIR")
-    if runfiles_dir:
-        for p in Path(runfiles_dir).rglob("run.py"):
-            if "fakeram" in p.parts[-2]:
-                return str(p)
-    return None
+FAKERAM_RUN_PY = Path(__file__).resolve().parents[3] / "tools/FakeRAM2.0/run.py"
 
 
 def run(
-    verilog: list[Path],
+    yosys_json: Path,
     memories_files: list[Path],
     platform: str,
     out_dir: Path,
     json_path: Path,
-    yosys_json: Path | None = None,
 ) -> int:
     if platform != "asap7":
         sys.stderr.write(f"gen_memories: unsupported platform {platform}\n")
         return 1
 
-    if yosys_json and yosys_json.is_file():
-        found = detect.scan_yosys_json(yosys_json)
-    else:
-        found = detect.scan_files(verilog)
+    found = detect.scan_yosys_json(yosys_json)
 
     idiomatic.apply(found)
 
@@ -76,17 +62,10 @@ def run(
     for mem in converted:
         schema.validate_emittable(mem)
 
-    fakeram_run = find_fakeram_run()
-    if not fakeram_run:
-        sys.stderr.write(
-            "gen_memories: FAKERAM_RUN_PY not set and FakeRAM run.py not found.\n"
-        )
-        return 1
-
     subprocess.check_call(
         [
             sys.executable,
-            fakeram_run,
+            str(FAKERAM_RUN_PY),
             "--orfs_asap7_backend",
             "--output_dir",
             str(out_dir),
@@ -109,16 +88,9 @@ def run(
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
-        "--verilog",
-        action="append",
-        default=[],
-        type=Path,
-        help="Verilog source file to scan (repeatable).",
-    )
-    p.add_argument(
         "--yosys-json",
+        required=True,
         type=Path,
-        default=None,
         help="Yosys netlist JSON file containing $mem_v2 primitives.",
     )
     p.add_argument(
@@ -144,12 +116,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = p.parse_args(argv)
     return run(
-        args.verilog,
+        args.yosys_json,
         args.memories,
         args.platform,
         args.out_dir,
         args.json,
-        args.yosys_json,
     )
 
 
