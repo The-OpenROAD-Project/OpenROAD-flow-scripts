@@ -36,13 +36,14 @@ class TestFlowSh(unittest.TestCase):
             OPENROAD_EXE="true",
             OPENROAD_ARGS="",
             OPENROAD_CMD="echo",
+            SKIP_STAGE_ART="0",
         )
         self.env.pop("RUN_CMD", None)
 
     def tearDown(self):
         self.tmp_dir.cleanup()
 
-    def run_stage(self):
+    def run_stage(self, returncode=0):
         result = subprocess.run(
             [
                 "bash",
@@ -54,7 +55,7 @@ class TestFlowSh(unittest.TestCase):
             capture_output=True,
             text=True,
         )
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(result.returncode, returncode, result.stdout + result.stderr)
         with open(os.path.join(self.log_dir, "2_1_floorplan.log")) as f:
             return f.read()
 
@@ -69,6 +70,42 @@ class TestFlowSh(unittest.TestCase):
         self.assertIn("Elapsed time:", log)
         self.assert_summary(log)
 
+    def test_stage_ends_with_its_summary(self):
+        log = self.run_stage()
+        self.assertIn("== ORFS 2_1_floorplan OK", log)
+
+    def test_skip_stage_art(self):
+        self.env["SKIP_STAGE_ART"] = "1"
+        log = self.run_stage()
+        self.assertNotIn("== ORFS", log)
+
+    def test_unset_skip_stage_art_is_an_error(self):
+        """No silent default: the flow always sets it (variables.yaml)."""
+        del self.env["SKIP_STAGE_ART"]
+        result = subprocess.run(
+            [
+                "bash",
+                os.path.join(SCRIPTS_DIR, "flow.sh"),
+                "2_1_floorplan",
+                "floorplan",
+            ],
+            env=self.env,
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("SKIP_STAGE_ART", result.stderr)
+
+    def test_failed_stage_is_explained_and_keeps_its_status(self):
+        stub = os.path.join(self.tmp_dir.name, "failing_openroad.sh")
+        with open(stub, "w") as f:
+            f.write("#!/bin/sh\necho '[ERROR IFP-0065] No rows created.'\nexit 3\n")
+        os.chmod(stub, 0o755)
+        self.env["OPENROAD_CMD"] = stub
+        log = self.run_stage(returncode=3)
+        self.assertIn("== ORFS 2_1_floorplan FAIL IFP-0065", log)
+        self.assertIn("issue: make floorplan_issue", log)
+
     def test_run_cmd_runs_the_stage(self):
         # A RUN_CMD that records that it ran, then runs run_command.py.
         marker = os.path.join(self.tmp_dir.name, "run_cmd_ran")
@@ -78,6 +115,7 @@ class TestFlowSh(unittest.TestCase):
                 import os, sys
                 with open({marker!r}, "a") as m:
                     m.write(" ".join(sys.argv[1:]) + "\\n")
+                    m.write(os.environ["ORFS_STAGE_SCRIPT"] + "\\n")
                 run_command = os.path.join({SCRIPTS_DIR!r}, "run_command.py")
                 os.execv(sys.executable, [sys.executable, run_command] + sys.argv[1:])
                 """))
@@ -87,7 +125,10 @@ class TestFlowSh(unittest.TestCase):
 
         self.assertTrue(os.path.exists(marker), "RUN_CMD did not run the stage")
         with open(marker) as f:
-            self.assertIn("floorplan.tcl", f.read())
+            ran = f.read()
+        # run_stage.tcl wraps the stage script to snapshot its result.
+        self.assertIn("run_stage.tcl", ran)
+        self.assertIn("floorplan.tcl", ran)
         self.assertIn("Elapsed time:", log)
         self.assert_summary(log)
 

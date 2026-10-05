@@ -110,6 +110,19 @@ REPORT_CLOCK_SKEW:
     - route
     - final
   default: 1
+SKIP_STAGE_ART:
+  description: >
+    If set to 1, stages do not snapshot the design for, or print, the
+    summary picture at the end of each stage log (util/stage_art.py).
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
+  default: 0
 SKIP_REPORT_METRICS:
   description: >
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up
