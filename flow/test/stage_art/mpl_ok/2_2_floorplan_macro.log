@@ -1,0 +1,3 @@
+rtl_macro_placer -max_num_level 2 -min_channel_size "8 8" -pin_aware_channels -min_ar 0.33 -area_weight 0.1 -wirelength_weight 100.0 -outline_weight 100.0 -boundary_weight 50.0 -notch_weight 50.0 -report_directory ./objects/asap7/riscv32i/base/rtlmp -fence_lx 0.0 -fence_ly 0.0 -fence_ux 0.0 -fence_uy 0.0 -target_util 0.6319999849796295
+Elapsed time: 0:08.99[h:]min:sec. CPU time: user 19.84 sys 8.60 (316%). Peak memory: 211684KB.
+Log                       Ext     Elapsed/s Peak Memory/MB sha1sum result [0:20)

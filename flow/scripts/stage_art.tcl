@@ -12,7 +12,7 @@ set ::stage_art_probes [dict create \
   1_synth {timing} \
   1_3_floorplan_to_place {} \
   2_1_floorplan {timing} \
-  2_2_floorplan_macro {} \
+  2_2_floorplan_macro {die macros} \
   2_3_floorplan_tapcell {} \
   2_4_floorplan_pdn {} \
   3_1_place_gp_skip_io {} \
@@ -37,6 +37,46 @@ proc stage_art_json_num { v } {
     return null
   }
   return $v
+}
+
+proc stage_art_um { dbu } {
+  return [expr { double($dbu) / [[ord::get_db_block] getDbUnitsPerMicron] }]
+}
+
+proc stage_art_rect { rect } {
+  return [format {[%.3f, %.3f, %.3f, %.3f]} \
+    [stage_art_um [$rect xMin]] [stage_art_um [$rect yMin]] \
+    [stage_art_um [$rect xMax]] [stage_art_um [$rect yMax]]]
+}
+
+proc stage_art_die { } {
+  set block [ord::get_db_block]
+  return [format {{"die": %s, "core": %s}} \
+    [stage_art_rect [$block getDieArea]] [stage_art_rect [$block getCoreArea]]]
+}
+
+proc stage_art_macros { } {
+  set block [ord::get_db_block]
+  set macros {}
+  foreach inst [$block getInsts] {
+    set master [$inst getMaster]
+    if { ![$master isBlock] } {
+      continue
+    }
+    set halo [$inst getHalo]
+    if { $halo != "NULL" } {
+      set halo_json [stage_art_rect [$halo getBox]]
+    } else {
+      set halo_json null
+    }
+    lappend macros [format \
+      {{"name": %s, "master": %s, "w": %.3f, "h": %.3f, "box": %s, "placed": %s, "halo": %s}} \
+      [stage_art_json_str [$inst getName]] [stage_art_json_str [$master getName]] \
+      [stage_art_um [$master getWidth]] [stage_art_um [$master getHeight]] \
+      [stage_art_rect [$inst getBBox]] \
+      [expr { [$inst isPlaced] ? "true" : "false" }] $halo_json]
+  }
+  return "\[[join $macros {, }]\]"
 }
 
 proc stage_art_timing { } {

@@ -1,0 +1,9 @@
+{"stage": "2_2_floorplan_macro",
+ "design": "riscv32i",
+ "platform": "asap7",
+ "variant": "base",
+ "error": "",
+ "openroad": "bazel-nostamp",
+ "threads": 16,
+ "die": {"die": [0.000, 0.000, 73.147, 73.147], "core": [5.022, 5.130, 68.094, 68.040]},
+ "macros": [{"name": "dmem/dmem0", "master": "fakeram7_256x32", "w": 8.360, "h": 42.000, "box": [17.430, 26.040, 25.790, 68.040], "placed": true, "halo": null}, {"name": "dmem/dmem1", "master": "fakeram7_256x32", "w": 8.360, "h": 42.000, "box": [29.814, 26.040, 38.174, 68.040], "placed": true, "halo": null}, {"name": "dmem/dmem2", "master": "fakeram7_256x32", "w": 8.360, "h": 42.000, "box": [5.046, 26.040, 13.406, 68.040], "placed": true, "halo": null}, {"name": "dmem/dmem3", "master": "fakeram7_256x32", "w": 8.360, "h": 42.000, "box": [42.198, 26.040, 50.558, 68.040], "placed": true, "halo": null}]}

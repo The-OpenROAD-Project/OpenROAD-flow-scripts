@@ -1,0 +1,4 @@
+[WARNING ORD-0012] Hierarchical flow (-hier) is currently in development and may cause multiple issues. Do not use in production environments.
+rtl_macro_placer -max_num_level 2 -min_channel_size "8 8" -pin_aware_channels -min_ar 0.33 -area_weight 0.1 -wirelength_weight 100.0 -outline_weight 100.0 -boundary_weight 50.0 -notch_weight 50.0 -report_directory ./objects/asap7/riscv32i/mplfail/rtlmp -fence_lx 0.0 -fence_ly 0.0 -fence_ux 0.0 -fence_uy 0.0 -target_util 0.8210000193119049
+[ERROR MPL-0065] The movable cells do not fit in the macro placement area.
+Elapsed time: 0:01.36[h:]min:sec. CPU time: user 1.31 sys 0.06 (101%). Peak memory: 192852KB.

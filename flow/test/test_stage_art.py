@@ -63,6 +63,21 @@ class StageArtTest(unittest.TestCase):
         st.script = script
         return stage_art.render(st, rich=rich, full=full)
 
+    def fixture(self, name, stem, status, script=None, rich=False):
+        return self.render(os.path.join(FIXTURES, name), stem, status, script, rich)
+
+    def frame_rows(self, text):
+        """The inside of the first (leftmost) die frame, top row first."""
+        lines = text.splitlines()
+        top = next(i for i, l in enumerate(lines) if l.startswith(" +-"))
+        width = len(lines[top][1:].split(" ")[0]) - 2
+        rows = []
+        for line in lines[top + 1 :]:
+            if line.startswith(" +-"):
+                return rows
+            rows.append(line[2 : 2 + width])
+        return rows
+
     def assert_plain(self, text):
         """ASCII only, and everything but the header fits 80 columns; the
         header carries the version and may run long."""
@@ -201,6 +216,56 @@ class StageArtTest(unittest.TestCase):
         rich = self.render(d, "2_1_floorplan", 1, rich=True)
         plain = self.render(d, "2_1_floorplan", 1).plain()
         self.assertEqual(len(rich.lines), len(plain.splitlines()))
+
+    # -- macro placement ---------------------------------------------------
+
+    def test_macro_failure_shows_why_the_macros_do_not_fit(self):
+        """MPL-0065 on riscv32i at 85% utilization: macros plus their
+        channels and the std cells need more than the core, and the
+        picture spills the excess out of it."""
+        doc = self.fixture("mpl_fail", "2_2_floorplan_macro", 1, "macro_place")
+        text = doc.plain()
+        self.assertIn("FAIL MPL-0065", text)
+        self.assertIn("why: macros+std cells need 158% of core", text)
+        self.assertIn("1 macro left over", text)
+        rows = self.frame_rows(text)
+        # Three of the four macros fit side by side; the fourth does not.
+        self.assertEqual(sum(r.count("A") for r in rows), 3)
+        # The std cells fill the strip left next to the macros...
+        macro_rows = [i for i, r in enumerate(rows) if "|.|" in r]
+        self.assertTrue(
+            all(r.rstrip().endswith(":|") for r in (rows[i] for i in macro_rows[1:-1]))
+        )
+        # ...and the rest spills out of the core, below it.
+        spill = [i for i, r in enumerate(rows) if "X" in r]
+        self.assertTrue(spill and min(spill) > max(macro_rows))
+        self.assertIn("58% of core over", text)
+        self.assert_plain(text)
+
+    def test_placed_macros_are_drawn_where_the_placer_put_them(self):
+        """riscv32i as configured: the four RAMs placed side by side along
+        the top of the core, and the area they and the std cells take."""
+        text = self.render(
+            os.path.join(FIXTURES, "mpl_ok"), "2_2_floorplan_macro", 0, full=True
+        ).plain()
+        self.assertIn("2_2_floorplan_macro OK", text)
+        rows = self.frame_rows(text)
+        labelled = [i for i, r in enumerate(rows) if "A" in r]
+        self.assertEqual(len(labelled), 1)
+        self.assertEqual(rows[labelled[0]].count("A"), 4)
+        # In the top half of the die.
+        self.assertLess(labelled[0], len(rows) // 2)
+        self.assertRegex(text, r"total +#+\.+ +78%")
+        self.assertNotIn("core full", text)
+        self.assert_plain(text)
+
+    def test_macro_failure_in_colour_draws_blocks(self):
+        if importlib.util.find_spec("rich") is None:
+            self.skipTest("rich not installed")
+        doc = self.fixture("mpl_fail", "2_2_floorplan_macro", 1, rich=True)
+        drawn = "".join(t for line in doc.lines for t, _ in line)
+        self.assertIn("█", drawn)  # std cells that do not fit
+        self.assertIn("▒", drawn)  # std cells that do
 
 
 if __name__ == "__main__":

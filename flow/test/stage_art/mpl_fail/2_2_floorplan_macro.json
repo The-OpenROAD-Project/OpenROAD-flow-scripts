@@ -1,0 +1,8 @@
+{
+	"flow__warnings__count": 12,
+	"flow__errors__count": 1,
+	"flow__warnings__count:GPL-0302": 1,
+	"flow__warnings__count:ORD-0012": 1,
+	"flow__warnings__count:STA-1212": 1001,
+	"flow__warnings__type_count": 3
+}

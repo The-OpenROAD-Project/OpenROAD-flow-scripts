@@ -20,6 +20,7 @@ import argparse
 import glob
 import importlib
 import json
+import math
 import os
 import re
 import sys
@@ -74,6 +75,23 @@ METRIC_STAGES = {
     "finish",
 }
 
+PLAIN_RAMP = " .:-=+*#%@"
+
+# viridis, sampled; perceptually uniform and readable with colour
+# vision deficiency.
+VIRIDIS = [
+    (0x44, 0x01, 0x54),
+    (0x48, 0x28, 0x78),
+    (0x3E, 0x49, 0x89),
+    (0x31, 0x68, 0x8E),
+    (0x26, 0x82, 0x8E),
+    (0x1F, 0x9E, 0x89),
+    (0x35, 0xB7, 0x79),
+    (0x6E, 0xCE, 0x58),
+    (0xB5, 0xDE, 0x2B),
+    (0xFD, 0xE7, 0x25),
+]
+OVER = (0xFF, 0x30, 0x30)
 
 # ---------------------------------------------------------------------------
 # Output document: lines of (text, style) segments. Plain rendering drops
@@ -106,6 +124,29 @@ class Doc:
         return "\n".join(
             "".join(text for text, _ in line).rstrip() for line in self.lines
         )
+
+
+def hexcolor(rgb):
+    return "#%02x%02x%02x" % rgb
+
+
+def ramp_color(t):
+    """viridis at t in [0, 1]; red above 1 (over capacity)."""
+    if t > 1.0:
+        return OVER
+    t = max(0.0, t) * (len(VIRIDIS) - 1)
+    i = min(int(t), len(VIRIDIS) - 2)
+    f = t - i
+    a, b = VIRIDIS[i], VIRIDIS[i + 1]
+    return tuple(int(a[k] + (b[k] - a[k]) * f) for k in range(3))
+
+
+def plain_char(t):
+    if t is None:
+        return " "
+    if t > 1.0:
+        return "X"
+    return PLAIN_RAMP[min(len(PLAIN_RAMP) - 1, max(0, int(t * len(PLAIN_RAMP))))]
 
 
 # ---------------------------------------------------------------------------
@@ -239,6 +280,11 @@ def kb(v):
     if v is None:
         return "-"
     return "%.1fGB" % (v / 1048576) if v >= 1048576 else "%dMB" % (v / 1024)
+
+
+def bar(frac, width):
+    n = max(0, min(width, int(round(frac * width))))
+    return "#" * n + "." * (width - n)
 
 
 def time_unit(st):
@@ -467,6 +513,177 @@ def footer(doc, st, gui):
 # floorplan fill up with macros, cells, congestion and DRCs.
 
 
+class Frame:
+    """Maps die coordinates (um) onto a character grid.
+
+    Character cells are about twice as tall as wide, so the grid keeps the
+    die's aspect ratio with half as many rows as columns per um.
+    """
+
+    def __init__(self, die, rich, max_w=46, max_h=16):
+        # rich draws half-blocks: two map rows per character row.
+        self.sub = 2 if rich else 1
+        self.values = None
+        self.x0, self.y0, self.x1, self.y1 = die
+        dw = max(self.x1 - self.x0, 1e-9)
+        dh = max(self.y1 - self.y0, 1e-9)
+        w = max_w
+        h = int(round(w * dh / dw / 2.0))
+        if h > max_h:
+            h = max_h
+            w = max(4, int(round(h * 2.0 * dw / dh)))
+        self.w, self.h = w, max(2, h)
+        self.cells = [[(" ", None)] * self.w for _ in range(self.h)]
+        # Cells covered by something solid (a macro), not free for cells.
+        self.solid = [[False] * self.w for _ in range(self.h)]
+
+    def col(self, x):
+        return (x - self.x0) / (self.x1 - self.x0) * self.w
+
+    def row(self, y):
+        # Row 0 is the top of the die.
+        return (self.y1 - y) / (self.y1 - self.y0) * self.h
+
+    def put(self, c, r, ch, style=None):
+        if 0 <= r < self.h and 0 <= c < self.w:
+            self.cells[r][c] = (ch, style)
+
+    def box(self, rect, label="", style=None, fill=" ", solid=False):
+        """Draw a rectangle (um); tiny ones collapse to a filled block."""
+        c0 = int(math.floor(self.col(rect[0])))
+        c1 = int(math.ceil(self.col(rect[2]))) - 1
+        r0 = int(math.floor(self.row(rect[3])))
+        r1 = int(math.ceil(self.row(rect[1]))) - 1
+        c1, r1 = max(c0, c1), max(r0, r1)
+        for r in range(r0, r1 + 1):
+            for c in range(c0, c1 + 1):
+                edge_c = c in (c0, c1) and c1 > c0
+                edge_r = r in (r0, r1) and r1 > r0
+                if c1 - c0 < 2 or r1 == r0 and c1 - c0 < 2:
+                    ch = "#"
+                elif edge_c and edge_r:
+                    ch = "+"
+                elif edge_r:
+                    ch = "-"
+                elif edge_c:
+                    ch = "|"
+                else:
+                    ch = fill
+                self.put(c, r, ch, style)
+                if solid and 0 <= r < self.h and 0 <= c < self.w:
+                    self.solid[r][c] = True
+        if label and c1 - c0 >= 2:
+            r = r0 + 1 if r1 > r0 + 1 else r0
+            for k, ch in enumerate(label[: c1 - c0 - 1]):
+                self.put(c0 + 1 + k, r, ch, style)
+
+    def outline(self, rect, style=None):
+        """Draw only the edges of a rectangle (um), e.g. a macro over a map."""
+        c0 = int(math.floor(self.col(rect[0])))
+        c1 = max(c0, int(math.ceil(self.col(rect[2]))) - 1)
+        r0 = int(math.floor(self.row(rect[3])))
+        r1 = max(r0, int(math.ceil(self.row(rect[1]))) - 1)
+        for c in range(c0, c1 + 1):
+            for r in (r0, r1):
+                self.put(c, r, "+" if c in (c0, c1) else "-", style)
+        for r in range(r0 + 1, r1):
+            for c in (c0, c1):
+                self.put(c, r, "|", style)
+
+    def mark(self, x, y, ch, style):
+        """Put a marker at a die coordinate (um)."""
+        self.put(
+            min(self.w - 1, int(self.col(x))),
+            min(self.h - 1, int(self.row(y))),
+            ch,
+            style,
+        )
+
+    def heat(self, grid, scale, pool=max):
+        """Shade the frame from a die-binned grid (row 0 = top).
+
+        Several grid bins can fall in one character; `pool` combines them:
+        max for congestion, so a hot spot is never averaged away, mean for
+        density, which is an average by nature. Returns per-cell values for
+        the rich renderer's half-blocks.
+        """
+        rows, cols = len(grid), len(grid[0]) if grid else 0
+        if not rows or not cols:
+            return
+        sub = self.sub
+        values = []
+        for r in range(self.h * sub):
+            g0 = r * rows // (self.h * sub)
+            g1 = max(g0 + 1, (r + 1) * rows // (self.h * sub))
+            row = []
+            for c in range(self.w):
+                k0 = c * cols // self.w
+                k1 = max(k0 + 1, (c + 1) * cols // self.w)
+                cell = [grid[g][k] for g in range(g0, g1) for k in range(k0, k1)]
+                v = pool(cell)
+                row.append(v / scale if scale else 0.0)
+            values.append(row)
+        self.values = values
+        for r in range(self.h):
+            for c in range(self.w):
+                v = max(values[r * sub + s][c] for s in range(sub))
+                self.cells[r][c] = (plain_char(v), ("heat", r, c))
+
+    def lines(self):
+        """Framed rows as segment lists."""
+        out = [[("+" + "-" * self.w + "+", "dim")]]
+        sub, values = self.sub, self.values
+        for r, row in enumerate(self.cells):
+            line = [("|", "dim")]
+            for c, (ch, style) in enumerate(row):
+                if isinstance(style, tuple) and style[0] == "heat":
+                    if sub == 2:
+                        top = hexcolor(ramp_color(values[r * sub][c]))
+                        bot = hexcolor(ramp_color(values[r * sub + sub - 1][c]))
+                        line.append(("\u2580", "%s on %s" % (top, bot)))
+                    else:
+                        line.append((ch, None))
+                elif style in LOOKS:
+                    line.append(LOOKS[style](ch, sub == 2))
+                else:
+                    line.append((ch, style))
+            line.append(("|", "dim"))
+            out.append(line)
+        out.append([("+" + "-" * self.w + "+", "dim")])
+        return out
+
+
+# Frame cell kinds: plain keeps the ASCII glyph, rich draws blocks.
+LOOKS = {
+    "macro": lambda ch, rich: (
+        (ch if ch.isalnum() else " ", "bold white on #7b3fa0") if rich else (ch, None)
+    ),
+    "halo": lambda ch, rich: (" ", "on #3a2350") if rich else (ch, None),
+    "std": lambda ch, rich: ("\u2592", "#3fb5c9") if rich else (ch, None),
+    "over": lambda ch, rich: ("\u2588", "#ff3030") if rich else (ch, None),
+    "outline": lambda ch, rich: (ch, "bold white") if rich else (ch, None),
+    "marker": lambda ch, rich: (ch, "bold white on #c00000") if rich else (ch, None),
+}
+
+
+def side_by_side(left, right, gap=2):
+    """Join two segment-line lists into columns."""
+    lw = max((sum(len(t) for t, _ in l) for l in left), default=0)
+    out = []
+    for i in range(max(len(left), len(right))):
+        line = list(left[i]) if i < len(left) else []
+        pad = lw - sum(len(t) for t, _ in line)
+        line.append((" " * (pad + gap), None))
+        if i < len(right):
+            line.extend(right[i])
+        out.append(line)
+    return out
+
+
+def indent(lines, n=1):
+    return [[(" " * n, None)] + list(l) for l in lines]
+
+
 # ---------------------------------------------------------------------------
 # Panels: one per stage concern, each in its own stage_art_*.py module.
 # A panel draws into doc and returns (reason, gui hint): a reason marks
@@ -475,7 +692,9 @@ def footer(doc, st, gui):
 PANELS = {}  # log stem -> panels drawn when the stage ran
 FAILURE_PANELS = {}  # tool, e.g. "MPL" -> panels that explain its errors
 
-PANEL_MODULES = []
+PANEL_MODULES = [
+    "stage_art_macros",
+]
 
 
 def panel(stems=(), tools=()):
