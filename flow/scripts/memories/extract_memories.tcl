@@ -36,32 +36,20 @@ yosys proc
 # nothing in the result: a pass finds nothing to do in a module without
 # them. memory_bmux2rom runs first and unscoped, since it is what turns a
 # module's constant muxes into a memory. t:$mem* takes every memory cell
-# type: read_verilog leaves reads as $memrd until memory_collect. The
-# module list comes from the cells' names (module before the first slash)
-# rather than the selection's `%m` expansion, which leaves a module
-# partially selected when its name carries a `$`, as slang's uniquified
-# names do, and the passes then skip it. A module name that itself holds a
-# slash would be cut short and select nothing, so the selection must hold
-# every memory cell.
+# type: read_verilog leaves reads as $memrd until memory_collect. `%m`
+# then selects every module that holds one, whole, without going through
+# its name: an escaped module or memory name may carry a slash, a `$` or a
+# glob character, and none of those survives being cut out of a
+# `select -list` line and handed back to `select`.
 memory_bmux2rom
-set mem_cells {}
-foreach line [tee -q -s result.string select -list t:\$mem*] {
-  set line [string trim $line]
-  if { $line ne "" } {
-    lappend mem_cells $line
-  }
-}
-set mem_modules [dict create]
-foreach cell $mem_cells {
-  dict set mem_modules [lindex [split $cell "/"] 0] 1
-}
-set mem_modules [dict keys $mem_modules]
-log "extract_memories: [llength $mem_modules] modules hold [llength $mem_cells] memory cells"
+set n_mem_cells [lindex [tee -q -s result.string select -count t:\$mem*] 0]
 set out_json "$::env(RESULTS_DIR)/memories_inferred.json"
 file mkdir [file dirname $out_json]
-if { [llength $mem_modules] > 0 } {
-  yosys select {*}$mem_modules
-  select -assert-count [llength $mem_cells] % t:\$mem* %i
+if { $n_mem_cells > 0 } {
+  yosys select t:\$mem* %m
+  set mem_modules [tee -q -s result.string select -list-mod %]
+  set n_mem_modules [llength [split [string trim $mem_modules] "\n"]]
+  log "extract_memories: $n_mem_modules modules hold $n_mem_cells memory cells"
   memory -nomap
   # The JSON is read by gen_memories.py's detector, which looks at the
   # $mem_v2 cells of each module and nothing across modules, so the
