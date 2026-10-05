@@ -375,6 +375,46 @@ class StageArtTest(unittest.TestCase):
         text = self.render(d, "4_1_cts", 0).plain()
         self.assertIn("why: 3 hold violations after CTS", text)
 
+    # -- clock tree synthesis ------------------------------------------------
+
+    def test_cts_describes_the_tree_and_flags_skew(self):
+        """gcd's clock: 37 sinks under a 5-buffer tree; with 40ps skew on a
+        310ps clock, skew is worth a look."""
+        d = self.timing_dir(-40.0, -43.2)
+        with open(os.path.join(d, "4_1_cts.json"), "w") as f:
+            json.dump(
+                {
+                    "cts__timing__setup__ws": -43.2,
+                    "cts__clock__skew__setup": 40.0,
+                    "cts__design__instance__count": 424,
+                    "cts__design__instance__count__hold_buffer": 0,
+                },
+                f,
+            )
+        text = self.render(d, "4_1_cts", 0).plain()
+        self.assertIn("why: clock skew is 13% of the clock period", text)
+        self.assertIn("clk (clock core_clock): 37 sinks\n", text)
+        self.assertIn("5 tree + 0 leaf buffers, 2 levels, 2 buffers sink to root", text)
+        self.assertRegex(text, r"fanout +8 #+\.* x3")
+        self.assertRegex(text, r"fanout +10 #+\.* x1")
+        self.assertIn("skew 40ps (13% of clock), hold repair added 0 buffers", text)
+        self.assertIn("Clock Tree Viewer", text)
+        self.assert_plain(text)
+
+    def test_cts_flags_heavy_hold_repair(self):
+        d = self.timing_dir(-40.0, -43.2)
+        with open(os.path.join(d, "4_1_cts.json"), "w") as f:
+            json.dump(
+                {
+                    "cts__timing__setup__ws": -43.2,
+                    "cts__design__instance__count": 424,
+                    "cts__design__instance__count__hold_buffer": 60,
+                },
+                f,
+            )
+        text = self.render(d, "4_1_cts", 0).plain()
+        self.assertIn("why: hold repair added 60 buffers, 14% of instances", text)
+
 
 if __name__ == "__main__":
     unittest.main()

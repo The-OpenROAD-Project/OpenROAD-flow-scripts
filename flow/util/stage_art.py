@@ -713,6 +713,7 @@ PANEL_MODULES = [
     "stage_art_grt",
     "stage_art_drt",
     "stage_art_timing",
+    "stage_art_cts",
 ]
 
 
