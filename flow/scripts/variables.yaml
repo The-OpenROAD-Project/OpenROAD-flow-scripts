@@ -540,12 +540,9 @@ WIRE_LOAD_MODEL:
     result), where no net has parasitics yet and paths otherwise carry no
     wire delay. OpenSTA applies a wire-load model only to nets without
     parasitics, so placed and routed timing is unaffected. An unknown name
-    is an error. Empty, the default, applies none.
-  type: string
-WIRE_LOAD_LIB:
-  description: |
-    Liberty file read before applying WIRE_LOAD_MODEL, for a platform whose
-    libraries define no wire_load group of their own. Optional.
+    is an error. Empty, the default, applies none. A platform whose
+    libraries define no wire_load group can supply one in a Liberty file
+    listed in ADDITIONAL_LIBS.
   type: string
 TAPCELL_TCL:
   description: |

@@ -175,9 +175,6 @@ proc apply_wire_load_model { } {
   if { ![env_var_exists_and_non_empty WIRE_LOAD_MODEL] } {
     return
   }
-  if { [env_var_exists_and_non_empty WIRE_LOAD_LIB] } {
-    log_cmd read_liberty $::env(WIRE_LOAD_LIB)
-  }
   log_cmd set_wire_load_model -name $::env(WIRE_LOAD_MODEL)
 }
 
