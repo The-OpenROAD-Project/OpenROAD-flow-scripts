@@ -50,9 +50,9 @@ proc read_timing { input_file } {
   } else {
     log_cmd source $::env(PLATFORM_DIR)/setRC.tcl
   }
-  if { $design_stage < 3 } {
-    # Before placement: no net has parasitics to estimate.
-    apply_wire_load_model
+  if { [env_var_exists_and_non_empty WIRE_LOAD_MODEL] } {
+    # OpenSTA applies a wire-load model only to nets without parasitics.
+    log_cmd set_wire_load_model -name $::env(WIRE_LOAD_MODEL)
   }
   if { $design_stage >= 4 } {
     # CTS has run, so propagate clocks

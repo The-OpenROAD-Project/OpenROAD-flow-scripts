@@ -168,16 +168,6 @@ proc find_macros { } {
   return $macros
 }
 
-# A statistical wire-load model for timing read before placement, when no
-# net has parasitics yet. OpenSTA applies it only to nets without
-# parasitics. set_wire_load_model stops on an unknown name.
-proc apply_wire_load_model { } {
-  if { ![env_var_exists_and_non_empty WIRE_LOAD_MODEL] } {
-    return
-  }
-  log_cmd set_wire_load_model -name $::env(WIRE_LOAD_MODEL)
-}
-
 proc erase_non_stage_variables { stage_name } {
   if { $::env(KEEP_VARS) } {
     return
