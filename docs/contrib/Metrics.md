@@ -35,9 +35,12 @@ make [clean_metadata] metadata
 `make metadata` runs three steps in order: `finish` (the full flow),
 `metadata-generate` (write `metadata.json`), and `metadata-check` (send it to
 the dashboard). The check log is written to
-`$(REPORTS_DIR)/metadata-check.log`. It lists every failed rule with the
-baseline value, the current value, the limit, and the delta, and ends with a
-`QoR check: PASS`, `FAIL`, `INCONCLUSIVE`, or `ERROR` line.
+`$(REPORTS_DIR)/metadata-check.log`. It has one `[ERROR]` line for each
+failed rule, with the current value, the baseline value, the limit, and the
+delta. It ends with a `QoR check: PASS`, `FAIL`, `INCONCLUSIVE`, or `ERROR`
+line. `util/genReport.py` copies the `[ERROR]` lines into
+`reports/report-summary.log`, so the summary shows the failed rules of all
+designs in one place.
 
 A `FAIL` verdict fails the target. So does `ERROR`, which means
 `metadata.json` was missing, malformed, or held no numeric metric. An

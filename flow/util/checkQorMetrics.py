@@ -327,7 +327,17 @@ def render_run(result, verbose):
     passed = totals.get("passed", 0)
     failed = totals.get("failed", 0)
     missing = totals.get("missingFromBaseline", 0)
-    prefix = "[ERROR]" if failed else "[INFO]"
+
+    metrics = response.get("metrics", [])
+    failing = sorted(
+        (m for m in metrics if m.get("status") == "fail"),
+        key=lambda m: m.get("metricName", ""),
+    )
+    # genReport.py copies only the [ERROR] lines of metadata-check.log into the
+    # report summary, so each failed rule gets its own [ERROR] line below. The
+    # headline is [ERROR] only when the dashboard failed the run without naming
+    # a metric; otherwise the summary count would not match the failed rules.
+    prefix = "[ERROR]" if failed and not failing else "[INFO]"
 
     lines.append(
         f"{prefix} {identity}: {result['status'].upper()} — "
@@ -345,11 +355,17 @@ def render_run(result, verbose):
             "or the platform is private and no DASHBOARD_API_KEY was set."
         )
 
-    metrics = response.get("metrics", [])
-    shown = metrics if verbose else [m for m in metrics if m.get("status") == "fail"]
-    shown = [m for m in shown if m.get("status") != "missing_from_baseline"]
+    for metric in failing:
+        lines.append(
+            f"[ERROR] {identity}: {metric.get('metricName', '?')}: "
+            f"current {fmt_value(metric.get('targetValue'))}, "
+            f"baseline {fmt_value(metric.get('baseValue'))}, "
+            f"limit {fmt_value(metric.get('thresholdValue'))}, "
+            f"delta {fmt_delta(metric.get('deltaPct'))}%"
+        )
 
-    if shown:
+    shown = [m for m in metrics if m.get("status") != "missing_from_baseline"]
+    if verbose and shown:
         lines.append(ROW_FMT.format("Metric", "Baseline", "Current", "Limit", "Delta%"))
         lines.append(
             ROW_FMT.format("-" * NAME_W, "-" * 12, "-" * 12, "-" * 12, "-" * 7)
@@ -423,7 +439,8 @@ def summarize(results):
         f"{counts.get('invalid', 0)} with unusable metadata"
     )
     if failing:
-        lines.append(f"[ERROR] Failing runs: {', '.join(sorted(failing))}")
+        # [INFO]: each run already printed an [ERROR] line per failed rule.
+        lines.append(f"[INFO] Failing runs: {', '.join(sorted(failing))}")
     else:
         lines.append("[INFO] No run failed a QoR dashboard rule.")
 
@@ -556,7 +573,7 @@ def parse_args(argv):
     parser.add_argument(
         "--verbose",
         action="store_true",
-        help="Report every rule-checked metric, not only the failing ones, "
+        help="Also print a table of every rule-checked metric, "
         "and name the metrics absent from the baseline build.",
     )
     args = parser.parse_args(argv)
