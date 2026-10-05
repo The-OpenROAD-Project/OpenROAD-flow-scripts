@@ -39,6 +39,7 @@ function usage() {
 
 Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [--or_branch BRANCH_NAME] [--or_repo REPO_URL] [--no_init]
+          [-s|--skip_openroad] [--openroad_only]
           [-n|--nice] [-t|--threads N]
           [--yosys-args-overwrite] [--yosys-args STRING]
           [--with-verific PATH]
@@ -56,6 +57,9 @@ Options:
                             by default for tools/OpenROAD.
 
     -s, --skip_openroad     Skip building and all git operations on OpenROAD.
+
+    --openroad_only         Build only OpenROAD; skip Yosys, Verific and
+                            kepler-formal.
 
     --or_branch BRANCH_NAME Use the head of branch BRANCH for tools/OpenROAD.
 
@@ -164,6 +168,9 @@ while (( "$#" )); do
                         ;;
                 -s|--skip_openroad)
                         SKIP_OPENROAD=1
+                        ;;
+                --openroad_only)
+                        OPENROAD_ONLY=1
                         ;;
                 --or_branch)
                         OPENROAD_APP_BRANCH="$2"
@@ -371,6 +378,10 @@ __local_build()
         if [ -z "${SKIP_OPENROAD+x}" ]; then
                 echo "[INFO FLW-0018] Compiling OpenROAD."
                 ${NICE} ./tools/OpenROAD/etc/Build.sh "${OPENROAD_APP_ARGS[@]}"
+        fi
+
+        if [ ! -z "${OPENROAD_ONLY+x}" ]; then
+                return
         fi
 
         YOSYS_ABC_PATH=tools/yosys/abc
