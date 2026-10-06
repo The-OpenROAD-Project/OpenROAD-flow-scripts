@@ -80,7 +80,8 @@ def print_log_dir_times(logdir, args):
 
     # Loop on all log files in the directory
     for f in sorted(pathlib.Path(logdir).glob("**/*.log")):
-        if any(x in str(f) for x in ["eqy_output", "rsz_lec_check"]):
+        # kepler-formal's own logs; its timing is in ${step}_lec/_sec.log
+        if any(x in str(f) for x in ["eqy_output", "_lec_check", "_sec_check"]):
             continue
         # Extract Elapsed Time line from log file
         stem = os.path.splitext(os.path.basename(str(f)))[0]
@@ -147,9 +148,12 @@ def print_log_dir_times(logdir, args):
                 else:
                     print_row(stem, ext, "", "", "", "", h[0:10])
                 stage_first = False
-        if elapsedTime is not None:
+        # LEC/SEC run inside another step (e.g. 6_report), which already
+        # counts their time.
+        nested = stem.endswith(("_lec", "_sec"))
+        if elapsedTime is not None and not nested:
             totalElapsed += elapsedTime
-        if cpuTime is not None and elapsedTime is not None:
+        if cpuTime is not None and elapsedTime is not None and not nested:
             totalCpu += cpuTime
             totalCpuElapsed += elapsedTime + elapsedFraction
         if peak_memory is not None:
