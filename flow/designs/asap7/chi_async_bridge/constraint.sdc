@@ -98,11 +98,15 @@ set sync_hop_max 72
 # (flattened with '.', yosys's cell type appended; the database escapes
 # the brackets, timing analysis does not); sync[SYNC-1] takes the
 # asynchronous input, sync[0] is the output.
+#
+# The defaults are chi_async_bridge.sv's; VERILOG_TOP_PARAMS overrides
+# them as it overrides the RTL's.
 set sync_stages 3
 set depth 16
 if { [info exists ::env(VERILOG_TOP_PARAMS)] } {
   foreach {k v} $::env(VERILOG_TOP_PARAMS) {
     if { $k eq "DEPTH" } { set depth $v }
+    if { $k eq "SYNC" } { set sync_stages $v }
   }
 }
 # 6 flit queues and 6 credit queues, each with a pointer synchroniser in
