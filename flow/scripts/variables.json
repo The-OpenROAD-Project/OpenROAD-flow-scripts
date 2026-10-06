@@ -1173,13 +1173,6 @@
       "route"
     ]
   },
-  "SKIP_ANTENNA_REPAIR_PRE_GRT": {
-    "default": 0,
-    "description": "Skips antenna repair pre-global routing.\n",
-    "stages": [
-      "grt"
-    ]
-  },
   "SKIP_BUFFER_REMOVAL": {
     "description": "Passed as -skip_buffer_removal to repair_timing. Do not remove buffers as a transform to fix timing violations (default: allow buffer removal).\n",
     "stages": [

@@ -1556,12 +1556,6 @@ FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.
   default: base
-SKIP_ANTENNA_REPAIR_PRE_GRT:
-  default: 0
-  description: >
-    Skips antenna repair pre-global routing.
-  stages:
-    - grt
 SKIP_ANTENNA_REPAIR_POST_DRT:
   default: 0
   description: >
