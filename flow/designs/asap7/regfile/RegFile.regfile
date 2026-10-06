@@ -1,0 +1,22 @@
+# RegFile as a register file of placed standard cells (generate_regfile).
+# mode netlist: a macro through synthesis and macro placement, then its
+# cells, the core FIRM where the macro was placed, the address decode
+# left to placement.
+module RegFile
+mode netlist
+words 16
+bits 8
+clock clock
+read io_r0_addr io_r0_data
+read io_r1_addr io_r1_data
+write io_w0_addr io_w0_data io_w0_en
+write io_w1_addr io_w1_data io_w1_en
+cell flop DFFHQNx1_ASAP7_75t_R
+cell and2 AND2x2_ASAP7_75t_R
+cell or2 OR2x2_ASAP7_75t_R
+cell ao22 AO22x2_ASAP7_75t_R
+cell inv INVx1_ASAP7_75t_R
+cell tap TAPCELL_ASAP7_75t_R
+pin_layer M4
+tap_columns 8
+service_sites 40

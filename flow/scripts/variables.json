@@ -68,6 +68,12 @@
     "default": 0,
     "description": "Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and \u2014 when idiomatic as an SRAM macro \u2014 given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.\n"
   },
+  "AUTO_MEMORIES_REGFILES": {
+    "description": "Experimental. Space-separated list of register-file spec files, one per RTL module to build as a register file of placed standard cells rather than synthesise to flops. Each spec names its module, words, bits, read and write ports by the RTL's own port names, and the cells; OpenROAD's generate_regfile checks the spec against the module's ports and writes `<module>.lef`, `<module>.lib` and `<module>_pre_layout.lib` under `$(RESULTS_DIR)/memories/`, and the module is blackboxed like an AUTO_MEMORIES macro and placed as one. A spec in `mode netlist` then dissolves into its cells after macro placement: its core FIRM where the macro was placed, in the macro's orientation, its address decode left to placement. Every register file appears in memories.json with kind `regfile`. Requires AUTO_MEMORIES=1.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "BALANCE_ROWS": {
     "default": 0,
     "description": "Balance rows during placement.\n",

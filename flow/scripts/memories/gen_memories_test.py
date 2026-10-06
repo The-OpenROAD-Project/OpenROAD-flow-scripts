@@ -117,6 +117,7 @@ class GenMemoriesTest(unittest.TestCase):
                 "mem_128x32.lef",
                 "mem_128x32.lib",
                 "mem_128x32_pre_layout.lib",
+                "regfiles.txt",
             ],
         )
         # one `<module> <area>` line; the area is the one the .lib states,
@@ -194,6 +195,25 @@ class GenMemoriesTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(json.loads((d / "memories.json").read_text())["memories"], [])
         self.assertEqual((d / "memories" / "blackboxes.txt").read_text(), "")
+        self.assertEqual((d / "memories" / "regfiles.txt").read_text(), "")
+
+    def test_regfile_area_is_the_lib_cell_area(self):
+        # a register file's blackboxes.txt line carries the area its
+        # generated .lib states, as FakeRAM's do
+        with tempfile.TemporaryDirectory() as d:
+            lib = Path(d) / "RegFile.lib"
+            lib.write_text(
+                "library (RegFile) {\n  cell (RegFile) {\n"
+                "    area : 153.527400;\n  }\n}\n"
+            )
+            self.assertEqual(gen_memories._lib_area(lib), "153.527400")
+
+    def test_regfile_lib_without_area_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            lib = Path(d) / "RegFile.lib"
+            lib.write_text("library (RegFile) {\n  cell (RegFile) {\n  }\n}\n")
+            with self.assertRaises(SystemExit):
+                gen_memories._lib_area(lib)
 
 
 if __name__ == "__main__":

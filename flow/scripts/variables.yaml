@@ -227,6 +227,23 @@ ADDITIONAL_MEMORIES:
     docs/user/AutoMemories.md.
   stages:
     - synth
+AUTO_MEMORIES_REGFILES:
+  description: >
+    Experimental. Space-separated list of register-file spec files, one
+    per RTL module to build as a register file of placed standard cells
+    rather than synthesise to flops. Each spec names its module, words,
+    bits, read and write ports by the RTL's own port names, and the cells;
+    OpenROAD's generate_regfile checks the spec against the module's
+    ports and writes `<module>.lef`, `<module>.lib` and
+    `<module>_pre_layout.lib` under `$(RESULTS_DIR)/memories/`, and the
+    module is blackboxed like an AUTO_MEMORIES macro and placed as one. A
+    spec in `mode netlist` then dissolves into its cells after macro
+    placement: its core FIRM where the macro was placed, in the macro's
+    orientation, its address decode left to placement. Every register
+    file appears in memories.json with kind `regfile`. Requires
+    AUTO_MEMORIES=1.
+  stages:
+    - synth
 SYNTH_MEMORY_MAX_BITS:
   description: >
     Maximum number of bits for memory synthesis.

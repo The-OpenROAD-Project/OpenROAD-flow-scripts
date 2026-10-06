@@ -277,10 +277,14 @@ do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	  --yosys-json $(RESULTS_DIR)/memories_inferred.json \
 	  --out-dir $(RESULTS_DIR)/memories \
 	  --json $(RESULTS_DIR)/memories.json \
-	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file))
+	  $(foreach file,$(VERILOG_FILES),--verilog $(file)) \
+	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file)) \
+	  $(foreach file,$(AUTO_MEMORIES_REGFILES),--regfile-spec $(file)) \
+	  $(if $(AUTO_MEMORIES_REGFILES),--openroad $(OPENROAD_EXE)) \
+	  $(foreach file,$(TECH_LEF) $(SC_LEF),--lef $(file))
 
 $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \
-    $(wildcard $(SCRIPTS_DIR)/memories/*.py)
+    $(AUTO_MEMORIES_REGFILES) $(wildcard $(SCRIPTS_DIR)/memories/*.py)
 	$(UNSET_AND_MAKE) do-auto-memories
 
 yosys-dependencies: $(RESULTS_DIR)/memories.json

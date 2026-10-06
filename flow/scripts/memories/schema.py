@@ -61,10 +61,19 @@ class Memory:
     pins: list[Pin] = field(default_factory=list)
     # The module whose RTL body simulates this memory: {"file", "module"}.
     behavioral_model: dict | None = None
-    # True when the memory is converted to a macro (.lib/.lef emitted and
-    # the module blackboxed); False leaves it to synthesize as flops.
+    # True when FakeRAM converts the memory to an SRAM macro (.lib/.lef
+    # emitted and the module blackboxed); see `kind` for what the flow
+    # does with the memory in the end.
     idiomatic: bool = False
     reason: str = ""
+    # What the memory becomes: "fakeram" (an SRAM macro), "regfile" (a
+    # register file generate_regfile builds from `spec`) or "flops".
+    kind: str = "flops"
+    # "detected" (yosys inferred it), "listed" (AUTO_MEMORIES_REGFILES
+    # names it) or "override" (an ADDITIONAL_MEMORIES file).
+    source: str = "detected"
+    # The register-file spec generate_regfile reads, for kind "regfile".
+    spec: str = ""
 
     def total_ports(self) -> int:
         return self.read_ports + self.write_ports + self.rw_ports
@@ -129,6 +138,9 @@ def memory_from_dict(d: dict) -> Memory:
         mem.idiomatic = bool(d["idiomatic"])
     if "reason" in d:
         mem.reason = str(d["reason"])
+    for key in ("kind", "source", "spec"):
+        if key in d:
+            setattr(mem, key, str(d[key]))
     return mem
 
 
