@@ -152,20 +152,32 @@ domain. Its ready signals and credits are ports here.
 
 ## Results
 
-The core clock is set where the flow stops keeping up: given 420, 380
-or 340 ps it closes, each time within a few picoseconds of the target;
-given 300 ps, the worst path just fails. That path is the core half's async queue sink, from the read
+The core clock is 290 ps, a little below what the flow closes, so the
+worst slack stays negative through global route and repair keeps
+working rather than stopping at zero:
+
+| base, core clock 290 ps | worst slack |
+|---|---|
+| CTS | -35.8 ps |
+| global route | -35.5 ps |
+| final | -30.1 ps |
+
+The worst path is the core half's async queue sink, from the read
 pointer through the read-mux select, buffered out to every bit of a
 385-bit data flit, into `deq_bits_reg`: the queue's own logic, as in
-XiangShan.
+XiangShan. Detailed routing leaves 113 max-slew violations, all in the
+NoC half's data flit channel: 57 in its shadow buffer, 56 in its async
+queue sink.
 
 This design reproduces XiangShan's bridge. Both were run through the
-same flow and constraints at the same targets, to global route; the
-XiangShan side is XiangShan's own `CHIAsyncBridgeSource` and
-`CHIAsyncBridgeSink`, elaborated from its Chisel with its parameters
-and hardened alone.
+same flow and constraints at the same targets, to global route, with
+the netlist flattened; the XiangShan side is XiangShan's own
+`CHIAsyncBridgeSource` and `CHIAsyncBridgeSink`, elaborated from its
+Chisel with its parameters and hardened alone. Given 420, 380 or 340 ps
+both close, each time within a few picoseconds of the target; given
+300 ps, both just fail, on the same path.
 
-| at global route | target | this design | XiangShan's bridge |
+| at global route, flat | target | this design | XiangShan's bridge |
 |---|---|---|---|
 | core clock, min period | 340 ps | 339.7 ps | 340.0 ps |
 | core clock, min period | 300 ps | 305.9 ps | 301.4 ps |
@@ -173,32 +185,24 @@ and hardened alone.
 | its logic / inserted buffers / wire | | 163 / 80 / 22 ps | 159 / 76 / 22 ps |
 | flops | | 35,106 | 35,043 |
 
-Through the rest of the flow, base ends at final with a worst slack of
--23.1 ps (core clock min period 323.1 ps), on the shadow buffer's read
-pointer into the async queue's memory write, the class that comes
-second at global route. Detailed routing also leaves 149 max-slew
-violations on 9 nets, all of them a queue's entry write-enable or read
-select, decoded once and buffered out across a 385-bit entry, which
-global route did not report.
-
 The NoC half is not calibrated: XiangShan's NoC link layer, left out
 here, is in its NoC domain's worst path. Both NoC domains keep more than
 200 ps of slack at the NoC period, so neither limits the design.
 
 The clock trees are the ones OpenROAD's CTS builds: clusters of sinks
 under an H-tree, no mesh, and no on-chip-variation derates in this flow.
-At final the core tree is 261 ps deep, most of a 300 ps period. That is
+At final the core tree is about 260 ps deep, most of the period. That is
 an ordinary tree at a 1,000 ps period and not what a core aimed at
 300 ps would get, which is a clock mesh or a multi-source tree that
 keeps paths diverging late. It does not touch what this design tests:
 the crossing is timed without clock latency and without a hold check,
 so the depth of either tree does not enter it. What the tree does move
 is the same-clock paths, the synchroniser hops among them, and with them
-the 300 ps; XiangShan's bridge was measured through the same trees.
+the period; XiangShan's bridge was measured through the same trees.
 
 ## Variants
 
-| FLOW_VARIANT | flits (req/rsp/dat/snp bits) | queue depth | flops | core clock min period at 300 ps, global route | to global route |
+| FLOW_VARIANT | flits (req/rsp/dat/snp bits) | queue depth | flops | core clock min period at 300 ps, global route, flat | to global route |
 |---|---|---|---|---|---|
 | base | 125 / 51 / 385 / 88, XiangShan's | 16 | 35,106 | 305.9 ps, fails | 30 min |
 | medium | 125 / 51 / 385 / 88 | 4 | 21,846 | 299.5 ps, closes | 20 min |

@@ -2,12 +2,12 @@
 # between them. README.md says what each constraint is for.
 set sdc_version 2.0
 
-# The core clock: the period at which XiangShan's own bridge, hardened
-# alone through this flow, just fails at global route (-1.4 ps, on the
-# core half's async queue sink read path), and so does this design
-# (README.md, Results). Above it both close; the flow meets every target
-# down to here.
-set clk_period 300
+# The core clock: a little below what the flow can close, so the worst
+# slack stays negative through global route and repair keeps working
+# instead of stopping at zero. XiangShan's own bridge, hardened alone
+# through this flow, just fails at 300 ps on the core half's async queue
+# sink read path, and so does this design (README.md, Results).
+set clk_period 290
 # The NoC clock: an unrelated period, about 0.3 times the core's frequency.
 # The two never align, and nothing here depends on the ratio.
 set noc_clk_period 1021
