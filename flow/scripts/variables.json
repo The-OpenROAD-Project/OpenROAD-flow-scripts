@@ -1118,12 +1118,6 @@
       "synth"
     ]
   },
-  "SDC_GUT": {
-    "description": "Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.\n",
-    "stages": [
-      "synth"
-    ]
-  },
   "SEAL_GDS": {
     "description": "Seal macro to place around the design.\n"
   },

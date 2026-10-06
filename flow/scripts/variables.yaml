@@ -992,14 +992,6 @@ SDC_FILE:
     The path to design constraint (SDC) file.
   stages:
     - synth
-SDC_GUT:
-  description: >
-    Load design and remove all internal logic before doing synthesis. This is
-    useful when creating a mock .lef abstract that has a smaller area than the
-    amount of logic would allow. bazel-orfs uses this to mock SRAMs, for
-    instance.
-  stages:
-    - synth
 ADDITIONAL_FILES:
   description: |
     Additional files to be added to `make issue` archive.
