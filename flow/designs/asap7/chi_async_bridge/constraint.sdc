@@ -36,10 +36,12 @@ set_false_path -hold -from [get_clocks noc_clk] -to [get_clocks clk]
 set_false_path -from [get_ports noc_reset]
 
 # ---- The ports -------------------------------------------------------
-# As $PLATFORM_DIR/constraints.sdc budgets a single-clock macro's ports,
-# with that file's ratio, but per domain: the tile's ports at the core
-# period, the NoC's (noc_*) at the NoC period. That file creates one
-# clock, so it is not sourced here.
+# Budgeted with set_max_delay, in the shape of $PLATFORM_DIR/constraints.sdc
+# but not with its numbers: that file gives a single-clock macro a fixed
+# 80 ps per port path, sized for a small macro. Here each domain's ports
+# get 80 % of that domain's period, a choice of this file: the tile's
+# ports at the core period, the NoC's (noc_*) at the NoC period. That
+# file creates one clock, so it is not sourced here.
 set tile_in {}
 set noc_in {}
 foreach p [all_inputs -no_clocks] {

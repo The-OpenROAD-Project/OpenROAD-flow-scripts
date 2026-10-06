@@ -60,9 +60,9 @@ measured from its first flop's clock pin to its last flop's data pin.
   (`set_max_delay -ignore_clock_latency`): the Gray-code bound, which
   also covers the data;
 - there is no hold check between the clocks (`set_false_path -hold`);
-- each domain's ports are budgeted as `$PLATFORM_DIR/constraints.sdc`
-  budgets a single-clock macro's, with `set_max_delay`, at that domain's
-  period;
+- each domain's ports are budgeted with `set_max_delay`, in the shape of
+  `$PLATFORM_DIR/constraints.sdc` but at 80 % of that domain's period
+  rather than that file's fixed 80 ps;
 - the step from one synchroniser flop to the next is short. This is the
   only constraint that has to name instances.
 
