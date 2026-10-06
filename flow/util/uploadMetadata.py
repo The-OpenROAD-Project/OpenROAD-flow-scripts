@@ -4,7 +4,7 @@ import json
 import argparse
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 
 # --- PUBSUB ---
 from google.cloud import pubsub_v1
@@ -58,8 +58,9 @@ parser.add_argument(
     type=str,
     default=None,
     help="When the build ran, emitted as build_time on the pipeline payload. "
-    "Defaults to now, in the format genMetrics.py uses for "
-    "run__flow__generate_date (%%Y-%%m-%%d %%H:%%M).",
+    "Defaults to now in UTC, in the format genMetrics.py uses for "
+    "run__flow__generate_date (%%Y-%%m-%%d %%H:%%M). The backend reads it "
+    "as UTC.",
 )
 parser.add_argument(
     "--expectedDesigns",
@@ -219,10 +220,14 @@ def resolve_schema_version(args, provenance):
 
 
 def resolve_build_time(args):
-    """The build time to report, defaulting to now in genMetrics.py's format."""
+    """The build time to report, defaulting to now in genMetrics.py's format.
+
+    The default is UTC because the backend reads the value as UTC; local time
+    would shift the build by the agent's offset wherever that is not UTC.
+    """
     if args.buildTime and args.buildTime.strip():
         return args.buildTime.strip()
-    return datetime.now().strftime("%Y-%m-%d %H:%M")
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
 
 
 def build_pipeline_payload(design_records, args, provenance=None):

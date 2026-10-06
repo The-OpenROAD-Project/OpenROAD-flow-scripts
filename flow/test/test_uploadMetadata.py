@@ -17,6 +17,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timezone
 
 SCRIPT = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "util", "uploadMetadata.py"
@@ -95,8 +96,10 @@ class TestUploadMetadata(unittest.TestCase):
         with open(os.path.join(report_dir, "metadata.json"), "w") as f:
             json.dump(metrics or {"finish:area": 1.0}, f)
 
-    def run_script(self, *extra, fail=False):
+    def run_script(self, *extra, fail=False, tz=None):
         env = dict(os.environ)
+        if tz:
+            env["TZ"] = tz
         env["PYTHONPATH"] = self.stubs
         env["STUB_PUBSUB_OUT"] = self.out
         if fail:
@@ -169,6 +172,17 @@ class TestUploadMetadata(unittest.TestCase):
         result, _ = self.run_script(fail=True)
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn("[ERROR] Pub/Sub publish failed", result.stdout)
+
+    def test_default_build_time_is_utc(self):
+        # Far from UTC, so a local-time default could not pass by accident.
+        before = datetime.now(timezone.utc).replace(second=0, microsecond=0)
+        result, messages = self.run_script(tz="Pacific/Kiritimati")
+        after = datetime.now(timezone.utc)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        build_time = datetime.strptime(
+            messages[0]["data"]["build_time"], "%Y-%m-%d %H:%M"
+        ).replace(tzinfo=timezone.utc)
+        self.assertTrue(before <= build_time <= after, build_time)
 
     def test_designs_payload_gains_build_time_only(self):
         self.add_design("nangate45", "gcd", metrics={"finish:area": 5.0})
