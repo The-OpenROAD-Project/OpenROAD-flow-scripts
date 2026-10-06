@@ -27,7 +27,9 @@ ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
 
 FROM orfs-builder-base AS orfs-tools-builder
 
-COPY --link --exclude=OpenROAD --exclude=AutoTuner tools tools
+# Exclude install so a local build's output (e.g. tools/install/OpenROAD)
+# cannot leak into the image; the build below starts from an empty install.
+COPY --link --exclude=OpenROAD --exclude=AutoTuner --exclude=install tools tools
 ARG numThreads=$(nproc)
 ARG verificPath=""
 

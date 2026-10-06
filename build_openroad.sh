@@ -59,7 +59,7 @@ Options:
     -s, --skip_openroad     Skip building and all git operations on OpenROAD.
 
     --openroad_only         Build only OpenROAD; skip Yosys, Verific and
-                            kepler-formal.
+                            kepler-formal. Requires --local.
 
     --or_branch BRANCH_NAME Use the head of branch BRANCH for tools/OpenROAD.
 
@@ -239,6 +239,17 @@ while (( "$#" )); do
         esac
         shift
 done
+
+if [ ! -z "${OPENROAD_ONLY+x}" ]; then
+        if [ -z "${LOCAL_BUILD+x}" ]; then
+                echo "[ERROR FLW-0033] --openroad_only requires --local." >&2
+                exit 1
+        fi
+        if [ ! -z "${SKIP_OPENROAD+x}" ]; then
+                echo "[ERROR FLW-0033] --openroad_only and --skip_openroad are mutually exclusive." >&2
+                exit 1
+        fi
+fi
 
 if [[ "$PROC" == "-1" ]]; then
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then
