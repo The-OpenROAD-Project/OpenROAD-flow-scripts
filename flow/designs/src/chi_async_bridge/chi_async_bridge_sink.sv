@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MulanPSL-2.0
+// Copyright (c) 2020-2021 Institute of Computing Technology, Chinese Academy of Sciences
+// Copyright (c) 2020-2021 Peng Cheng Laboratory
+// Changed from the original: rewritten as readable SystemVerilog from
+// XiangShan's Chisel. SOURCE.md names the source and its license.
+//
 // The NoC's half of the bridge, on the NoC clock: XSCache's
 // CHIAsyncBridgeSink (xscache/chi/AsyncBridge.scala:227-341 at 300515b),
 // which XSNoCTop instantiates (XSNoCTop.scala:275-276). The mirror image

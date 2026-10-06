@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2016-2017 SiFive, Inc.
+// Changed from the original: rewritten as readable SystemVerilog from
+// rocket-chip's Chisel. SOURCE.md names the source and its license.
+//
 // The writing half of an asynchronous queue: rocket-chip's
 // AsyncQueueSource (util/AsyncQueue.scala:70-104 at a2df1a4) with
 // safe = false and narrow = false, which is how XiangShan's CHI bridge

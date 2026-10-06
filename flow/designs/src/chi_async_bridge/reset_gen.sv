@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MulanPSL-2.0
+// Copyright (c) 2020-2021 Institute of Computing Technology, Chinese Academy of Sciences
+// Copyright (c) 2020-2021 Peng Cheng Laboratory
+// Changed from the original: rewritten as readable SystemVerilog from
+// XiangShan's Chisel. SOURCE.md names the source and its license.
+//
 // A reset synchroniser: asserts asynchronously, releases SYNC clocks
 // later on this domain's clock. XiangShan's ResetGen
 // (utility/ResetGen.scala at eb8e12b), without its DFT muxes.

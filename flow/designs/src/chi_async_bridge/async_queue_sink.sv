@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2016-2017 SiFive, Inc.
+// Changed from the original: rewritten as readable SystemVerilog from
+// rocket-chip's Chisel. SOURCE.md names the source and its license.
+//
 // The reading half of an asynchronous queue: rocket-chip's AsyncQueueSink
 // (util/AsyncQueue.scala:148-179 at a2df1a4), safe = false, narrow = false.
 //

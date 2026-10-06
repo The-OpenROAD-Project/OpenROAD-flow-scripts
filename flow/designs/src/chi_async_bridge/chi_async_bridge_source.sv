@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MulanPSL-2.0
+// Copyright (c) 2020-2021 Institute of Computing Technology, Chinese Academy of Sciences
+// Copyright (c) 2020-2021 Peng Cheng Laboratory
+// Changed from the original: rewritten as readable SystemVerilog from
+// XiangShan's Chisel. SOURCE.md names the source and its license.
+//
 // The tile's half of the bridge, on the core clock: XSCache's
 // CHIAsyncBridgeSource (xscache/chi/AsyncBridge.scala:157-225 at
 // 300515b), which XSTileWrap instantiates beside XSTile

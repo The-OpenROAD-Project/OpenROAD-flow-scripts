@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MulanPSL-2.0
+// Copyright (c) 2020-2021 Institute of Computing Technology, Chinese Academy of Sciences
+// Copyright (c) 2020-2021 Peng Cheng Laboratory
+// Changed from the original: rewritten as readable SystemVerilog from
+// XiangShan's Chisel. SOURCE.md names the source and its license.
+//
 // The bridge's shadow buffer: a Chisel Queue(entries = 16, flow = true,
 // pipe = false) in front of each outgoing CHI flit channel's async queue
 // (ToAsyncBundleWithBuf, xscache/chi/AsyncBridge.scala:67-94 at XSCache

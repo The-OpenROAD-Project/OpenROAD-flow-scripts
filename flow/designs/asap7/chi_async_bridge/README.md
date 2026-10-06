@@ -115,6 +115,12 @@ a block like XSTile is constrained with `set_max_delay` budgets on its
 ports rather than with input and output delays, and why only its
 register-to-register paths can fail timing closure.
 
+The SystemVerilog is rewritten from that Chisel, not generated from it,
+and keeps its licenses: rocket-chip's Apache-2.0 for the async queue
+and synchroniser, XiangShan's Mulan PSL v2 for the rest.
+`src/chi_async_bridge/SOURCE.md` says which file comes from where, at
+which commit, and `src/chi_async_bridge/LICENSES/` holds both texts.
+
 Not modelled: the NoC's CHI link layer beyond the bridge (link-state
 machines and the credit managers), which is logic of the NoC's own
 domain. Its ready signals and credits are ports here.

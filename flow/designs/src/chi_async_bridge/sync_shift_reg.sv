@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2016-2017 SiFive, Inc.
+// Changed from the original: rewritten as readable SystemVerilog from
+// rocket-chip's Chisel. SOURCE.md names the source and its license.
+//
 // A synchroniser: WIDTH independent chains of SYNC flops, each bit
 // clocked into the destination domain. Rocket-chip's
 // AsyncResetSynchronizerShiftReg (util/SynchronizerReg.scala at a2df1a4,

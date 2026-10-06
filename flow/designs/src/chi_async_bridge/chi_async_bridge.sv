@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MulanPSL-2.0
+// Copyright (c) 2024-2025 Beijing Institute of Open Source Chip (BOSC)
+// Copyright (c) 2024-2025 Institute of Computing Technology, Chinese Academy of Sciences
+// Changed from the original: rewritten as readable SystemVerilog from
+// XiangShan's Chisel. SOURCE.md names the source and its license.
+//
 // chi_async_bridge: the asynchronous CHI bridge between XiangShan's tile
 // and its network-on-chip, both halves in one block. README.md (beside
 // config.mk) tells the story; this file only wires the halves together.
