@@ -248,4 +248,30 @@ proc convert_liberty_areas { } {
     set gate_eq [expr int($area / $found_cell_area)]
     rtlil::set_attr -mod -uint $box gate_cost_equivalent $gate_eq
   }
+
+  # An AUTO_MEMORIES macro is a blackbox from the RTL's own module, not a
+  # Liberty cell: it costs what its generated view's area says, or
+  # keep_hierarchy -min_cost refuses it ("Missing cost information on
+  # instanced blackbox"). Its view is not read in its place, as its pins
+  # need not be the module's (FakeRAM uses its own names).
+  foreach m [auto_memories_blackboxes] {
+    set lib "$::env(RESULTS_DIR)/memories/$m.lib"
+    if { ![file exists $lib] } {
+      error "AUTO_MEMORIES macro $m has no $lib"
+    }
+    set fh [open $lib r]
+    set text [read $fh]
+    close $fh
+    # the cell group of <m> and its area; the brace characters spelled as
+    # hex escapes, which keep the brace count of this body balanced
+    set pat "cell\\s*\\(\\s*\"?[string map {$ \\$} $m]\"?\\s*\\)\\s*\\\x7b\[^\x7d\]*?area\\s*:\\s*(\[0-9.eE+-\]+)"
+    if { ![regexp $pat $text -> area] } {
+      error "AUTO_MEMORIES macro $m: no area for cell $m in $lib"
+    }
+    if { [catch {rtlil::set_attr -mod -uint $m gate_cost_equivalent \
+        [expr { int($area / $found_cell_area) }]}] } {
+      # not in the design: removed as unused, or never instantiated
+      continue
+    }
+  }
 }
