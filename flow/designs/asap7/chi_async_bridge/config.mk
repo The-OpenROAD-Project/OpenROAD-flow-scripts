@@ -11,6 +11,15 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 # Readable, parameterised SystemVerilog, read by slang.
 export SYNTH_HDL_FRONTEND     = slang
 
+# OpenROAD links the netlist hierarchically (-hier), the mode that is to
+# become the default, so this design tests it. A clock-crossing bridge
+# keeps its structure by name: the two clock-domain halves, their
+# asynchronous queues and their shadow buffers stay modules, so the
+# crossing is visible in the hierarchy -hier links.
+export OPENROAD_HIERARCHICAL  = 1
+export SYNTH_KEEP_MODULES     = chi_async_bridge_source chi_async_bridge_sink \
+  async_queue_source async_queue_sink shadow_buffer
+
 # All three threshold voltages, as for the core this bridge serves.
 export ASAP7_USE_VT           = RVT LVT SLVT
 

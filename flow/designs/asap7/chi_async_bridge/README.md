@@ -74,11 +74,17 @@ checks that each synchroniser flop drives the next one and nothing
 else; if synthesis has renamed or restructured them, the flow stops at
 the synthesis stage with an error saying which.
 
+The design is linked hierarchically (`OPENROAD_HIERARCHICAL`), the way
+a clock-crossing bridge is usually kept: its two clock-domain halves,
+their asynchronous queues and their shadow buffers stay modules, and
+everything inside them is flattened. The check looks for the
+synchronisers at every level of that hierarchy.
+
 What synthesis does to the names, on this design:
 
 | in the RTL | in the netlist |
 |---|---|
-| `sync_shift_reg ridx_gray`, its `bit_[2]`, flop `sync[1]` | `sink.asyncQSource_dat_flit.ridx_gray.bit_[2].sync[1]$_DFF_PP0_`: the hierarchy flattened with `.`, yosys's cell type appended |
+| `sync_shift_reg ridx_gray`, its `bit_[2]`, flop `sync[1]` | `sink/asyncQSource_dat_flit/ridx_gray.bit_[2].sync[1]$_DFF_PP0_`: the kept modules (`SYNTH_KEEP_MODULES`) joined with `/`, the hierarchy inside them flattened with `.`, yosys's cell type appended |
 | the register `ridx_gray` that drives the output `async_ridx` | `...async_ridx[0]$_DFF_PP0_`: a flop takes the name of the net it drives, not of the variable that holds it |
 | the same flop, in the database and in timing analysis | `bit_\[2\].sync\[1\]` in ODB, `bit_[2].sync[1]` from `get_full_name` |
 | one flop driving the next | a flop, an inverter, a flop: asap7's flop with asynchronous set and reset, `DFFASRHQNx1`, has only an inverted output |

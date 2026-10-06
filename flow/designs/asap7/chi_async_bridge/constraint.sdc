@@ -95,9 +95,11 @@ set sync_hop_max 72
 #
 # In that netlist a chain flop is named, as timing analysis spells it,
 #   <instance path>.bit_[<bit>].sync[<stage>]$_DFF_PP<init>_
-# (flattened with '.', yosys's cell type appended; the database escapes
-# the brackets, timing analysis does not); sync[SYNC-1] takes the
-# asynchronous input, sync[0] is the output.
+# (the kept modules (config.mk) joined with '/', the hierarchy inside
+# each flattened with '.', yosys's cell type appended; the database
+# escapes the brackets, timing analysis does not); sync[SYNC-1] takes
+# the asynchronous input, sync[0] is the output. The chains sit inside
+# kept modules, so they are found at every level of the hierarchy.
 #
 # The defaults are chi_async_bridge.sv's; VERILOG_TOP_PARAMS overrides
 # them as it overrides the RTL's.
@@ -131,7 +133,7 @@ proc sync_output { cell } {
 }
 
 set chains [dict create]
-foreach cell [get_cells -quiet {*_gray.bit_* *sync_link.bit_*}] {
+foreach cell [get_cells -quiet -hierarchical {*_gray.bit_* *sync_link.bit_*}] {
   set name [get_full_name $cell]
   if { ![regexp {^(.*)\.sync\[([0-9]+)\]} $name -> chain stage] } {
     sync_check_fail "unexpected cell name $name"
