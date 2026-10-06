@@ -12,6 +12,25 @@ from one clock to the other meets its budget, nothing tries to fix hold
 across the asynchronous boundary, each synchroniser's flops stay
 together, and what is left to fail is the logic inside each domain.
 
+## What it tests that no other design here does
+
+It is an integration test: one small block that takes a combination of
+the flow's features through every stage together. Among the designs in
+`flow/designs`, it is the only one with all of them, and the only one
+with some of them at all:
+
+| feature | where | elsewhere in `flow/designs` |
+|---|---|---|
+| an asynchronous crossing that is timed: `set_clock_groups -asynchronous -allow_paths`, bounded by `set_max_delay -ignore_clock_latency` between the clocks, no hold check across | `constraint.sdc` | only `asap7/mock-cpu`; the other multi-clock designs declare their clocks exclusive or time only virtual IO clocks |
+| a constraint file that checks the netlist it names and stops the flow if synthesis renamed, merged or restructured what it constrains | `constraint.sdc`, the synchronisers | none |
+| the slang frontend, the hierarchy kept by name with `SYNTH_KEEP_MODULES` on slang's uniquified, parameterised modules, and linked with `OPENROAD_HIERARCHICAL` (`-hier`) | `config.mk` | none together; `asap7/mock-cpu` keeps its hierarchy with an RTL attribute and reads its Verilog with yosys |
+| instance names in the constraints resolved through that hierarchy (`get_cells -hierarchical`) and written back by hierarchical name for every later stage | `constraint.sdc` | none |
+| three threshold voltages, RVT, LVT and SLVT, on a multi-clock design | `ASAP7_USE_VT` | `asap7/cva6`, single-clock; the `_lvt` designs use LVT alone |
+| the top's parameters set from the flow, one RTL for every variant | `VERILOG_TOP_PARAMS` | `asap7/uart` |
+
+A change to any of these shows up here first, in a design small enough
+to run in minutes (`FLOW_VARIANT=small`).
+
 ## The crossing
 
 ```mermaid
