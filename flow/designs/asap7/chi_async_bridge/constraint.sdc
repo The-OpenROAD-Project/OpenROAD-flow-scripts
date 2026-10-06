@@ -8,7 +8,7 @@ set sdc_version 2.0
 # (README.md, Results). Above it both close; the flow meets every target
 # down to here.
 set clk_period 300
-# The NoC clock: an unrelated period, about half the core's frequency.
+# The NoC clock: an unrelated period, about 0.3 times the core's frequency.
 # The two never align, and nothing here depends on the ratio.
 set noc_clk_period 1021
 
