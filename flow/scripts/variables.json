@@ -1541,6 +1541,10 @@
       "route"
     ]
   },
+  "WIRE_LOAD_MODEL": {
+    "description": "Name of a Liberty wire_load group applied with set_wire_load_model\nwhenever open.tcl reads timing. OpenSTA applies a wire-load model only\nto nets without parasitics, so it gives wire delay to timing read\nbefore placement and leaves placed and routed timing unaffected. An\nunknown name is an error. Empty, the default, applies none. A platform\nwhose libraries define no wire_load group can supply one in a Liberty\nfile listed in ADDITIONAL_LIBS.\n",
+    "type": "string"
+  },
   "WRITE_ODB_AND_SDC_EACH_STAGE": {
     "default": 1,
     "description": "Save out .sdc and .odb file after each stage, useful to disable when using a single OpenROAD instance to run all stages of the flow.\n",
