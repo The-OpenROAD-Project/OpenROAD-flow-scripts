@@ -69,11 +69,15 @@ foreach {ins outs period} [list $tile_in $tile_out $clk_period \
     -from $ins -to [all_registers]
   set_max_delay -ignore_clock_latency [expr { $period * 0.8 }] \
     -from [all_registers] -to $outs
+  # Through a domain without a flop: the NoC's ready reaches its flitv
+  # through one gate (chi_async_bridge_sink.sv, tx_flitv).
+  set_max_delay [expr { $period * 0.8 }] -from $ins -to $outs
 }
 
 group_path -name in2reg -from [all_inputs -no_clocks] -to [all_registers]
 group_path -name reg2out -from [all_registers] -to [all_outputs]
 group_path -name reg2reg -from [all_registers] -to [all_registers]
+group_path -name in2out -from [all_inputs -no_clocks] -to [all_outputs]
 
 # ---- The synchronisers ------------------------------------------------
 # A synchroniser's flops resolve metastability in the time a period
