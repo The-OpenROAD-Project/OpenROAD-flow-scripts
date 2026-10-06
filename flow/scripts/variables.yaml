@@ -934,9 +934,6 @@ DISABLE_VIA_GEN:
     Passed as -disable_via_gen to detailed_route.
   stages:
     - route
-MACRO_EXTENSION:
-  description: |
-    Sets the number of GCells added to the blockages boundaries from macros.
 DETAILED_ROUTE_END_ITERATION:
   description: >
     Maximum number of iterations.
