@@ -86,6 +86,14 @@ What synthesis does to the names, on this design:
 The check is written against the right-hand column, and fails the
 build when it stops being true.
 
+It runs once. `constraint.sdc` is read only at synthesis, against the
+netlist yosys wrote; from there on every stage reads the constraints as
+OpenROAD wrote them back out (`1_synth.sdc` and its successors), with
+the names already resolved, one `set_max_delay` per hop. So the check
+guards against what synthesis does to a synchroniser. A buffer that
+resizing or hold repair later puts inside a hop is still held to the
+hop's budget, but nothing checks the hop again.
+
 ## Where it comes from
 
 XiangShan's tile is wrapped in `XSTileWrap` (`xiangshan/XSTileWrap.scala`),
