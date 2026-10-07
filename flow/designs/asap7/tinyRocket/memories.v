@@ -20,8 +20,8 @@ module data_arrays_0_ext(
 );
   reg [31:0] Memory [0:63];
   reg [5:0] raddr;
-  integer i;
-  always @(posedge RW0_clk) begin
+  always @(posedge RW0_clk) begin : port
+    integer i;
     if (RW0_en && !RW0_wmode) raddr <= RW0_addr;
     if (RW0_en && RW0_wmode)
       for (i = 0; i < 4; i = i + 1)
