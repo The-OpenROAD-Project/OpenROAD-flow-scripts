@@ -27,6 +27,11 @@ RUN ./DependencyInstaller.sh -base $options $constantBuildDir -save-deps-prefixe
     && ./DependencyInstaller.sh -common $options $constantBuildDir -save-deps-prefixes=/etc/openroad_deps_prefixes.txt \
     && rm -rf /tmp/installer /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
+# Remove the unused net-imap default gem bundled with Ubuntu 22.04's Ruby 3.0
+# (flagged by CVE scanners; never used by the flow). No-op if not present.
+RUN rm -rf /usr/lib/ruby/gems/*/gems/net-imap-0.1.1 \
+           /usr/lib/ruby/gems/*/specifications/default/net-imap-0.1.1.gemspec
+
 ARG fromImage
 
 RUN echo "$fromImage" | grep -q "ubuntu" && \
