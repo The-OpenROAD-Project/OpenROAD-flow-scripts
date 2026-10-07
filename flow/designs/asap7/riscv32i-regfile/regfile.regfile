@@ -1,8 +1,8 @@
 # riscv32i's `regfile` (src/riscv32i/regfile.v) as a register file of
-# placed standard cells: 32 x 32, two combinational reads, one write,
-# x0 reads 0 and drops its writes.
+# standard cells, inlined in synthesis: 32 x 32, two combinational reads,
+# one write through a clock gate per word, x0 reads 0 and drops its
+# writes.
 module regfile
-mode netlist
 words 32
 bits 32
 clock clk
@@ -12,16 +12,8 @@ write wa3 wd3 we3
 zero_word 0
 write_style clock_gate
 cell icg ICGx1_ASAP7_75t_R
-# Flat, 58 x 19 um: it stacks under the four FakeRAMs at riscv32i's own
-# 62 %, where two folds (32 x 36 um) fit beside them at no utilisation
-# above 35 %. The clock tree's free sites are sized for a 32-word file.
-bit_folds 1
-service_sites 16
-tap_columns 16
 cell flop DFFHQNx1_ASAP7_75t_R
 cell and2 AND2x2_ASAP7_75t_R
 cell or2 OR2x2_ASAP7_75t_R
 cell ao22 AO22x2_ASAP7_75t_R
 cell inv INVx1_ASAP7_75t_R
-cell tap TAPCELL_ASAP7_75t_R
-pin_layer M4

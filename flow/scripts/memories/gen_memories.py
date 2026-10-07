@@ -12,6 +12,9 @@ collects its $mem_v2 cells, merges user-supplied `.memories` files
   <out-dir>/<m>.lef             abstract LEF per converted memory
   <out-dir>/regfiles.txt        register files to dissolve into their cells
                                 after macro placement (`mode netlist`)
+  <out-dir>/inline.txt          register files whose generated netlist
+                                replaces their module in synthesis (those
+                                not in AUTO_MEMORIES_MACRO_PLACE)
   <out-dir>/blackboxes.txt      `<module> <area>` per line, area in um^2 as
                                 the .lib states it — what synthesis
                                 blackboxes and the cost it gives each
@@ -141,16 +144,52 @@ def _lib_area(lib: Path) -> str:
     return m.group(1)
 
 
+def _inline_spec(spec: Path, out: Path) -> Path:
+    """`spec` without its tap cell: an inlined register file's cells
+    land on the parent's rows, whose taps the floorplan places."""
+    kept = [
+        line
+        for line in spec.read_text().splitlines()
+        if line.split("#", 1)[0].split()[:2] != ["cell", "tap"]
+    ]
+    out.write_text("".join(l + "\n" for l in kept))
+    return out
+
+
+def _regfile_memory(spec: Path, module: str, reason: str) -> schema.Memory:
+    """A register file's memories.json record, its shape from its spec."""
+    mem = schema.Memory(name=module, kind="regfile", source="listed", spec=str(spec))
+    words = _spec_value(spec, "words")
+    bits = _spec_value(spec, "bits")
+    mem.rows = int(words[0][0]) if words else 0
+    mem.bits = int(bits[0][0]) if bits else 0
+    mem.read_ports = len(_spec_value(spec, "read")) + len(
+        _spec_value(spec, "read_banked")
+    )
+    mem.write_ports = len(_spec_value(spec, "write"))
+    mem.reason = reason
+    return mem
+
+
 def run_regfiles(
     specs: list[Path],
     openroad: str | None,
     lefs: list[Path],
     verilog: list[Path],
     out_dir: Path,
+    macro_place: list[str] | None = None,
 ) -> list[schema.Memory]:
     """Generate every listed register file with OpenROAD's generate_regfile.
 
-    A register file is a macro to synthesis and to macro placement: its
+    A register file not named in AUTO_MEMORIES_MACRO_PLACE is inlined: its
+    generated netlist replaces the module's body in synthesis (inline.txt),
+    and from there on its cells are placed, sized and buffered with the
+    rest of the design. No macro, no abstract, no dissolve: the best shape
+    for a small design, where a macro's outline and channels cost more
+    core than the array saves.
+
+    A register file named in AUTO_MEMORIES_MACRO_PLACE is a macro to
+    synthesis and to macro placement: its
     abstract LEF and model liberty land beside the FakeRAM views and the
     module joins blackboxes.txt. In `mode netlist` it then dissolves into
     its placed cells after macro placement (regfile_dissolve.tcl), which
@@ -159,8 +198,16 @@ def run_regfiles(
     are not the module's stops the build here rather than miswire the
     parent.
     """
+    macro_place = set(macro_place or [])
     if not specs:
         (out_dir / "regfiles.txt").write_text("")
+        (out_dir / "inline.txt").write_text("")
+        if macro_place:
+            raise SystemExit(
+                "gen_memories: AUTO_MEMORIES_MACRO_PLACE names "
+                + " ".join(sorted(macro_place))
+                + " but AUTO_MEMORIES_REGFILES lists no register file"
+            )
         return []
     if not openroad:
         raise SystemExit(
@@ -170,13 +217,38 @@ def run_regfiles(
         raise SystemExit(
             "gen_memories: AUTO_MEMORIES_REGFILES needs TECH_LEF and SC_LEF"
         )
+    modules = [_spec_module(spec) for spec in specs]
+    unknown = sorted(macro_place - set(modules))
+    if unknown:
+        raise SystemExit(
+            "gen_memories: AUTO_MEMORIES_MACRO_PLACE names "
+            + " ".join(unknown)
+            + ", which no AUTO_MEMORIES_REGFILES spec builds; it lists "
+            + " ".join(modules)
+        )
     memories = []
     dissolve = []
-    for spec in specs:
-        module = _spec_module(spec)
+    inline = []
+    for spec, module in zip(specs, modules):
         mode = _spec_mode(spec)
         rtl = _file_defining(module, verilog)
         tcl = out_dir / f"{module}.generate.tcl"
+        if module not in macro_place:
+            inline_spec = _inline_spec(spec, out_dir / f"{module}.inline.regfile")
+            tcl.write_text(
+                "".join(f"read_lef {lef}\n" for lef in lefs)
+                + f"generate_regfile -spec {inline_spec}"
+                + f" -check_ports {rtl} -verilog {out_dir / f'{module}.v'}\n"
+            )
+            subprocess.check_call(
+                [openroad, "-exit", "-no_init", "-no_splash", str(tcl)]
+            )
+            memories.append(_regfile_memory(spec, module, "register file, inlined"))
+            inline.append(module)
+            sys.stderr.write(
+                f"gen_memories: {module} -> register file, inlined ({spec.name})\n"
+            )
+            continue
         tcl.write_text(
             "".join(f"read_lef {lef}\n" for lef in lefs)
             + f"generate_regfile -spec {spec} -check_ports {rtl}"
@@ -184,18 +256,7 @@ def run_regfiles(
             + f" -lef {out_dir / f'{module}.lef'} -liberty {out_dir / f'{module}.lib'}\n"
         )
         subprocess.check_call([openroad, "-exit", "-no_init", "-no_splash", str(tcl)])
-        mem = schema.Memory(
-            name=module, kind="regfile", source="listed", spec=str(spec)
-        )
-        words = _spec_value(spec, "words")
-        bits = _spec_value(spec, "bits")
-        mem.rows = int(words[0][0]) if words else 0
-        mem.bits = int(bits[0][0]) if bits else 0
-        mem.read_ports = len(_spec_value(spec, "read")) + len(
-            _spec_value(spec, "read_banked")
-        )
-        mem.write_ports = len(_spec_value(spec, "write"))
-        mem.reason = f"register file, mode {mode}"
+        mem = _regfile_memory(spec, module, f"register file, mode {mode}")
         if mode == "netlist":
             _def_placement(out_dir / f"{module}.def", out_dir / f"{module}.place")
             dissolve.append(module)
@@ -206,10 +267,13 @@ def run_regfiles(
     with (out_dir / "blackboxes.txt").open("a") as f:
         f.write(
             "".join(
-                f"{m.name} {_lib_area(out_dir / f'{m.name}.lib')}\n" for m in memories
+                f"{m.name} {_lib_area(out_dir / f'{m.name}.lib')}\n"
+                for m in memories
+                if m.name not in inline
             )
         )
     (out_dir / "regfiles.txt").write_text("".join(f"{m}\n" for m in dissolve))
+    (out_dir / "inline.txt").write_text("".join(f"{m}\n" for m in inline))
     return memories
 
 
@@ -223,6 +287,7 @@ def run(
     regfile_specs: list[Path] | None = None,
     openroad: str | None = None,
     lefs: list[Path] | None = None,
+    macro_place: list[str] | None = None,
 ) -> int:
     if platform != "asap7":
         sys.stderr.write(f"gen_memories: unsupported platform {platform}\n")
@@ -264,7 +329,7 @@ def run(
     # After FakeRAM has written blackboxes.txt for the inferred memories,
     # and recorded in memories.json beside them.
     regfiles = run_regfiles(
-        regfile_specs or [], openroad, lefs or [], verilog or [], out_dir
+        regfile_specs or [], openroad, lefs or [], verilog or [], out_dir, macro_place
     )
     if regfiles:
         listed = {m.name for m in regfiles}
@@ -325,6 +390,13 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="Technology and cell LEF for the generator (repeatable).",
     )
+    p.add_argument(
+        "--macro-place",
+        action="append",
+        default=[],
+        help="A register file placed as a macro, AUTO_MEMORIES_MACRO_PLACE "
+        "(repeatable); the others are inlined.",
+    )
     p.add_argument("--platform", required=True)
     p.add_argument(
         "--out-dir",
@@ -349,6 +421,7 @@ def main(argv: list[str] | None = None) -> int:
         args.regfile_spec,
         args.openroad,
         args.lef,
+        args.macro_place,
     )
 
 

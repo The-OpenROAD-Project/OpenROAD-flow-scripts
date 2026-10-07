@@ -114,6 +114,7 @@ class GenMemoriesTest(unittest.TestCase):
             sorted(p.name for p in mems_dir.iterdir()),
             [
                 "blackboxes.txt",
+                "inline.txt",
                 "mem_128x32.lef",
                 "mem_128x32.lib",
                 "mem_128x32_pre_layout.lib",
@@ -196,6 +197,7 @@ class GenMemoriesTest(unittest.TestCase):
         self.assertEqual(json.loads((d / "memories.json").read_text())["memories"], [])
         self.assertEqual((d / "memories" / "blackboxes.txt").read_text(), "")
         self.assertEqual((d / "memories" / "regfiles.txt").read_text(), "")
+        self.assertEqual((d / "memories" / "inline.txt").read_text(), "")
 
     def test_regfile_area_is_the_lib_cell_area(self):
         # a register file's blackboxes.txt line carries the area its

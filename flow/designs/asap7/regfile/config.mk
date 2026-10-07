@@ -9,6 +9,9 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 
 export AUTO_MEMORIES          = 1
 export AUTO_MEMORIES_REGFILES = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/RegFile.regfile
+# Placed as a macro and dissolved after macro placement, the path this
+# design exists to exercise; unlisted, it would be inlined.
+export AUTO_MEMORIES_MACRO_PLACE = RegFile
 
 # The file's macro is 28.5 x 10 um; a core sized by utilization alone
 # would be square and narrower than the macro and its halo.

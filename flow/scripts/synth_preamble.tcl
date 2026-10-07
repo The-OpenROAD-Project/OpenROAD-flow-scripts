@@ -81,6 +81,29 @@ proc auto_memories_blackboxes { } {
   return [dict keys [auto_memories_areas]]
 }
 
+# AUTO_MEMORIES: register files inlined (AUTO_MEMORIES_REGFILES not in
+# AUTO_MEMORIES_MACRO_PLACE): the RTL module is read as a blackbox and its
+# generated netlist of standard cells is read in its place.
+proc auto_memories_inline { } {
+  if { ![env_var_equals AUTO_MEMORIES 1] } {
+    return {}
+  }
+  set f "$::env(RESULTS_DIR)/memories/inline.txt"
+  if { ![file exists $f] } {
+    return {}
+  }
+  set fh [open $f r]
+  set content [read $fh]
+  close $fh
+  return [regexp -all -inline {\S+} $content]
+}
+
+proc read_auto_memories_inline { } {
+  foreach m [auto_memories_inline] {
+    read_verilog -overwrite "$::env(RESULTS_DIR)/memories/$m.v"
+  }
+}
+
 proc read_design_sources { } {
   # We are reading Verilog sources
   source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
@@ -134,7 +157,7 @@ proc read_design_sources { } {
 
     # Blackbox AUTO_MEMORIES-detected memory modules so their generated
     # liberty view wins over their behavioral bodies.
-    foreach m [auto_memories_blackboxes] {
+    foreach m [concat [auto_memories_blackboxes] [auto_memories_inline]] {
       lappend slang_args --blackboxed-module "$m"
     }
 
@@ -142,6 +165,7 @@ proc read_design_sources { } {
     lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
 
     yosys read_slang {*}$slang_args
+    read_auto_memories_inline
 
     # Workaround for yosys-slang#119
     setattr -unset init
@@ -163,7 +187,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
       error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
     }
-    if { [llength [auto_memories_blackboxes]] > 0 } {
+    if { [llength [concat [auto_memories_blackboxes] [auto_memories_inline]]] > 0 } {
       error "AUTO_MEMORIES unsupported with HDL frontend \"$::env(SYNTH_HDL_FRONTEND)\""
     }
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
@@ -195,6 +219,10 @@ proc read_design_sources { } {
       foreach m $auto_blackboxes {
         blackbox $m
       }
+      hierarchy -check -top $::env(DESIGN_NAME)
+    }
+    if { [llength [auto_memories_inline]] > 0 } {
+      read_auto_memories_inline
       hierarchy -check -top $::env(DESIGN_NAME)
     }
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
