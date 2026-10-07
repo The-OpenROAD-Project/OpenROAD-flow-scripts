@@ -5,7 +5,7 @@ export PROCESS = 45
 # Tech/Libs
 # ----------------------------------------------------
 export TECH_LEF = $(PLATFORM_DIR)/lef/NangateOpenCellLibrary.tech.lef
-export SC_LEF = $(PLATFORM_DIR)/lef/NangateOpenCellLibrary.macro.mod.lef
+export SC_LEF = $(PLATFORM_DIR)/lef/NangateOpenCellLibrary.macro.lef
 
 export LIB_FILES = $(PLATFORM_DIR)/lib/NangateOpenCellLibrary_typical.lib \
                      $(ADDITIONAL_LIBS)
