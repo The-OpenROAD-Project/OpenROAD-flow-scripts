@@ -100,6 +100,15 @@ proc auto_memories_inline { } {
 
 proc read_auto_memories_inline { } {
   foreach m [auto_memories_inline] {
+    # A parameterized RTL module (ibex_register_file_ff #(...)) is
+    # instantiated with parameters the generated netlist has no
+    # declaration for, which hierarchy refuses. The netlist is that module
+    # at the instance's widths, as generate_regfile's port check has
+    # confirmed: drop the parameters from its instances.
+    set dump [tee -q -s result.string dump t:$m]
+    foreach {- name} [regexp -all -inline -- {parameter \\(\S+)} $dump] {
+      setparam -unset $name t:$m
+    }
     read_verilog -overwrite "$::env(RESULTS_DIR)/memories/$m.v"
   }
 }
