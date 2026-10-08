@@ -263,8 +263,11 @@ proc convert_liberty_areas { } {
     set text [read $fh]
     close $fh
     # the cell group of <m> and its area; the brace characters spelled as
-    # hex escapes, which keep the brace count of this body balanced
-    set pat "cell\\s*\\(\\s*\"?[string map {$ \\$} $m]\"?\\s*\\)\\s*\\\x7b\[^\x7d\]*?area\\s*:\\s*(\[0-9.eE+-\]+)"
+    # hex escapes, which keep the brace count of this body balanced. The
+    # module name is escaped whole: yosys and slang names carry `$`, `\`,
+    # `[` and `.`, each a regular-expression metacharacter.
+    set name [regsub -all {[][\x7b\x7d()*+?.\\^$|]} $m {\\&}]
+    set pat "cell\\s*\\(\\s*\"?$name\"?\\s*\\)\\s*\\\x7b\[^\x7d\]*?area\\s*:\\s*(\[0-9.eE+-\]+)"
     if { ![regexp $pat $text -> area] } {
       error "AUTO_MEMORIES macro $m: no area for cell $m in $lib"
     }
