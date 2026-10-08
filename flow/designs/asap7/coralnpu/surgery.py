@@ -119,6 +119,242 @@ def make_sram_seams(text, path):
     return text
 
 
+READS = 8
+WRITES = 6
+MASKED = (1, 2, 3)
+
+
+def regfile_rf_module():
+    ports = ["  input clock", "  input reset"]
+    for k in range(READS):
+        ports += ["  input [4:0] raddr%d" % k, "  output [31:0] rdata%d" % k]
+    for p in range(WRITES):
+        ports += [
+            "  input [4:0] waddr%d" % p,
+            "  input [31:0] wdata%d" % p,
+            "  input we%d" % p,
+        ]
+    hit = lambda p: "(we%d && waddr%d == i)" % (p, p)
+    any_hit = " || ".join(hit(p) for p in range(WRITES))
+    data = " | ".join("(%s ? wdata%d : 32'd0)" % (hit(p), p) for p in range(WRITES))
+    reads = "\n".join(
+        "  assign rdata%d = raddr%d == 5'd0 ? 32'd0 : mem[raddr%d];" % (k, k, k)
+        for k in range(READS)
+    )
+    return """
+// SYNTH_VERILOG_SURGERY (asap7/coralnpu/surgery.py --regfile): Regfile's
+// storage, behavioural; AUTO_MEMORIES_REGFILES replaces it. Word 0 reads
+// zero and keeps nothing; writes of one word in one cycle are ORed, as
+// Regfile's data_N are; every word resets to zero while reset is high.
+module Regfile_rf (
+%s
+);
+  reg [31:0] mem [1:31];
+  integer i;
+  always @(posedge clock or posedge reset) begin
+    if (reset) begin
+      for (i = 1; i < 32; i = i + 1) mem[i] <= 32'd0;
+    end else begin
+      for (i = 1; i < 32; i = i + 1)
+        if (%s)
+          mem[i] <= %s;
+    end
+  end
+%s
+endmodule
+""" % (",\n".join(ports), any_hit, data, reads)
+
+
+def regfile_instance():
+    conns = ["    .clock(clock)", "    .reset(reset)"]
+    for k in range(READS):
+        conns += [
+            "    .raddr%d(io_readAddr_%d_addr)" % (k, k),
+            "    .rdata%d(_rf_rdata_%d)" % (k, k),
+        ]
+    for p in range(WRITES):
+        we = "io_writeData_%d_valid" % p
+        if p in MASKED:
+            we += " & ~io_writeMask_%d_valid" % p
+        conns += [
+            "    .waddr%d(io_writeData_%d_bits_addr)" % (p, p),
+            "    .wdata%d(io_writeData_%d_bits_data)" % (p, p),
+            "    .we%d(%s)" % (p, we),
+        ]
+    return "  Regfile_rf rf (\n%s\n  );\n" % ",\n".join(conns)
+
+
+def addr_is(port_expr, word):
+    if word == 31:
+        return "(&%s)" % port_expr
+    return "%s == 5'h%X" % (port_expr, word)
+
+
+def port_we(p):
+    we = "io_writeData_%d_valid" % p
+    if p in MASKED:
+        we += " & ~io_writeMask_%d_valid" % p
+    return we
+
+
+def write_through(k):
+    """Port k's read of a word being written: compares of the write
+    ports' addresses, not a select over every word's decoded data."""
+    lines = []
+    for p in range(WRITES):
+        lines.append(
+            "  wire _wt_%d_%d = %s & io_writeData_%d_bits_addr == io_readAddr_%d_addr"
+            " & (|io_readAddr_%d_addr);\n" % (k, p, port_we(p), p, k, k)
+        )
+    lines.append(
+        "  wire _wt_%d = %s;\n"
+        % (k, " | ".join("_wt_%d_%d" % (k, p) for p in range(WRITES)))
+    )
+    lines.append(
+        "  wire [31:0] _wt_%d_data =\n    %s;\n"
+        % (
+            k,
+            "\n    | ".join(
+                "(_wt_%d_%d ? io_writeData_%d_bits_data : 32'h0)" % (k, p, p)
+                for p in range(WRITES)
+            ),
+        )
+    )
+    return "".join(lines)
+
+
+def rwdata_expected(k, tail):
+    dname = lambda n: "data" if n == 1 else "data_%d" % (n - 1)
+    cond = ["io_readAddr_%d_addr == 5'h0" % k]
+    cond += [
+        "_wdata_%d_value_%d_T & (|_writeValid_%d_T)" % (k, n, n) for n in range(1, 31)
+    ]
+    cond += ["(&io_readAddr_%d_addr) & (|_writeValid_31_T)" % k]
+    data = [
+        "(_wdata_%d_value_%d_T ? %s : 32'h0)" % (k, n, dname(n)) for n in range(1, 31)
+    ]
+    data += ["((&io_readAddr_%d_addr) ? data_30 : 32'h0)" % k]
+    return "%s ? %s : %s" % (" | ".join(cond), " | ".join(data), tail)
+
+
+def make_write_through(mod):
+    """Each read port's bypass, a select by read address over the 31
+    words' decoded write data (data_N), as a compare of the read address
+    with each write port's: the same function (a read of x0 is zero, the
+    ports that write the word are ORed), and data_N is left to nothing."""
+    decls = []
+    for k in range(READS):
+        m = re.search(
+            r"^(\s*wire\s+\[31:0\]\s+rwdata_%d\s*=)(.*?);\n" % k, mod, re.M | re.S
+        )
+        if not m:
+            fail("Regfile: no rwdata_%d" % k)
+        got = " ".join(m.group(2).split())
+        tails = ["_rf_rdata_%d" % k, "rdata_%d_value_5_0" % k]
+        if not any(got == rwdata_expected(k, t) for t in tails):
+            fail("Regfile: rwdata_%d is not the bypass this rewrite knows" % k)
+        mod = (
+            mod[: m.start()]
+            + "%s\n    _wt_%d ? _wt_%d_data : _rf_rdata_%d;\n" % (m.group(1), k, k, k)
+            + mod[m.end() :]
+        )
+        decls.append(write_through(k))
+    return mod, "".join(decls)
+
+
+def make_regfile_seam(text, path):
+    found = list(re.finditer(r"^module Regfile\(.*?^endmodule\b", text, re.M | re.S))
+    if len(found) != 1:
+        fail("%s defines Regfile %d times, not once" % (path, len(found)))
+    m = found[0]
+    mod = m.group(0)
+
+    def wire(name):
+        hits = re.findall(
+            r"^\s*wire\s+(?:\[\d+:\d+\]\s+)?%s\s*=\s*(.*?);" % re.escape(name),
+            mod,
+            re.M | re.S,
+        )
+        if len(hits) != 1:
+            fail("Regfile: wire %s defined %d times" % (name, len(hits)))
+        return " ".join(hits[0].split())
+
+    # Reads: the address compares, then each port's select over the words.
+    for k in range(READS):
+        for n in range(1, 31):
+            got = wire("_wdata_%d_value_%d_T" % (k, n))
+            if got != addr_is("io_readAddr_%d_addr" % k, n):
+                fail("Regfile: _wdata_%d_value_%d_T is %s" % (k, n, got))
+        terms = [
+            r"\(_wdata_%d_value_%d_T \? regfile_%d : 32'h0\)" % (k, n, n)
+            for n in range(1, 31)
+        ]
+        terms.append(r"\(\(&io_readAddr_%d_addr\) \? regfile_31 : 32'h0\)" % k)
+        sel = re.compile(r"\s*\|\s*".join(terms))
+        hits = list(sel.finditer(mod))
+        if len(hits) != 1:
+            fail(
+                "Regfile: read port %d's select over the words found %d times"
+                % (k, len(hits))
+            )
+        mod = mod[: hits[0].start()] + "_rf_rdata_%d" % k + mod[hits[0].end() :]
+
+    # Writes: each word's data is the OR over the ports that write it.
+    for n in range(1, 32):
+        dname = "data" if n == 1 else "data_%d" % (n - 1)
+        terms = re.fullmatch(
+            r"\s*".join(
+                [
+                    r"\((\w+) \? io_writeData_%d_bits_data : 32'h0\)" % p
+                    for p in range(WRITES)
+                ]
+            ).replace(r"\)\s*\(", r"\)\s*\|\s*\("),
+            wire(dname),
+        )
+        if not terms:
+            fail("Regfile: %s is not the OR of the six write ports" % dname)
+        conds = list(terms.groups())
+        if wire("_writeValid_%d_T" % n) != "{%s}" % ", ".join(conds):
+            fail("Regfile: _writeValid_%d_T is not {%s}" % (n, ", ".join(conds)))
+        for p, c in enumerate(conds):
+            want = "io_writeData_%d_valid & %s" % (
+                p,
+                addr_is("io_writeData_%d_bits_addr" % p, n),
+            )
+            if p in MASKED:
+                want += " & ~io_writeMask_%d_valid" % p
+            if wire(c) != want:
+                fail("Regfile: %s is %s, not %s" % (c, wire(c), want))
+        removals = [
+            r"^\s*reg\s+\[31:0\]\s+regfile_%d;\n" % n,
+            r"^\s*regfile_%d <= 32'h0;\n" % n,
+            r"^\s*if \(\|_writeValid_%d_T\)\s*regfile_%d <= %s;\n" % (n, n, dname),
+        ]
+        for r in removals:
+            hits = list(re.finditer(r, mod, re.M))
+            if len(hits) != 1:
+                fail("Regfile: /%s/ matched %d times" % (r.strip(), len(hits)))
+            mod = mod[: hits[0].start()] + mod[hits[0].end() :]
+        # The simulation-only initial values (`ifndef SYNTHESIS).
+        mod = re.sub(r"^\s*regfile_%d = [^;]*;\n" % n, "", mod, flags=re.M)
+
+    left = re.findall(r"\bregfile_\d+\b", mod)
+    if left:
+        fail("Regfile still names %s" % left[0])
+    head = re.search(r"^module Regfile\(.*?\);\n", mod, re.S | re.M)
+    if not re.search(r"^\s*input\s+clock,\s*$", head.group(0), re.M) or not re.search(
+        r"^\s*reset,\s*$", head.group(0), re.M
+    ):
+        fail("Regfile's ports are not clock and reset first")
+    decls = "".join("  wire [31:0] _rf_rdata_%d;\n" % k for k in range(READS))
+    mod, wt = make_write_through(mod)
+    decls += wt
+    mod = mod[: head.end()] + decls + mod[head.end() :]
+    end = mod.rindex("endmodule")
+    mod = mod[:end] + regfile_instance() + mod[end:]
+    return text[: m.start()] + mod + text[m.end() :] + regfile_rf_module()
+
+
 def fail(msg):
     sys.exit("coralnpu surgery: " + msg)
 
@@ -148,6 +384,11 @@ def strip_layers(text, path):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--out-dir", required=True)
+    p.add_argument(
+        "--regfile",
+        action="store_true",
+        help="also move Regfile's storage into Regfile_rf",
+    )
     p.add_argument("files", nargs="+")
     a = p.parse_args()
     done = 0
@@ -157,6 +398,8 @@ def main():
         if MARKER.search(text):
             text, removed = strip_layers(text, path)
             text = make_sram_seams(text, path)
+            if a.regfile:
+                text = make_regfile_seam(text, path)
             print(
                 "coralnpu surgery: %s: removed %d verification files"
                 % (os.path.basename(path), len(removed))

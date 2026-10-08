@@ -1,0 +1,34 @@
+# coralnpu's integer register file as standard cells, inlined in its
+# place: Regfile_rf, the module surgery.py --regfile moves Regfile's
+# storage into. 32 x 32 with x0 reading zero, eight combinational reads,
+# six writes ORed when two write one word (Regfile's own data_N), a
+# clock gate per word, every word reset to zero while reset is high.
+module Regfile_rf
+words 32
+bits 32
+clock clock
+async_reset reset high
+read raddr0 rdata0
+read raddr1 rdata1
+read raddr2 rdata2
+read raddr3 rdata3
+read raddr4 rdata4
+read raddr5 rdata5
+read raddr6 rdata6
+read raddr7 rdata7
+write waddr0 wdata0 we0
+write waddr1 wdata1 we1
+write waddr2 wdata2 we2
+write waddr3 wdata3 we3
+write waddr4 wdata4 we4
+write waddr5 wdata5 we5
+zero_word 0
+write_style clock_gate
+cell icg ICGx1_ASAP7_75t_R
+cell flop DFFHQNx1_ASAP7_75t_R
+cell flop_r DFFASRHQNx1_ASAP7_75t_R
+cell tie_hi TIEHIx1_ASAP7_75t_R
+cell and2 AND2x2_ASAP7_75t_R
+cell or2 OR2x2_ASAP7_75t_R
+cell ao22 AO22x2_ASAP7_75t_R
+cell inv INVx1_ASAP7_75t_R
