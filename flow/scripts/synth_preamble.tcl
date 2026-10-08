@@ -268,8 +268,12 @@ proc convert_liberty_areas { } {
     if { ![regexp $pat $text -> area] } {
       error "AUTO_MEMORIES macro $m: no area for cell $m in $lib"
     }
-    if { [catch {rtlil::set_attr -mod -uint $m gate_cost_equivalent \
-        [expr { int($area / $found_cell_area) }]}] } {
+    if {
+      [catch {
+        rtlil::set_attr -mod -uint $m gate_cost_equivalent \
+          [expr { int($area / $found_cell_area) }]
+      }]
+    } {
       # not in the design: removed as unused, or never instantiated
       continue
     }
