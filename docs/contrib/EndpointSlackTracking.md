@@ -34,14 +34,15 @@ reporting as in `open.tcl`, based on the step number:
 | --- | --- |
 | 1, 2 | none (cells are not placed) |
 | 3, 4 | `estimate_parasitics -placement` |
-| 5, 6 | `estimate_parasitics -global_routing` if global routes exist |
+| 5, `6_1_fill` | `estimate_parasitics -global_routing` if global routes exist |
+| `6_final` | `rcx`: the extracted `6_final.spef`, as in `6_finish.rpt` (`global_routing` on platforms without `RCX_RULES`) |
 
 The parasitics model is recorded in each snapshot and shown by
 `endpointSlack.py`. Slack changes between steps with different models (e.g.
-`2_4_floorplan_pdn` to `3_1_place_gp_skip_io`, or `4_1_cts` to `5_1_grt`)
-include the change of model. Detailed routing is not extracted, so
-`5_2_route` and later steps show global routing estimates; `6_finish.rpt`,
-which uses the extracted SPEF, can differ.
+`2_4_floorplan_pdn` to `3_1_place_gp_skip_io`, `4_1_cts` to `5_1_grt`, or
+`6_1_fill` to `6_final`) include the change of model. Detailed routing is
+only extracted in `6_final`, so `5_2_route` to `6_1_fill` show global routing
+estimates.
 
 Each file contains `design`, `step`, `parasitics`, `time_unit` (seconds per
 time unit of the values) and `endpoints`: a map from every endpoint pin

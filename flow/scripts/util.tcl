@@ -309,25 +309,29 @@ proc endpoint_slack_file { step } {
 # Write the setup and hold slack of every endpoint at the end of a flow
 # step so they can be compared across steps with
 # flow/util/endpointSlack.py. Parasitics are estimated the same way as
-# open.tcl so that every step is timed consistently.
-proc write_endpoint_slack { step } {
+# open.tcl so that every step is timed consistently, unless the caller
+# has already loaded parasitics (e.g. extracted ones) and passes their
+# name as parasitics.
+proc write_endpoint_slack { step { parasitics "" } } {
   if { !$::env(REPORT_ENDPOINT_SLACK) || [string match "*-failed" $step] } {
     return
   }
   set filename [endpoint_slack_file $step]
   puts "Writing endpoint slack to $filename"
 
-  set design_stage [lindex [split $step _] 0]
-  set parasitics none
-  if { $design_stage >= 5 } {
-    if { [grt::have_routes] } {
-      set parasitics global_routing
+  if { $parasitics == "" } {
+    set design_stage [lindex [split $step _] 0]
+    set parasitics none
+    if { $design_stage >= 5 } {
+      if { [grt::have_routes] } {
+        set parasitics global_routing
+      }
+    } elseif { $design_stage >= 3 } {
+      set parasitics placement
     }
-  } elseif { $design_stage >= 3 } {
-    set parasitics placement
-  }
-  if { $parasitics != "none" } {
-    estimate_parasitics -$parasitics
+    if { $parasitics != "none" } {
+      estimate_parasitics -$parasitics
+    }
   }
   # Update timing before sta::endpoints: the endpoint set is cached the
   # first time it is requested and misses gated clock enable checks if the
@@ -387,8 +391,12 @@ proc copy_endpoint_slack { input_file output_file } {
   close $fileId
 }
 
-proc orfs_write_db { output_file } {
-  write_endpoint_slack [file rootname [file tail $output_file]]
+# endpoint_slack 0 is for callers that write the endpoint slack snapshot
+# themselves, e.g. 6_final after parasitic extraction.
+proc orfs_write_db { output_file { endpoint_slack 1 } } {
+  if { $endpoint_slack } {
+    write_endpoint_slack [file rootname [file tail $output_file]]
+  }
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
