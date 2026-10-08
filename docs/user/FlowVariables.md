@@ -247,6 +247,7 @@ configuration file.
 | <a name="REMOVE_CELLS_FOR_LEC"></a>REMOVE_CELLS_FOR_LEC| String patterns directly passed to write_verilog -remove_cells <> for lec checks.| |
 | <a name="REPAIR_PDN_VIA_LAYER"></a>REPAIR_PDN_VIA_LAYER| Remove power grid vias which generate DRC violations after detailed routing.| |
 | <a name="REPORT_CLOCK_SKEW"></a>REPORT_CLOCK_SKEW| Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.| 1|
+| <a name="REPORT_ENDPOINT_SLACK"></a>REPORT_ENDPOINT_SLACK| If set to 1, write the setup and hold slack of every timing endpoint at the end of every flow step (e.g. 3_3_place_gp) to $REPORTS_DIR/<step>_endpoint_slack.json. These snapshots can be compared across steps with flow/util/endpointSlack.py. See docs/contrib/EndpointSlackTracking.md.| 0|
 | <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically (entirely design specific, but going from hours to minutes has been observed) when the value is low (such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/whittle.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. whittle.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.| 0.5|
 | <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT| Weight for the area of the current floorplan.| 0.1|
 | <a name="RTLMP_ARGS"></a>RTLMP_ARGS| Overrides all other RTL macro placer arguments.| |
@@ -354,6 +355,7 @@ configuration file.
 - [POST_SYNTH_TCL](#POST_SYNTH_TCL)
 - [POS_CLKGATE_AND_PORTS](#POS_CLKGATE_AND_PORTS)
 - [PRE_SYNTH_TCL](#PRE_SYNTH_TCL)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [SDC_FILE](#SDC_FILE)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
@@ -425,6 +427,7 @@ configuration file.
 - [PRE_PDN_TCL](#PRE_PDN_TCL)
 - [PRE_TAPCELL_TCL](#PRE_TAPCELL_TCL)
 - [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
 - [RTLMP_ARGS](#RTLMP_ARGS)
@@ -502,6 +505,7 @@ configuration file.
 - [PRE_GLOBAL_PLACE_TCL](#PRE_GLOBAL_PLACE_TCL)
 - [PRE_IO_PLACEMENT_TCL](#PRE_IO_PLACEMENT_TCL)
 - [PRE_RESIZE_TCL](#PRE_RESIZE_TCL)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
@@ -525,6 +529,7 @@ configuration file.
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [PRE_CTS_TCL](#PRE_CTS_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_BUFFER_REMOVAL](#SKIP_BUFFER_REMOVAL)
@@ -554,6 +559,7 @@ configuration file.
 - [POST_GLOBAL_ROUTE_TCL](#POST_GLOBAL_ROUTE_TCL)
 - [PRE_GLOBAL_ROUTE_TCL](#PRE_GLOBAL_ROUTE_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
@@ -587,6 +593,7 @@ configuration file.
 - [PRE_DETAIL_ROUTE_TCL](#PRE_DETAIL_ROUTE_TCL)
 - [PRE_FILLCELL_TCL](#PRE_FILLCELL_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_ANTENNA_REPAIR_POST_DRT](#SKIP_ANTENNA_REPAIR_POST_DRT)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
@@ -610,6 +617,7 @@ configuration file.
 - [PRE_FINAL_REPORT_TCL](#PRE_FINAL_REPORT_TCL)
 - [PWR_NETS_VOLTAGES](#PWR_NETS_VOLTAGES)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
