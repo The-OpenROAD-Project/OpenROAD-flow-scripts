@@ -1407,6 +1407,18 @@
       "synth"
     ]
   },
+  "SYNTH_VERILOG_SURGERY": {
+    "description": "Surgery at home: a script that copies VERILOG_FILES and edits the copies before synthesis reads them, so the source tree stays as upstream has it. Two uses. First, local edits are applied at synthesis time as a patch, as a procedure, or both, instead of being carried in the source, so bringing in a new upstream or a regenerated core stays a plain bump; a procedure can survive RTL changes that make a patch fail to apply. Second, PDK-specific seams: whether a register file, say, becomes a module of its own that a generated netlist replaces depends on which gives the best QoR on that PDK, not on the source code, so the seam is made in the platform's flow configuration. A hack; you asked for it, you deserve the results. Good for simple RTL, especially generated RTL (firtool, sv2v), whose text is regular enough to edit reliably. Unsuitable for idiomatic SystemVerilog code bases with include files, macros, packages, `bind` and other advanced language features, where an edit to the text cannot see what the code means. As the RTL is read (canonicalization, memory extraction, and the SYNTH_USE_SYN frontend), it runs with SYNTH_VERILOG_SURGERY_ARGS, then `--out-dir $(OBJECTS_DIR)/surgery --` and the VERILOG_FILES (by PYTHON_EXE when it ends in .py), and writes one copy per source under the same file name; synthesis reads the copies. They are kept for inspection but are no make target or build output. Input file names must be unique. Nothing checks what the script changed: write it to fail loudly when it cannot recognise its input.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_VERILOG_SURGERY_ARGS": {
+    "description": "Arguments to SYNTH_VERILOG_SURGERY, before the ones the flow adds.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "SYNTH_WRAPPED_ADDERS": {
     "description": "Specify the adder modules that can be used for synthesis, separated by commas. The default adder module is determined by the first element of this variable.\n",
     "stages": [
