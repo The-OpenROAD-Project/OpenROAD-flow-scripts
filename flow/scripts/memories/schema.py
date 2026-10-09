@@ -49,6 +49,15 @@ class Memory:
     # Total width of the per-port write mask, 0 if unmasked. Subword-split
     # mask pins (`W0_mask_0..3`) contribute one lane each.
     mask_lanes: int = 0
+    # Read ports yosys inferred without a clock ($mem_v2 RD_CLK_ENABLE=0).
+    # An SRAM macro reads on a clock edge, so one of these rules the memory
+    # out of conversion; see idiomatic.py.
+    comb_read_ports: int = 0
+    # Where the pin list came from. "firtool" when every port of the
+    # behavioral module follows firtool's <R|W|RW><n>_<function> naming and
+    # the pins are the module's own ports; "" when they were synthesized
+    # from the yosys port counts.
+    port_convention: str = ""
     pins: list[Pin] = field(default_factory=list)
     # The module whose RTL body simulates this memory: {"file", "module"}.
     behavioral_model: dict | None = None
@@ -106,9 +115,12 @@ def memory_from_dict(d: dict) -> Memory:
         "write_ports",
         "rw_ports",
         "mask_lanes",
+        "comb_read_ports",
     ):
         if key in d:
             setattr(mem, key, int(d[key]))
+    if "port_convention" in d:
+        mem.port_convention = str(d["port_convention"])
     if "pins" in d:
         mem.pins = [_pin_from_dict(p) for p in d["pins"]]
     if "behavioral_model" in d:
@@ -170,10 +182,13 @@ def merge(detected: list[Memory], overrides: list[Memory]) -> list[Memory]:
             "write_ports",
             "rw_ports",
             "mask_lanes",
+            "comb_read_ports",
         ):
             value = getattr(o, key)
             if value:
                 setattr(base, key, value)
+        if o.port_convention:
+            base.port_convention = o.port_convention
         if o.behavioral_model is not None:
             base.behavioral_model = o.behavioral_model
         if o.idiomatic:
