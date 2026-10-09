@@ -8,12 +8,17 @@
 # later, as a memory over SYNTH_MEMORY_MAX_BITS with no hint of why. Run
 # after the sources are read; `names` is the blackboxes.txt list.
 proc auto_memories_check_blackboxed { names } {
+  if { [llength $names] == 0 } {
+    return
+  }
   # yosys lists an escaped module with its leading backslash (`\1d_ram`);
   # blackboxes.txt names it as read_slang takes it (`1d_ram`).
   set blackboxed {}
-  foreach m [split [string trim \
-    [tee -q -s result.string select -list-mod =A:blackbox]] "\n"] {
-    lappend blackboxed [regsub {^\\} $m {}]
+  foreach m [split [tee -q -s result.string select -list-mod =A:blackbox] "\n"] {
+    set m [string trim $m]
+    if { $m ne "" } {
+      lappend blackboxed [regsub {^\\} $m {}]
+    }
   }
   set missing {}
   foreach m $names {
