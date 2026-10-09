@@ -122,6 +122,13 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
 
     for mod_name, mod_info in modules.items():
         clean_mod_name = mod_name[1:] if mod_name.startswith("\\") else mod_name
+        # slang's --keep-hierarchy elaborates one module per instance and
+        # names it `<definition>$<instance path>`; the flow blackboxes by
+        # definition (`--blackboxed-module <definition>` is what the
+        # frontend honours, and the black box it imports has the
+        # definition's type), so the memory is named for the definition
+        # and its copies collapse into one entry below.
+        clean_mod_name = definition_name(clean_mod_name)
         cells = mod_info.get("cells", {})
         mem_cells = [
             n for n, c in cells.items() if c.get("type", "") in ("$mem_v2", "$mem")
@@ -289,4 +296,54 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
             )
             out.append(mem)
 
-    return out
+    return dedupe(out)
+
+
+def definition_name(module: str) -> str:
+    """`array_64x114$top.u0` -> `array_64x114`; anything else unchanged.
+
+    Only a slang uniquified name, an identifier before the first `$`,
+    is cut; yosys's own `$paramod\\...` names have nothing before it and
+    stay whole.
+    """
+    head, sep, _ = module.partition("$")
+    if sep and head and (head[0].isalpha() or head[0] == "_"):
+        return head
+    return module
+
+
+def dedupe(memories: list[schema.Memory]) -> list[schema.Memory]:
+    """One entry per name; copies must agree on shape and pins.
+
+    The copies are one definition elaborated per instance, so they agree
+    unless the definition is parameterised on the memory's shape -- and
+    then one liberty view per definition cannot serve them, which is an
+    error rather than a silent pick.
+    """
+
+    def shape(m):
+        return (
+            m.rows,
+            m.bits,
+            m.read_ports,
+            m.write_ports,
+            m.rw_ports,
+            m.mask_lanes,
+            m.comb_read_ports,
+            m.port_convention,
+            tuple((p.name, p.direction, p.width) for p in m.pins),
+        )
+
+    by_name: dict[str, schema.Memory] = {}
+    for m in memories:
+        first = by_name.get(m.name)
+        if first is None:
+            by_name[m.name] = m
+        elif shape(first) != shape(m):
+            raise ValueError(
+                f"memory {m.name}: two elaborations differ in shape "
+                f"({first.rows}x{first.bits} against {m.rows}x{m.bits}, or in "
+                "ports); a definition parameterised on its memory cannot be "
+                "one macro"
+            )
+    return list(by_name.values())

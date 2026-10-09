@@ -157,6 +157,35 @@ class FirtoolConventionTest(unittest.TestCase):
         mems = detect.scan_yosys_json(yosys_json)
         self.assertEqual(sorted(m.name for m in mems), ["array_256x66", "array_64x114"])
 
+    def test_slang_uniquified_copies_collapse_to_the_definition(self):
+        # slang --keep-hierarchy names a module per instance; the flow
+        # blackboxes the definition, so that is the memory's name and its
+        # copies are one entry
+        yosys_json = {
+            "modules": {
+                "\\array_64x114$top.t0.u0": _firtool_rw_module(),
+                "\\array_64x114$top.t0.u1": _firtool_rw_module(),
+                "\\array_256x66$top.t1.u0": _firtool_rw_module(256, 66, 1),
+            }
+        }
+        mems = detect.scan_yosys_json(yosys_json)
+        self.assertEqual(sorted(m.name for m in mems), ["array_256x66", "array_64x114"])
+        by = {m.name: m for m in mems}
+        self.assertEqual(by["array_64x114"].behavioral_model["module"], "array_64x114")
+        self.assertEqual(
+            detect.definition_name("$paramod\\foo\\W=8"), "$paramod\\foo\\W=8"
+        )
+
+    def test_copies_of_one_definition_must_agree(self):
+        yosys_json = {
+            "modules": {
+                "\\array_64x114$top.t0.u0": _firtool_rw_module(),
+                "\\array_64x114$top.t0.u1": _firtool_rw_module(64, 114, 1),
+            }
+        }
+        with self.assertRaises(ValueError):
+            detect.scan_yosys_json(yosys_json)
+
     def test_rw_port_pins_are_the_module_ports(self):
         (m,) = detect.scan_yosys_json(
             {"modules": {"\\array_64x114": _firtool_rw_module()}}
