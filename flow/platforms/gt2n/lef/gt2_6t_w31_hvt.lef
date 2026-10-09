@@ -96,6 +96,8 @@ MACRO gt2_6t_and2_x1_w31_hvt
       RECT 0.038 0.114 0.1595 0.126 ;
     LAYER M1 ;
       RECT 0.14 0.038 0.154 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.168 0.144 ;
   END
 END gt2_6t_and2_x1_w31_hvt
 
@@ -157,6 +159,8 @@ MACRO gt2_6t_and2_x2_w31_hvt
       RECT 0.038 0.114 0.1595 0.126 ;
     LAYER M1 ;
       RECT 0.14 0.038 0.154 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_and2_x2_w31_hvt
 
@@ -218,6 +222,8 @@ MACRO gt2_6t_and2_x3_w31_hvt
       RECT 0.038 0.114 0.2435 0.126 ;
     LAYER M1 ;
       RECT 0.14 0.038 0.154 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.252 0.144 ;
   END
 END gt2_6t_and2_x3_w31_hvt
 
@@ -279,6 +285,8 @@ MACRO gt2_6t_and2_x4_w31_hvt
       RECT 0.038 0.114 0.2435 0.126 ;
     LAYER M1 ;
       RECT 0.14 0.038 0.154 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_and2_x4_w31_hvt
 
@@ -349,6 +357,8 @@ MACRO gt2_6t_and3_x1_w31_hvt
       RECT 0.147 0.114 0.2015 0.126 ;
     LAYER M1 ;
       RECT 0.182 0.038 0.196 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_and3_x1_w31_hvt
 
@@ -429,6 +439,8 @@ MACRO gt2_6t_ao211_x1_w31_hvt
       RECT 0.2605 0.114 0.2855 0.126 ;
     LAYER M1 ;
       RECT 0.224 0.014 0.238 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_ao211_x1_w31_hvt
 
@@ -499,6 +511,8 @@ MACRO gt2_6t_ao21_x1_w31_hvt
       RECT 0.0505 0.114 0.2015 0.126 ;
     LAYER M1 ;
       RECT 0.182 0.014 0.196 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_ao21_x1_w31_hvt
 
@@ -579,6 +593,8 @@ MACRO gt2_6t_ao22_x1_w31_hvt
       RECT 0.2605 0.114 0.2855 0.126 ;
     LAYER M1 ;
       RECT 0.224 0.014 0.238 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_ao22_x1_w31_hvt
 
@@ -659,6 +675,8 @@ MACRO gt2_6t_ao31_x1_w31_hvt
       RECT 0.2605 0.114 0.2855 0.126 ;
     LAYER M1 ;
       RECT 0.224 0.014 0.238 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_ao31_x1_w31_hvt
 
@@ -748,6 +766,8 @@ MACRO gt2_6t_ao32_x1_w31_hvt
       RECT 0.3025 0.114 0.3275 0.126 ;
     LAYER M1 ;
       RECT 0.266 0.038 0.28 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.336 0.144 ;
   END
 END gt2_6t_ao32_x1_w31_hvt
 
@@ -846,6 +866,8 @@ MACRO gt2_6t_ao33_x1_w31_hvt
       RECT 0.3445 0.114 0.3695 0.126 ;
     LAYER M1 ;
       RECT 0.308 0.038 0.322 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.378 0.144 ;
   END
 END gt2_6t_ao33_x1_w31_hvt
 
@@ -921,6 +943,8 @@ MACRO gt2_6t_aoi211_x1_w31_hvt
       RECT 0.1555 0.066 0.2015 0.078 ;
       RECT 0.1315 0.09 0.2015 0.102 ;
       RECT 0.0085 0.114 0.1175 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_aoi211_x1_w31_hvt
 
@@ -987,6 +1011,8 @@ MACRO gt2_6t_aoi21_x1_w31_hvt
       RECT 0.1135 0.066 0.1385 0.078 ;
       RECT 0.0085 0.09 0.1175 0.102 ;
       RECT 0.038 0.114 0.0765 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.168 0.144 ;
   END
 END gt2_6t_aoi21_x1_w31_hvt
 
@@ -1062,6 +1088,8 @@ MACRO gt2_6t_aoi22_x1_w31_hvt
       RECT 0.1555 0.066 0.2015 0.078 ;
       RECT 0.129 0.09 0.177 0.102 ;
       RECT 0.0085 0.114 0.2015 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_aoi22_x1_w31_hvt
 
@@ -1137,6 +1165,8 @@ MACRO gt2_6t_aoi31_x1_w31_hvt
       RECT 0.1555 0.066 0.2015 0.078 ;
       RECT 0.1315 0.09 0.2015 0.102 ;
       RECT 0.0505 0.114 0.1595 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_aoi31_x1_w31_hvt
 
@@ -1221,6 +1251,8 @@ MACRO gt2_6t_aoi32_x1_w31_hvt
       RECT 0.1975 0.066 0.2435 0.078 ;
       RECT 0.1765 0.09 0.2435 0.102 ;
       RECT 0.0505 0.114 0.2435 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.252 0.144 ;
   END
 END gt2_6t_aoi32_x1_w31_hvt
 
@@ -1314,6 +1346,8 @@ MACRO gt2_6t_aoi33_x1_w31_hvt
       RECT 0.2395 0.066 0.2855 0.078 ;
       RECT 0.1765 0.09 0.2855 0.102 ;
       RECT 0.0505 0.114 0.2435 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_aoi33_x1_w31_hvt
 
@@ -1366,6 +1400,8 @@ MACRO gt2_6t_buf_x1_w31_hvt
       RECT 0.052 0.114 0.1175 0.126 ;
     LAYER M1 ;
       RECT 0.098 0.038 0.112 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.126 0.144 ;
   END
 END gt2_6t_buf_x1_w31_hvt
 
@@ -1418,6 +1454,8 @@ MACRO gt2_6t_buf_x10_w31_hvt
       RECT 0.156 0.066 0.558 0.078 ;
       RECT 0.0085 0.09 0.2015 0.102 ;
       RECT 0.1345 0.114 0.5375 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.588 0.144 ;
   END
 END gt2_6t_buf_x10_w31_hvt
 
@@ -1470,6 +1508,8 @@ MACRO gt2_6t_buf_x12_w31_hvt
       RECT 0.156 0.066 0.642 0.078 ;
       RECT 0.0085 0.09 0.2015 0.102 ;
       RECT 0.1345 0.114 0.6215 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.672 0.144 ;
   END
 END gt2_6t_buf_x12_w31_hvt
 
@@ -1522,6 +1562,8 @@ MACRO gt2_6t_buf_x2_w31_hvt
       RECT 0.072 0.066 0.138 0.078 ;
       RECT 0.0085 0.09 0.1175 0.102 ;
       RECT 0.0505 0.114 0.1175 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.168 0.144 ;
   END
 END gt2_6t_buf_x2_w31_hvt
 
@@ -1574,6 +1616,8 @@ MACRO gt2_6t_buf_x3_w31_hvt
       RECT 0.072 0.066 0.18 0.078 ;
       RECT 0.0085 0.09 0.1175 0.102 ;
       RECT 0.0505 0.114 0.2015 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_buf_x3_w31_hvt
 
@@ -1626,6 +1670,8 @@ MACRO gt2_6t_buf_x4_w31_hvt
       RECT 0.072 0.066 0.222 0.078 ;
       RECT 0.0085 0.09 0.1175 0.102 ;
       RECT 0.0505 0.114 0.2015 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.252 0.144 ;
   END
 END gt2_6t_buf_x4_w31_hvt
 
@@ -1678,6 +1724,8 @@ MACRO gt2_6t_buf_x6_w31_hvt
       RECT 0.114 0.066 0.348 0.078 ;
       RECT 0.0505 0.09 0.1595 0.102 ;
       RECT 0.0925 0.114 0.3275 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.378 0.144 ;
   END
 END gt2_6t_buf_x6_w31_hvt
 
@@ -1730,6 +1778,8 @@ MACRO gt2_6t_buf_x8_w31_hvt
       RECT 0.114 0.066 0.432 0.078 ;
       RECT 0.0505 0.09 0.1595 0.102 ;
       RECT 0.0925 0.114 0.4115 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.462 0.144 ;
   END
 END gt2_6t_buf_x8_w31_hvt
 
@@ -1765,6 +1815,8 @@ MACRO gt2_6t_decapcc_w31_hvt
     LAYER M1 ;
       RECT 0.056 0.014 0.07 0.129 ;
       RECT 0.014 0.015 0.028 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.084 0.144 ;
   END
 END gt2_6t_decapcc_w31_hvt
 
@@ -1888,6 +1940,8 @@ MACRO gt2_6t_dffasync_x1_w31_hvt
       RECT 0.2185 0.234 0.389 0.246 ;
       RECT 0.409 0.234 0.5795 0.246 ;
       RECT 0.071 0.258 0.3695 0.27 ;
+    LAYER HVT ;
+      RECT 0 0 0.63 0.288 ;
   END
 END gt2_6t_dffasync_x1_w31_hvt
 
@@ -2025,6 +2079,8 @@ MACRO gt2_6t_dffasync_x2_w31_hvt
       RECT 0.2185 0.234 0.389 0.246 ;
       RECT 0.409 0.234 0.662 0.246 ;
       RECT 0.071 0.258 0.3695 0.27 ;
+    LAYER HVT ;
+      RECT 0 0 0.756 0.288 ;
   END
 END gt2_6t_dffasync_x2_w31_hvt
 
@@ -2163,6 +2219,8 @@ MACRO gt2_6t_dffasync_x4_w31_hvt
       RECT 0.409 0.234 0.662 0.246 ;
       RECT 0.071 0.258 0.3695 0.27 ;
       RECT 0.6805 0.258 0.7475 0.27 ;
+    LAYER HVT ;
+      RECT 0 0 0.798 0.288 ;
   END
 END gt2_6t_dffasync_x4_w31_hvt
 
@@ -2189,6 +2247,10 @@ MACRO gt2_6t_filler_w31_hvt
         RECT 0 -0.016 0.042 0.016 ;
     END
   END vss
+  OBS
+    LAYER HVT ;
+      RECT 0 0 0.042 0.144 ;
+  END
 END gt2_6t_filler_w31_hvt
 
 MACRO gt2_6t_inv_x1_w31_hvt
@@ -2235,6 +2297,8 @@ MACRO gt2_6t_inv_x1_w31_hvt
       RECT 0.042 0.042 0.0755 0.054 ;
       RECT 0.01 0.066 0.054 0.078 ;
       RECT 0.042 0.09 0.0755 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.084 0.144 ;
   END
 END gt2_6t_inv_x1_w31_hvt
 
@@ -2282,6 +2346,8 @@ MACRO gt2_6t_inv_x10_w31_hvt
       RECT 0.042 0.042 0.412 0.054 ;
       RECT 0.01 0.066 0.432 0.078 ;
       RECT 0.042 0.09 0.412 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.462 0.144 ;
   END
 END gt2_6t_inv_x10_w31_hvt
 
@@ -2329,6 +2395,8 @@ MACRO gt2_6t_inv_x12_w31_hvt
       RECT 0.042 0.042 0.496 0.054 ;
       RECT 0.01 0.066 0.516 0.078 ;
       RECT 0.042 0.09 0.496 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.546 0.144 ;
   END
 END gt2_6t_inv_x12_w31_hvt
 
@@ -2376,6 +2444,8 @@ MACRO gt2_6t_inv_x2_w31_hvt
       RECT 0.042 0.042 0.0755 0.054 ;
       RECT 0.01 0.066 0.096 0.078 ;
       RECT 0.042 0.09 0.0755 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.126 0.144 ;
   END
 END gt2_6t_inv_x2_w31_hvt
 
@@ -2423,6 +2493,8 @@ MACRO gt2_6t_inv_x3_w31_hvt
       RECT 0.042 0.042 0.1595 0.054 ;
       RECT 0.01 0.066 0.138 0.078 ;
       RECT 0.042 0.09 0.1595 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.168 0.144 ;
   END
 END gt2_6t_inv_x3_w31_hvt
 
@@ -2470,6 +2542,8 @@ MACRO gt2_6t_inv_x4_w31_hvt
       RECT 0.042 0.042 0.1595 0.054 ;
       RECT 0.01 0.066 0.18 0.078 ;
       RECT 0.042 0.09 0.1595 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_inv_x4_w31_hvt
 
@@ -2517,6 +2591,8 @@ MACRO gt2_6t_inv_x6_w31_hvt
       RECT 0.042 0.042 0.244 0.054 ;
       RECT 0.01 0.066 0.264 0.078 ;
       RECT 0.042 0.09 0.244 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_inv_x6_w31_hvt
 
@@ -2564,6 +2640,8 @@ MACRO gt2_6t_inv_x8_w31_hvt
       RECT 0.042 0.042 0.328 0.054 ;
       RECT 0.01 0.066 0.348 0.078 ;
       RECT 0.042 0.09 0.328 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.378 0.144 ;
   END
 END gt2_6t_inv_x8_w31_hvt
 
@@ -2649,6 +2727,8 @@ MACRO gt2_6t_mux2_x1_w31_hvt
       RECT 0.182 0.014 0.196 0.129 ;
       RECT 0.14 0.015 0.154 0.273 ;
       RECT 0.056 0.1595 0.07 0.273 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.288 ;
   END
 END gt2_6t_mux2_x1_w31_hvt
 
@@ -2705,6 +2785,8 @@ MACRO gt2_6t_nand2_x1_w31_hvt
       RECT 0.0085 0.066 0.054 0.078 ;
       RECT 0.072 0.066 0.1175 0.078 ;
       RECT 0.0085 0.09 0.1175 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.126 0.144 ;
   END
 END gt2_6t_nand2_x1_w31_hvt
 
@@ -2765,6 +2847,8 @@ MACRO gt2_6t_nand2_x2_w31_hvt
       RECT 0.0085 0.09 0.2015 0.102 ;
     LAYER M1 ;
       RECT 0.182 0.014 0.196 0.083 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_nand2_x2_w31_hvt
 
@@ -2828,6 +2912,8 @@ MACRO gt2_6t_nand2_x3_w31_hvt
     LAYER M1 ;
       RECT 0.182 0.014 0.196 0.083 ;
       RECT 0.266 0.061 0.28 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_nand2_x3_w31_hvt
 
@@ -2893,6 +2979,8 @@ MACRO gt2_6t_nand2_x4_w31_hvt
       RECT 0.182 0.014 0.196 0.083 ;
       RECT 0.35 0.014 0.364 0.083 ;
       RECT 0.266 0.061 0.28 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.378 0.144 ;
   END
 END gt2_6t_nand2_x4_w31_hvt
 
@@ -2958,6 +3046,8 @@ MACRO gt2_6t_nand3_x1_w31_hvt
       RECT 0.0715 0.066 0.0965 0.078 ;
       RECT 0.1135 0.066 0.1595 0.078 ;
       RECT 0.0085 0.09 0.1175 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.168 0.144 ;
   END
 END gt2_6t_nand3_x1_w31_hvt
 
@@ -3014,6 +3104,8 @@ MACRO gt2_6t_nor2_x1_w31_hvt
       RECT 0.0085 0.066 0.054 0.078 ;
       RECT 0.072 0.066 0.1175 0.078 ;
       RECT 0.042 0.09 0.1175 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.126 0.144 ;
   END
 END gt2_6t_nor2_x1_w31_hvt
 
@@ -3074,6 +3166,8 @@ MACRO gt2_6t_nor2_x2_w31_hvt
       RECT 0.042 0.09 0.1175 0.102 ;
     LAYER M1 ;
       RECT 0.182 0.014 0.196 0.082 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_nor2_x2_w31_hvt
 
@@ -3137,6 +3231,8 @@ MACRO gt2_6t_nor2_x3_w31_hvt
     LAYER M1 ;
       RECT 0.182 0.014 0.196 0.082 ;
       RECT 0.266 0.062 0.28 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_nor2_x3_w31_hvt
 
@@ -3202,6 +3298,8 @@ MACRO gt2_6t_nor2_x4_w31_hvt
       RECT 0.182 0.014 0.196 0.082 ;
       RECT 0.35 0.014 0.364 0.082 ;
       RECT 0.266 0.062 0.28 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.378 0.144 ;
   END
 END gt2_6t_nor2_x4_w31_hvt
 
@@ -3267,6 +3365,8 @@ MACRO gt2_6t_nor3_x1_w31_hvt
       RECT 0.0715 0.066 0.0965 0.078 ;
       RECT 0.1135 0.066 0.1595 0.078 ;
       RECT 0.0825 0.09 0.1595 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.168 0.144 ;
   END
 END gt2_6t_nor3_x1_w31_hvt
 
@@ -3347,6 +3447,8 @@ MACRO gt2_6t_oa211_x1_w31_hvt
       RECT 0.0085 0.114 0.2435 0.126 ;
     LAYER M1 ;
       RECT 0.224 0.038 0.238 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.252 0.144 ;
   END
 END gt2_6t_oa211_x1_w31_hvt
 
@@ -3417,6 +3519,8 @@ MACRO gt2_6t_oa21_x1_w31_hvt
       RECT 0.1465 0.114 0.2015 0.126 ;
     LAYER M1 ;
       RECT 0.182 0.015 0.196 0.129 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_oa21_x1_w31_hvt
 
@@ -3497,6 +3601,8 @@ MACRO gt2_6t_oa22_x1_w31_hvt
       RECT 0.2605 0.114 0.2855 0.126 ;
     LAYER M1 ;
       RECT 0.224 0.038 0.238 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_oa22_x1_w31_hvt
 
@@ -3577,6 +3683,8 @@ MACRO gt2_6t_oa31_x1_w31_hvt
       RECT 0.2605 0.114 0.2855 0.126 ;
     LAYER M1 ;
       RECT 0.224 0.038 0.238 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_oa31_x1_w31_hvt
 
@@ -3666,6 +3774,8 @@ MACRO gt2_6t_oa32_x1_w31_hvt
       RECT 0.3025 0.114 0.3275 0.126 ;
     LAYER M1 ;
       RECT 0.266 0.038 0.28 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.336 0.144 ;
   END
 END gt2_6t_oa32_x1_w31_hvt
 
@@ -3764,6 +3874,8 @@ MACRO gt2_6t_oa33_x1_w31_hvt
       RECT 0.3445 0.114 0.3695 0.126 ;
     LAYER M1 ;
       RECT 0.308 0.038 0.322 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.378 0.144 ;
   END
 END gt2_6t_oa33_x1_w31_hvt
 
@@ -3839,6 +3951,8 @@ MACRO gt2_6t_oai211_x1_w31_hvt
       RECT 0.1135 0.066 0.1385 0.078 ;
       RECT 0.1555 0.066 0.2015 0.078 ;
       RECT 0.0085 0.114 0.172 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_oai211_x1_w31_hvt
 
@@ -3905,6 +4019,8 @@ MACRO gt2_6t_oai21_x1_w31_hvt
       RECT 0.0715 0.066 0.0965 0.078 ;
       RECT 0.1135 0.066 0.1385 0.078 ;
       RECT 0.038 0.09 0.1225 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.168 0.144 ;
   END
 END gt2_6t_oai21_x1_w31_hvt
 
@@ -3980,6 +4096,8 @@ MACRO gt2_6t_oai22_x1_w31_hvt
       RECT 0.1135 0.066 0.1385 0.078 ;
       RECT 0.1555 0.066 0.2015 0.078 ;
       RECT 0.0085 0.114 0.2015 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_oai22_x1_w31_hvt
 
@@ -4055,6 +4173,8 @@ MACRO gt2_6t_oai31_x1_w31_hvt
       RECT 0.1135 0.066 0.1385 0.078 ;
       RECT 0.1555 0.066 0.2015 0.078 ;
       RECT 0.0085 0.114 0.2015 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_oai31_x1_w31_hvt
 
@@ -4139,6 +4259,8 @@ MACRO gt2_6t_oai32_x1_w31_hvt
       RECT 0.1555 0.066 0.1805 0.078 ;
       RECT 0.1975 0.066 0.2435 0.078 ;
       RECT 0.0085 0.114 0.2435 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.252 0.144 ;
   END
 END gt2_6t_oai32_x1_w31_hvt
 
@@ -4232,6 +4354,8 @@ MACRO gt2_6t_oai33_x1_w31_hvt
       RECT 0.1975 0.066 0.2225 0.078 ;
       RECT 0.2395 0.066 0.2855 0.078 ;
       RECT 0.0085 0.114 0.2855 0.126 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_oai33_x1_w31_hvt
 
@@ -4293,6 +4417,8 @@ MACRO gt2_6t_or2_x1_w31_hvt
       RECT 0.038 0.114 0.1595 0.126 ;
     LAYER M1 ;
       RECT 0.14 0.038 0.154 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.168 0.144 ;
   END
 END gt2_6t_or2_x1_w31_hvt
 
@@ -4354,6 +4480,8 @@ MACRO gt2_6t_or2_x2_w31_hvt
       RECT 0.038 0.114 0.1595 0.126 ;
     LAYER M1 ;
       RECT 0.14 0.038 0.154 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_or2_x2_w31_hvt
 
@@ -4415,6 +4543,8 @@ MACRO gt2_6t_or2_x3_w31_hvt
       RECT 0.038 0.114 0.2435 0.126 ;
     LAYER M1 ;
       RECT 0.14 0.038 0.154 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.252 0.144 ;
   END
 END gt2_6t_or2_x3_w31_hvt
 
@@ -4476,6 +4606,8 @@ MACRO gt2_6t_or2_x4_w31_hvt
       RECT 0.038 0.114 0.2435 0.126 ;
     LAYER M1 ;
       RECT 0.14 0.038 0.154 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_or2_x4_w31_hvt
 
@@ -4546,6 +4678,8 @@ MACRO gt2_6t_or3_x1_w31_hvt
       RECT 0.147 0.114 0.2015 0.126 ;
     LAYER M1 ;
       RECT 0.182 0.038 0.196 0.106 ;
+    LAYER HVT ;
+      RECT 0 0 0.21 0.144 ;
   END
 END gt2_6t_or3_x1_w31_hvt
 
@@ -4580,6 +4714,8 @@ MACRO gt2_6t_tapfspdn_w31_hvt
     LAYER M0 ;
       RECT 0.01 0.042 0.0755 0.054 ;
       RECT 0.01 0.09 0.034 0.102 ;
+    LAYER HVT ;
+      RECT 0 0 0.084 0.144 ;
   END
 END gt2_6t_tapfspdn_w31_hvt
 
@@ -4606,6 +4742,10 @@ MACRO gt2_6t_tapbspdn_w31_hvt
         RECT 0 -0.016 0.042 0.016 ;
     END
   END vss
+  OBS
+    LAYER HVT ;
+      RECT 0 0 0.042 0.144 ;
+  END
 END gt2_6t_tapbspdn_w31_hvt
 
 MACRO gt2_6t_tiehigh_w31_hvt
@@ -4646,6 +4786,8 @@ MACRO gt2_6t_tiehigh_w31_hvt
       RECT 0.042 0.09 0.0755 0.102 ;
     LAYER M1 ;
       RECT 0.014 0.015 0.028 0.129 ;
+    LAYER HVT ;
+      RECT 0 0 0.084 0.144 ;
   END
 END gt2_6t_tiehigh_w31_hvt
 
@@ -4687,6 +4829,8 @@ MACRO gt2_6t_tielow_w31_hvt
       RECT 0.01 0.09 0.0435 0.102 ;
     LAYER M1 ;
       RECT 0.014 0.015 0.028 0.129 ;
+    LAYER HVT ;
+      RECT 0 0 0.084 0.144 ;
   END
 END gt2_6t_tielow_w31_hvt
 
@@ -4752,6 +4896,8 @@ MACRO gt2_6t_xnor2_x1_w31_hvt
       RECT 0.056 0.014 0.07 0.106 ;
       RECT 0.224 0.014 0.238 0.082 ;
       RECT 0.161 0.062 0.175 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_xnor2_x1_w31_hvt
 
@@ -4817,6 +4963,8 @@ MACRO gt2_6t_xor2_x1_w31_hvt
       RECT 0.161 0.014 0.175 0.082 ;
       RECT 0.056 0.038 0.07 0.13 ;
       RECT 0.224 0.062 0.238 0.13 ;
+    LAYER HVT ;
+      RECT 0 0 0.294 0.144 ;
   END
 END gt2_6t_xor2_x1_w31_hvt
 

@@ -14,8 +14,10 @@ itself a welcome signal that someone is using it.
 
 ## What it does
 
-With `AUTO_MEMORIES=1`, a pre-synthesis step runs
-`scripts/memories/gen_memories.py` over `VERILOG_FILES` and writes:
+With `AUTO_MEMORIES=1`, a pre-synthesis yosys pass
+(`scripts/memories/extract_memories.tcl`) elaborates `VERILOG_FILES`
+into `$(RESULTS_DIR)/memories_inferred.json`, and
+`scripts/memories/gen_memories.py` reads that netlist and writes:
 
 | File | Content |
 | --- | --- |
@@ -39,23 +41,26 @@ flip-flops, like any other RTL.
 
 ## How memories are detected
 
-Detection is a fast Python scan (`scripts/memories/detect.py`) for
-modules whose entire port list follows the firtool (CIRCT) memory port
-convention: every port named `<R|W|RW><n>_<function>`, e.g. `R0_addr`,
-`W0_en`, `RW0_wdata`, including the subword-split forms `RW0_wdata_3` /
-`W0_mask_2`. This is what Chisel/firtool emits for module-separated
-memories, and what the rocket-chip generation of Chisel emitted (the
-in-tree tinyRocket design).
+Yosys infers the memories. `scripts/memories/extract_memories.tcl`
+reads the design sources with the design's frontend, runs `hierarchy`,
+`proc` and `memory -nomap`, and writes the netlist as JSON.
+`scripts/memories/detect.py` then takes each `$mem_v2` cell in it:
+
+- depth and width from `SIZE` and `WIDTH`, read and write port counts
+  from `RD_PORTS` and `WR_PORTS`, and write-mask lanes from the width
+  of `WR_EN`. Read-write ports are not inferred; a `.memories` override
+  can describe them (see below).
+- pins named `R<n>_clk/addr/en/data` and `W<n>_clk/addr/en/data`, plus
+  `W<n>_mask` when there are mask lanes.
+- the module's name when the `$mem_v2` is the only cell in its module,
+  otherwise the cell's name.
 
 Two consequences, documented as deliberate scope:
 
-- **Module boundary only.** A memory embedded inside a larger module
-  (a bare `reg [7:0] mem [0:255]` next to other logic) is not detected.
-  Yosys's memory-inference pass sees those; FPGA tools extract them
-  into block RAMs. Wiring yosys up as the detector — or growing such a
-  pass in OpenROAD SYN, which currently has no memory inference and
-  therefore cannot be leaned on here either — is future work; this
-  feature punts on it with the simple scanner.
+- **Module boundary only.** Synthesis blackboxes converted memories by
+  module name, so only a memory alone in its module is replaced by a
+  macro. A memory inferred next to other logic is named after its
+  cell, which matches no module.
 - **No banking.** Each detected memory maps to exactly one macro. A
   memory too wide, too deep, or too ported for a single sensible macro
   is not decomposed across several macros — a future extension.
@@ -95,37 +100,39 @@ option and the design forces conversion.
 
 ## Generated views
 
-The `.lib` mirrors the structural shape OpenROAD's abstract writer
-produces for hardened blocks: `bus()` groups **with per-bit `pin()`
-records** (a bus without per-bit siblings makes yosys silently drop bit
-connections at parent instances), per-port clock pins with
-`min/max_clock_tree_path` arcs, setup/hold constraints on inputs,
-clock-to-out arcs on outputs, and `internal_power()` records under a
-`power_lut_template` so SAIF-driven power reporting is non-zero.
+The views come from FakeRAM2.0's asap7 backend
+(`tools/FakeRAM2.0/orfs_asap7/generate.py`), which `gen_memories.py` runs
+as `run.py --orfs_asap7_backend`.
+Every converted memory becomes a FakeRAM2.0 single-port RAM of its depth
+and width. Its other ports and write-mask lanes are not modelled, and the
+views use FakeRAM2.0's pin names, not the memory's own.
 
-The `.lef` is an abstract following the conventions of the platform's
-fakeram abstracts: `CLASS BLOCK`, per-bit signal pin pads stacked along
-the macro edge, interleaved horizontal power/ground straps the
-platform's PDN macro grid connects to, and a full-footprint multi-layer
-`OBS`.
+The `.lib` has `bus()` groups `addr_in`, `wd_in` and `rd_out` and pins
+`clk`, `we_in` and `ce_in`. Inputs have setup/hold constraints, `rd_out`
+has a clock-to-out arc, and pins have `internal_power()` records under a
+`power_lut_template`. `<m>_pre_layout.lib` has the same content as
+`<m>.lib`.
 
-Timing and area come from simple parametric models
-(`scripts/memories/liberty.py`, `scripts/memories/sram_area_model.py`):
-log2(rows) decode depth and √bits bit-line scaling for timing; an area
-model anchored to published 7 nm SP-SRAM figures (Suzuki et al., ISSCC
-2018). These are budgetary models — good enough to make floorplanning,
-placement, and timing behave representatively; not sign-off numbers.
+Timing, power and leakage are FakeRAM2.0's built-in asap7 defaults,
+the same for every memory. Only area and bus widths depend on the
+memory. Each bit is 2 contacted poly pitches by 10 fin pitches, and the
+bit array gets 20% extra in each direction: that is the `.lib` area.
+The `.lef` size is at least that array, rounded up to a multiple of
+0.19 µm in width and 1.4 µm in height; a shallow memory is made taller
+to leave room for its pins.
+
+The `.lef` is a `CLASS BLOCK` abstract with signal pins on M4 stacked up
+the left edge, alternating horizontal M4 `VDD`/`VSS` straps across the
+macro (which the platform's PDN macro grid connects to M5), and an `OBS`
+covering M1 to M4.
 
 ## Platform support
 
-**asap7 only.** The emitters are split into general structure
-(`liberty.py`, `lef.py`, parameterized by a `PdkParams`) and platform
-constants (`pdk_asap7.py`: pins and power straps on M4 — where the
-platform's PDN macro grid connects — pin pad/pitch, strap geometry,
-OBS layers, nominal voltage). Generalizing to other PDKs means
-providing their `PdkParams` — the code seam exists, the calibration
-work does not. `AUTO_MEMORIES=1` on any other platform fails with a
-clear error.
+**asap7 only.** `gen_memories.py` rejects any other platform. The
+asap7 process parameters (layers, pin pitch, poly and fin pitch, snap grid)
+are constants in `ASAP7_PROCESS_CONFIG` in
+`tools/FakeRAM2.0/orfs_asap7/generate.py`, not read from the platform.
+Another PDK would need its own backend there.
 
 ## Trying it
 
@@ -133,12 +140,14 @@ clear error.
 make DESIGN_CONFIG=designs/asap7/tinyRocket/config.mk synth floorplan
 ```
 
-The generator can also be run standalone to inspect what it would do:
+The generator can also be run standalone, on the
+`memories_inferred.json` that run leaves in the results directory, to
+inspect what it would do:
 
 ```shell
 python3 flow/scripts/memories/gen_memories.py \
   --platform asap7 --out-dir /tmp/mems --json /tmp/memories.json \
-  --verilog flow/designs/src/tinyRocket/freechips.rocketchip.system.TinyConfig.v
+  --yosys-json flow/results/asap7/tinyRocket/base/memories_inferred.json
 ```
 
 ## Consuming from bazel-orfs

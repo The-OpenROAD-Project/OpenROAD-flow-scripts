@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json
-import os
 import sys
 import tempfile
 import unittest
@@ -9,24 +8,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import gen_memories
-
-# Setup FAKERAM_RUN_PY using runfiles if available, otherwise assume a relative path
-if "TEST_WORKSPACE" in os.environ:
-    # Bazel test execution
-    runfiles_dir = Path(os.environ.get("RUNFILES_DIR", "."))
-    candidates = list(runfiles_dir.glob("**/fakeram*/run.py")) + list(
-        runfiles_dir.glob("**/run.py")
-    )
-    fakeram_run = candidates[0] if candidates else runfiles_dir / "fakeram" / "run.py"
-else:
-    fakeram_run = (
-        Path(__file__).resolve().parent.parent.parent.parent
-        / "tools"
-        / "FakeRAM2.0"
-        / "run.py"
-    )
-
-os.environ["FAKERAM_RUN_PY"] = str(fakeram_run)
 
 SAMPLE_YOSYS_NETLIST = {
     "modules": {
@@ -162,6 +143,22 @@ class GenMemoriesTest(unittest.TestCase):
         bad.write_text("{not json")
         with self.assertRaises(json.JSONDecodeError):
             self.run_generator(memories_files=[bad])
+
+    def test_missing_yosys_json_fails(self):
+        d = Path(self.tmp.name)
+        with self.assertRaises(FileNotFoundError):
+            gen_memories.main(
+                [
+                    "--platform",
+                    "asap7",
+                    "--out-dir",
+                    str(d / "memories"),
+                    "--json",
+                    str(d / "memories.json"),
+                    "--yosys-json",
+                    str(d / "missing.json"),
+                ]
+            )
 
     def test_no_memories_still_writes_contract_files(self):
         d = Path(self.tmp.name)

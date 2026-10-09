@@ -110,6 +110,22 @@ REPORT_CLOCK_SKEW:
     - route
     - final
   default: 1
+REPORT_ENDPOINT_SLACK:
+  description: >
+    If set to 1, write the setup and hold slack of every timing endpoint at
+    the end of every flow step (e.g. 3_3_place_gp) to
+    $REPORTS_DIR/<step>_endpoint_slack.json. These snapshots can be compared
+    across steps with flow/util/endpointSlack.py. See
+    docs/contrib/EndpointSlackTracking.md.
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
+  default: 0
 SKIP_REPORT_METRICS:
   description: >
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up
@@ -192,9 +208,9 @@ SYNTH_USE_SYN:
   default: 0
 AUTO_MEMORIES:
   description: >
-    Experimental. When set to 1, memory-shaped modules in the RTL
-    (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only)
-    are detected pre-synthesis, inventoried in
+    Experimental. When set to 1, memories that yosys infers in the RTL
+    (`$mem_v2` cells, module boundary only) are detected
+    pre-synthesis, inventoried in
     `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM
     macro — given generated .lib/.lef views under
     `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and
@@ -437,12 +453,6 @@ MIN_BUF_CELL_AND_PORTS:
     Used to insert a buffer cell to pass through wires. Used in synthesis.
   stages:
     - synth
-ABC_CLOCK_PERIOD_IN_PS:
-  description: >
-    Clock period to be used by STA during synthesis. Default value read from
-    `constraint.sdc`.
-  stages:
-    - synth
 ABC_DRIVER_CELL:
   description: |
     Default driver cell used during ABC synthesis.
@@ -538,6 +548,16 @@ PLACE_SITE:
 LAYER_PARASITICS_FILE:
   description: |
     Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.
+  type: string
+WIRE_LOAD_MODEL:
+  description: |
+    Name of a Liberty wire_load group applied with set_wire_load_model
+    whenever open.tcl reads timing. OpenSTA applies a wire-load model only
+    to nets without parasitics, so it gives wire delay to timing read
+    before placement and leaves placed and routed timing unaffected. An
+    unknown name is an error. Empty, the default, applies none. A platform
+    whose libraries define no wire_load group can supply one in a Liberty
+    file listed in ADDITIONAL_LIBS.
   type: string
 TAPCELL_TCL:
   description: |
@@ -674,10 +694,14 @@ ENABLE_DPO:
   description: |
     Enable detail placement with improve_placement feature.
   default: 1
+  stages:
+    - place
 DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
+  stages:
+    - place
 GPL_RANDOM_SEED:
   description: |
     Specifies a random seed for global placement.  Useful for perturbation studies.
@@ -926,9 +950,6 @@ DISABLE_VIA_GEN:
     Passed as -disable_via_gen to detailed_route.
   stages:
     - route
-MACRO_EXTENSION:
-  description: |
-    Sets the number of GCells added to the blockages boundaries from macros.
 DETAILED_ROUTE_END_ITERATION:
   description: >
     Maximum number of iterations.
@@ -948,9 +969,6 @@ OR_SEED:
 RCX_RULES:
   description: |
     RC Extraction rules file path.
-SET_RC_TCL:
-  description: |
-    Metal & Via RC definition file path.
 FILL_CONFIG:
   description: |
     JSON rule file for metal fill during chip finishing.
@@ -985,14 +1003,6 @@ SDC_FILE:
   required: true
   description: |
     The path to design constraint (SDC) file.
-  stages:
-    - synth
-SDC_GUT:
-  description: >
-    Load design and remove all internal logic before doing synthesis. This is
-    useful when creating a mock .lef abstract that has a smaller area than the
-    amount of logic would allow. bazel-orfs uses this to mock SRAMs, for
-    instance.
   stages:
     - synth
 ADDITIONAL_FILES:
@@ -1175,11 +1185,6 @@ CTS_CLUSTER_SIZE:
 CTS_LIB_NAME:
   description: |
     Name of the Liberty library to use in selecting the clock buffers.
-  stages:
-    - cts
-CTS_SNAPSHOT:
-  description: |
-    Creates ODB/SDC files prior to clock net and setup/hold repair.
   stages:
     - cts
 POST_CTS_TCL:
@@ -1551,12 +1556,6 @@ FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.
   default: base
-SKIP_ANTENNA_REPAIR_PRE_GRT:
-  default: 0
-  description: >
-    Skips antenna repair pre-global routing.
-  stages:
-    - grt
 SKIP_ANTENNA_REPAIR_POST_DRT:
   default: 0
   description: >

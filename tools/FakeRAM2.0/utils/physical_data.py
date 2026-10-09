@@ -92,7 +92,11 @@ class PhysicalData:
             raise Exception(
                 f"Error: attempting to set pin pitches before height ({name})"
             )
-        number_of_tracks_available = math.floor((h - 2 * y_offset) / min_pin_pitch)
+        # Rounded before flooring: a height that fits its pins exactly would
+        # otherwise lose a track to float error (e.g. 46.99999 -> 46)
+        number_of_tracks_available = math.floor(
+            round((h - 2 * y_offset) / min_pin_pitch, 6)
+        )
         number_of_spare_tracks = number_of_tracks_available - num_pins
 
         if number_of_spare_tracks < 0:
