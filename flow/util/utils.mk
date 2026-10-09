@@ -27,11 +27,13 @@ metadata-generate:
 	    -o $(REPORTS_DIR)/metadata.json 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
 
-# The QoR gate: metadata.json against the latest master build on the QoR
-# dashboard, using the dashboard's rule configs. Set DASHBOARD_API_KEY for
-# a private platform and DASHBOARD_JOB_NAME when the baseline pipeline is
-# not OpenROAD-flow-scripts-Public. A failed rule fails the target; an
-# unreachable dashboard or a design without a baseline only warns.
+# The QoR gate: metadata.json against the QoR dashboard's baseline for the
+# commit it records (the master build at its merge base, from the first of
+# the dashboard's default pipelines that has the design), using the
+# dashboard's rule configs. Set DASHBOARD_API_KEY for a private platform and
+# DASHBOARD_JOB_NAME to check as a build of one pipeline instead. A failed
+# rule fails the target; an unreachable dashboard or a design without a
+# baseline only warns.
 .PHONY: metadata-check
 metadata-check:
 	$(PYTHON_EXE) $(UTILS_DIR)/checkQorMetrics.py \
