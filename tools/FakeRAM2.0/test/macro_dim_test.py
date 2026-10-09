@@ -71,6 +71,20 @@ class MacroDimTest(unittest.TestCase):
             self.assertAlmostEqual(height, exp_height, delta=self._delta)
             self.assertAlmostEqual(width, exp_width, delta=self._delta)
 
+    def test_macro_dim_min_width(self):
+        """A narrow macro is widened to min_width_um; a wide one is not"""
+
+        process_data = TestUtils.get_base_process_data().copy()
+        process_data["min_width_um"] = 10.0
+        process = Process(process_data)
+        # 39 bits at 2048 deep is 5.054 um wide, below the floor
+        width, height = process.get_macro_dimensions(39, 2048, 1, 0)
+        self.assertAlmostEqual(width, 10.0, delta=self._delta)
+        self.assertAlmostEqual(height, 663.552, delta=self._delta)
+        # four banks make it 20.216 um wide, above the floor
+        width, _ = process.get_macro_dimensions(39, 2048, 4, 0)
+        self.assertAlmostEqual(width, 5.054 * 4, delta=self._delta)
+
     def test_macro_dim_invalid_banks(self):
         """Tests detection that an invalid bank value was given"""
 
