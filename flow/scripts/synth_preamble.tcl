@@ -273,7 +273,16 @@ proc convert_liberty_areas { } {
   # keep_hierarchy -min_cost refuses it ("Missing cost information on
   # instanced blackbox"). Its view is not read in its place, as its pins
   # need not be the module's (FakeRAM uses its own names).
-  set modules [tee -q -s result.string select -list-mod =*]
+  # One name per line, not a Tcl list: yosys lists an escaped module with
+  # its leading backslash (`\1d_ram`), which list parsing reads as an
+  # escape, and blackboxes.txt names it as read_slang takes it (`1d_ram`).
+  set modules {}
+  foreach line [split [tee -q -s result.string select -list-mod =*] "\n"] {
+    set line [string trim $line]
+    if { $line ne "" } {
+      lappend modules [regsub {^\\} $line {}]
+    }
+  }
   dict for {m area} [auto_memories_areas] {
     if { [lsearch -exact $modules $m] < 0 } {
       # slang imports a blackboxed module only where it is instanced
