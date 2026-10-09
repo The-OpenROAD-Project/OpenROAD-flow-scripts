@@ -63,6 +63,14 @@ class Process:
         # The narrowest macro the platform's power grid can reach; 0 for
         # no floor. See ASAP7_PROCESS_CONFIG in orfs_asap7/generate.py.
         self.min_width_um = json_data.get("min_width_um", 0.0)
+        if (
+            not isinstance(self.min_width_um, (int, float))
+            or isinstance(self.min_width_um, bool)
+            or self.min_width_um < 0
+        ):
+            raise Exception(
+                "min_width_um %r is not a width in um" % (self.min_width_um,)
+            )
 
         # Set to True when we want to use the process parameters or bitcell
         # sizes to calculate the macro dimensions. Set to False for spreadsheet

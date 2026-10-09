@@ -85,6 +85,15 @@ class MacroDimTest(unittest.TestCase):
         width, _ = process.get_macro_dimensions(39, 2048, 4, 0)
         self.assertAlmostEqual(width, 5.054 * 4, delta=self._delta)
 
+    def test_min_width_must_be_a_width(self):
+        """A min_width_um that is not a non-negative number is refused"""
+
+        for bad in (None, "5.6", -1.0):
+            process_data = TestUtils.get_base_process_data().copy()
+            process_data["min_width_um"] = bad
+            with self.assertRaises(Exception):
+                Process(process_data)
+
     def test_macro_dim_invalid_banks(self):
         """Tests detection that an invalid bank value was given"""
 

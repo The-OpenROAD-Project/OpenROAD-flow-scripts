@@ -28,7 +28,7 @@ ASAP7_PROCESS_CONFIG = {
     # (openRoad/pdn/grid_strategy-M1-M2-M5-M6.tcl: each net every 5.4 um,
     # 0.12 um wide). A narrower macro can sit between two straps of a
     # net, its grid gets no shapes and pdngen fails the whole design
-    # (PDN-0233). One pitch plus a strap, plus the rails' 0.048 um inset
+    # (PDN-0233, or PDN-0179 when it cannot repair the channels). One pitch plus a strap, plus the rails' 0.048 um inset
     # at both edges, puts a strap of each net across the rails wherever
     # the macro lands.
     "min_width_um": 5.4 + 0.12 + 2 * 0.048,
