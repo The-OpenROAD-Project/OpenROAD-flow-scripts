@@ -373,11 +373,28 @@ class TestAutoMemoriesCells(unittest.TestCase):
             )
 
     def test_missing_list_is_an_error(self):
+        # the flow always writes it; a missing list is a broken flow, not
+        # a design without generated macros
         with tempfile.TemporaryDirectory() as results:
-            with self.assertRaises(FileNotFoundError):
+            with self.assertRaisesRegex(RuntimeError, "blackboxes.txt is missing"):
                 def2stream.auto_memories_cells(
                     {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
                 )
+
+    def test_missing_results_dir_is_an_error(self):
+        with self.assertRaisesRegex(RuntimeError, "RESULTS_DIR is not set"):
+            def2stream.auto_memories_cells({"AUTO_MEMORIES": "1"})
+
+    def test_empty_list_allows_nothing(self):
+        with tempfile.TemporaryDirectory() as results:
+            os.mkdir(os.path.join(results, "memories"))
+            open(os.path.join(results, "memories", "blackboxes.txt"), "w").close()
+            self.assertEqual(
+                def2stream.auto_memories_cells(
+                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                ),
+                frozenset(),
+            )
 
 
 class TestOrphanCells(unittest.TestCase):

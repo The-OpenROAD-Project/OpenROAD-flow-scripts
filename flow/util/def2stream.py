@@ -143,8 +143,18 @@ def auto_memories_cells(environ):
     """
     if environ.get("AUTO_MEMORIES") != "1":
         return frozenset()
-    path = os.path.join(environ["RESULTS_DIR"], "memories", "blackboxes.txt")
-    with open(path) as f:
+    # do-auto-memories always writes the list, empty when nothing was
+    # converted; without it the merge cannot tell a generated macro from
+    # a cell whose GDS is missing.
+    results_dir = environ.get("RESULTS_DIR")
+    if not results_dir:
+        raise RuntimeError("AUTO_MEMORIES=1 but RESULTS_DIR is not set")
+    path = os.path.join(results_dir, "memories", "blackboxes.txt")
+    if not os.path.isfile(path):
+        raise RuntimeError(
+            f"AUTO_MEMORIES=1 but {path} is missing; do-auto-memories writes it"
+        )
+    with open(path, encoding="utf-8") as f:
         return frozenset(line.split()[0] for line in f if line.strip())
 
 
