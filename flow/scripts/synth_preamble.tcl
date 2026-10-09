@@ -44,10 +44,11 @@ proc read_checkpoint { file } {
 }
 
 # AUTO_MEMORIES: memory modules whose generated liberty view replaces
-# their behavioral body during synthesis. The list is produced by
-# scripts/memories/gen_memories.py before canonicalization; see
+# their behavioral body during synthesis, each with that view's area in
+# um^2. The list is produced by scripts/memories/gen_memories.py before
+# canonicalization, one `<module> <area>` per line; see
 # docs/user/AutoMemories.md.
-proc auto_memories_blackboxes { } {
+proc auto_memories_areas { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
   }
@@ -59,7 +60,25 @@ proc auto_memories_blackboxes { } {
   set fh [open $f r]
   set content [string map {\r ""} [read $fh]]
   close $fh
-  return [regexp -all -inline {\S+} $content]
+  set areas [dict create]
+  foreach line [split $content "\n"] {
+    if { [string trim $line] == "" } {
+      continue
+    }
+    set fields [regexp -all -inline {\S+} $line]
+    if {
+      [llength $fields] != 2
+      || ![string is double -strict [lindex $fields 1]]
+    } {
+      error "$f: expected `<module> <area>`, got `$line`"
+    }
+    dict set areas {*}$fields
+  }
+  return $areas
+}
+
+proc auto_memories_blackboxes { } {
+  return [dict keys [auto_memories_areas]]
 }
 
 proc read_design_sources { } {
@@ -250,12 +269,12 @@ proc convert_liberty_areas { } {
   }
 
   # An AUTO_MEMORIES macro is a blackbox from the RTL's own module, not a
-  # Liberty cell: it costs what its generated view's area says, or
+  # Liberty cell: it costs its generated view's area, or
   # keep_hierarchy -min_cost refuses it ("Missing cost information on
   # instanced blackbox"). Its view is not read in its place, as its pins
   # need not be the module's (FakeRAM uses its own names).
   set modules [tee -q -s result.string select -list-mod =*]
-  foreach m [auto_memories_blackboxes] {
+  dict for {m area} [auto_memories_areas] {
     if { [lsearch -exact $modules $m] < 0 } {
       # slang imports a blackboxed module only where it is instanced
       continue
@@ -265,22 +284,6 @@ proc convert_liberty_areas { } {
       # --blackboxed-module does not match: the body was elaborated
       error "AUTO_MEMORIES macro $m is in the design but was not\
         blackboxed; its name does not match the module's definition"
-    }
-    set lib "$::env(RESULTS_DIR)/memories/$m.lib"
-    if { ![file exists $lib] } {
-      error "AUTO_MEMORIES macro $m has no $lib"
-    }
-    set fh [open $lib r]
-    set text [read $fh]
-    close $fh
-    # the cell group of <m> and its area; the brace characters spelled as
-    # hex escapes, which keep the brace count of this body balanced. The
-    # module name is escaped whole: yosys and slang names carry `$`, `\`,
-    # `[` and `.`, each a regular-expression metacharacter.
-    set name [regsub -all {[][\x7b\x7d()*+?.\\^$|]} $m {\\&}]
-    set pat "cell\\s*\\(\\s*\"?$name\"?\\s*\\)\\s*\\\x7b\[^\x7d\]*?area\\s*:\\s*(\[0-9.eE+-\]+)"
-    if { ![regexp $pat $text -> area] } {
-      error "AUTO_MEMORIES macro $m: no area for cell $m in $lib"
     }
     rtlil::set_attr -mod -uint $m gate_cost_equivalent \
       [expr { int($area / $found_cell_area) }]

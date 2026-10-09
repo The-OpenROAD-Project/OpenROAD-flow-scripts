@@ -10,8 +10,9 @@ collects its $mem_v2 cells, merges user-supplied `.memories` files
   <out-dir>/<m>.lib             Liberty view per converted memory
   <out-dir>/<m>_pre_layout.lib  ideal-clock variant for pre-CTS consumers
   <out-dir>/<m>.lef             abstract LEF per converted memory
-  <out-dir>/blackboxes.txt      converted module names, one per line —
-                                what synthesis blackboxes
+  <out-dir>/blackboxes.txt      `<module> <area>` per line, area in um^2 as
+                                the .lib states it — what synthesis
+                                blackboxes and the cost it gives each
 
 Everything downstream consumes these files; nothing else is passed
 between the generator and the flow.
