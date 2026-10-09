@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -133,6 +134,36 @@ class GenMemoriesTest(unittest.TestCase):
         tags = next(m for m in doc["memories"] if m["name"] == "cache_tags")
         self.assertTrue(tags["idiomatic"])
         self.assertIn("forced", tags["reason"])
+
+    def test_deep_memory_is_folded_square(self):
+        # 512x17 with one bit line per column is 2.3 x 166.6 um, 73:1, a
+        # sliver macro placement cannot fit; the column mux folds it. The
+        # fold squares the bit-cell counts, and a bit cell is not square,
+        # so the bound leaves room for that.
+        netlist = json.loads(json.dumps(SAMPLE_YOSYS_NETLIST))
+        mem = netlist["modules"].pop("\\mem_128x32")
+        mem["cells"]["\\$mem_0"]["parameters"].update(SIZE=512, WIDTH=17)
+        netlist["modules"] = {"\\mem_512x17": mem}
+        d = Path(self.tmp.name)
+        (d / "netlist.json").write_text(json.dumps(netlist))
+        code = gen_memories.main(
+            [
+                "--platform",
+                "asap7",
+                "--out-dir",
+                str(d / "memories"),
+                "--json",
+                str(d / "memories.json"),
+                "--yosys-json",
+                str(d / "netlist.json"),
+            ]
+        )
+        self.assertEqual(code, 0)
+        lef = (d / "memories" / "mem_512x17.lef").read_text()
+        width, height = map(
+            float, re.search(r"SIZE\s+(\S+)\s+BY\s+(\S+)", lef).groups()
+        )
+        self.assertLessEqual(max(width, height) / min(width, height), 8.0)
 
     def test_unsupported_platform_fails_clearly(self):
         code, _d = self.run_generator(platform="nangate45")

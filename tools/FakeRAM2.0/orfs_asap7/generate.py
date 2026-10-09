@@ -1,4 +1,5 @@
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -34,6 +35,29 @@ ASAP7_TIMING_CONFIG = {
 }
 
 
+def pick_column_mux_factor(rows, bits):
+    """Fold a tall array into a square one.
+
+    The array is rows/factor cells tall and bits*factor cells wide, so
+    the factor that squares it is sqrt(rows/bits). Rounded to a power of
+    two because a column mux selects one of 2^n bit lines, and clamped
+    at 1 so a wide, shallow memory is left alone.
+
+    Area does not change: this moves cells between the two dimensions
+    rather than adding or removing any.
+    """
+    if rows <= 0 or bits <= 0:
+        return 1
+    ideal = math.sqrt(float(rows) / float(bits))
+    if ideal <= 1.0:
+        return 1
+    lo = 2 ** int(math.floor(math.log(ideal, 2)))
+    hi = lo * 2
+    # Nearest in log space, which is what "closest to square" means when
+    # the candidates are powers of two.
+    return lo if (ideal / lo) <= (hi / ideal) else hi
+
+
 def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
     if platform != "asap7":
         sys.stderr.write(f"FakeRAM2.0 orfs_asap7: unsupported platform {platform}\n")
@@ -51,13 +75,16 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
         (m for m in memories if m.get("idiomatic")), key=lambda m: m["name"]
     )
 
-    process = Process(ASAP7_PROCESS_CONFIG)
     timing_data = TimingData(ASAP7_TIMING_CONFIG)
 
     for m in converted:
         name = m["name"]
         bits = m.get("bits", 32)
         rows = m.get("rows", 128)
+
+        process_config = dict(ASAP7_PROCESS_CONFIG)
+        process_config["column_mux_factor"] = pick_column_mux_factor(rows, bits)
+        process = Process(process_config)
 
         sram_dict = {
             "name": name,
