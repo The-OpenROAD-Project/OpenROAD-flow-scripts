@@ -51,7 +51,7 @@ def pick_column_mux_factor(rows, bits):
     ideal = math.sqrt(float(rows) / float(bits))
     if ideal <= 1.0:
         return 1
-    lo = 2 ** int(math.floor(math.log(ideal, 2)))
+    lo = 2 ** math.floor(math.log2(ideal))
     hi = lo * 2
     # Nearest in log space, which is what "closest to square" means when
     # the candidates are powers of two.

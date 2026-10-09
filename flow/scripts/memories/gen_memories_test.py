@@ -160,9 +160,9 @@ class GenMemoriesTest(unittest.TestCase):
         )
         self.assertEqual(code, 0)
         lef = (d / "memories" / "mem_512x17.lef").read_text()
-        width, height = map(
-            float, re.search(r"SIZE\s+(\S+)\s+BY\s+(\S+)", lef).groups()
-        )
+        size = re.search(r"SIZE\s+(\S+)\s+BY\s+(\S+)", lef)
+        self.assertIsNotNone(size, "no SIZE in the generated LEF")
+        width, height = map(float, size.groups())
         self.assertLessEqual(max(width, height) / min(width, height), 8.0)
 
     def test_unsupported_platform_fails_clearly(self):
