@@ -18,6 +18,7 @@ def merge_gds(
     seal_file,
     out_file,
     allow_empty="",
+    allow_empty_cells=frozenset(),
 ):
     """Merge DEF and GDS/OAS files into a single stream file.
 
@@ -31,6 +32,7 @@ def merge_gds(
         seal_file: Path to seal ring GDS/OAS file (empty string if none).
         out_file: Path to output GDS/OAS file.
         allow_empty: Regex pattern for cells allowed to be empty.
+        allow_empty_cells: Names of cells allowed to be empty.
 
     Returns:
         Number of errors encountered.
@@ -88,6 +90,11 @@ def merge_gds(
                         i.name
                     )
                 )
+            elif i.name in allow_empty_cells:
+                print(
+                    "[WARNING] LEF Cell '{0}' ignored. AUTO_MEMORIES generated"
+                    " its views; it has no GDS.".format(i.name)
+                )
             else:
                 print(
                     "[ERROR] LEF Cell '{0}' has no matching GDS/OAS cell."
@@ -128,6 +135,19 @@ def merge_gds(
     return errors
 
 
+def auto_memories_cells(environ):
+    """The modules AUTO_MEMORIES turned into macros.
+
+    Their LEF and liberty views are generated and they have no GDS, so
+    they are empty in the merged layout by design.
+    """
+    if environ.get("AUTO_MEMORIES") != "1":
+        return frozenset()
+    path = os.path.join(environ["RESULTS_DIR"], "memories", "blackboxes.txt")
+    with open(path) as f:
+        return frozenset(line.split()[0] for line in f if line.strip())
+
+
 # When run via klayout -r, globals tech_file, layer_map, in_def, etc.
 # are set by klayout's -rd mechanism.
 if pya is not None:
@@ -144,6 +164,7 @@ if pya is not None:
                 seal_file=seal_file,  # noqa: F821
                 out_file=out_file,  # noqa: F821
                 allow_empty=os.environ.get("GDS_ALLOW_EMPTY", ""),
+                allow_empty_cells=auto_memories_cells(os.environ),
             )
         )
     except NameError:

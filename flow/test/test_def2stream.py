@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import MagicMock, patch, call
 import sys
 import os
+import tempfile
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "util"))
 
@@ -319,6 +320,64 @@ class TestMissingCells(unittest.TestCase):
         )
 
         self.assertEqual(errors, 1)
+
+    def test_auto_memories_cell_may_be_empty(self):
+        """A macro AUTO_MEMORIES generated has no GDS; it is not an error."""
+        generated = make_mock_cell(
+            "tage_entry_sram", cell_index=1, is_empty=True, parent_cells=1
+        )
+        other = make_mock_cell("other_cell", cell_index=2, is_empty=True)
+
+        top = make_mock_cell("test_design", cell_index=0)
+
+        pya_mod, main_layout, _, _ = make_mock_pya(
+            cells_before_read=[],
+            cells_after_read=[top],
+            top_only_cells=[generated, other],
+        )
+        main_layout.cell.return_value = top
+
+        errors = def2stream.merge_gds(
+            pya_mod=pya_mod,
+            tech_file="/tmp/test.lyt",
+            layer_map="",
+            in_def="/tmp/test.def",
+            design_name="test_design",
+            in_files="",
+            seal_file="",
+            out_file="/tmp/out.gds",
+            allow_empty_cells=frozenset(["tage_entry_sram"]),
+        )
+
+        self.assertEqual(errors, 1)
+
+
+class TestAutoMemoriesCells(unittest.TestCase):
+    def test_off_reads_nothing(self):
+        self.assertEqual(
+            def2stream.auto_memories_cells({"RESULTS_DIR": "/nonexistent"}),
+            frozenset(),
+        )
+
+    def test_names_from_blackboxes_txt(self):
+        with tempfile.TemporaryDirectory() as results:
+            os.mkdir(os.path.join(results, "memories"))
+            with open(os.path.join(results, "memories", "blackboxes.txt"), "w") as f:
+                # a name per line, optionally followed by more columns
+                f.write("tage_entry_sram\nmbtb_entry_sram 491.400000\n\n")
+            self.assertEqual(
+                def2stream.auto_memories_cells(
+                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                ),
+                frozenset(["tage_entry_sram", "mbtb_entry_sram"]),
+            )
+
+    def test_missing_list_is_an_error(self):
+        with tempfile.TemporaryDirectory() as results:
+            with self.assertRaises(FileNotFoundError):
+                def2stream.auto_memories_cells(
+                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                )
 
 
 class TestOrphanCells(unittest.TestCase):
