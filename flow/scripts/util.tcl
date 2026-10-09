@@ -338,10 +338,11 @@ proc source_step_tcl { hook_type step_name } {
 }
 
 # The Verilog files synthesis reads: VERILOG_FILES or, with
-# SYNTH_VERILOG_SURGERY (a hack), the copies its script writes. The script
-# runs here, as the RTL is read, into $(OBJECTS_DIR)/surgery: one copy per
-# source under the same file name, kept for inspection. They are no make
-# target and no build output.
+# SYNTH_VERILOG_SURGERY, the copies its script writes. The script runs
+# here, as the RTL is read, into $(OBJECTS_DIR)/surgery: one copy per
+# source under the same file name, kept so a diff against the original
+# shows what the surgery changed. They are no make target and no build
+# output.
 proc synth_verilog_files { } {
   if { ![env_var_exists_and_non_empty SYNTH_VERILOG_SURGERY] } {
     return $::env(VERILOG_FILES)
