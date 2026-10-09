@@ -35,10 +35,19 @@ module ram (input clk, input we, input [5:0] addr, input [15:0] d,
     q <= mem[addr];
   end
 endmodule
+module \\1d_ram (input clk, input we, input [5:0] addr, input [15:0] d,
+                output logic [15:0] q);
+  logic [15:0] mem [0:63];
+  always_ff @(posedge clk) begin
+    if (we) mem[addr] <= d;
+    q <= mem[addr];
+  end
+endmodule
 module top (input clk, input we, input [5:0] addr, input [15:0] d,
-            output [15:0] q0, q1);
+            output [15:0] q0, q1, q2);
   ram u0 (.clk, .we, .addr, .d, .q(q0));
   ram u1 (.clk, .we, .addr, .d, .q(q1));
+  \\1d_ram  u2 (.clk, .we, .addr, .d, .q(q2));
 endmodule
 """
 
@@ -82,6 +91,11 @@ class TestAutoMemoriesBlackboxed(unittest.TestCase):
 
     def test_definition_name_is_blackboxed(self):
         returncode, output = self.run_check(["ram"])
+        self.assertEqual(returncode, 0, output)
+
+    def test_escaped_definition_name_is_blackboxed(self):
+        # read_slang takes `\1d_ram` as `1d_ram`; yosys lists it escaped
+        returncode, output = self.run_check(["ram", "1d_ram"])
         self.assertEqual(returncode, 0, output)
 
     def test_per_instance_name_stops_the_flow(self):
