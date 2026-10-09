@@ -112,8 +112,14 @@ def _clock_enable_bits(val, ports: int) -> str:
     return val
 
 
-def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
-    """Extract memory modules from a Yosys netlist JSON output ($mem_v2 cells)."""
+def scan_yosys_json(
+    data: dict | str | Path, top: str | None = None
+) -> list[schema.Memory]:
+    """Extract memory modules from a Yosys netlist JSON output ($mem_v2 cells).
+
+    `top` is the design's top module; slang's per-instance module names
+    are cut back to their definition with it (see definition_name).
+    """
     if isinstance(data, (str, Path)):
         data = json.loads(Path(data).read_text())
 
@@ -128,7 +134,7 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
         # frontend honours, and the black box it imports has the
         # definition's type), so the memory is named for the definition
         # and its copies collapse into one entry below.
-        clean_mod_name = definition_name(clean_mod_name)
+        clean_mod_name = definition_name(clean_mod_name, top)
         cells = mod_info.get("cells", {})
         mem_cells = [
             n for n, c in cells.items() if c.get("type", "") in ("$mem_v2", "$mem")
@@ -299,16 +305,18 @@ def scan_yosys_json(data: dict | str | Path) -> list[schema.Memory]:
     return dedupe(out)
 
 
-def definition_name(module: str) -> str:
-    """`array_64x114$top.u0` -> `array_64x114`; anything else unchanged.
+def definition_name(module: str, top: str | None) -> str:
+    """`array_64x114$top.u0` -> `array_64x114` for top module `top`.
 
-    Only a slang uniquified name, an identifier before the first `$`,
-    is cut; yosys's own `$paramod\\...` names have nothing before it and
-    stay whole.
+    slang's instance path starts at the top module, so the name is cut
+    where `$<top>.` begins, not at the first `$`: a definition may have a
+    `$` of its own (`my$ram$top.u0` is `my$ram`). Any other name, yosys's
+    own `$paramod\\...` names among them, is returned unchanged.
     """
-    head, sep, _ = module.partition("$")
-    if sep and head and (head[0].isalpha() or head[0] == "_"):
-        return head
+    if top:
+        i = module.find(f"${top}.")
+        if i > 0:
+            return module[:i]
     return module
 
 
@@ -331,7 +339,7 @@ def dedupe(memories: list[schema.Memory]) -> list[schema.Memory]:
             m.mask_lanes,
             m.comb_read_ports,
             m.port_convention,
-            tuple((p.name, p.direction, p.width) for p in m.pins),
+            tuple(m.pins),
         )
 
     by_name: dict[str, schema.Memory] = {}

@@ -168,13 +168,22 @@ class FirtoolConventionTest(unittest.TestCase):
                 "\\array_256x66$top.t1.u0": _firtool_rw_module(256, 66, 1),
             }
         }
-        mems = detect.scan_yosys_json(yosys_json)
+        mems = detect.scan_yosys_json(yosys_json, top="top")
         self.assertEqual(sorted(m.name for m in mems), ["array_256x66", "array_64x114"])
         by = {m.name: m for m in mems}
         self.assertEqual(by["array_64x114"].behavioral_model["module"], "array_64x114")
-        self.assertEqual(
-            detect.definition_name("$paramod\\foo\\W=8"), "$paramod\\foo\\W=8"
-        )
+
+    def test_definition_name_is_cut_where_the_instance_path_starts(self):
+        name = detect.definition_name
+        # read_slang names modules this way: a definition with a `$` of its
+        # own, an escaped one starting with a digit, a single instance
+        self.assertEqual(name("my$ram$top2.u2", "top2"), "my$ram")
+        self.assertEqual(name("1d_ram$top2.u0", "top2"), "1d_ram")
+        self.assertEqual(name("ram$top.u0", "top"), "ram")
+        # not a slang instance name: unchanged
+        self.assertEqual(name("$paramod\\foo\\W=8", "top"), "$paramod\\foo\\W=8")
+        self.assertEqual(name("my$ram", "top"), "my$ram")
+        self.assertEqual(name("ram$top.u0", None), "ram$top.u0")
 
     def test_copies_of_one_definition_must_agree(self):
         yosys_json = {
@@ -184,7 +193,7 @@ class FirtoolConventionTest(unittest.TestCase):
             }
         }
         with self.assertRaises(ValueError):
-            detect.scan_yosys_json(yosys_json)
+            detect.scan_yosys_json(yosys_json, top="top")
 
     def test_rw_port_pins_are_the_module_ports(self):
         (m,) = detect.scan_yosys_json(
