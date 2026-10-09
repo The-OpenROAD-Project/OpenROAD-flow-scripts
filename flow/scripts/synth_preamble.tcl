@@ -254,7 +254,18 @@ proc convert_liberty_areas { } {
   # keep_hierarchy -min_cost refuses it ("Missing cost information on
   # instanced blackbox"). Its view is not read in its place, as its pins
   # need not be the module's (FakeRAM uses its own names).
+  set modules [tee -q -s result.string select -list-mod =*]
   foreach m [auto_memories_blackboxes] {
+    if { [lsearch -exact $modules $m] < 0 } {
+      # slang imports a blackboxed module only where it is instanced
+      continue
+    }
+    if { ![rtlil::has_attr -mod $m blackbox] } {
+      # e.g. slang's per-instance `<definition>$<instance path>`, which
+      # --blackboxed-module does not match: the body was elaborated
+      error "AUTO_MEMORIES macro $m is in the design but was not\
+        blackboxed; its name does not match the module's definition"
+    }
     set lib "$::env(RESULTS_DIR)/memories/$m.lib"
     if { ![file exists $lib] } {
       error "AUTO_MEMORIES macro $m has no $lib"
@@ -271,14 +282,7 @@ proc convert_liberty_areas { } {
     if { ![regexp $pat $text -> area] } {
       error "AUTO_MEMORIES macro $m: no area for cell $m in $lib"
     }
-    if {
-      [catch {
-        rtlil::set_attr -mod -uint $m gate_cost_equivalent \
-          [expr { int($area / $found_cell_area) }]
-      }]
-    } {
-      # not in the design: removed as unused, or never instantiated
-      continue
-    }
+    rtlil::set_attr -mod -uint $m gate_cost_equivalent \
+      [expr { int($area / $found_cell_area) }]
   }
 }
