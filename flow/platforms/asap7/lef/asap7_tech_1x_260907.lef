@@ -99,7 +99,10 @@ LAYER M1
                                     # we only allow landing on pins (set in router) so area should not matter
  SPACING 0.018 RANGE 0.036 1.0 ; # This rule is redundant with the SPACING rule
 
- PROPERTY LEF58_EOLKEEPOUT "EOLKEEPOUT 0.01825 EXTENSION 0.0 0.0 0.031 ;" ; # Tip to Tip Spacing
+ # Tip to Tip Spacing.  The EOL width is "less than", so it sits above the 18 nm
+ # minimum width to make an 18 nm tip a line end; it is 0.019, not 0.01825, since
+ # DATABASE MICRONS 1000 rounds 0.01825 to 18 and no 18 nm tip would qualify.
+ PROPERTY LEF58_EOLKEEPOUT "EOLKEEPOUT 0.019 EXTENSION 0.0 0.0 0.031 ;" ;
 
  PROPERTY LEF58_CORNERSPACING "CORNERSPACING CONVEXCORNER CORNERONLY 0.01 WIDTH 0.018 SPACING 0.018 ;" ;
  OFFSET 0.0 ;
@@ -257,8 +260,11 @@ LAYER M4
  WIDTH 0.0 SPACING 0.04 ;
  " ;
 
+ # The side extension reaches a wire on the adjacent track, 24 nm away; the
+ # corner must lie strictly inside, so it is 0.025, not 0.02425, which DATABASE
+ # MICRONS 1000 rounds to 24 and so to exactly that wire's edge.
  PROPERTY LEF58_EOLKEEPOUT "
- EOLKEEPOUT 0.025 EXTENSION 0.048 0.02425 0.048 CORNERONLY ;
+ EOLKEEPOUT 0.025 EXTENSION 0.048 0.025 0.048 CORNERONLY ;
  " ;
 
   # spacing table is required for the rule that has wide metal requires a 72nm (288 scaled)
@@ -344,8 +350,11 @@ LAYER M5
  WIDTH 0.0 SPACING 0.04 ;
  " ;
 
+ # The side extension reaches a wire on the adjacent track, 24 nm away; the
+ # corner must lie strictly inside, so it is 0.025, not 0.02425, which DATABASE
+ # MICRONS 1000 rounds to 24 and so to exactly that wire's edge.
  PROPERTY LEF58_EOLKEEPOUT "
- EOLKEEPOUT 0.025 EXTENSION 0.048 0.02425 0.048
+ EOLKEEPOUT 0.025 EXTENSION 0.048 0.025 0.048
     CORNERONLY ;
  " ;
 
@@ -426,8 +435,11 @@ LAYER M6
  WIDTH 0.0 SPACING 0.04 ;
  " ;
 
+ # The side extension reaches a wire on the adjacent track, 32 nm away; the
+ # corner must lie strictly inside, so it is 0.033, not 0.03225, which DATABASE
+ # MICRONS 1000 rounds to 32 and so to exactly that wire's edge.
  PROPERTY LEF58_EOLKEEPOUT "
- EOLKEEPOUT 0.05 EXTENSION 0.048 0.03225 0.048 CORNERONLY ;
+ EOLKEEPOUT 0.05 EXTENSION 0.048 0.033 0.048 CORNERONLY ;
  " ;
 
   SPACINGTABLE
@@ -501,8 +513,11 @@ LAYER M7
  WIDTH 0.0 SPACING 0.04 ;
  " ;
 
+ # The side extension reaches a wire on the adjacent track, 32 nm away; the
+ # corner must lie strictly inside, so it is 0.033, not 0.03225, which DATABASE
+ # MICRONS 1000 rounds to 32 and so to exactly that wire's edge.
  PROPERTY LEF58_EOLKEEPOUT "
- EOLKEEPOUT 0.05 EXTENSION 0.048 0.03225 0.048
+ EOLKEEPOUT 0.05 EXTENSION 0.048 0.033 0.048
     CORNERONLY ;
  " ;
 
@@ -534,14 +549,18 @@ LAYER M8
  WIDTH 0.04 ;
  AREA 0.00752 ;
 
+ # A row applies to a width, and a column to a run, greater than its value: each
+ # sits a nanometre under the manual's 60/80/120/500/1000 nm widths and 400/1200/
+ # 1800 nm runs, which DATABASE MICRONS 1000 cannot hold a quarter of; 0.39975
+ # would round to 0.400 and leave a run of exactly 400 nm in the column below.
   SPACINGTABLE
- PARALLELRUNLENGTH 0.0 0.39975 1.19975 1.79975
+ PARALLELRUNLENGTH 0.0 0.399 1.199 1.799
  WIDTH 0.0 0.04 0.04 0.04 0.04
- WIDTH 0.05975 0.04 0.04 0.04 0.04
- WIDTH 0.07975 0.04 0.04 0.04 0.04
- WIDTH 0.11975 0.04 0.04 0.04 0.04
- WIDTH 0.49975 0.04 0.04 0.04 0.5
- WIDTH 0.99975 0.04 0.04 0.04 1.0 ;
+ WIDTH 0.059 0.04 0.04 0.04 0.04
+ WIDTH 0.079 0.04 0.04 0.04 0.04
+ WIDTH 0.119 0.04 0.04 0.04 0.04
+ WIDTH 0.499 0.04 0.04 0.04 0.5
+ WIDTH 0.999 0.04 0.04 0.04 1.0 ;
 
  MINIMUMCUT 2 WIDTH 1.805 WITHIN 1.705 FROMBELOW ;
  MINIMUMCUT 2 WIDTH 1.805 WITHIN 1.705 FROMABOVE ;
@@ -562,14 +581,18 @@ LAYER M9
  WIDTH 0.04 ;
  AREA 0.00752 ;
 
+ # A row applies to a width, and a column to a run, greater than its value: each
+ # sits a nanometre under the manual's 60/80/120/500/1000 nm widths and 400/1200/
+ # 1800 nm runs, which DATABASE MICRONS 1000 cannot hold a quarter of; 0.39975
+ # would round to 0.400 and leave a run of exactly 400 nm in the column below.
   SPACINGTABLE
- PARALLELRUNLENGTH 0.0 0.39975 1.19975 1.79975
+ PARALLELRUNLENGTH 0.0 0.399 1.199 1.799
  WIDTH 0.0 0.04 0.04 0.04 0.04
- WIDTH 0.05975 0.04 0.04 0.04 0.04
- WIDTH 0.07975 0.04 0.04 0.04 0.04
- WIDTH 0.11975 0.04 0.04 0.04 0.04
- WIDTH 0.49975 0.04 0.04 0.04 0.5
- WIDTH 0.99975 0.04 0.04 0.04 1.0 ;
+ WIDTH 0.059 0.04 0.04 0.04 0.04
+ WIDTH 0.079 0.04 0.04 0.04 0.04
+ WIDTH 0.119 0.04 0.04 0.04 0.04
+ WIDTH 0.499 0.04 0.04 0.04 0.5
+ WIDTH 0.999 0.04 0.04 0.04 1.0 ;
 
  MINIMUMCUT 2 WIDTH 1.805 WITHIN 1.705 FROMABOVE ;
  MINSTEP 0.04 STEP ;
