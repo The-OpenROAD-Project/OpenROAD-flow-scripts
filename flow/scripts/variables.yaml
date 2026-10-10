@@ -1037,6 +1037,13 @@ ABC_AREA:
   stages:
     - synth
   default: 0
+ABC_SCRIPT:
+  description: |
+    Replaces the ABC script synthesis runs, so that a design can vendor and
+    change it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS
+    is set: abc_new then maps each arithmetic operator with its own script.
+  stages:
+    - synth
 PWR_NETS_VOLTAGES:
   description: |
     Used for IR Drop calculation.

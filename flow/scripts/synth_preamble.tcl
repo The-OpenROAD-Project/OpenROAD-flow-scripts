@@ -189,7 +189,10 @@ proc read_design_sources { } {
   }
 }
 
-if { $::env(ABC_AREA) } {
+if { [env_var_exists_and_non_empty ABC_SCRIPT] } {
+  puts "Using ABC script $::env(ABC_SCRIPT)."
+  set abc_script $::env(ABC_SCRIPT)
+} elseif { $::env(ABC_AREA) } {
   puts "Using ABC area script."
   set abc_script $::env(SCRIPTS_DIR)/abc_area.script
 } else {
