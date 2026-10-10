@@ -82,7 +82,7 @@ proc read_design_sources { } {
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
 
     # slang requires all files at once
-    lappend slang_args {*}$::env(VERILOG_FILES)
+    lappend slang_args {*}[synth_verilog_files]
 
     # Add clock gate cell definition, if available
     if { [env_var_exists_and_non_empty CLKGATE_MAP_FILE] } {
@@ -133,7 +133,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
       verific -vlog-define {*}$::env(VERILOG_DEFINES)
     }
-    verific -sv2012 {*}$::env(VERILOG_FILES)
+    verific -sv2012 {*}[synth_verilog_files]
     verific -import -no-split-complex-ports $::env(DESIGN_NAME)
 
     dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
@@ -152,7 +152,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
       verilog_defaults -add {*}$::env(VERILOG_DEFINES)
     }
-    foreach file $::env(VERILOG_FILES) {
+    foreach file [synth_verilog_files] {
       read_verilog -defer -sv {*}$vIdirsArgs $file
     }
     # Read platform specific mapfile for OPENROAD_CLKGATE cells

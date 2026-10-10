@@ -227,6 +227,35 @@ ADDITIONAL_MEMORIES:
     docs/user/AutoMemories.md.
   stages:
     - synth
+SYNTH_VERILOG_SURGERY:
+  description: >
+    RTL surgery as a step of the flow: a script that copies VERILOG_FILES
+    and edits the copies before synthesis reads them, so vendored RTL
+    stays byte-identical to upstream and the OpenROAD- and PDK-specific
+    changes live in one script next to the design's config.mk. Typical
+    surgery gives a memory or register file a module of its own that
+    AUTO_MEMORIES can convert, maps a clock gate onto the platform's,
+    rewrites a pragma for the frontend, or removes a simulation
+    construct. A new upstream version is then a plain copy: the surgery
+    reapplies, or stops where upstream moved. Best on generated or
+    regular RTL (firtool, sv2v, netlists); a text edit cannot see the
+    meaning of include files, macros, packages or `bind`. As the RTL is
+    read (canonicalization, memory extraction, and the SYNTH_USE_SYN
+    frontend), it runs with SYNTH_VERILOG_SURGERY_ARGS, then
+    `--out-dir $(OBJECTS_DIR)/surgery --` and the VERILOG_FILES (by
+    PYTHON_EXE when it ends in .py), and writes one copy per source under
+    the same file name; synthesis reads the copies. Input file names must
+    be unique. Diff a copy against its original to see exactly what the
+    surgery changed. The script should fail when it does not recognise
+    its input; a failing script, or a copy it did not write, stops
+    synthesis.
+  stages:
+    - synth
+SYNTH_VERILOG_SURGERY_ARGS:
+  description: >
+    Arguments to SYNTH_VERILOG_SURGERY, before the ones the flow adds.
+  stages:
+    - synth
 SYNTH_MEMORY_MAX_BITS:
   description: >
     Maximum number of bits for memory synthesis.
