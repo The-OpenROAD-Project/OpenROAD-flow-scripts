@@ -25,7 +25,7 @@ into `$(RESULTS_DIR)/memories_inferred.json`, and
 | `$(RESULTS_DIR)/memories/<m>.lib` | Generated Liberty view per converted memory. |
 | `$(RESULTS_DIR)/memories/<m>_pre_layout.lib` | Ideal-clock (zero clock-tree insertion) variant for pre-CTS consumers that select lib files themselves. The Makefile flow uses `<m>.lib` throughout. |
 | `$(RESULTS_DIR)/memories/<m>.lef` | Abstract LEF per converted memory. |
-| `$(RESULTS_DIR)/memories/blackboxes.txt` | Names of the converted modules — what synthesis blackboxes. |
+| `$(RESULTS_DIR)/memories/blackboxes.txt` | `<module> <area>` per converted module — what synthesis blackboxes, and the area in um² its `.lib` states, which `SYNTH_MINIMUM_KEEP_SIZE` costs it by. |
 
 Synthesis (canonicalization) blackboxes the converted modules so the
 liberty view wins over their behavioral bodies; floorplan through final
@@ -122,6 +122,124 @@ the left edge, alternating horizontal M4 `VDD`/`VSS` straps across the
 macro (which the platform's PDN macro grid connects to M5), and an `OBS`
 covering M1 to M4.
 
+## Register files
+
+A register file, many read and write ports over a few words, is no
+SRAM: FakeRAM's single-port model does not describe it, and synthesised
+to flops its mux trees are placed by a placer that does not know they
+are an array. `AUTO_MEMORIES_REGFILES` lists spec files, one per RTL
+module, and OpenROAD's `generate_regfile` builds each as an array of
+placed standard cells: a flop per bit, its write mux beside it, the read
+trees in columns. The spec names the module, its words and bits, its
+read and write ports by the module's own port names, and the cells:
+
+```
+module RegFile
+mode netlist
+words 16
+bits 8
+clock clock
+read io_r0_addr io_r0_data
+write io_w0_addr io_w0_data io_w0_en
+cell flop DFFHQNx1_ASAP7_75t_R
+...
+```
+
+`generate_regfile` checks the spec against the module's ports and
+writes `<m>.v`, the array as standard cells. What happens next depends
+on `AUTO_MEMORIES_MACRO_PLACE`, the register files to place as macros:
+
+- **Not listed (the default): inlined.** Synthesis reads the module as a
+  blackbox and `<m>.v` in its place; from there on its cells are placed,
+  sized and buffered with the rest of the design. No macro, no abstract,
+  no dissolve. The better shape for a small design, where a macro's
+  outline and channels cost more core than the array saves.
+- **Listed: a macro.** `generate_regfile` also writes `<m>.lef` (an
+  abstract, its pins where their connections land in the array) and
+  `<m>.lib`/`<m>_pre_layout.lib` (a timing model) beside the FakeRAM
+  views, and the module joins `blackboxes.txt`, so synthesis and macro
+  placement see a macro. In `mode netlist` (the usual one) the macro
+  dissolves into its cells at the end of macro placement
+  (`regfile_dissolve.tcl`): the array's core lands FIRM where the macro
+  was placed, flipped as the macro was, on the parent's rows; the
+  address decode is left to global placement and the resizer, and dead
+  logic is eliminated as at synthesis. `mode macro` keeps the macro to
+  the end. A large design whose floorplan plans its register files lists
+  them.
+
+A word holds its value between writes either through a hold term in
+every bit's write mux (`write_style mux`, the default) or through one
+integrated clock gate per word, enabled by its write selects
+(`write_style clock_gate`, as OpenROAD's `generate_ram` writes): with
+one write port a flop's D is then the write data itself.
+
+Listed register files appear in `memories.json` with kind `regfile`;
+the rest have kind `fakeram` or `flops`. `designs/asap7/regfile` is the
+smallest example.
+
+Moving parts of this into OpenROAD, the dissolve in particular, is left
+for later: it would make them faster, testable at unit level and
+maintained with the database they edit.
+
+### Designs to measure it on
+
+What a register file of placed cells buys is a shorter minimum clock
+period (the read mux trees are columns, not a cloud) and a shorter
+build (fewer cells for synthesis, placement and the resizer to work
+on). The ORFS designs whose register file is flip-flops today and its
+own module, the seam a spec needs, measured as flops against
+`AUTO_MEMORIES_REGFILES`:
+
+| Design | Module | Today | Shape | Ready? |
+|---|---|---|---|---|
+| asap7/riscv32i | `regfile` | flip-flops: `reg [31:0] rf[31:0]`, mapped to flops (no AUTO_MEMORIES) | 32 x 32, 2R1W, x0 reads 0 | Yes: the ports are the spec's (`zero_word 0`). Also exercises `OPENROAD_HIERARCHICAL=1` beside two FakeRAM macros. |
+| asap7/ibex | `ibex_register_file_ff` | flip-flops: `RegFile = RegFileFF`, the default | 32 x 32, 2R1W, x0 reads 0 | Not yet: `test_en_i` and `dummy_instr_id_i` are ports the array does not use, which a spec cannot yet name, and `rst_ni` resets the flops to 0 where the generator's flops have no reset (the ISA leaves x1-x31 undefined after reset). |
+| asap7/cva6 | `ariane_regfile` (`ariane_regfile_ff.sv`) | flip-flops: cv32a65x has `FpgaEn` 0 | 32 x 32, 2R1W | Not yet: the ports are packed arrays (`raddr_i[1:0][4:0]`), one port per slice, which a spec cannot yet address; asynchronous reset as ibex. |
+| asap7/swerv_wrapper | `dec_gpr_ctl_*` | flip-flops | 32 x 32, 4R3W | Not yet: read enables, bank ids and scan ports around the array need a seam in the RTL. |
+
+coralnpu's `Regfile` (8R4W) and `FRegfile` (3R2W) carry their
+scoreboard and bypass logic in the same module, and picorv32 and
+tinyRocket keep their register file inside the CPU module: those need a
+seam in their RTL first.
+
+`designs/asap7/regfile` is the smallest case, for turnaround rather
+than measurement.
+
+### Status: at parity on riscv32i, on a smaller core
+
+`designs/asap7/riscv32i-regfile` is riscv32i with its register file
+generated, inlined and written through a clock gate per word, at
+riscv32i's own utilisation. To global route, 950 ps clock, global-route
+parasitics, against `designs/asap7/riscv32i`:
+
+| | flops | register file |
+|---|---|---|
+| minimum period | 954 ps | 955 ps |
+| core area | 4 012 um2 | 3 544 um2 |
+| standard-cell area, without taps | 1 284 um2 | 973 um2 |
+| clock-tree buffers and inverters | 122 | 179 |
+| clock gates | 0 | 31 |
+| hold, worst slack | +36 ps | +86 ps |
+
+Both are limited by the same single-cycle path: the instruction into
+the register file's read, the ALU, the data memory and back into the
+register file's write. The register file's share of it, decode and read
+tree, is about 260 ps in either.
+
+What did not pay, measured on the same design:
+
+- the register file as a macro dissolved after macro placement: it does
+  not fit riscv32i's 62 % beside the four FakeRAMs, and at 55 % it is
+  959 ps on a 4 644 um2 core;
+- a hold mux per bit instead of the clock gate: 994 ps inlined, every
+  array endpoint carrying the mux;
+- predecoded read selects: 960 ps;
+- a tree of 2:1 muxes steered by the address bits instead of a decoded
+  one-hot read: 959 ps, the address bits' fanout (about 1 000 inputs a
+  port) needs as many buffer levels as the decode it replaces;
+- four-input gates in the read tree, stronger cells: 950 to 954 ps,
+  within what any change to the placement moves.
+
 ## Platform support
 
 **asap7 only.** `gen_memories.py` rejects any other platform. The
@@ -183,3 +301,5 @@ bazel-orfs implements this.
 
 - [AUTO_MEMORIES](FlowVariables.md#AUTO_MEMORIES)
 - [ADDITIONAL_MEMORIES](FlowVariables.md#ADDITIONAL_MEMORIES)
+- [AUTO_MEMORIES_MACRO_PLACE](FlowVariables.md#AUTO_MEMORIES_MACRO_PLACE)
+- [AUTO_MEMORIES_REGFILES](FlowVariables.md#AUTO_MEMORIES_REGFILES)

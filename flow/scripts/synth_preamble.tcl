@@ -44,10 +44,11 @@ proc read_checkpoint { file } {
 }
 
 # AUTO_MEMORIES: memory modules whose generated liberty view replaces
-# their behavioral body during synthesis. The list is produced by
-# scripts/memories/gen_memories.py before canonicalization; see
+# their behavioral body during synthesis, each with that view's area in
+# um^2. The list is produced by scripts/memories/gen_memories.py before
+# canonicalization, one `<module> <area>` per line; see
 # docs/user/AutoMemories.md.
-proc auto_memories_blackboxes { } {
+proc auto_memories_areas { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
   }
@@ -59,7 +60,57 @@ proc auto_memories_blackboxes { } {
   set fh [open $f r]
   set content [string map {\r ""} [read $fh]]
   close $fh
+  set areas [dict create]
+  foreach line [split $content "\n"] {
+    if { [string trim $line] == "" } {
+      continue
+    }
+    set fields [regexp -all -inline {\S+} $line]
+    if {
+      [llength $fields] != 2
+      || ![string is double -strict [lindex $fields 1]]
+    } {
+      error "$f: expected `<module> <area>`, got `$line`"
+    }
+    dict set areas {*}$fields
+  }
+  return $areas
+}
+
+proc auto_memories_blackboxes { } {
+  return [dict keys [auto_memories_areas]]
+}
+
+# AUTO_MEMORIES: register files inlined (AUTO_MEMORIES_REGFILES not in
+# AUTO_MEMORIES_MACRO_PLACE): the RTL module is read as a blackbox and its
+# generated netlist of standard cells is read in its place.
+proc auto_memories_inline { } {
+  if { ![env_var_equals AUTO_MEMORIES 1] } {
+    return {}
+  }
+  set f "$::env(RESULTS_DIR)/memories/inline.txt"
+  if { ![file exists $f] } {
+    return {}
+  }
+  set fh [open $f r]
+  set content [read $fh]
+  close $fh
   return [regexp -all -inline {\S+} $content]
+}
+
+proc read_auto_memories_inline { } {
+  foreach m [auto_memories_inline] {
+    # A parameterized RTL module (ibex_register_file_ff #(...)) is
+    # instantiated with parameters the generated netlist has no
+    # declaration for, which hierarchy refuses. The netlist is that module
+    # at the instance's widths, as generate_regfile's port check has
+    # confirmed: drop the parameters from its instances.
+    set dump [tee -q -s result.string dump t:$m]
+    foreach {- name} [regexp -all -inline -- {parameter \\(\S+)} $dump] {
+      setparam -unset $name t:$m
+    }
+    read_verilog -overwrite "$::env(RESULTS_DIR)/memories/$m.v"
+  }
 }
 
 proc read_design_sources { } {
@@ -115,7 +166,7 @@ proc read_design_sources { } {
 
     # Blackbox AUTO_MEMORIES-detected memory modules so their generated
     # liberty view wins over their behavioral bodies.
-    foreach m [auto_memories_blackboxes] {
+    foreach m [concat [auto_memories_blackboxes] [auto_memories_inline]] {
       lappend slang_args --blackboxed-module "$m"
     }
 
@@ -123,6 +174,7 @@ proc read_design_sources { } {
     lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
 
     yosys read_slang {*}$slang_args
+    read_auto_memories_inline
 
     # Workaround for yosys-slang#119
     setattr -unset init
@@ -144,7 +196,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
       error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
     }
-    if { [llength [auto_memories_blackboxes]] > 0 } {
+    if { [llength [concat [auto_memories_blackboxes] [auto_memories_inline]]] > 0 } {
       error "AUTO_MEMORIES unsupported with HDL frontend \"$::env(SYNTH_HDL_FRONTEND)\""
     }
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
@@ -176,6 +228,10 @@ proc read_design_sources { } {
       foreach m $auto_blackboxes {
         blackbox $m
       }
+      hierarchy -check -top $::env(DESIGN_NAME)
+    }
+    if { [llength [auto_memories_inline]] > 0 } {
+      read_auto_memories_inline
       hierarchy -check -top $::env(DESIGN_NAME)
     }
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
@@ -247,5 +303,35 @@ proc convert_liberty_areas { } {
     set area [rtlil::get_attr -mod -string $box area]
     set gate_eq [expr int($area / $found_cell_area)]
     rtlil::set_attr -mod -uint $box gate_cost_equivalent $gate_eq
+  }
+
+  # An AUTO_MEMORIES macro is a blackbox from the RTL's own module, not a
+  # Liberty cell: it costs its generated view's area, or
+  # keep_hierarchy -min_cost refuses it ("Missing cost information on
+  # instanced blackbox"). Its view is not read in its place, as its pins
+  # need not be the module's (FakeRAM uses its own names).
+  # One name per line, not a Tcl list: yosys lists an escaped module with
+  # its leading backslash (`\1d_ram`), which list parsing reads as an
+  # escape, and blackboxes.txt names it as read_slang takes it (`1d_ram`).
+  set modules {}
+  foreach line [split [tee -q -s result.string select -list-mod =*] "\n"] {
+    set line [string trim $line]
+    if { $line ne "" } {
+      lappend modules [regsub {^\\} $line {}]
+    }
+  }
+  dict for {m area} [auto_memories_areas] {
+    if { [lsearch -exact $modules $m] < 0 } {
+      # slang imports a blackboxed module only where it is instanced
+      continue
+    }
+    if { ![rtlil::has_attr -mod $m blackbox] } {
+      # e.g. slang's per-instance `<definition>$<instance path>`, which
+      # --blackboxed-module does not match: the body was elaborated
+      error "AUTO_MEMORIES macro $m is in the design but was not\
+        blackboxed; its name does not match the module's definition"
+    }
+    rtlil::set_attr -mod -uint $m gate_cost_equivalent \
+      [expr { int($area / $found_cell_area) }]
   }
 }

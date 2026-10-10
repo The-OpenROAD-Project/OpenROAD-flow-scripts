@@ -1,0 +1,19 @@
+# riscv32i's `regfile` (src/riscv32i/regfile.v) as a register file of
+# standard cells, inlined in synthesis: 32 x 32, two combinational reads,
+# one write through a clock gate per word, x0 reads 0 and drops its
+# writes.
+module regfile
+words 32
+bits 32
+clock clk
+read ra1 rd1
+read ra2 rd2
+write wa3 wd3 we3
+zero_word 0
+write_style clock_gate
+cell icg ICGx1_ASAP7_75t_R
+cell flop DFFHQNx1_ASAP7_75t_R
+cell and2 AND2x2_ASAP7_75t_R
+cell or2 OR2x2_ASAP7_75t_R
+cell ao22 AO22x2_ASAP7_75t_R
+cell inv INVx1_ASAP7_75t_R
