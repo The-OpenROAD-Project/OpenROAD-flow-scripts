@@ -44,10 +44,11 @@ proc read_checkpoint { file } {
 }
 
 # AUTO_MEMORIES: memory modules whose generated liberty view replaces
-# their behavioral body during synthesis. The list is produced by
-# scripts/memories/gen_memories.py before canonicalization; see
+# their behavioral body during synthesis, each with that view's area in
+# um^2. The list is produced by scripts/memories/gen_memories.py before
+# canonicalization, one `<module> <area>` per line; see
 # docs/user/AutoMemories.md.
-proc auto_memories_blackboxes { } {
+proc auto_memories_areas { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
   }
@@ -59,7 +60,25 @@ proc auto_memories_blackboxes { } {
   set fh [open $f r]
   set content [string map {\r ""} [read $fh]]
   close $fh
-  return [regexp -all -inline {\S+} $content]
+  set areas [dict create]
+  foreach line [split $content "\n"] {
+    if { [string trim $line] == "" } {
+      continue
+    }
+    set fields [regexp -all -inline {\S+} $line]
+    if {
+      [llength $fields] != 2
+      || ![string is double -strict [lindex $fields 1]]
+    } {
+      error "$f: expected `<module> <area>`, got `$line`"
+    }
+    dict set areas {*}$fields
+  }
+  return $areas
+}
+
+proc auto_memories_blackboxes { } {
+  return [dict keys [auto_memories_areas]]
 }
 
 proc read_design_sources { } {
@@ -247,5 +266,35 @@ proc convert_liberty_areas { } {
     set area [rtlil::get_attr -mod -string $box area]
     set gate_eq [expr int($area / $found_cell_area)]
     rtlil::set_attr -mod -uint $box gate_cost_equivalent $gate_eq
+  }
+
+  # An AUTO_MEMORIES macro is a blackbox from the RTL's own module, not a
+  # Liberty cell: it costs its generated view's area, or
+  # keep_hierarchy -min_cost refuses it ("Missing cost information on
+  # instanced blackbox"). Its view is not read in its place, as its pins
+  # need not be the module's (FakeRAM uses its own names).
+  # One name per line, not a Tcl list: yosys lists an escaped module with
+  # its leading backslash (`\1d_ram`), which list parsing reads as an
+  # escape, and blackboxes.txt names it as read_slang takes it (`1d_ram`).
+  set modules {}
+  foreach line [split [tee -q -s result.string select -list-mod =*] "\n"] {
+    set line [string trim $line]
+    if { $line ne "" } {
+      lappend modules [regsub {^\\} $line {}]
+    }
+  }
+  dict for {m area} [auto_memories_areas] {
+    if { [lsearch -exact $modules $m] < 0 } {
+      # slang imports a blackboxed module only where it is instanced
+      continue
+    }
+    if { ![rtlil::has_attr -mod $m blackbox] } {
+      # e.g. slang's per-instance `<definition>$<instance path>`, which
+      # --blackboxed-module does not match: the body was elaborated
+      error "AUTO_MEMORIES macro $m is in the design but was not\
+        blackboxed; its name does not match the module's definition"
+    }
+    rtlil::set_attr -mod -uint $m gate_cost_equivalent \
+      [expr { int($area / $found_cell_area) }]
   }
 }
