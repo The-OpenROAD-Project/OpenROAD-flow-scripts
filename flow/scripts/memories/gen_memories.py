@@ -40,12 +40,13 @@ def run(
     platform: str,
     out_dir: Path,
     json_path: Path,
+    top: str | None = None,
 ) -> int:
     if platform != "asap7":
         sys.stderr.write(f"gen_memories: unsupported platform {platform}\n")
         return 1
 
-    found = detect.scan_yosys_json(yosys_json)
+    found = detect.scan_yosys_json(yosys_json, top)
 
     idiomatic.apply(found)
 
@@ -114,6 +115,11 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="Path of the memories.json inventory to write.",
     )
+    p.add_argument(
+        "--top",
+        help="The design's top module, which slang's per-instance module "
+        "names carry.",
+    )
     args = p.parse_args(argv)
     return run(
         args.yosys_json,
@@ -121,6 +127,7 @@ def main(argv: list[str] | None = None) -> int:
         args.platform,
         args.out_dir,
         args.json,
+        args.top,
     )
 
 

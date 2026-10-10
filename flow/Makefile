@@ -274,6 +274,7 @@ do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	mkdir -p $(RESULTS_DIR)
 	$(PYTHON_EXE) $(SCRIPTS_DIR)/memories/gen_memories.py \
 	  --platform $(PLATFORM) \
+	  --top $(DESIGN_NAME) \
 	  --yosys-json $(RESULTS_DIR)/memories_inferred.json \
 	  --out-dir $(RESULTS_DIR)/memories \
 	  --json $(RESULTS_DIR)/memories.json \
