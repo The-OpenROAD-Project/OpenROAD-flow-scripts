@@ -60,6 +60,17 @@ class Process:
         self._calc_y_step()
         self.bitcell_width_um = json_data.get("bitcell_width_um", None)
         self.bitcell_height_um = json_data.get("bitcell_height_um", None)
+        # The narrowest macro the platform's power grid can reach; 0 for
+        # no floor. See ASAP7_PROCESS_CONFIG in orfs_asap7/generate.py.
+        self.min_width_um = json_data.get("min_width_um", 0.0)
+        if (
+            not isinstance(self.min_width_um, (int, float))
+            or isinstance(self.min_width_um, bool)
+            or self.min_width_um < 0
+        ):
+            raise Exception(
+                "min_width_um %r is not a width in um" % (self.min_width_um,)
+            )
 
         # Set to True when we want to use the process parameters or bitcell
         # sizes to calculate the macro dimensions. Set to False for spreadsheet
@@ -118,6 +129,7 @@ class Process:
         total_width = all_bitcell_width * 1.2
 
         total_height += additional_height
+        total_width = max(total_width, self.min_width_um)
 
         return (total_width, total_height)
 
