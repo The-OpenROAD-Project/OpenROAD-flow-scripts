@@ -81,9 +81,9 @@ To overrule the gate, list a `.memories` file in `ADDITIONAL_MEMORIES`:
   "version": 1,
   "memories": [
     {
-      "name": "tag_array",
+      "name": "small_array",
       "idiomatic": true,
-      "reason": "forced: the RTL provides no behavioral fallback"
+      "reason": "forced: a macro despite the floors"
     }
   ]
 }
@@ -92,11 +92,7 @@ To overrule the gate, list a `.memories` file in `ADDITIONAL_MEMORIES`:
 Entries merge by name onto the detected set: fields the override
 carries win, everything else (geometry, pins) is kept from detection. A
 `.memories` entry naming a module the scanner never found is taken
-whole — it must then describe its pins itself. The
-`designs/asap7/tinyRocket` design demonstrates the forced-conversion
-case: its `tag_array` wrapper is 4 entries deep (rejected by the gate)
-but instantiates a module the sources never define, so flops are not an
-option and the design forces conversion.
+whole — it must then describe its pins itself.
 
 ## Generated views
 
