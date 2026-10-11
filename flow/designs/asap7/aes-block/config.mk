@@ -28,5 +28,8 @@ export PWR_NETS_VOLTAGES      =
 # The macros are very small so use a smaller halo
 export RTLMP_MIN_CHANNEL_SIZE  ?= 6 6
 
+# Keep the hardened blocks' cells on the fin and gate grids of the rows around them
+export POST_MACRO_PLACE_TCL = $(PLATFORM_DIR)/openRoad/snap_macros_to_fin_grid.tcl
+
 export ROUTING_LAYER_ADJUSTMENT = 0.3
 export HOLD_SLACK_MARGIN        = -30
