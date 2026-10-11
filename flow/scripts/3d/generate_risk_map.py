@@ -5,9 +5,14 @@ Generate per-pad risk heatmap CSV files from YAP W2W or D2W simulation output.
 Reads the assembly_fail_map_per_interface_dict<tag>.npz, per-interface
 bitmap_collection.npy, per-interface <interface><tag>.yaml configs, and the
 .3dbx stack config to produce CSV heatmap files with format:
-    <chiplet_instance>,<connection_name>_<mechanism>
+    <chiplet_path>,<connection_name>_<mechanism>
     x0,y0,x1,y1,value
 
+value is the pad's failure rate in percent: the share of simulated stacks in
+which it failed (YAP stores this as a 0-1 fraction).
+
+<chiplet_path> is the chiplet's full hierarchical path as the web viewer names
+it (e.g. top/Compute_Large_0_1), which web_load_chiplet_heatmap matches on.
 Pad coordinates are in the chiplet's pre-transform local frame.
 
 <tag> is empty for W2W. D2W appends __<config name>__<criticality profile>.
@@ -39,25 +44,29 @@ def find_stack_config(objects_dir: str) -> str:
 def build_interface_mapping(dbx_path: str) -> dict:
     """
     Parse .3dbx to build a mapping from YAP interface name to
-    (chiplet_instance, connection_name).
+    (chiplet_path, connection_name).
 
     YAP derives the interface name as:
         INTERFACE_TOP = connection.bot  -> last dotted part -> strip 'To_' prefix
         INTERFACE_BOT = connection.top  -> last dotted part -> strip 'From_' prefix
         INTERFACE     = {INTERFACE_TOP}_From_{INTERFACE_BOT}
 
-    The chiplet instance owning the pad coordinates is extracted from
-    connection.top (the first dotted part).
+    The chiplet owning the pad coordinates is the one connection.top names.
+    3Dblox writes that as <inst>[/<inst>...].regions.<region>, so the part
+    before '.regions.' is already the '/'-delimited instance path below the
+    root; prefixing the root (the .3dbx Design name) gives the full path the
+    viewer keys chiplets on.
     """
     dbx = OmegaConf.load(dbx_path)
+    root = str(dbx.Design.name)
     mapping = {}
 
     for conn_name, connection in dbx.Connection.items():
         itf_top = str(connection.bot.split(".")[-1]).split("To_")[-1]
         itf_bot = str(connection.top.split(".")[-1]).split("From_")[-1]
         interface_name = f"{itf_top}_From_{itf_bot}"
-        chiplet_instance = connection.top.split(".")[0]
-        mapping[interface_name] = (chiplet_instance, conn_name)
+        inst_path = str(connection.top).split(".regions.")[0]
+        mapping[interface_name] = (f"{root}/{inst_path}", conn_name)
 
     return mapping
 
@@ -77,7 +86,7 @@ def generate_risk_maps(results_dir: str, objects_dir: str, file_tag: str = ""):
             print(f"Skipping {itf_name}: no matching connection in .3dbx")
             continue
 
-        chiplet_inst, conn_name = itf_mapping[itf_name]
+        chiplet_path, conn_name = itf_mapping[itf_name]
 
         bmp_path = os.path.join(
             results_dir, itf_name, f"{itf_name}_bitmap_collection.npy"
@@ -96,8 +105,11 @@ def generate_risk_maps(results_dir: str, objects_dir: str, file_tag: str = ""):
 
         bmp = np.load(bmp_path, allow_pickle=True).item()
         bump_data = bmp["bump_data"]
-        n_pads = len(bump_data)
-        pad_arr_side = int(np.sqrt(n_pads))
+        # Fail maps live on YAP's physical pad grid; this maps each cell to its
+        # bump id, NaN where the grid has no pad.  The pad array need not be
+        # square or full (e.g. a round footprint), so it must drive the walk.
+        grid_to_bump = bmp["mapping_physical_to_bumpid"]
+        n_rows, n_cols = grid_to_bump.shape
 
         fail_maps = fail_data[itf_name].item()
 
@@ -110,29 +122,29 @@ def generate_risk_maps(results_dir: str, objects_dir: str, file_tag: str = ""):
             )
             written = 0
             with open(csv_path, "w") as f:
-                f.write(f"{chiplet_inst},{heatmap_name}\n")
-                for row in range(pad_arr_side):
-                    for col in range(pad_arr_side):
-                        bid = row * pad_arr_side + col
-                        if bid >= n_pads:
+                f.write(f"{chiplet_path},{heatmap_name}\n")
+                for row in range(n_rows):
+                    for col in range(n_cols):
+                        if np.isnan(grid_to_bump[row, col]):
                             continue
+                        bid = int(grid_to_bump[row, col])
                         x = bump_data[bid]["x"]
                         y = bump_data[bid]["y"]
-                        prob = fail_prob[row, col]
+                        fail_pct = fail_prob[row, col] * 100.0
                         x0 = x - pad_r
                         y0 = y - pad_r
                         x1 = x + pad_r
                         y1 = y + pad_r
-                        f.write(f"{x0:.4f},{y0:.4f},{x1:.4f},{y1:.4f},{prob:.6f}\n")
+                        f.write(f"{x0:.4f},{y0:.4f},{x1:.4f},{y1:.4f},{fail_pct:.4f}\n")
                         written += 1
 
             nonzero = int(np.count_nonzero(fail_prob))
             print(
-                f"  {chiplet_inst} {heatmap_name}: {csv_path} "
+                f"  {chiplet_path} {heatmap_name}: {csv_path} "
                 f"({written} pads, {nonzero} nonzero)"
             )
 
-        print(f"Done: {itf_name} -> {chiplet_inst} ({conn_name})")
+        print(f"Done: {itf_name} -> {chiplet_path} ({conn_name})")
 
 
 def main():
