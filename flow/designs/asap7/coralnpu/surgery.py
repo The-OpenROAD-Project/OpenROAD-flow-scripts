@@ -1,6 +1,6 @@
 """SYNTH_VERILOG_SURGERY for coralnpu: the snapshot made a synthesis build.
 
-A hack. CoreMiniAxi.sv is firtool's output for CoreMiniAxi with every
+CoreMiniAxi.sv is firtool's output for CoreMiniAxi with every
 file of the build concatenated, each behind a marker line
 
     // ----- 8< ----- FILE "<path>" ----- 8< -----
@@ -393,7 +393,7 @@ def main():
     a = p.parse_args()
     done = 0
     for path in a.files:
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             text = f.read()
         if MARKER.search(text):
             text, removed = strip_layers(text, path)
@@ -405,7 +405,9 @@ def main():
                 % (os.path.basename(path), len(removed))
             )
             done += 1
-        with open(os.path.join(a.out_dir, os.path.basename(path)), "w") as f:
+        with open(
+            os.path.join(a.out_dir, os.path.basename(path)), "w", encoding="utf-8"
+        ) as f:
             f.write(text)
     if done != 1:
         fail("the snapshot found in %d files, not one" % done)
