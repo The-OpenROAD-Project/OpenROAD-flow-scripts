@@ -13,7 +13,7 @@ concurrency:
 jobs:
   create-tag:
     name: Create quarterly tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: github.repository == 'The-OpenROAD-Project/OpenROAD-flow-scripts'
     permissions:
       contents: write

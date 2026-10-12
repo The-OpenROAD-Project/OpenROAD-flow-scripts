@@ -18,6 +18,12 @@
       "synth"
     ]
   },
+  "ABC_SCRIPT": {
+    "description": "Replaces the ABC script synthesis runs, so that a design can vendor and\nchange it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS\nis set: abc_new then maps each arithmetic operator with its own script.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "ABSTRACT_SOURCE": {
     "description": "Which .odb file to use to create abstract\n",
     "stages": [

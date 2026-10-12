@@ -10,8 +10,9 @@ collects its $mem_v2 cells, merges user-supplied `.memories` files
   <out-dir>/<m>.lib             Liberty view per converted memory
   <out-dir>/<m>_pre_layout.lib  ideal-clock variant for pre-CTS consumers
   <out-dir>/<m>.lef             abstract LEF per converted memory
-  <out-dir>/blackboxes.txt      converted module names, one per line —
-                                what synthesis blackboxes
+  <out-dir>/blackboxes.txt      `<module> <area>` per line, area in um^2 as
+                                the .lib states it — what synthesis
+                                blackboxes and the cost it gives each
 
 Everything downstream consumes these files; nothing else is passed
 between the generator and the flow.
@@ -40,12 +41,13 @@ def run(
     platform: str,
     out_dir: Path,
     json_path: Path,
+    top: str | None = None,
 ) -> int:
     if platform != "asap7":
         sys.stderr.write(f"gen_memories: unsupported platform {platform}\n")
         return 1
 
-    found = detect.scan_yosys_json(yosys_json)
+    found = detect.scan_yosys_json(yosys_json, top)
 
     idiomatic.apply(found)
 
@@ -114,6 +116,11 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="Path of the memories.json inventory to write.",
     )
+    p.add_argument(
+        "--top",
+        help="The design's top module, which slang's per-instance module "
+        "names carry.",
+    )
     args = p.parse_args(argv)
     return run(
         args.yosys_json,
@@ -121,6 +128,7 @@ def main(argv: list[str] | None = None) -> int:
         args.platform,
         args.out_dir,
         args.json,
+        args.top,
     )
 
 

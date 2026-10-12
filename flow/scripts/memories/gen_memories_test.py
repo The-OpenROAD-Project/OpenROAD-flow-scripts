@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -118,14 +119,28 @@ class GenMemoriesTest(unittest.TestCase):
                 "mem_128x32_pre_layout.lib",
             ],
         )
-        self.assertEqual((mems_dir / "blackboxes.txt").read_text(), "mem_128x32\n")
+        # one `<module> <area>` line; the area is the one the .lib states,
+        # which synthesis costs the blackbox by
+        [line] = (mems_dir / "blackboxes.txt").read_text().splitlines()
+        name, area = line.split()
+        self.assertEqual(name, "mem_128x32")
+        lib_area = re.search(
+            r"^\s*area\s*:\s*([0-9.]+)\s*;",
+            (mems_dir / "mem_128x32.lib").read_text(),
+            re.M,
+        ).group(1)
+        self.assertEqual(float(area), float(lib_area))
+        self.assertGreater(float(area), 0)
 
     def test_additional_memories_forces_conversion(self):
         force = Path(self.tmp.name) / "force.memories"
         force.write_text(FORCE_TAGS)
         code, d = self.run_generator(memories_files=[force])
         self.assertEqual(code, 0)
-        blackboxes = (d / "memories" / "blackboxes.txt").read_text().split()
+        blackboxes = [
+            line.split()[0]
+            for line in (d / "memories" / "blackboxes.txt").read_text().splitlines()
+        ]
         self.assertEqual(sorted(blackboxes), ["cache_tags", "mem_128x32"])
         self.assertTrue((d / "memories" / "cache_tags.lib").exists())
         self.assertTrue((d / "memories" / "cache_tags.lef").exists())
