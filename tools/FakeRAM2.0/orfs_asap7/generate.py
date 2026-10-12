@@ -20,7 +20,6 @@ ASAP7_PROCESS_CONFIG = {
     "manufacturing_grid_nm": 1,
     "contacted_poly_pitch_nm": 54,
     "fin_pitch_nm": 27,
-    "column_mux_factor": 1,
     "snap_width_nm": 190,
     "snap_height_nm": 1400,
 }
