@@ -355,6 +355,152 @@ def make_regfile_seam(text, path):
     return text[: m.start()] + mod + text[m.end() :] + regfile_rf_module()
 
 
+LANES = 4
+
+
+def port_widths(head):
+    """{port: width} of an ANSI module header, where a port without a
+    direction and width of its own takes the previous one's."""
+    widths = {}
+    width = 1
+    for line in head.splitlines()[1:]:
+        m = re.match(r"\s*(?:(input|output)\s+(?:\[(\d+):0\]\s+)?)?(\w+)[,)]?\s*$", line)
+        if not m:
+            continue
+        if m.group(1):
+            width = int(m.group(2)) + 1 if m.group(2) else 1
+        widths[m.group(3)] = width
+    return widths
+
+
+def make_address_register(text, path):
+    """LsuV1 with an EX/MEM register on its inputs: the lanes' requests,
+    the effective addresses and the store data are registered, and
+    LsuV1 builds and enqueues its uops from the registers a cycle later.
+    A load or store takes one cycle longer; nothing else changes.
+
+    io_req_N_ready keeps its thresholds, applied to the entries the
+    queue holds plus those the register will enqueue, so a request
+    accepted now still has its room when it is enqueued."""
+    found = list(re.finditer(r"^module LsuV1\(.*?^endmodule\b", text, re.M | re.S))
+    if len(found) != 1:
+        fail("%s defines LsuV1 %d times, not once" % (path, len(found)))
+    m = found[0]
+    mod = m.group(0)
+    head = re.search(r"^module LsuV1\(.*?\);\n", mod, re.S | re.M)
+    widths = port_widths(head.group(0))
+    body = mod[head.end() :]
+
+    fields = ["bits_store", "bits_addr", "bits_op", "bits_pc"]
+    regs = ["io_req_%d_%s" % (k, f) for k in range(LANES) for f in fields]
+    regs += ["io_busPort_addr_%d" % k for k in range(LANES)]
+    regs += ["io_busPort_data_%d" % k for k in range(LANES)]
+    regs += ["io_busPort_flt_data_0"]
+    valids = ["io_req_%d_valid" % k for k in range(LANES)]
+    for name in regs + valids:
+        if name not in widths:
+            fail("LsuV1 has no port %s" % name)
+    left = sorted(
+        set(re.findall(r"\bio_(?:req_\d+_(?:valid|bits_\w+)|busPort_\w+)\b", head.group(0)))
+        - set(regs + valids)
+    )
+    if left:
+        fail("LsuV1 has inputs this rewrite does not register: %s" % left)
+
+    # The queue takes a lane when the lane is valid and LsuV1 ready for
+    # it; the register holds that, so the queue's side drops the ready.
+    ready = {
+        0: ("_ctrl_io_count < 4'h2", "io_req_0_valid & ctrlready_0"),
+        1: ("_ctrl_io_count < 4'h4", "io_req_1_valid & ctrlready_1"),
+        2: ("_ctrl_io_count < 4'h6", "io_req_2_valid & ctrlready_2"),
+        3: ("~(_ctrl_io_count[3])", "io_req_3_valid & ~(_ctrl_io_count[3])"),
+    }
+    credit_ready = {
+        0: "_ctrl_credit < 5'h2",
+        1: "_ctrl_credit < 5'h4",
+        2: "_ctrl_credit < 5'h6",
+        3: "_ctrl_credit < 5'h8",
+    }
+
+    def replace_once(src, old, new, what):
+        n = src.count(old)
+        if n != 1:
+            fail("LsuV1: %s found %d times, not once" % (what, n))
+        return src.replace(old, new)
+
+    for k in range(LANES - 1):
+        body = replace_once(
+            body,
+            "wire         ctrlready_%d = %s;" % (k, ready[k][0]),
+            "wire         ctrlready_%d = %s;" % (k, credit_ready[k]),
+            "ctrlready_%d" % k,
+        )
+    body = replace_once(
+        body,
+        "assign io_req_3_ready = %s;" % ready[3][0],
+        "assign io_req_3_ready = %s;" % credit_ready[3],
+        "io_req_3_ready",
+    )
+    for k in range(LANES):
+        body = replace_once(body, ready[k][1], "_ex_io_req_%d_valid" % k, ready[k][1])
+    body = replace_once(
+        body,
+        "(io_req_0_valid | io_req_1_valid | io_req_2_valid | io_req_3_valid)",
+        "(_ex_io_req_0_valid | _ex_io_req_1_valid | _ex_io_req_2_valid"
+        " | _ex_io_req_3_valid)",
+        "the queue's io_in_valid",
+    )
+    for name in valids:
+        if re.search(r"\b%s\b" % name, body):
+            fail("LsuV1: %s is read where this rewrite does not expect" % name)
+    for name in regs:
+        body, n = re.subn(r"\b%s\b" % name, "_ex_" + name, body)
+        if n == 0:
+            fail("LsuV1 never reads %s" % name)
+
+    # The queue's slots each request fills: one, or two across a line.
+    slots = re.findall(r"\.io_in_bits_(\d)_valid\s*\(([^()]*)\),", body)
+    if sorted(int(s) for s, _ in slots) != list(range(2 * LANES)):
+        fail("LsuV1: the queue's slot valids are not io_in_bits_0..7_valid")
+    entries = " + ".join("{3'h0, %s}" % v.strip() for _, v in slots)
+
+    decl = "".join(
+        "  reg  %s_ex_%s;\n"
+        % ("[%d:0] " % (widths[n] - 1) if widths[n] > 1 else "", n)
+        for n in valids + regs
+    )
+    # Declared here, assigned at the end: the slot valids are wires
+    # LsuV1 declares after the ready signals that read the credit.
+    decl += "  wire [3:0]   _ctrl_inflight;\n  wire [4:0]   _ctrl_credit;\n"
+    resets = "".join("      _ex_%s <= 1'h0;\n" % n for n in valids)
+    accepts = "".join(
+        "      _ex_io_req_%d_valid <= io_req_%d_valid & io_req_%d_ready;\n" % (k, k, k)
+        for k in range(LANES)
+    )
+    loads = "".join("    _ex_%s <= %s;\n" % (n, n) for n in regs)
+    always = (
+        "  assign _ctrl_inflight = %s;\n"
+        "  assign _ctrl_credit = {1'h0, _ctrl_io_count} + {1'h0, _ctrl_inflight};\n"
+        "  // SYNTH_VERILOG_SURGERY (asap7/coralnpu/surgery.py\n"
+        "  // --address-register): the EX/MEM register.\n"
+        "  always @(posedge clock or posedge reset) begin\n"
+        "    if (reset) begin\n%s    end\n    else begin\n%s    end\n"
+        "  end\n"
+        "  always @(posedge clock) begin\n%s  end\n"
+    ) % (entries, resets, accepts, loads)
+
+    body = replace_once(
+        body,
+        "  assign io_active = |{_ctrl_io_count, _data_io_count};\n",
+        "  assign io_active =\n"
+        "    |{_ctrl_io_count, _data_io_count, _ex_io_req_0_valid, _ex_io_req_1_valid,\n"
+        "      _ex_io_req_2_valid, _ex_io_req_3_valid};\n" + always,
+        "io_active",
+    )
+    mod = mod[: head.end()] + decl + body
+    return text[: m.start()] + mod + text[m.end() :]
+
+
 def fail(msg):
     sys.exit("coralnpu surgery: " + msg)
 
@@ -389,6 +535,11 @@ def main():
         action="store_true",
         help="also move Regfile's storage into Regfile_rf",
     )
+    p.add_argument(
+        "--address-register",
+        action="store_true",
+        help="also register LsuV1's inputs, the EX/MEM register",
+    )
     p.add_argument("files", nargs="+")
     a = p.parse_args()
     done = 0
@@ -400,6 +551,8 @@ def main():
             text = make_sram_seams(text, path)
             if a.regfile:
                 text = make_regfile_seam(text, path)
+            if a.address_register:
+                text = make_address_register(text, path)
             print(
                 "coralnpu surgery: %s: removed %d verification files"
                 % (os.path.basename(path), len(removed))
