@@ -79,13 +79,16 @@ proc asap7_snap_macros_to_fin_grid { } {
 
     set loc [$inst getLocation]
     set x [asap7_snap_axis [lindex $loc 0] $w $flip_x $cons_x]
-    set y [asap7_snap_axis [lindex $loc 1] $h $flip_y $cons_y]
-    if { $x == "" || $y == "" } {
-      # The tracks disagree with each other or with the fin grid: keep the
-      # fin and gate grids, which the cells need, and say so.
-      utl::warn FLW 26 "[$inst getName]: no origin puts both its pins on the\
-        tracks and its cells on the fin grid; snapping to the fin grid only."
+    # Keep routing-track alignment on each axis whose constraints agree.
+    if { $x == "" } {
+      utl::warn FLW 26 "[$inst getName]: no X origin puts both its pins on the\
+        tracks and its cells on the gate grid; snapping to the gate grid only."
       set x [asap7_snap_axis [lindex $loc 0] $w $flip_x [lrange $cons_x 0 0]]
+    }
+    set y [asap7_snap_axis [lindex $loc 1] $h $flip_y $cons_y]
+    if { $y == "" } {
+      utl::warn FLW 26 "[$inst getName]: no Y origin puts both its pins on the\
+        tracks and its cells on the fin grid; snapping to the fin grid only."
       set y [asap7_snap_axis [lindex $loc 1] $h $flip_y [lrange $cons_y 0 0]]
     }
     set dx [expr { $x - [lindex $loc 0] }]
@@ -127,18 +130,23 @@ proc asap7_snap_macros_to_fin_grid { } {
 
 # The origin nearest `origin` (DBU) along one axis that meets every constraint
 # {pitch twice-offset}: origin = 0 (mod pitch) unmirrored, origin + size =
-# twice-offset (mod pitch) mirrored.  Empty if none does within the lcm.
+# twice-offset (mod pitch) mirrored.  Empty if the constraints are incompatible.
 proc asap7_snap_axis { origin size mirrored cons } {
   set period 1
+  set prepared_cons {}
   foreach c $cons {
-    set period [asap7_lcm $period [lindex $c 0]]
+    lassign $c pitch twice
+    set period [asap7_lcm $period $pitch]
+    set want [expr { $mirrored ? ($twice - $size) % $pitch : 0 }]
+    lappend prepared_cons [list $pitch $want]
   }
-  for { set d 0 } { $d <= $period } { incr d } {
+  # Valid origins repeat every period, so the nearest is at most half a period away.
+  set max_d [expr { $period / 2 }]
+  for { set d 0 } { $d <= $max_d } { incr d } {
     foreach cand [list [expr { $origin - $d }] [expr { $origin + $d }]] {
       set ok 1
-      foreach c $cons {
-        lassign $c pitch twice
-        set want [expr { $mirrored ? ($twice - $size) % $pitch : 0 }]
+      foreach c $prepared_cons {
+        lassign $c pitch want
         if { ($cand - $want) % $pitch != 0 } {
           set ok 0
           break
