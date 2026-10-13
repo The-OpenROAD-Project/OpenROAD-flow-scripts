@@ -9,5 +9,5 @@
 	url = https://github.com/keplertech/kepler-formal
 [submodule "tools/YAP"]
 	path = tools/YAP
-	url = git@github.com:The-OpenROAD-Project/YAP.git
+	url = https://github.com/The-OpenROAD-Project/YAP.git
 	branch = yap-stack

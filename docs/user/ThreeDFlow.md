@@ -1,7 +1,7 @@
 # 3D Hybrid Bonding Yield Flow
 
 A Makefile-driven flow for 3D hybrid bonding yield analysis. It combines
-OpenROAD for 3D stack validation with [YAP](https://github.com/osamahammad21/YAP)
+OpenROAD for 3D stack validation with [YAP](https://github.com/The-OpenROAD-Project/YAP)
 (Yield Analysis Platform) for wafer-to-wafer (W2W) or die-to-wafer (D2W) hybrid
 bonding yield simulation, and visualizes per-pad risk heatmaps in the OpenROAD
 GUI.
@@ -47,20 +47,19 @@ elsewhere.
 
 ```bash
 cd flow
-make DESIGN_CONFIG=./designs/3d/design_6/config.mk
+make DESIGN_CONFIG=./designs/3d/design_2/config.mk
 ```
 
 Or run individual steps:
 
 ```bash
-make DESIGN_CONFIG=./designs/3d/design_6/config.mk yap_simulate
+make DESIGN_CONFIG=./designs/3d/design_2/config.mk yap_simulate
 ```
 
-Two designs ship with the flow, and they differ in where their inputs live:
+One design ships with the flow:
 
 | Design | Stack | Simulator | Inputs |
 | --- | --- | --- | --- |
-| `design_6` | A four high DRAM stack on a TSV interconnect die, four interfaces bonded vertically | W2W | In the YAP checkout, under `$(YAP_HOME)/W2W/input/design_6` |
 | `design_2` | Four `Compute_Large` chiplets side by side on an organic substrate, four interfaces at the same z | D2W | Next to `config.mk`, in the design directory |
 
 | Step | Target | Description | Output |
@@ -80,7 +79,7 @@ in the viewer's Heat Maps panel, one entry per bonding interface. To pin the
 port instead of letting the server pick one:
 
 ```bash
-make DESIGN_CONFIG=./designs/3d/design_6/config.mk OR_ARGS="-web_port 8080" view_heatmaps
+make DESIGN_CONFIG=./designs/3d/design_2/config.mk OR_ARGS="-web_port 8080" view_heatmaps
 ```
 
 `make clean` removes this design's `objects/`, `results/` and `logs/`
@@ -199,8 +198,7 @@ export THREEDBF_FILES   = $(DESIGN_DIR)/ChipletA.3dbf \
 
 Every input is named by its full path, so the files can live next to
 `config.mk` (`$(DESIGN_DIR)`, as above and as `designs/3d/design_2` does) or
-inside a YAP checkout (`$(YAP_HOME)/W2W/input/<design>`, as
-`designs/3d/design_6` does).
+inside a YAP checkout (e.g. `$(YAP_HOME)/W2W/input/<design>`).
 
 Only list the `*_From_*.bmap` files in `BMAP_FILES` that YAP should simulate.
 `generate_criticality` globs for that pattern in the staged objects directory,

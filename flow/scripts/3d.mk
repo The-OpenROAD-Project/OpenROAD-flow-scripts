@@ -195,7 +195,13 @@ generate_criticality: $(CRITICALITY_STAMP)
 $(CRITICALITY_STAMP): $(YAP_CONFIG_STAGED)
 	@mkdir -p $(LOG_DIR)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/3_generate_criticality.log) --tee -- \
-		bash -c 'set -e; for bmap in $(abspath $(OBJECTS_DIR))/*_From_*.bmap; do \
+		bash -c 'set -e; shopt -s nullglob; \
+		bmaps=($(abspath $(OBJECTS_DIR))/*_From_*.bmap); \
+		if [ $${#bmaps[@]} -eq 0 ]; then \
+			echo "[ERROR] No *_From_*.bmap in $(abspath $(OBJECTS_DIR))." >&2; \
+			exit 1; \
+		fi; \
+		for bmap in "$${bmaps[@]}"; do \
 			crit="$${bmap%.bmap}$(CRITICALITY_SUFFIX)"; \
 			if [ -f "$$crit" ]; then \
 				echo "Exists: $$crit"; \

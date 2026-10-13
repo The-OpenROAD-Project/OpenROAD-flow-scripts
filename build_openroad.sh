@@ -505,7 +505,7 @@ __setup_3d()
         local venv="${DIR}/tools/install/yap-venv"
         echo "[INFO FLW-0032] Installing YAP Python requirements for the 3D flow into ${venv}."
         ${PYTHON_EXE:-python3} -m venv "${venv}"
-        "${venv}/bin/python" -m pip install -r tools/YAP/requirements.txt
+        "${venv}/bin/python" -m pip install -r "${DIR}/tools/YAP/requirements.txt"
 }
 
 __logging()
