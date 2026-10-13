@@ -65,7 +65,7 @@ if { !$::env(SKIP_DETAILED_ROUTE) } {
       incr repair_antennas_iters
     }
   } else {
-    utl::metric_int "antenna_diodes_count" -1
+    utl::metric_integer "antenna_diodes_count" -1
   }
 
   source_step_tcl POST DETAIL_ROUTE

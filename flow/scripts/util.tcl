@@ -45,6 +45,13 @@ proc repair_timing_helper { args } {
   log_cmd repair_timing {*}$additional_args
 }
 
+# Every detailed_placement in the flow goes through here, so the design's
+# DETAIL_PLACEMENT_ARGS (the legalizer and its window, say) apply to the
+# placement stage and to every re-legalization after it alike.
+proc detailed_placement_helper { args } {
+  log_cmd detailed_placement {*}[env_var_or_empty DETAIL_PLACEMENT_ARGS] {*}$args
+}
+
 proc repair_design_helper { } {
   puts "Perform buffer insertion and gate resizing..."
 
@@ -295,7 +302,101 @@ proc find_physical_only_masters { } {
   return $physical_only_masters
 }
 
-proc orfs_write_db { output_file } {
+proc endpoint_slack_file { step } {
+  return $::env(REPORTS_DIR)/${step}_endpoint_slack.json
+}
+
+# Write the setup and hold slack of every endpoint at the end of a flow
+# step so they can be compared across steps with
+# flow/util/endpointSlack.py. Parasitics are estimated the same way as
+# open.tcl so that every step is timed consistently, unless the caller
+# has already loaded parasitics (e.g. extracted ones) and passes their
+# name as parasitics.
+proc write_endpoint_slack { step { parasitics "" } } {
+  if { !$::env(REPORT_ENDPOINT_SLACK) || [string match "*-failed" $step] } {
+    return
+  }
+  set filename [endpoint_slack_file $step]
+  puts "Writing endpoint slack to $filename"
+
+  if { $parasitics == "" } {
+    set design_stage [lindex [split $step _] 0]
+    set parasitics none
+    if { $design_stage >= 5 } {
+      if { [grt::have_routes] } {
+        set parasitics global_routing
+      }
+    } elseif { $design_stage >= 3 } {
+      set parasitics placement
+    }
+    if { $parasitics != "none" } {
+      estimate_parasitics -$parasitics
+    }
+  }
+  # Update timing before sta::endpoints: the endpoint set is cached the
+  # first time it is requested and misses gated clock enable checks if the
+  # clock network has not been found yet.
+  sta::find_timing
+
+  set fileId [open $filename w]
+  puts $fileId "{"
+  puts $fileId "\"design\": \"$::env(DESIGN_NAME)\","
+  puts $fileId "\"step\": \"$step\","
+  puts $fileId "\"parasitics\": \"$parasitics\","
+  # Seconds per reported time unit
+  puts $fileId "\"time_unit\": [sta::time_ui_sta 1],"
+  # endpoint: [setup slack, hold slack], null if unconstrained
+  puts $fileId "\"endpoints\": {"
+  set sep ""
+  foreach pin [sta::endpoints] {
+    set name [string map {\\ \\\\ \" \\\"} [get_full_name $pin]]
+    set slacks {}
+    foreach min_max {max min} {
+      set slack [get_property $pin slack_$min_max]
+      if { $slack eq "INF" || $slack eq "-INF" } {
+        set slack null
+      }
+      lappend slacks $slack
+    }
+    puts -nonewline $fileId "$sep\"$name\": \[[join $slacks ,]\]"
+    set sep ",\n"
+  }
+  puts $fileId "\n}"
+  puts $fileId "}"
+  close $fileId
+}
+
+# A step that copies its input .odb leaves the design unchanged, so
+# re-time it if it is loaded, otherwise copy the input step's snapshot.
+proc copy_endpoint_slack { input_file output_file } {
+  if { !$::env(REPORT_ENDPOINT_SLACK) } {
+    return
+  }
+  set step [file rootname [file tail $output_file]]
+  set chip [[ord::get_db] getChip]
+  if { $chip != "NULL" && [$chip getBlock] != "NULL" } {
+    write_endpoint_slack $step
+    return
+  }
+  set input [endpoint_slack_file [file rootname [file tail $input_file]]]
+  if { ![file exists $input] } {
+    return
+  }
+  set fileId [open $input r]
+  set json [read $fileId]
+  close $fileId
+  regsub {"step": "[^"]*"} $json "\"step\": \"$step\"" json
+  set fileId [open [endpoint_slack_file $step] w]
+  puts -nonewline $fileId $json
+  close $fileId
+}
+
+# endpoint_slack 0 is for callers that write the endpoint slack snapshot
+# themselves, e.g. 6_final after parasitic extraction.
+proc orfs_write_db { output_file { endpoint_slack 1 } } {
+  if { $endpoint_slack } {
+    write_endpoint_slack [file rootname [file tail $output_file]]
+  }
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
@@ -319,6 +420,7 @@ proc orfs_write_sdc { output_file } {
 # mtime with second resolution, which breaks make's timestamp-based
 # up-to-date checks for fast builds.
 proc orfs_copy_db { input_file output_file } {
+  copy_endpoint_slack $input_file $output_file
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }

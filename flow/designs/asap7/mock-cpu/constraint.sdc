@@ -31,8 +31,8 @@ source $::env(SDC_FILE_EXTRA)
 
 set sdc_version 2.0
 
-set clk_period 333
-set clk2_period 1000
+set clk_period 270
+set clk2_period 810
 
 set clk1_name clk
 create_clock -name $clk1_name -period $clk_period \

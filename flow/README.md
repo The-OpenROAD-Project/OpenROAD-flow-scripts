@@ -19,8 +19,7 @@ For a design at `flow/designs/<platform>/<design>/` with `DESIGN_NAME =
 | `<n>_route` | Detailed routing |
 | `<n>_final` | Final + fill |
 | `<n>_generate_abstract` | LEF/LIB abstract |
-| `<n>_test` | Full flow + QoR check against `rules-base.json` |
-| `<n>_update` | Rebuild and write thresholds back to `rules-base.json` |
+| `<n>_test` | Full flow + QoR check |
 
 Stages depend on the previous, so `_final` runs the whole flow.
 
@@ -48,8 +47,11 @@ load("//flow/designs:design.bzl", "files")
 files("verilog")
 ```
 
-A design counts as CI-tested iff `rules-base.json` exists; without it
-the generated targets get `tags = ["manual"]`.
+The QoR check is the dashboard check described in
+`docs/contrib/Metrics.md`. The committed `rules-base.json` files it used
+to read were removed, so bazel-orfs no longer has that file to mark a
+design as CI-tested. Until bazel-orfs picks another marker, its generated
+test targets carry `tags = ["manual"]` for every design.
 
 ## Parallelism
 

@@ -65,7 +65,7 @@ export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 export TAP_CELL_NAME = sky130_fd_sc_hs__tapvpwrvgnd_1
 export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
-export MACRO_PLACE_HALO ?= 40 40
+export RTLMP_MIN_CHANNEL_SIZE ?= 80 80
 
 #---------------------------------------------------------
 # Place

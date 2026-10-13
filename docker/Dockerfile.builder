@@ -6,6 +6,9 @@
 # instead use etc/DockerHelper.sh
 
 ARG fromImage=openroad/flow-ubuntu22.04-dev:latest
+# Image holding the prebuilt tools/install of every tool except OpenROAD
+# (a build of the orfs-tools target). By default they are built here.
+ARG toolsImage=orfs-tools
 
 FROM $fromImage AS orfs-base
 
@@ -22,9 +25,12 @@ RUN sh /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
 # Prepend wrapper directory to PATH so they override system compilers
 ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
 
-COPY --link tools tools
+FROM orfs-builder-base AS orfs-tools-builder
+
+# Exclude install so a local build's output (e.g. tools/install/OpenROAD)
+# cannot leak into the image; the build below starts from an empty install.
+COPY --link --exclude=OpenROAD --exclude=AutoTuner --exclude=install tools tools
 ARG numThreads=$(nproc)
-ARG openroadVersion=NotSet
 ARG verificPath=""
 
 RUN <<EOF
@@ -37,8 +43,8 @@ else
 fi
 ./build_openroad.sh --no_init \
                     --local \
+                    --skip_openroad \
                     --threads ${numThreads} \
-                    --openroad-args -DOPENROAD_VERSION=${openroadVersion} \
                     ${verificArgs}
 if [ -n "${verificPath}" ]; then
     rm -rf "${verificPath}"
@@ -46,12 +52,44 @@ fi
 EOF
 
 # Collect LICENSE files from tool source trees into the install directory so
-# they are available in the final image. tools/OpenROAD/src/sta is excluded
-# because it is covered by a separate commercial license agreement.
+# they are available in the final image.
 RUN find /OpenROAD-flow-scripts/tools \( -name "*LICENSE*" -o -name "*LICENSES*" \) \
-    | grep -v '/OpenROAD/src/sta/' \
-    | grep -v '/AutoTuner/' \
     | grep -v '^/OpenROAD-flow-scripts/tools/install/' \
+    | while IFS= read -r f; do \
+        rel="${f#/OpenROAD-flow-scripts/tools/}"; \
+        mkdir -p "/OpenROAD-flow-scripts/tools/install/licenses/$(dirname "$rel")"; \
+        cp -r "$f" "/OpenROAD-flow-scripts/tools/install/licenses/$rel"; \
+    done
+
+# Yosys, kepler-formal and their licenses, without sources or build trees.
+FROM orfs-base AS orfs-tools
+
+COPY --link --from=orfs-tools-builder /OpenROAD-flow-scripts/tools/install tools/install
+
+FROM $toolsImage AS tools
+
+FROM orfs-builder-base AS orfs-openroad-builder
+
+COPY --link --from=tools /OpenROAD-flow-scripts/tools/install tools/install
+COPY --link tools/OpenROAD tools/OpenROAD
+ARG numThreads=$(nproc)
+
+RUN <<EOF
+set -e
+./build_openroad.sh --no_init \
+                    --local \
+                    --openroad_only \
+                    --threads ${numThreads}
+if [ ! -x tools/install/OpenROAD/bin/openroad ]; then
+    echo "Error: tools/install/OpenROAD/bin/openroad is missing or not executable." >&2
+    exit 1
+fi
+EOF
+
+# tools/OpenROAD/src/sta is excluded because it is covered by a separate
+# commercial license agreement.
+RUN find /OpenROAD-flow-scripts/tools/OpenROAD \( -name "*LICENSE*" -o -name "*LICENSES*" \) \
+    | grep -v '/OpenROAD/src/sta/' \
     | while IFS= read -r f; do \
         rel="${f#/OpenROAD-flow-scripts/tools/}"; \
         mkdir -p "/OpenROAD-flow-scripts/tools/install/licenses/$(dirname "$rel")"; \
@@ -72,7 +110,7 @@ COPY --link flow/scripts flow/scripts
 COPY --link flow/designs flow/designs
 COPY --link tools/AutoTuner tools/AutoTuner
 
-COPY --link --from=orfs-builder-base /OpenROAD-flow-scripts/tools/install tools/install
+COPY --link --from=orfs-openroad-builder /OpenROAD-flow-scripts/tools/install tools/install
 COPY --link \
      --exclude=.git* --exclude=tools/ --exclude=docs/ --exclude=docker/ \
      --exclude=flow/designs --exclude=flow/platforms --exclude=flow/scripts \

@@ -82,7 +82,7 @@ export PDN_TCL                               ?= $(PLATFORM_DIR)/openROAD/pdn/pdn
 export TAPCELL_TCL                           ?= $(PLATFORM_DIR)/openROAD/tapcell.tcl
 
 # macro planning
-export MACRO_PLACE_HALO                      ?= 10 10
+export RTLMP_MIN_CHANNEL_SIZE                ?= 20 20
 
 #---------------------------------------------------------
 # Place

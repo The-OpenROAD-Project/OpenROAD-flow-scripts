@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import pathlib
 import os
+import re
 import sys
 
 # Parse and validate arguments
@@ -19,6 +20,20 @@ import sys
 # emit .odb (and often .def / .sdc); routing emits .spef; finish
 # emits .gds.
 RESULT_EXTS = [".v", ".rtlil", ".odb", ".def", ".spef", ".gds", ".sdc"]
+
+
+# The timing line run_command.py emits, matched wherever it appears in
+# the line rather than from its start.  A RUN_CMD wrapper is free to
+# prefix every log line -- a per-line elapsed stamp, "[  123.45] " --
+# and such a prefix must not change what this reports.  Hours are
+# optional, as _format_elapsed only emits them past an hour, and the
+# fraction of a second is matched so it can be discarded from the
+# reported seconds, but kept for the CPU/elapsed ratio.
+ELAPSED_RE = re.compile(r"Elapsed time: (?:(\d+):)?(\d+):(\d+)(\.\d+)?\[h:\]min:sec")
+
+# The CPU time run_command.py emits on the same line, as user and sys
+# seconds; reported as their sum.
+CPU_RE = re.compile(r"CPU time: user (\d+(?:\.\d+)?) sys (\d+(?:\.\d+)?)")
 
 
 def get_hashes(f):
@@ -55,13 +70,18 @@ def get_hashes(f):
 def print_log_dir_times(logdir, args):
     first = True
     totalElapsed = 0
+    totalCpu = 0.0
+    # Elapsed time of only the steps that report CPU time, so the total
+    # CPU/elapsed ratio isn't diluted by steps without it.
+    totalCpuElapsed = 0.0
     total_max_memory = 0
     if not args.match:
         print(logdir)
 
     # Loop on all log files in the directory
     for f in sorted(pathlib.Path(logdir).glob("**/*.log")):
-        if any(x in str(f) for x in ["eqy_output", "rsz_lec_check"]):
+        # kepler-formal's own logs; its timing is in ${step}_lec/_sec.log
+        if any(x in str(f) for x in ["eqy_output", "_lec_check", "_sec_check"]):
             continue
         # Extract Elapsed Time line from log file
         stem = os.path.splitext(os.path.basename(str(f)))[0]
@@ -71,34 +91,32 @@ def print_log_dir_times(logdir, args):
             found = False
             for line in logfile:
                 elapsedTime = None
+                elapsedFraction = 0.0
+                cpuTime = None
                 peak_memory = None
 
                 # Example line:
                 # Elapsed time: 0:04.26[h:]min:sec. CPU time: user 4.08 sys 0.17 (99%). Peak memory: 671508KB.
                 if "Elapsed time" in line:
                     found = True
-                    # Extract the portion that has the time
-                    timePor = line.strip().replace("Elapsed time: ", "")
-                    # Remove the units from the time portion
-                    timePor = timePor.split("[h:]", 1)[0]
-                    # Remove any fraction of a second
-                    timePor = timePor.split(".", 1)[0]
-                    # Calculate elapsed time that has this format 'h:m:s'
-                    timeList = timePor.split(":")
-                    if len(timeList) == 2:
-                        # Only minutes and seconds are present
-                        elapsedTime = int(timeList[0]) * 60 + int(timeList[1])
-                    elif len(timeList) == 3:
-                        # Hours, minutes, and seconds are present
-                        elapsedTime = (
-                            int(timeList[0]) * 3600
-                            + int(timeList[1]) * 60
-                            + int(timeList[2])
-                        )
+                    # Match the 'h:m:s' time against the known format,
+                    # so anything the line is prefixed with is ignored.
+                    timeMatch = ELAPSED_RE.search(line)
+                    if timeMatch:
+                        hours, minutes, seconds, fraction = timeMatch.groups()
+                        # Any fraction of a second is dropped.
+                        if fraction:
+                            elapsedFraction = float(fraction)
+                        elapsedTime = int(minutes) * 60 + int(seconds)
+                        if hours is not None:
+                            elapsedTime += int(hours) * 3600
                     else:
                         print(
                             "Elapsed time not understood in", str(line), file=sys.stderr
                         )
+                    cpuMatch = CPU_RE.search(line)
+                    if cpuMatch:
+                        cpuTime = float(cpuMatch.group(1)) + float(cpuMatch.group(2))
                     # Find Peak Memory
                     peak_memory = int(
                         int(line.split("Peak memory: ")[1].split("KB")[0]) / 1024
@@ -113,41 +131,64 @@ def print_log_dir_times(logdir, args):
 
         # Print the name of the step and the corresponding elapsed time.
         # One row per (stage, result-file-ext); only the first row of a
-        # stage shows elapsed/peak.
-        format_str = "%-25s %-6s %10s %14s %20s"
+        # stage shows elapsed/cpu/peak.
         if elapsedTime is not None and peak_memory is not None:
             if first and not args.noHeader:
-                print(
-                    format_str
-                    % (
-                        "Log",
-                        "Ext",
-                        "Elapsed/s",
-                        "Peak Memory/MB",
-                        "sha1sum result [0:20)",
-                    )
-                )
+                print_header()
                 first = False
             stage_first = True
             for ext, h in hashes:
-                print(
-                    format_str
-                    % (
-                        stem,
-                        ext,
-                        elapsedTime if stage_first else "",
-                        peak_memory if stage_first else "",
-                        h[0:20],
-                    )
-                )
+                if stage_first:
+                    if cpuTime is None:
+                        cpu = "N/A"
+                    else:
+                        cpu = round(cpuTime)
+                    ratio = cpu_ratio(cpuTime, elapsedTime + elapsedFraction)
+                    print_row(stem, ext, elapsedTime, cpu, ratio, peak_memory, h[0:10])
+                else:
+                    print_row(stem, ext, "", "", "", "", h[0:10])
                 stage_first = False
-        if elapsedTime is not None:
+        # LEC/SEC run inside another step (e.g. 6_report), which already
+        # counts their time.
+        nested = stem.endswith(("_lec", "_sec"))
+        if elapsedTime is not None and not nested:
             totalElapsed += elapsedTime
+        if cpuTime is not None and elapsedTime is not None and not nested:
+            totalCpu += cpuTime
+            totalCpuElapsed += elapsedTime + elapsedFraction
         if peak_memory is not None:
             total_max_memory = max(total_max_memory, int(peak_memory))
 
     if totalElapsed != 0 and not args.match:
-        print(format_str % ("Total", "", totalElapsed, total_max_memory, ""))
+        print_row(
+            "Total",
+            "",
+            totalElapsed,
+            round(totalCpu),
+            cpu_ratio(totalCpu, totalCpuElapsed),
+            total_max_memory,
+            "",
+        )
+
+
+def cpu_ratio(cpu, elapsed):
+    """CPU time over elapsed time: roughly the number of busy threads."""
+    if cpu is None or not elapsed:
+        return "N/A"
+    return "%.2f" % (cpu / elapsed)
+
+
+def print_header():
+    """Print the column headers, split over two lines to keep the
+    columns narrow."""
+    print_row("Log", "Ext", "Elapsed", "CPU", "CPU/", "Peak Mem", "sha1sum")
+    print_row("", "", "s", "s", "Elapsed", "MB", "[0:10)")
+
+
+def print_row(log, ext, elapsed, cpu, ratio, memory, sha):
+    fmt = "%-22s %-6s %8s %8s %8s %8s %s"
+    row = fmt % (log, ext, elapsed, cpu, ratio, memory, sha)
+    print(row.rstrip())
 
 
 def scan_logs(args):

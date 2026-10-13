@@ -56,8 +56,6 @@ export FOOTPRINT_TCL   = $(PLATFORM_DIR)/bp/footprint.tcl
 export DIE_AREA = 0 0 3000 3000
 export CORE_AREA = 200 200 2800 2800
 
-export ABC_CLOCK_PERIOD_IN_PS = 1250
-
 export TNS_END_PERCENT = 0
 export PLACE_DENSITY = 0.50
 
@@ -65,7 +63,7 @@ export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
-export MACRO_PLACE_HALO = 5 5
+export RTLMP_MIN_CHANNEL_SIZE = 10 10
 
 export OPT_POST_GRT_WNS = 0
 

@@ -2,9 +2,7 @@ current_design gcd
 
 set clk_name core_clock
 set clk_port_name clk
-# 500 ps clock (2 GHz) — modest target; lib path delays grow once realistic
-# wire RC kicks in. Tighten once a clean run lands.
-set clk_period 500
+set clk_period 170
 set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_port_name]

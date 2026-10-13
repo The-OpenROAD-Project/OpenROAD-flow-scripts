@@ -20,7 +20,7 @@ export CORE_AREA   = 5 5 895 745
 
 export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
 
-export MACRO_PLACE_HALO = 10 10
+export RTLMP_MIN_CHANNEL_SIZE = 20 20
 
 export PLACE_DENSITY_LB_ADDON = 0.05
 
@@ -29,5 +29,3 @@ export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN
 endif
-
-export REMOVE_ABC_BUFFERS = 1

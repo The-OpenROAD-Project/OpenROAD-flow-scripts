@@ -53,9 +53,6 @@ IO_DELAY = []
 # Synthesis
 ##################
 
-# Clock period for Yosys (for synthesis)
-# The unit should follow each design (ns, ps) (float)
-ABC_CLOCK_PERIOD = []
 # Hierarchical Synthsis. 0 = hierarchical, 1 = flatten, empty = flatten
 # (default) (int)
 FLATTEN = []
@@ -144,7 +141,6 @@ DR_SEED = []
 SweepingAttributes = {
     "PLATFORM_DESIGN": PLATFORM_DESIGN,
     "CP": CLK_PERIOD,
-    "ABC_CP": ABC_CLOCK_PERIOD,
     "FLATTEN": FLATTEN,
     "UNCERTAINTY": UNCERTAINTY,
     "IO_DELAY": IO_DELAY,
@@ -264,7 +260,6 @@ def adjustFastRoute(filedata, adjSet, GrOverflow):
 def writeConfigs(CurAttrs, CurChunkNum):
     CurPlatform, CurDesign = CurAttrs.get("PLATFORM_DESIGN").split("-")
     CurClkPeriod = CurAttrs.get("CP")
-    CurAbcClkPeriod = CurAttrs.get("ABC_CP")
     CurFlatten = CurAttrs.get("FLATTEN")
     CurUncertainty = CurAttrs.get("UNCERTAINTY")
     CurIoDelay = CurAttrs.get("IO_DELAY")
@@ -312,7 +307,7 @@ def writeConfigs(CurAttrs, CurChunkNum):
         return
 
     # print(CurPlatform, CurDesign)
-    # print(CurClkPeriod, CurAbcClkPeriod, CurFlatten, CurCoreUtil)
+    # print(CurClkPeriod, CurFlatten, CurCoreUtil)
     # print(CurAspectRatio, CurCoreDieMargin, CurGpPad, CurDpPad)
     # print(CurCtsClusterSize, CurCtsClusterDiameter, CurLayerAdjust)
     # print(CurLayerAdjustM1, CurLayerAdjustM2, CurLayerAdjustM3)
@@ -365,8 +360,6 @@ def writeConfigs(CurAttrs, CurChunkNum):
             "export SDC_FILE = $(DESIGN_DIR)/constraint-DoE-%s.sdc\n" % variantName
         )
 
-    if CurAbcClkPeriod != "empty":
-        fo.write("export ABC_CLOCK_PERIOD_IN_PS = %s\n" % CurAbcClkPeriod)
     if CurFlatten != "empty":
         if CurFlatten == 0:
             fo.write("export SYNTH_ARGS = \n")

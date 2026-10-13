@@ -7,7 +7,9 @@ WORKDIR /OpenROAD-flow-scripts
 COPY --from=openroad/yosys /install ./tools/install/yosys
 
 # openroad binary
-COPY --from=openroad/ubuntu22.04-builder-gcc /OpenROAD/build/src/openroad ./tools/install/OpenROAD/bin/openroad
+COPY --from=openroad/ubuntu22.04-builder-gcc \
+    /OpenROAD/install/bin/openroad \
+    ./tools/install/OpenROAD/bin/openroad
 
 # flow files
 COPY ./env.sh .
