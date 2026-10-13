@@ -19,6 +19,33 @@ INVOCATION_DIR = os.getcwd()
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
+BUILD_TIME_FORMAT = "%Y-%m-%d %H:%M"
+
+
+def _build_time(val):
+    """Validate --buildTime against BUILD_TIME_FORMAT; blank means unset."""
+    val = val.strip()
+    if not val:
+        return None
+    try:
+        datetime.strptime(val, BUILD_TIME_FORMAT)
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            f"'{val}' does not match the expected format 'YYYY-MM-DD HH:MM'"
+        )
+    return val
+
+
+def _non_negative_int(val):
+    try:
+        number = int(val)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"'{val}' is not an integer")
+    if number < 0:
+        raise argparse.ArgumentTypeError(f"'{val}' is negative")
+    return number
+
+
 # Create the argument parser
 parser = argparse.ArgumentParser(description="Process some integers.")
 
@@ -55,7 +82,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--buildTime",
-    type=str,
+    type=_build_time,
     default=None,
     help="When the build ran, emitted as build_time on the pipeline payload. "
     "Defaults to now in UTC, in the format genMetrics.py uses for "
@@ -64,7 +91,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--expectedDesigns",
-    type=int,
+    type=_non_negative_int,
     default=None,
     help="Number of designs the pipeline set out to build. When set, emitted "
     "as design_count on the pipeline payload so the backend can tell a build "
@@ -225,9 +252,9 @@ def resolve_build_time(args):
     The default is UTC because the backend reads the value as UTC; local time
     would shift the build by the agent's offset wherever that is not UTC.
     """
-    if args.buildTime and args.buildTime.strip():
-        return args.buildTime.strip()
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+    if args.buildTime:
+        return args.buildTime
+    return datetime.now(timezone.utc).strftime(BUILD_TIME_FORMAT)
 
 
 def build_pipeline_payload(design_records, args, provenance=None):
@@ -259,6 +286,11 @@ def build_pipeline_payload(design_records, args, provenance=None):
     reason = args.noMetricsReason.strip() if args.noMetricsReason else ""
     if not design_records and reason:
         payload["no_metrics_reason"] = reason
+    elif reason:
+        print(
+            "[WARN] --noMetricsReason was given but design records were "
+            "collected. Ignoring the reason."
+        )
     # Only a v4 payload carries provenance. Provenance without a job name cannot
     # be v4 (the backend requires job_name from v3 up), and attaching v4 keys to
     # a message labelled v2 would make payload_schema_version stop describing

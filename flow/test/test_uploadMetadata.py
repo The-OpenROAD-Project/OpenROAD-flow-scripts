@@ -216,6 +216,24 @@ class TestUploadMetadata(unittest.TestCase):
             },
         )
         self.assertNotIn("empty (no-metrics)", result.stdout)
+        self.assertIn("[WARN] --noMetricsReason was given", result.stdout)
+
+    def test_blank_build_time_defaults_to_now(self):
+        result, messages = self.run_script("--buildTime", "  ")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertRegex(messages[0]["data"]["build_time"], BUILD_TIME_FORMAT)
+
+    def test_malformed_build_time_is_rejected(self):
+        result, messages = self.run_script("--buildTime", "2026-10-05T12:34:56Z")
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("expected format", result.stderr)
+        self.assertEqual(messages, [])
+
+    def test_negative_expected_designs_is_rejected(self):
+        result, messages = self.run_script("--expectedDesigns", "-1")
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("is negative", result.stderr)
+        self.assertEqual(messages, [])
 
     def test_design_count_with_designs(self):
         self.add_design("nangate45", "gcd")
