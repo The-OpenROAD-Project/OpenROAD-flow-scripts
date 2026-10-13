@@ -77,6 +77,53 @@ class MemoryTest(unittest.TestCase):
         self.assertEqual(timing_data.cycle_time_ns, 0.1566)
         self.assertEqual(timing_data.fo4_ps, 9.0632)
 
+    def _create_sp_ram(self, process, width, depth):
+        mem_config = MemoryConfig.from_json(
+            {"name": "sample", "width": width, "depth": depth, "banks": 1}
+        )
+        return MemoryFactory.create(mem_config, "RAM", "SP", process, TimingData())
+
+    def _pin_height(self, process, memory):
+        return 2 * process.y_offset + memory.get_num_pins() * process.pin_pitch_um
+
+    def test_shallow_memory_is_tall_enough_for_its_pins(self):
+        """
+        A 4x25 RAM's bitcells are 1.296 um tall, too short for its 55 pins;
+        it is made as tall as its pins need, snapped up to 2.8 um
+        """
+
+        memory = self._create_sp_ram(self._process, 25, 4)
+        physical = memory.get_physical_data()
+        self.assertEqual(memory.get_num_pins(), 55)
+        self.assertGreaterEqual(
+            physical.get_height(), self._pin_height(self._process, memory)
+        )
+        self.assertAlmostEqual(physical.get_height(), 2.8, delta=self._delta)
+
+    def test_deep_memory_keeps_bitcell_height(self):
+        """A memory whose bitcells already fit its pins is not made taller"""
+
+        memory = self._create_sp_ram(self._process, 32, 64)
+        _, height = self._process.get_macro_dimensions(32, 64, 1, 0)
+        self.assertGreater(height, self._pin_height(self._process, memory))
+        self.assertAlmostEqual(
+            memory.get_physical_data().get_height(), 21.0, delta=self._delta
+        )
+
+    def test_pins_fit_exactly_without_snapping(self):
+        """
+        With a 1 nm snap the height is exactly what the pins need, and
+        every pin still gets a track
+        """
+
+        process_data = TestUtils.get_base_process_data().copy()
+        process_data["snap_height_nm"] = 1
+        process = Process(process_data)
+        for width in range(1, 300):
+            # constructing the memory raises if its pins do not fit
+            memory = self._create_sp_ram(process, width, 4)
+            self.assertGreaterEqual(memory.get_physical_data().get_pin_pitch(), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

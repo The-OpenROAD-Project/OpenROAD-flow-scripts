@@ -30,7 +30,8 @@ class TestElapsedTime(unittest.TestCase):
         genElapsedTime.scan_logs(["--logDir", str(self.tmp_dir.name), "--noHeader"])
         # check if output is correct
         expected_output = (
-            self.tmp_dir.name + "\n1_test 5400 9440 N/A\nTotal 5400 9440\n"
+            self.tmp_dir.name
+            + "\n1_test 5400 N/A N/A 9440 N/A\nTotal 5400 0 N/A 9440\n"
         ).split()
         actual_output = mock_stdout.getvalue().split()
         self.assertEqual(actual_output, expected_output)
@@ -44,7 +45,7 @@ class TestElapsedTime(unittest.TestCase):
         # call the script with the test log file
         genElapsedTime.scan_logs(["--logDir", str(self.tmp_dir.name), "--noHeader"])
         expected_output = (
-            self.tmp_dir.name + "\n1_test 74 9440 N/A\nTotal 74 9440\n"
+            self.tmp_dir.name + "\n1_test 74 N/A N/A 9440 N/A\nTotal 74 0 N/A 9440\n"
         ).split()
         actual_output = mock_stdout.getvalue().split()
         self.assertEqual(actual_output, expected_output)
@@ -61,7 +62,8 @@ class TestElapsedTime(unittest.TestCase):
         genElapsedTime.scan_logs(["--logDir", str(self.tmp_dir.name), "--noHeader"])
         # check if output is correct
         expected_output = (
-            self.tmp_dir.name + "\n1_test 744 9440 N/A Total 744 9440"
+            self.tmp_dir.name
+            + "\n1_test 744 5252 7.06 9440 N/A Total 744 5252 7.06 9440"
         ).split()
         actual_output = mock_stdout.getvalue().split()
         self.assertEqual(actual_output, expected_output)

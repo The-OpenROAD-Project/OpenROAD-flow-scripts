@@ -39,6 +39,7 @@ function usage() {
 
 Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [--or_branch BRANCH_NAME] [--or_repo REPO_URL] [--no_init]
+          [-s|--skip_openroad] [--openroad_only]
           [-n|--nice] [-t|--threads N]
           [--yosys-args-overwrite] [--yosys-args STRING]
           [--with-verific PATH]
@@ -56,6 +57,9 @@ Options:
                             by default for tools/OpenROAD.
 
     -s, --skip_openroad     Skip building and all git operations on OpenROAD.
+
+    --openroad_only         Build only OpenROAD; skip Yosys, Verific and
+                            kepler-formal. Requires --local.
 
     --or_branch BRANCH_NAME Use the head of branch BRANCH for tools/OpenROAD.
 
@@ -165,6 +169,9 @@ while (( "$#" )); do
                 -s|--skip_openroad)
                         SKIP_OPENROAD=1
                         ;;
+                --openroad_only)
+                        OPENROAD_ONLY=1
+                        ;;
                 --or_branch)
                         OPENROAD_APP_BRANCH="$2"
                         shift
@@ -233,6 +240,17 @@ while (( "$#" )); do
         shift
 done
 
+if [ ! -z "${OPENROAD_ONLY+x}" ]; then
+        if [ -z "${LOCAL_BUILD+x}" ]; then
+                echo "[ERROR FLW-0033] --openroad_only requires --local." >&2
+                exit 1
+        fi
+        if [ ! -z "${SKIP_OPENROAD+x}" ]; then
+                echo "[ERROR FLW-0033] --openroad_only and --skip_openroad are mutually exclusive." >&2
+                exit 1
+        fi
+fi
+
 if [[ "$PROC" == "-1" ]]; then
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then
                 PROC=$(nproc --all)
@@ -251,13 +269,11 @@ echo "[INFO FLW-0028] Compiling with ${PROC} threads."
 
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" -DCMAKE_INSTALL_PREFIX=\"${INSTALL_PATH}/yosys\""
-# -lto selects Bazel --config=opt (-O3 and LTO). The default Bazel build is
-# -O2 without LTO, which produces a slower binary with different QoR than the
-# previous CMake RELEASE build.
+# Build.sh always builds with Bazel --config=release, which includes
+# --config=opt (-O3 and ThinLTO).
 OPENROAD_APP_ARGS=(
         "-prefix=${INSTALL_PATH}/OpenROAD"
         "-threads=${PROC}"
-        "-lto"
 )
 
 __args_setup() {
@@ -373,6 +389,10 @@ __local_build()
         if [ -z "${SKIP_OPENROAD+x}" ]; then
                 echo "[INFO FLW-0018] Compiling OpenROAD."
                 ${NICE} ./tools/OpenROAD/etc/Build.sh "${OPENROAD_APP_ARGS[@]}"
+        fi
+
+        if [ ! -z "${OPENROAD_ONLY+x}" ]; then
+                return
         fi
 
         YOSYS_ABC_PATH=tools/yosys/abc

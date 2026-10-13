@@ -309,9 +309,9 @@ class TestRunCommand(unittest.TestCase):
         with patch("sys.stdout", new_callable=StringIO) as mock_out:
             genElapsedTime.scan_logs(["--logDir", log_dir, "--noHeader"])
         output = mock_out.getvalue()
-        # 0:04.26 is 4 seconds, and 671508KB is 655MB; the prefix is not
-        # part of either.
-        self.assertRegex(output, r"1_test\s+\S*\s+4\s+655")
+        # 0:04.26 is 4 seconds, 4.08 + 0.17 is 4 CPU seconds at a 1.00
+        # ratio, and 671508KB is 655MB; the prefix is not part of any.
+        self.assertRegex(output, r"1_test\s+\S*\s+4\s+4\s+1\.00\s+655")
 
     def test_genElapsedTime_parses_hours(self):
         """Verify genElapsedTime.py understands the optional hours field."""
@@ -332,7 +332,7 @@ class TestRunCommand(unittest.TestCase):
         with patch("sys.stdout", new_callable=StringIO) as mock_out:
             genElapsedTime.scan_logs(["--logDir", log_dir, "--noHeader"])
         output = mock_out.getvalue()
-        self.assertRegex(output, r"1_test\s+\S*\s+3661\s+655")
+        self.assertRegex(output, r"1_test\s+\S*\s+3661\s+4\s+0\.00\s+655")
 
 
 if __name__ == "__main__":

@@ -58,8 +58,6 @@ export FOOTPRINT_TCL   = $(PLATFORM_DIR)/bp/footprint.tcl
 export DIE_AREA = 0 0 3000 3000
 export CORE_AREA = 200 200 2800 2800
 
-export ABC_CLOCK_PERIOD_IN_PS = 1250
-
 export TNS_END_PERCENT = 0
 export PLACE_DENSITY = 0.40
 
@@ -71,3 +69,5 @@ export RTLMP_MIN_CHANNEL_SIZE = 42 42
 
 export OPT_POST_GRT_WNS = 0
 
+# Kepler Formal on the final netlist needs more memory than the CI VM has
+export LEC_CHECK = 0
