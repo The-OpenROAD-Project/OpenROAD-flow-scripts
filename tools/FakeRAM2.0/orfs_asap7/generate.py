@@ -20,7 +20,6 @@ ASAP7_PROCESS_CONFIG = {
     "manufacturing_grid_nm": 1,
     "contacted_poly_pitch_nm": 54,
     "fin_pitch_nm": 27,
-    "column_mux_factor": 1,
     "snap_width_nm": 190,
     "snap_height_nm": 1400,
 }
@@ -54,6 +53,7 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
     process = Process(ASAP7_PROCESS_CONFIG)
     timing_data = TimingData(ASAP7_TIMING_CONFIG)
 
+    blackboxes = []
     for m in converted:
         name = m["name"]
         bits = m.get("bits", 32)
@@ -82,7 +82,9 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
         with open(lef_path, "w") as f:
             LefExporter(ram).export(f)
 
-    (out_dir / "blackboxes.txt").write_text(
-        "".join(f"{m['name']}\n" for m in converted)
-    )
+        # the area the .lib states, beside the name: synthesis costs the
+        # blackbox by it
+        blackboxes.append(f"{name} {ram.physical.get_area(False):.6f}\n")
+
+    (out_dir / "blackboxes.txt").write_text("".join(blackboxes))
     return 0

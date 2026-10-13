@@ -25,7 +25,7 @@ into `$(RESULTS_DIR)/memories_inferred.json`, and
 | `$(RESULTS_DIR)/memories/<m>.lib` | Generated Liberty view per converted memory. |
 | `$(RESULTS_DIR)/memories/<m>_pre_layout.lib` | Ideal-clock (zero clock-tree insertion) variant for pre-CTS consumers that select lib files themselves. The Makefile flow uses `<m>.lib` throughout. |
 | `$(RESULTS_DIR)/memories/<m>.lef` | Abstract LEF per converted memory. |
-| `$(RESULTS_DIR)/memories/blackboxes.txt` | Names of the converted modules — what synthesis blackboxes. |
+| `$(RESULTS_DIR)/memories/blackboxes.txt` | `<module> <area>` per converted module — what synthesis blackboxes, and the area in um² its `.lib` states, which `SYNTH_MINIMUM_KEEP_SIZE` costs it by. |
 
 Synthesis (canonicalization) blackboxes the converted modules so the
 liberty view wins over their behavioral bodies; floorplan through final
@@ -81,9 +81,9 @@ To overrule the gate, list a `.memories` file in `ADDITIONAL_MEMORIES`:
   "version": 1,
   "memories": [
     {
-      "name": "tag_array",
+      "name": "small_array",
       "idiomatic": true,
-      "reason": "forced: the RTL provides no behavioral fallback"
+      "reason": "forced: a macro despite the floors"
     }
   ]
 }
@@ -92,11 +92,7 @@ To overrule the gate, list a `.memories` file in `ADDITIONAL_MEMORIES`:
 Entries merge by name onto the detected set: fields the override
 carries win, everything else (geometry, pins) is kept from detection. A
 `.memories` entry naming a module the scanner never found is taken
-whole — it must then describe its pins itself. The
-`designs/asap7/tinyRocket` design demonstrates the forced-conversion
-case: its `tag_array` wrapper is 4 entries deep (rejected by the gate)
-but instantiates a module the sources never define, so flops are not an
-option and the design forces conversion.
+whole — it must then describe its pins itself.
 
 ## Generated views
 

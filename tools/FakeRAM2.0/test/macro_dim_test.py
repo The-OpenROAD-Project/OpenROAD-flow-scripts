@@ -109,6 +109,39 @@ class MacroDimTest(unittest.TestCase):
         self.assertAlmostEqual(width, exp_width, delta=self._delta)
         self.assertAlmostEqual(height, exp_height, delta=self._delta)
 
+    def _dimensions(self, column_mux_factor, width, depth, banks):
+        """Macro dimensions, column_mux_factor None leaves the key out"""
+
+        process_data = TestUtils.get_base_process_data().copy()
+        del process_data["column_mux_factor"]
+        if column_mux_factor is not None:
+            process_data["column_mux_factor"] = column_mux_factor
+        return Process(process_data).get_macro_dimensions(width, depth, banks, 0)
+
+    def test_macro_dim_column_mux_picked(self):
+        """An absent column_mux_factor folds a deep memory square"""
+
+        # sqrt(512 / 17) = 5.5, the nearest power of two is 4
+        picked = self._dimensions(None, 17, 512, 1)
+        self.assertEqual(picked, self._dimensions(4, 17, 512, 1))
+        width, height = picked
+        self.assertLessEqual(max(width, height) / min(width, height), 8.0)
+
+    def test_macro_dim_column_mux_explicit(self):
+        """An explicit column_mux_factor is kept, even when it is a sliver"""
+
+        width, height = self._dimensions(1, 17, 512, 1)
+        self.assertGreater(height / width, 50.0)
+
+    def test_macro_dim_column_mux_after_banks(self):
+        """The factor is picked for the array banking leaves"""
+
+        # 4 banks make 2048x39 a 512x156 array: sqrt(512 / 156) = 1.8,
+        # so 2, where sqrt(2048 / 39) = 7.2 would have given 8
+        self.assertEqual(
+            self._dimensions(None, 39, 2048, 4), self._dimensions(2, 39, 2048, 4)
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
