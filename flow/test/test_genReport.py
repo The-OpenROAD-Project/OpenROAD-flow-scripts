@@ -17,6 +17,33 @@ with patch("sys.argv", [GEN_REPORT_PATH]), patch("os.chdir"):
 
 
 class TestGenReport(unittest.TestCase):
+    def test_incomplete_flow_reports_that_it_did_not_reach_last_stage(self):
+        name = "nangate45 gcd (base)"
+        data = {
+            "status": genReport.STATUS_RED,
+            "finished": False,
+            "last_log": "5_route.log",
+            "log_errors": [],
+            "metrics_logs_errors": [],
+            "metrics_errors": [],
+            "metrics_regressions": [],
+            "calibre_errors": [],
+            "drcs": {},
+        }
+
+        report = genReport.gen_report(name, data)
+
+        self.assertEqual(
+            report,
+            "\n".join(
+                [
+                    name,
+                    "  Flow did not reach last stage.",
+                    "  Last log file 5_route.log",
+                ]
+            ),
+        )
+
     def test_parse_qor_regressions_omits_the_optional_heading(self):
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8") as log:
             log.write("Ignored UTF-8 text: µ\n")

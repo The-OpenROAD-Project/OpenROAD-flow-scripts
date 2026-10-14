@@ -150,6 +150,7 @@ def gen_report(name, data):
         if data["finished"]:
             output += "  Flow reached last stage.\n"
         else:
+            output += "  Flow did not reach last stage.\n"
             output += f"  Last log file {data['last_log']}\n"
     else:
         output = ""
