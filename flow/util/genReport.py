@@ -81,14 +81,13 @@ def parse_messages(filename, print_missing=True):
 
 
 def parse_qor_regressions(filename):
-    """Return the failed metric details from a QoR check log, if present."""
+    """Return failed metric details from a QoR check log, if present."""
     regressions = []
     in_regressions = False
     try:
-        with open(filename, "r") as file:
+        with open(filename, "r", encoding="utf-8") as file:
             for line in file:
                 if line.startswith("QoR regression detected for "):
-                    regressions.append(line.strip())
                     in_regressions = True
                 elif in_regressions and line.startswith("  ") and line.strip():
                     regressions.append(line.strip())
@@ -97,6 +96,19 @@ def parse_qor_regressions(filename):
     except OSError:
         pass
     return regressions
+
+
+def append_metrics_errors(errors, regressions, name, text):
+    if not errors:
+        return text
+
+    text += f"  Found {len(errors)} metrics failures.\n"
+    for error in errors:
+        text += f"      {error}\n"
+        if error.startswith(f"[ERROR] {name}: FAIL"):
+            for regression in regressions:
+                text += f"          {regression}\n"
+    return text
 
 
 def append_text(list_, text, sup, regex, verbose):
@@ -152,13 +164,9 @@ def gen_report(name, data):
         REGEX_ERROR,
         args.verbose,
     )
-    output = append_text(
-        data["metrics_errors"], output, "metrics failures", REGEX_ERROR, args.verbose
+    output = append_metrics_errors(
+        data["metrics_errors"], data["metrics_regressions"], name, output
     )
-    if data["metrics_regressions"]:
-        output += f"  {data['metrics_regressions'][0]}\n"
-        for regression in data["metrics_regressions"][1:]:
-            output += f"    {regression}\n"
     output = append_text(
         data["calibre_errors"], output, "calibre failures", REGEX_ERROR, args.verbose
     )
