@@ -1,7 +1,7 @@
 export DESIGN_NAME = gcd
 export PLATFORM    = sky130hd
 
-export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/gcd.v
+export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/missing.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # Adders degrade GCD
