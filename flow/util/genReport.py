@@ -80,6 +80,25 @@ def parse_messages(filename, print_missing=True):
     return errors, warnings
 
 
+def parse_qor_regressions(filename):
+    """Return the failed metric details from a QoR check log, if present."""
+    regressions = []
+    in_regressions = False
+    try:
+        with open(filename, "r") as file:
+            for line in file:
+                if line.startswith("QoR regression detected for "):
+                    regressions.append(line.strip())
+                    in_regressions = True
+                elif in_regressions and line.startswith("  ") and line.strip():
+                    regressions.append(line.strip())
+                elif in_regressions:
+                    break
+    except OSError:
+        pass
+    return regressions
+
+
 def append_text(list_, text, sup, regex, verbose):
     """
     TODO
@@ -136,6 +155,10 @@ def gen_report(name, data):
     output = append_text(
         data["metrics_errors"], output, "metrics failures", REGEX_ERROR, args.verbose
     )
+    if data["metrics_regressions"]:
+        output += f"  {data['metrics_regressions'][0]}\n"
+        for regression in data["metrics_regressions"][1:]:
+            output += f"    {regression}\n"
     output = append_text(
         data["calibre_errors"], output, "calibre failures", REGEX_ERROR, args.verbose
     )
@@ -282,6 +305,9 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
     # check if metrics passed
     d["metrics_errors"], d["metrics_warnings"] = parse_messages(
         METRICS_CHECK_FMT.format(report_dir), print_missing=d["finished"]
+    )
+    d["metrics_regressions"] = parse_qor_regressions(
+        METRICS_CHECK_FMT.format(report_dir)
     )
 
     # check if calibre was run and if drc check passed
