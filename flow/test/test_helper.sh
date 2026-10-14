@@ -86,6 +86,10 @@ fi
 mkdir -p "$(dirname "$LOG_FILE")"
 "${__make[@]}" clean_all clean_metadata 2>&1 | tee "$LOG_FILE"
 
+REPORT_LOG_DIR=$("${__make[@]}" --no-print-directory -s print-LOG_DIR)
+REPORT_LOG_DIR=${REPORT_LOG_DIR#LOG_DIR: }
+rm -f "$REPORT_LOG_DIR/0_make.log"
+
 # turn off abort on error so we can always capture the result
 set +e
 
@@ -95,6 +99,12 @@ read -r -a TARGET_ARR <<< "$TARGET"
 # Save the return code to return as the overall status after we package
 # the results
 ret=$?
+
+# Make can fail on a prerequisite before any stage creates a log.
+if [ "$ret" -ne 0 ] && ! compgen -G "$REPORT_LOG_DIR/*.log" > /dev/null; then
+  mkdir -p "$REPORT_LOG_DIR"
+  command cp "$LOG_FILE" "$REPORT_LOG_DIR/0_make.log"
+fi
 
 if [ "${TARGET}" != "finish metadata" ]; then
   exit $ret
