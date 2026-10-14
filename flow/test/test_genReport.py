@@ -34,7 +34,7 @@ class TestGenReport(unittest.TestCase):
             )
 
     def test_qor_metrics_are_nested_under_the_failing_run(self):
-        name = "nangate45/gcd/base"
+        name = "nangate45 gcd (base)"
         data = {
             "status": genReport.STATUS_RED,
             "finished": True,
