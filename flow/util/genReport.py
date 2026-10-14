@@ -98,14 +98,14 @@ def parse_qor_regressions(filename):
     return regressions
 
 
-def append_metrics_errors(errors, regressions, name, text):
+def append_metrics_errors(errors, regressions, text):
     if not errors:
         return text
 
     text += f"  Found {len(errors)} metrics failures.\n"
     for error in errors:
         text += f"      {error}\n"
-        if error.startswith(f"[ERROR] {name}: FAIL"):
+        if error.startswith("[ERROR] ") and ": FAIL " in error:
             for regression in regressions:
                 text += f"          {regression}\n"
     return text
@@ -165,7 +165,7 @@ def gen_report(name, data):
         args.verbose,
     )
     output = append_metrics_errors(
-        data["metrics_errors"], data["metrics_regressions"], name, output
+        data["metrics_errors"], data["metrics_regressions"], output
     )
     output = append_text(
         data["calibre_errors"], output, "calibre failures", REGEX_ERROR, args.verbose
