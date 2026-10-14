@@ -151,7 +151,10 @@ def gen_report(name, data):
             output += "  Flow reached last stage.\n"
         else:
             output += "  Flow did not reach last stage.\n"
-            output += f"  Last log file {data['last_log']}\n"
+            if data["last_log"]:
+                output += f"  Last log file {data['last_log']}\n"
+            else:
+                output += "  No log file found.\n"
     else:
         output = ""
 
@@ -303,7 +306,7 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
         d["log_warnings"] += temp_w
         if name_.endswith(".log"):
             d["last_log"] = name_
-    d["finished"] = d["last_log"] in LAST_EXPECTED_LOG
+    d["finished"] = any(name in files for name in LAST_EXPECTED_LOG)
 
     # check if metrics generation had issues
     d["metrics_logs_errors"], d["metrics_logs_warnings"] = parse_messages(
@@ -346,9 +349,10 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
         if not d["finished"]:
             d["status"] = STATUS_RED
             last_lines = "Could not find last lines of the log file."
-            with open(os.path.join(log_dir, d["last_log"]), "r") as last_file:
-                last_lines = last_file.readlines()[-10:]
-                last_lines = "          ".join(last_lines)
+            if d["last_log"]:
+                with open(os.path.join(log_dir, d["last_log"]), "r") as last_file:
+                    last_lines = last_file.readlines()[-10:]
+                    last_lines = "          ".join(last_lines)
             message = "[ERROR CI-0000] No error message found. "
             message += "Here are the last 10 lines of the log.\n"
             d["log_errors"] = [message + last_lines]
