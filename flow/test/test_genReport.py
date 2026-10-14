@@ -7,7 +7,6 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-
 GEN_REPORT_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "util", "genReport.py"
 )
@@ -20,6 +19,7 @@ with patch("sys.argv", [GEN_REPORT_PATH]), patch("os.chdir"):
 class TestGenReport(unittest.TestCase):
     def test_parse_qor_regressions_omits_the_optional_heading(self):
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8") as log:
+            log.write("Ignored UTF-8 text: µ\n")
             log.write(
                 "QoR regression detected for nangate45/gcd:\n"
                 "  cts__timing__setup__tns -12.2456 "
@@ -29,8 +29,10 @@ class TestGenReport(unittest.TestCase):
 
             self.assertEqual(
                 genReport.parse_qor_regressions(log.name),
-                ["cts__timing__setup__tns -12.2456 "
-                 "(base -6.95522, limit -8.346264)"],
+                [
+                    "cts__timing__setup__tns -12.2456 "
+                    "(base -6.95522, limit -8.346264)"
+                ],
             )
 
     def test_qor_metrics_are_nested_under_the_failing_run(self):
@@ -47,10 +49,8 @@ class TestGenReport(unittest.TestCase):
                 "[ERROR] Failing runs: nangate45/gcd/base",
             ],
             "metrics_regressions": [
-                "cts__timing__setup__tns -12.2456 "
-                "(base -6.95522, limit -8.346264)",
-                "cts__timing__setup__ws -0.261172 "
-                "(base -0.156758, limit -0.169258)",
+                "cts__timing__setup__tns -12.2456 " "(base -6.95522, limit -8.346264)",
+                "cts__timing__setup__ws -0.261172 " "(base -0.156758, limit -0.169258)",
                 "finish__timing__setup__tns -12.4146 "
                 "(base -7.19445, limit -8.63334)",
                 "finish__timing__setup__ws -0.271991 "
