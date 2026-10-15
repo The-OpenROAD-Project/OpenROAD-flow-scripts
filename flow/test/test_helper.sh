@@ -17,6 +17,8 @@ Options:
   --design-path DIR     Root path containing 'designs/' (default: ./)
   --variant NAME        Flow variant (default: unset)
   --target STR          Make target(s), space-separated (default: 'finish metadata')
+                        'finish metadata-generate' keeps all full-flow follow-up steps
+                        and leaves QoR checking to an external caller
   --work-home DIR       Work home (default: .)
   --private-dir DIR     Private tool scripts dir (default: ../../private_tool_scripts)
   --save-to-db          Save metrics to DB (requires private.mk)
@@ -106,7 +108,7 @@ if [ "$ret" -ne 0 ] && ! compgen -G "$REPORT_LOG_DIR/*.log" > /dev/null; then
   command cp "$LOG_FILE" "$REPORT_LOG_DIR/0_make.log"
 fi
 
-if [ "${TARGET}" != "finish metadata" ]; then
+if [ "${TARGET}" != "finish metadata" ] && [ "${TARGET}" != "finish metadata-generate" ]; then
   exit $ret
 fi
 
