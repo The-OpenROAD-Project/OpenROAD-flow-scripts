@@ -6,11 +6,18 @@ export DESIGN_NICKNAME        = aes-block
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/aes/*.v))
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
+export SYNTH_HDL_FRONTEND     = slang
+# ignore unsynthesizable timing controls (the sources' #1 delays)
+export SYNTH_SLANG_ARGS += --ignore-timing
+
 export ABC_AREA               = 1
 
-export CORE_UTILIZATION       = 47
-export CORE_ASPECT_RATIO      = 1
-export CORE_MARGIN            = 2
+# Absolute sizes, today's result of CORE_UTILIZATION 47 with yosys's
+# Verilog frontend, so the macros keep fitting as yosys and OpenROAD
+# improve: this design is the smoke test of BLOCKS plus macro placement,
+# not of utilization.
+export DIE_AREA               = 0 0 113.801 113.801
+export CORE_AREA              = 2.052 2.160 111.780 111.780
 
 export BLOCKS ?= aes_rcon aes_sbox
 export SYNTH_HIERARCHICAL = 1
