@@ -67,6 +67,30 @@ proc write_lec_script { step file1 file2 } {
   close $outfile
 }
 
+# Hardened sub-blocks (BLOCKS) enter the parent netlist as timing-only
+# abstracts with no logic model, so a formal check would treat every output
+# cone that reaches one as opaque. Return the instance paths of all block
+# instances in the loaded design; both netlists come from the same run, so the
+# same path exists in both and each instance can be paired with itself.
+proc formal_block_instance_paths { } {
+  set paths {}
+  if { ![env_var_exists_and_non_empty BLOCKS] } {
+    return $paths
+  }
+  set block [ord::get_db_block]
+  foreach inst [$block getInsts] {
+    set master [[$inst getMaster] getName]
+    if { [lsearch -exact $::env(BLOCKS) $master] >= 0 } {
+      lappend paths [$inst getName]
+    }
+  }
+  return [lsort $paths]
+}
+
+proc formal_yaml_quote { text } {
+  return "\"[string map {\\ \\\\ \" \\\"} $text]\""
+}
+
 proc write_sec_script { step file1 file2 } {
   set outfile [open "$::env(OBJECTS_DIR)/${step}_sec_test.yml" w]
   puts $outfile "format: verilog"
@@ -78,6 +102,17 @@ proc write_sec_script { step file1 file2 } {
   puts $outfile "liberty_files:"
   foreach libFile $::env(LIB_FILES) {
     puts $outfile " - $libFile"
+  }
+  # Each block instance becomes a proof boundary: its input pins are compared
+  # across the two netlists and its output pins are shared free inputs, so the
+  # block is checked as a black box instead of hiding the cones behind it.
+  set boundaries [formal_block_instance_paths]
+  if { [llength $boundaries] > 0 } {
+    puts $outfile "set_as_boundary:"
+    foreach path $boundaries {
+      set quoted [formal_yaml_quote $path]
+      puts $outfile "  - \[$quoted, $quoted\]"
+    }
   }
   puts $outfile "log_file: $::env(LOG_DIR)/${step}_sec_check.log"
   close $outfile

@@ -1637,8 +1637,10 @@ LEC_CHECK:
 SEC_CHECK:
   description: >
     Perform a sequential equivalence check between the initial synthesis
-    netlist and final netlist with the Kepler Formal PDR engine. If this
-    fails, report an issue to OpenROAD.
+    netlist and final netlist with the Kepler Formal PDR engine. Hardened
+    sub-blocks listed in BLOCKS are checked as black boxes (proof boundaries),
+    since their abstracts carry no logic. If this fails, report an issue to
+    OpenROAD.
   default: $(if $(wildcard $(KEPLER_FORMAL_EXE)),1,0)
   stages:
     - synth
