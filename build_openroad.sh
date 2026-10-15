@@ -101,7 +101,7 @@ Options:
 Options valid only for Docker builds:
     -c, --copy-platforms    Copy platforms to inside docker image.
 
-    --os=DOCKER_OS_NAME     Choose between ubuntu22.04 (default), ubuntu20.04.
+    --os=DOCKER_OS_NAME     Use ubuntu22.04 (default).
 
     This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
     By default, the tools will be built from the linked submodule hashes.
