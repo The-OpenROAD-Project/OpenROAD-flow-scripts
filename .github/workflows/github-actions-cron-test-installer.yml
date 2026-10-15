@@ -29,30 +29,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu20.04", "ubuntu22.04"]
-    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-24.04' }}
+        os: ["ubuntu22.04"]
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted-ubuntu-26.04' || 'ubuntu-26.04' }}
+    env:
+      INSTALLER_TAG: installer-${{ github.run_id }}-${{ github.run_attempt }}
+      INSTALLER_CONTAINER: installer-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.os }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 1
           submodules: recursive
-      - name: Network Setup
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y bridge-utils
-          sudo pkill docker
-          sudo iptables -t nat -F
-          sudo ifconfig docker0 down
-          sudo brctl delbr docker0
-          sudo service docker restart
       - name: Run installer
         run: |
-          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }} -tag=latest
+          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }} -tag="$INSTALLER_TAG"
       - name: Build project
         run: |
-          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }} -tag=latest
+          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }} -tag="$INSTALLER_TAG"
       - name: Test build
         run: |
           cmd="source ./env.sh ; yosys -help ; openroad -help ; make -C flow ;"
-          docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "${cmd}"
+          docker run --rm --name "$INSTALLER_CONTAINER" "openroad/flow-${{ matrix.os }}-builder:$INSTALLER_TAG" /bin/bash -c "${cmd}"
+      - name: Clean up this installer run
+        if: always()
+        run: |
+          docker rm -f "$INSTALLER_CONTAINER" || true
+          docker image rm "openroad/flow-${{ matrix.os }}-builder:$INSTALLER_TAG" "openroad/flow-${{ matrix.os }}-dev:$INSTALLER_TAG" || true

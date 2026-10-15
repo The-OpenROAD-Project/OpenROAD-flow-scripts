@@ -1,6 +1,8 @@
 name: Build and publish ORFS images
 on:
   push:
+    branches:
+      - master
     paths:
       - etc/DependencyInstaller.sh
       - etc/DockerHelper.sh
@@ -12,26 +14,13 @@ on:
       - docker/Dockerfile.builder
       - tools/codespace/scripts/**
       - tools/codespace/Dockerfile-lxqt
-  pull_request:
-    paths:
-      - etc/DependencyInstaller.sh
-      - etc/DockerHelper.sh
-      - .github/workflows/github-actions-publish-docker-images.yml
-      - build_openroad.sh
-      - env.sh
-      - flow/Makefile
-      - docker/Dockerfile.dev
-      - docker/Dockerfile.builder
-      - tools/codespace/scripts/**
-      - tools/codespace/Dockerfile-lxqt
-
 permissions:
   contents: read
   packages: write
 
 jobs:
   buildCodespaceImage:
-    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-24.04' }}
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted-ubuntu-26.04' || 'ubuntu-26.04' }}
     timeout-minutes: 600
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -64,8 +53,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [["ubuntu20.04", "ubuntu:20.04"], ["ubuntu22.04", "ubuntu:22.04"]]
-    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-24.04' }}
+        os: [["ubuntu22.04", "ubuntu:22.04"]]
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted-ubuntu-26.04' || 'ubuntu-26.04' }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -108,10 +97,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu20.04", "ubuntu22.04"]
-    runs-on: ubuntu-24.04
+        os: ["ubuntu22.04"]
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted-ubuntu-26.04' || 'ubuntu-26.04' }}
     steps:
       - name: Free Disk Space
+        if: runner.environment == 'github-hosted'
         uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6  # v2.0.0
         with:
           tool-cache: false

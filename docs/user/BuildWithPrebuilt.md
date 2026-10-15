@@ -18,7 +18,7 @@ included from the Precision Innovations' GitHub releases
 Thanks to [Precision Innovations](https://precisioninno.com/) for hosting and maintaining these binaries.
 
 The following platforms are supported currently:
-- Ubuntu 20.04/22.04
+- Ubuntu 22.04
 - Debian 11
 
 Use the following steps to download:
@@ -28,10 +28,10 @@ Step 1: Click on the [Precision Innovations Github releases link](https://github
 Step 2: Download the artifacts for your distribution.
 
 Step 3: Run the install command based on platform use package installer.
-        For example Ubuntu 20.04 use:
+        For example Ubuntu 22.04 use:
 
 ```shell
-sudo apt install ./openroad_2.0_amd64-ubuntu20.04.deb
+sudo apt install ./openroad_2.0_amd64-ubuntu22.04.deb
 ```
 
 ## Verify Installation
