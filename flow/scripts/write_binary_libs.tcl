@@ -19,6 +19,10 @@ array set blib_sources {}
 foreach lib_file [lsort -unique $lib_files] {
   set blib [binary_lib_path $lib_file]
   if { [info exists blib_sources($blib)] } {
+    # The same library spelled differently, e.g. foo.lib and ./foo.lib
+    if { [file normalize $blib_sources($blib)] eq [file normalize $lib_file] } {
+      continue
+    }
     error "Liberty files $blib_sources($blib) and $lib_file both map to $blib"
   }
   set blib_sources($blib) $lib_file
