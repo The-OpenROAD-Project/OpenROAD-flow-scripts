@@ -16,7 +16,7 @@ export ABC_AREA               = 1
 ifeq ($(DESIGN_NAME),aes_rcon)
 export DIE_AREA               = 0 0 9.144 9.144
 export CORE_AREA              = 2.052 2.160 7.128 7.020
-else
+else ifeq ($(DESIGN_NAME),aes_sbox)
 export DIE_AREA               = 0 0 15.866 15.866
 export CORE_AREA              = 2.052 2.160 13.824 13.770
 endif
