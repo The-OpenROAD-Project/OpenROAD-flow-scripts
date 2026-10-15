@@ -292,6 +292,26 @@ $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
 $(OBJECTS_DIR)/klayout.lyt: $(RESULTS_DIR)/memories.json
 endif
 
+# OpenROAD stages read binary liberty (.blib) files, written before 1_synth.
+# Yosys reads the text libraries.
+export BINARY_LIBS_DIR = $(OBJECTS_DIR)/lib
+BINARY_LIBS_STAMP = $(BINARY_LIBS_DIR)/binary_libs.stamp
+# Generated corner libraries (BLOCKS abstracts) have no make rule.
+BINARY_LIBS_CORNER_SOURCES := $(foreach corner,$(CORNERS),$($(shell echo $(corner) | tr a-z A-Z)_LIB_FILES))
+BINARY_LIBS_SOURCES := $(LIB_FILES) $(wildcard $(BINARY_LIBS_CORNER_SOURCES))
+
+$(BINARY_LIBS_STAMP): $(BINARY_LIBS_SOURCES) $(SCRIPTS_DIR)/write_binary_libs.tcl $(wildcard $(OPENROAD_EXE))
+	$(UNSET_AND_MAKE) do-binary-libs
+
+.PHONY: do-binary-libs
+do-binary-libs:
+	mkdir -p $(BINARY_LIBS_DIR) $(LOG_DIR)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/write_binary_libs.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_binary_libs.tcl
+	touch $(BINARY_LIBS_STAMP)
+
+# Order-only here and below, so regenerating the .blib files does not rerun the flow.
+$(RESULTS_DIR)/1_synth.odb: | $(BINARY_LIBS_STAMP)
+
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
 	$(SCRIPTS_DIR)/synth.sh $(SYNTH_SCRIPT) $(LOG_DIR)/1_2_yosys.log
@@ -355,6 +375,7 @@ endef
 
 define OPEN_GUI
 .PHONY: open_$(1) gui_$(1) web_$(1)
+open_$(1) gui_$(1) web_$(1): | $(BINARY_LIBS_STAMP)
 open_$(1):
 	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/open.tcl
 gui_$(1):
@@ -403,7 +424,7 @@ $(eval $(call OPEN_GUI_SHORTCUT,$(1),$(1).odb))
 endif
 
 .PHONY: do-$(1)
-do-$(1): $(DO_STEP_DEPS_$(1)) $(OBJECTS_DIR)/copyright.txt
+do-$(1): $(DO_STEP_DEPS_$(1)) $(OBJECTS_DIR)/copyright.txt | $(BINARY_LIBS_STAMP)
 	$(SCRIPTS_DIR)/flow.sh $(1) $(3)
 endef
 
@@ -912,7 +933,7 @@ klayout:
 	$(SCRIPTS_DIR)/klayout.sh
 
 .phony: run
-run:
+run: | $(BINARY_LIBS_STAMP)
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/$(RUN_LOG_NAME_STEM).log) --tee -- $(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT)
 
