@@ -140,6 +140,22 @@ class TestReportCollection(unittest.TestCase):
         self.assertIn("sky130hd gcd (base)\n  Flow did not reach last stage.", summary)
         self.assertIn("No log file found.", summary)
 
+    def test_dashboard_verdict_reaches_the_summary(self):
+        self.write_file("logs/gf12/aes/base/6_report.log", "Finished\n")
+        self.write_file(
+            "reports/gf12/aes/base/metadata-check.log",
+            "[ERROR] Dashboard QoR check: FAIL (gf12/aes/base)\n"
+            "QoR regression detected for gf12/aes/base:\n"
+            "  finish__timing__setup__tns -253.714 (base -51.7363, limit -123.7363)\n"
+            "  Baseline: https://dashboard.example/builds/33923\n",
+        )
+        summary = self.summary()
+        self.assertIn("Failing designs", summary)
+        self.assertIn("gf12 aes (base)", summary)
+        self.assertIn("finish__timing__setup__tns -253.714", summary)
+        self.assertIn("limit -123.7363", summary)
+        self.assertIn("https://dashboard.example/builds/33923", summary)
+
 
 class TestGenReport(unittest.TestCase):
     def test_incomplete_flow_reports_that_it_did_not_reach_last_stage(self):
