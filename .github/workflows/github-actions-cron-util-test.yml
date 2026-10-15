@@ -20,20 +20,16 @@ jobs:
   testUtilScripts:
     strategy:
       fail-fast: false
-    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-24.04' }}
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted-ubuntu-26.04' || 'ubuntu-26.04' }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 1
           submodules: recursive
-      - name: Install Dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip
       - name: Run Tests
         run: |
           cd flow/test
           for file in *.py; do
-              python "$file"
+              python3 "$file"
           done

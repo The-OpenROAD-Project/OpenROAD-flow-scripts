@@ -196,10 +196,18 @@ class TestRunCommand(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        # Wait a bit for first line to be flushed
-        time.sleep(0.3)
-        with open(self.log_path) as f:
-            content = f.read()
+        # Poll until the first line is flushed. Interpreter start-up time
+        # varies, so a fixed sleep is racy. The child sleeps 1.5s in total,
+        # so line1 must show up before the deadline while it still runs.
+        content = ""
+        deadline = time.monotonic() + 1.0
+        while time.monotonic() < deadline:
+            if os.path.exists(self.log_path):
+                with open(self.log_path) as f:
+                    content = f.read()
+                if "line1" in content:
+                    break
+            time.sleep(0.05)
         self.assertIn(
             "line1", content, "line1 should appear before subprocess finishes"
         )
