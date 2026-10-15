@@ -431,3 +431,27 @@ proc source_step_tcl { hook_type step_name } {
   set env_var "${hook_type}_${step_name}_TCL"
   source_env_var_if_exists $env_var
 }
+
+# Binary liberty (.blib) files written by write_binary_libs.tcl
+proc binary_lib_dir { } {
+  if { [env_var_exists_and_non_empty BINARY_LIBS_DIR] } {
+    return $::env(BINARY_LIBS_DIR)
+  }
+  return [file join $::env(OBJECTS_DIR) lib]
+}
+
+proc binary_lib_path { lib_file } {
+  set name [file tail $lib_file]
+  regsub {\.gz$} $name "" name
+  return [file join [binary_lib_dir] "[file rootname $name].blib"]
+}
+
+# Falls back to the text library when its .blib was not generated
+proc lib_file_to_read { lib_file } {
+  set blib [binary_lib_path $lib_file]
+  if { [file exists $blib] } {
+    return $blib
+  }
+  utl::warn FLW 25 "$blib not found, reading $lib_file."
+  return $lib_file
+}
