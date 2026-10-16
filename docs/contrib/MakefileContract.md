@@ -9,13 +9,17 @@ never written down.
 
 This page writes them down as rules a review can check a change against: a
 change to `flow/Makefile`, `flow/scripts/*.mk`, the stage scripts in
-`flow/scripts/*.tcl` or `flow/scripts/variables.yaml`. It is written for
+`flow/scripts/*.tcl`, `flow/scripts/variables.yaml`, or the `config.mk` of a
+platform (`flow/platforms/*/config.mk`) or a design
+(`flow/designs/**/config.mk`). It is written for
 automated review of AI maintenance of these files: an agent that changes one
 of them, or reviews such a change, checks it against every rule here.
 
 The rules are hard stops: a change that breaks one is wrong, whatever else it
-fixes. Each rule says what breaks when it is broken. Existing code that breaks
-a rule is debt to fix, not a precedent to follow.
+fixes. Each rule says what breaks when it is broken. Any place where the
+existing code disagrees with a rule is technical debt, whether an expedient
+solution or older code written before the rule: debt to fix, not a precedent
+to follow.
 
 Some flows run the Makefile one step at a time, each step in a fresh tree that
 holds only that step's inputs, and track the dependencies themselves;
@@ -103,9 +107,11 @@ Several of the rules exist for them.
   variable a flow adds never reuses one of these names.
   *Breaks:* a flow that relocates the tree through `WORK_HOME` finds results
   where the Makefile did not put them.
-- **A variable is never missing from `flow/scripts/variables.yaml`.** Its entry
-  has its default, when it has one, and `stages:` when not every stage reads
-  it.
+- **A variable a design, platform or user sets, or a stage script reads, is
+  never missing from `flow/scripts/variables.yaml`.** Its entry has its
+  default, when it has one, and `stages:` when not every stage reads it.
+  Helpers internal to the Makefile, such as `DO_STEP_DEPS_*` and
+  `UNSET_AND_MAKE`, are not listed.
   *Breaks:* a flow that checks variable names against `variables.yaml`
   refuses it, and a flow that passes each stage only its own variables
   passes it nowhere, or everywhere.
