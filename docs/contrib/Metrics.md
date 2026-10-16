@@ -47,12 +47,28 @@ check did not run. Read the `[WARN]` lines to see which. Pass `--strict` to
 `checkQorMetrics.py` to get distinct exit codes instead (2 inconclusive,
 3 unreachable).
 
-Two environment variables shape the comparison:
+The check runs as the commit `metadata.json` records. The dashboard searches
+its default baseline pipelines in order and takes a `master` build that has the
+design: the one at the commit's merge base with `master`, otherwise the latest
+one before the commit. A commit on `master` is its own merge base, so a run of
+a `master` commit, such as a downloaded CI artifact, is compared against that
+commit's own build. A commit not yet pushed has no merge base on GitHub, so it
+is compared against the latest `master` build before it. Without a commit the
+run is compared against the latest `master` build.
+
+These environment variables shape the comparison:
 
 - `DASHBOARD_API_KEY` grants access to private platforms. Without it, a
-  private design reports as inconclusive, not as an authentication error.
-- `DASHBOARD_JOB_NAME` names the Jenkins pipeline whose `master` builds are the
-  baseline. The default is `OpenROAD-flow-scripts-Public`.
+  private design has no baseline and reports as inconclusive, not as an
+  authentication error.
+- `DASHBOARD_JOB_NAME` checks the run as a build of that CI pipeline instead,
+  with the pipeline's rules for the branch checked out in this repository: the
+  previous build on a trunk branch such as `master`, the merge base on any
+  other branch. A CI job, whose checkout has no branch, also sets
+  `DASHBOARD_BRANCH` and `DASHBOARD_COMMIT` (or passes `--branch` and
+  `--commit`).
+- `DASHBOARD_API_URL` (`--api-url`) points the check at another deployment and
+  takes precedence over `--beta`.
 
 If you only changed synthesis, you can gate a synthesis-only run, without
 running the rest of the flow. Only the `synth__` and `constraints__` metrics
