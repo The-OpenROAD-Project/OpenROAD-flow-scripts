@@ -114,7 +114,7 @@ source_env_var_if_exists FOOTPRINT_TCL
 log_cmd set_dont_use $::env(DONT_USE_CELLS)
 
 # The transforms below (repair_tie_fanout, replace_arith_modules,
-# remove_buffers, repair_timing_helper) look like synthesis-stage
+# repair_timing_helper) look like synthesis-stage
 # operations: they all act on the netlist and don't touch placement.
 # But they DO depend on having a floorplan in place — initialize_floorplan
 # above placed the bterms on the die boundary and set_routing_layers
@@ -151,13 +151,8 @@ if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
   log_cmd replace_arith_modules
 }
 
-if { $::env(REMOVE_ABC_BUFFERS) } {
-  # remove buffers inserted by yosys/abc
-  log_cmd remove_buffers
-} else {
-  # Skip clone & split
-  repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
-}
+# Skip clone & split
+repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
 
 puts "Default units for flow"
 report_units
