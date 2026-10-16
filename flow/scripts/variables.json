@@ -1205,7 +1205,8 @@
     "description": "Skips detailed route.\n",
     "stages": [
       "route",
-      "final"
+      "final",
+      "generate_abstract"
     ]
   },
   "SKIP_GATE_CLONING": {

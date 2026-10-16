@@ -68,11 +68,11 @@ if { $result != 0 } {
   error $errMsg
 }
 
-log_cmd estimate_parasitics -placement
+log_cmd estimate_parasitics
 
 if { $::env(CLUSTER_FLOPS) } {
   log_cmd cluster_flops {*}[env_var_or_empty CLUSTER_FLOPS_ARGS]
-  log_cmd estimate_parasitics -placement
+  log_cmd estimate_parasitics
 }
 
 report_metrics 3 "global place" false false
