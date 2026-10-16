@@ -111,7 +111,7 @@ an agent reviewing one does not make them.
 - **"Make this robust for a case the flow does not have,"** such as a second
   `read_timing` in one GUI session, or a variable for one design's special
   case. Each adds code no CI run exercises, or changes behavior.
-- **A rewrite of a yosys `select` expression.** Run it before taking it;
+- **"Rewrite this yosys `select` expression."** Run it before taking it;
   reviewers and tests have disagreed with such suggestions.
 
 Suggestions worth taking are real defects: a loop that is quadratic on large
