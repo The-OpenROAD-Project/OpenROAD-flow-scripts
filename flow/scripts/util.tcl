@@ -306,32 +306,29 @@ proc endpoint_slack_file { step } {
   return $::env(REPORTS_DIR)/${step}_endpoint_slack.json
 }
 
+# The final stage extracts parasitics into 6_final.spef when the platform
+# has OpenRCX rules and the design is detail routed. 6_final.odb is timed
+# with that SPEF; whether a .spef file exists says nothing.
+proc final_extracts_parasitics { } {
+  return [expr {
+    [env_var_exists_and_non_empty RCX_RULES]
+    && !$::env(SKIP_DETAILED_ROUTE)
+  }]
+}
+
 # Write the setup and hold slack of every endpoint at the end of a flow
 # step so they can be compared across steps with
-# flow/util/endpointSlack.py. Parasitics are estimated the same way as
-# open.tcl so that every step is timed consistently, unless the caller
-# has already loaded parasitics (e.g. extracted ones) and passes their
-# name as parasitics.
-proc write_endpoint_slack { step { parasitics "" } } {
+# flow/util/endpointSlack.py. A placed design is timed with the parasitics
+# OpenROAD has for it, a design before placement without any.
+proc write_endpoint_slack { step } {
   if { !$::env(REPORT_ENDPOINT_SLACK) || [string match "*-failed" $step] } {
     return
   }
   set filename [endpoint_slack_file $step]
   puts "Writing endpoint slack to $filename"
 
-  if { $parasitics == "" } {
-    set design_stage [lindex [split $step _] 0]
-    set parasitics none
-    if { $design_stage >= 5 } {
-      if { [grt::have_routes] } {
-        set parasitics global_routing
-      }
-    } elseif { $design_stage >= 3 } {
-      set parasitics placement
-    }
-    if { $parasitics != "none" } {
-      estimate_parasitics -$parasitics
-    }
+  if { [grt::design_is_placed] } {
+    log_cmd estimate_parasitics
   }
   # Update timing before sta::endpoints: the endpoint set is cached the
   # first time it is requested and misses gated clock enable checks if the
@@ -342,7 +339,7 @@ proc write_endpoint_slack { step { parasitics "" } } {
   puts $fileId "{"
   puts $fileId "\"design\": \"$::env(DESIGN_NAME)\","
   puts $fileId "\"step\": \"$step\","
-  puts $fileId "\"parasitics\": \"$parasitics\","
+  puts $fileId "\"parasitics\": \"[est::parasitics_source]\","
   # Seconds per reported time unit
   puts $fileId "\"time_unit\": [sta::time_ui_sta 1],"
   # endpoint: [setup slack, hold slack], null if unconstrained

@@ -27,19 +27,21 @@ cells) re-time the design if it is loaded, or else copy the previous step's
 snapshot. Intermediate `.odb` files written through `orfs_write_db` (e.g. CTS
 `save_progress`) also get a snapshot; `*-failed` ones don't.
 
-So that all steps are timed the same way, parasitics are estimated before
-reporting as in `open.tcl`, based on the step number:
+A placed step is timed with the parasitics OpenROAD has for it: a bare
+`estimate_parasitics` estimates from the global routes when there are any,
+else from placement, and does nothing once `read_spef` has read the
+extracted parasitics:
 
 | Steps | Parasitics |
 | --- | --- |
-| 1, 2 | none (cells are not placed) |
-| 3, 4 | `estimate_parasitics -placement` |
-| 5, `6_1_fill` | `estimate_parasitics -global_routing` if global routes exist |
-| `6_final` | `rcx`: the extracted `6_final.spef`, as in `6_finish.rpt` (`global_routing` on platforms without `RCX_RULES`) |
+| before placement, and `3_1_place_gp_skip_io` while the pins are unplaced | `none` |
+| placed, before global route | `placement` |
+| global route and later | `global_routing` |
+| `6_final` | `spef`: the extracted `6_final.spef`, as in `6_finish.rpt` (`global_routing` on platforms without `RCX_RULES`) |
 
 The parasitics model is recorded in each snapshot and shown by
 `endpointSlack.py`. Slack changes between steps with different models (e.g.
-`2_4_floorplan_pdn` to `3_1_place_gp_skip_io`, `4_1_cts` to `5_1_grt`, or
+`2_4_floorplan_pdn` to the first placed step, `4_1_cts` to `5_1_grt`, or
 `6_1_fill` to `6_final`) include the change of model. Detailed routing is
 only extracted in `6_final`, so `5_2_route` to `6_1_fill` show global routing
 estimates.

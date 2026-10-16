@@ -59,16 +59,14 @@ proc read_timing { input_file } {
     set_propagated_clock [all_clocks]
   }
 
-  if { $design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef] } {
+  if {
+    [file rootname [file tail $input_file]] == "6_final"
+    && [final_extracts_parasitics]
+  } {
     log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
-  } elseif { $design_stage >= 5 } {
-    if { [log_cmd grt::have_routes] } {
-      log_cmd estimate_parasitics -global_routing
-    } else {
-      puts "No global routing results available, skipping estimate_parasitics"
-    }
-  } elseif { $design_stage >= 3 } {
-    log_cmd estimate_parasitics -placement
+  }
+  if { [grt::design_is_placed] } {
+    log_cmd estimate_parasitics
   }
 
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster

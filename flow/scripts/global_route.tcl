@@ -39,7 +39,8 @@ proc global_route_helper { } {
         error $errMsg
       }
       orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
-      orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
+      # A route that failed has no parasitics to time the endpoints with.
+      orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb 0
       return 0
     }
     return 1
@@ -74,7 +75,7 @@ proc global_route_helper { } {
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
   set_propagated_clock [all_clocks]
-  log_cmd estimate_parasitics -global_routing
+  log_cmd estimate_parasitics
 
   if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
     set_dont_use $::env(DONT_USE_CELLS)
@@ -106,7 +107,7 @@ proc global_route_helper { } {
 
     # Repair timing using global route parasitics
     puts "Repair setup and hold violations..."
-    log_cmd estimate_parasitics -global_routing
+    log_cmd estimate_parasitics
 
     repair_timing_helper
 
@@ -126,7 +127,7 @@ proc global_route_helper { } {
       return
     }
 
-    log_cmd estimate_parasitics -global_routing
+    log_cmd estimate_parasitics
 
     if { $::env(OPT_POST_GRT_WNS) } {
       set repair_timing_args \
@@ -171,7 +172,7 @@ proc global_route_helper { } {
   }
 
   puts "Estimate parasitics..."
-  log_cmd estimate_parasitics -global_routing
+  log_cmd estimate_parasitics
 
   report_metrics 5 "global route"
 

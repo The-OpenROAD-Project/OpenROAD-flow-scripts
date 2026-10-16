@@ -20,10 +20,7 @@ if { $::env(SEC_CHECK) } {
 }
 
 # Run extraction and STA
-if {
-  [env_var_exists_and_non_empty RCX_RULES]
-  && !$::env(SKIP_DETAILED_ROUTE)
-} {
+if { [final_extracts_parasitics] } {
   # RCX section
   define_process_corner -ext_model_index 0 X
   set_extraction_rules_file $::env(RCX_RULES)
@@ -35,7 +32,6 @@ if {
 
   # Read Spef for OpenSTA
   read_spef $::env(RESULTS_DIR)/6_final.spef
-  set final_parasitics rcx
 
   # Static IR drop analysis
   if { [env_var_exists_and_non_empty PWR_NETS_VOLTAGES] } {
@@ -57,12 +53,10 @@ if {
     puts "IR drop analysis for ground nets is skipped because GND_NETS_VOLTAGES is undefined"
   }
 } else {
-  puts "OpenRCX is not enabled for this platform."
-  puts "Falling back to global route-based estimates."
-  log_cmd estimate_parasitics -global_routing
-  set final_parasitics global_routing
+  puts "OpenRCX is not enabled for this platform or detailed route was skipped."
+  log_cmd estimate_parasitics
 }
-write_endpoint_slack 6_final $final_parasitics
+write_endpoint_slack 6_final
 
 report_cell_usage
 
