@@ -107,11 +107,12 @@ Several of the rules exist for them.
   variable a flow adds never reuses one of these names.
   *Breaks:* a flow that relocates the tree through `WORK_HOME` finds results
   where the Makefile did not put them.
-- **A variable a design, platform or user sets, or a stage script reads, is
-  never missing from `flow/scripts/variables.yaml`.** Its entry has its
-  default, when it has one, and `stages:` when not every stage reads it.
-  Helpers internal to the Makefile, such as `DO_STEP_DEPS_*` and
-  `UNSET_AND_MAKE`, are not listed.
+- **A variable a design or platform sets, or a stage script reads, is never
+  missing from `flow/scripts/variables.yaml`.** Its entry has its default,
+  when it has one, and `stages:` when not every stage reads it. A variable
+  only the Makefile reads, such as `WORK_HOME`, or that is internal to it,
+  such as `DO_STEP_DEPS_*` and `UNSET_AND_MAKE`, may be documented elsewhere
+  and need not be listed.
   *Breaks:* a flow that checks variable names against `variables.yaml`
   refuses it, and a flow that passes each stage only its own variables
   passes it nowhere, or everywhere.
