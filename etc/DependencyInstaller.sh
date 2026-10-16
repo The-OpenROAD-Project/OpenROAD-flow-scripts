@@ -371,7 +371,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib
+    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib cmake
     brew link --force libomp
     brew install --cask klayout
     brew install docker docker-buildx
@@ -411,6 +411,14 @@ Usage: $0 [-all|-base|-common] [-<ARGS>]
                                 # Installs OpenROAD's common dependencies
                                 #     (-base must be executed in another
                                 #     command).
+       $0 -bazel
+                                # Default. Installs the dependencies to
+                                #     build OpenROAD with Bazel.
+       $0 -cmake
+                                # Installs the dependencies to build
+                                #     OpenROAD with CMake instead of Bazel,
+                                #     e.g. for build_openroad.sh
+                                #     --openroad-args -cmake-build.
        $0 -prefix=DIR
                                 # Installs common dependencies in an existing
                                 #     user-specified directory. Only used
@@ -445,6 +453,8 @@ option="none"
 isLocal="false"
 constantBuildDir="false"
 CI="no"
+# OpenROAD build system to install dependencies for: bazel or cmake
+buildSystem="bazel"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -469,6 +479,12 @@ while [ "$#" -gt 0 ]; do
                 echo "WARNING: previous argument -${option} will be overwritten with -common." >&2
             fi
             option="common"
+            ;;
+        -bazel)
+            buildSystem="bazel"
+            ;;
+        -cmake)
+            buildSystem="cmake"
             ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
@@ -510,10 +526,13 @@ if [[ "${option}" == "none"  ]]; then
 fi
 
 OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
-# build_openroad.sh builds OpenROAD with Bazel, so bazelisk and its runtime
-# libraries are base dependencies. They need root, and -common may run
-# unprivileged, so they ride along with -base only.
-if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+# build_openroad.sh builds OpenROAD with Bazel by default. The Bazel runtime
+# libraries need root, and -common may run unprivileged, so they ride along
+# with -base only; -common installs bazelisk. -cmake asks for the OpenROAD
+# CMake dependencies instead.
+if [[ "${buildSystem}" == "cmake" ]]; then
+    OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -cmake"
+elif [[ "${option}" == "base" || "${option}" == "all" ]]; then
     OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -bazel"
 fi
 
