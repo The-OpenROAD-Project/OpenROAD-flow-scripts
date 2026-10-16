@@ -4,6 +4,7 @@ import json
 import argparse
 import os
 import sys
+from datetime import datetime, timezone
 
 # --- PUBSUB ---
 from google.cloud import pubsub_v1
@@ -17,6 +18,33 @@ INVOCATION_DIR = os.getcwd()
 
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+
+BUILD_TIME_FORMAT = "%Y-%m-%d %H:%M"
+
+
+def _build_time(val):
+    """Validate --buildTime against BUILD_TIME_FORMAT; blank means unset."""
+    val = val.strip()
+    if not val:
+        return None
+    try:
+        datetime.strptime(val, BUILD_TIME_FORMAT)
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            f"'{val}' does not match the expected format 'YYYY-MM-DD HH:MM'"
+        )
+    return val
+
+
+def _non_negative_int(val):
+    try:
+        number = int(val)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"'{val}' is not an integer")
+    if number < 0:
+        raise argparse.ArgumentTypeError(f"'{val}' is negative")
+    return number
+
 
 # Create the argument parser
 parser = argparse.ArgumentParser(description="Process some integers.")
@@ -51,6 +79,30 @@ parser.add_argument(
     "pipelines repoint tools/OpenROAD, so the reporting workspace holds the "
     "pinned commit rather than the built one. When supplied alongside "
     "--jobName the payload is emitted as schema v4.",
+)
+parser.add_argument(
+    "--buildTime",
+    type=_build_time,
+    default=None,
+    help="When the build ran, emitted as build_time on the pipeline payload. "
+    "Defaults to now in UTC, in the format genMetrics.py uses for "
+    "run__flow__generate_date (%%Y-%%m-%%d %%H:%%M). The backend reads it "
+    "as UTC.",
+)
+parser.add_argument(
+    "--expectedDesigns",
+    type=_non_negative_int,
+    default=None,
+    help="Number of designs the pipeline set out to build. When set, emitted "
+    "as design_count on the pipeline payload so the backend can tell a build "
+    "that produced fewer (or no) metrics from one that built fewer designs.",
+)
+parser.add_argument(
+    "--noMetricsReason",
+    type=str,
+    default=None,
+    help="Why no design produced metrics. Emitted as no_metrics_reason only "
+    "on a payload with no designs.",
 )
 
 # --- PUBSUB args ---
@@ -194,6 +246,17 @@ def resolve_schema_version(args, provenance):
     return 4 if provenance else 3
 
 
+def resolve_build_time(args):
+    """The build time to report, defaulting to now in genMetrics.py's format.
+
+    The default is UTC because the backend reads the value as UTC; local time
+    would shift the build by the agent's offset wherever that is not UTC.
+    """
+    if args.buildTime:
+        return args.buildTime
+    return datetime.now(timezone.utc).strftime(BUILD_TIME_FORMAT)
+
+
 def build_pipeline_payload(design_records, args, provenance=None):
     """Return the pipeline-level payload dict.
 
@@ -211,10 +274,23 @@ def build_pipeline_payload(design_records, args, provenance=None):
         "change_branch": args.changeBranch,
         "commit_sha": args.commitSHA,
         "jenkins_url": args.jenkinsURL,
+        "build_time": resolve_build_time(args),
         "designs": design_records,
     }
     if job_name:
         payload["job_name"] = job_name
+    if args.expectedDesigns is not None:
+        payload["design_count"] = args.expectedDesigns
+    # A reason only describes a build that produced nothing; on a payload with
+    # designs it would contradict the metrics it carries.
+    reason = args.noMetricsReason.strip() if args.noMetricsReason else ""
+    if not design_records and reason:
+        payload["no_metrics_reason"] = reason
+    elif reason:
+        print(
+            "[WARN] --noMetricsReason was given but design records were "
+            "collected. Ignoring the reason."
+        )
     # Only a v4 payload carries provenance. Provenance without a job name cannot
     # be v4 (the backend requires job_name from v3 up), and attaching v4 keys to
     # a message labelled v2 would make payload_schema_version stop describing
@@ -260,6 +336,11 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
     requirement: a v1 message declares no schema version, so there is nothing
     for the extra keys to contradict, and the backend reads provenance here by
     key presence rather than by version.
+
+    build_time, design_count and no_metrics_reason are left off: the backend
+    reads every v1 root key it does not list as metadata as a metric, so new
+    root keys here would surface as bogus metrics. An empty build never gets
+    here anyway; its payload is far below the size cap.
     """
     futures = []
     failed = 0
@@ -361,7 +442,16 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
 # A failed publish exits non-zero. A warning alone let CI builds pass while the
 # QoR dashboard stopped receiving results, which froze the baseline that later
 # builds are compared against.
-if publisher and design_records:
+#
+# A build where no design produced metrics still publishes, with an empty
+# designs list, so the dashboard lists it as a build without metrics instead of
+# leaving it out.
+if publisher:
+    if not design_records:
+        print(
+            "[INFO] No design records were collected. Publishing an empty "
+            "(no-metrics) pipeline report."
+        )
     provenance = load_provenance(args.provenanceFile)
     payload = build_pipeline_payload(design_records, args, provenance)
     message_data = json.dumps(payload, default=str).encode("utf-8")
@@ -393,6 +483,6 @@ if publisher and design_records:
         except Exception as e:
             print(f"[ERROR] Pub/Sub publish failed for pipeline report: {e}")
             sys.exit(1)
-elif publisher and not design_records:
-    print("[WARN] Pub/Sub publisher initialized but no design records were collected.")
+        if not design_records:
+            print("[INFO] Published an empty (no-metrics) pipeline report.")
 # --- END PUBSUB ---
