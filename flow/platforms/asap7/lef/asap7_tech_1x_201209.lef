@@ -35,8 +35,11 @@ DIVIDERCHAR "/" ;
 CLEARANCEMEASURE EUCLIDEAN ;
 USEMINSPACING OBS OFF ;
 
+# 4000, not 1000: several rules are written on a quarter nanometre (M1's
+# EOLKEEPOUT width 0.01825, M4-M7's side extension 0.02425 and 0.03225, M8/M9's
+# SPACINGTABLE thresholds 0.05975 ... 1.79975), which a 1 nm database rounds off.
 UNITS
- DATABASE MICRONS 1000 ;
+ DATABASE MICRONS 4000 ;
 END UNITS
  MANUFACTURINGGRID 0.001 ;
 
