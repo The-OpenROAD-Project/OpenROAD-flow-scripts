@@ -20,7 +20,7 @@
  <original-base-path></original-base-path>
  <layer-properties_file>sg13g2.lyp</layer-properties_file>
  <add-other-layers>true</add-other-layers>
- <default-grids>0.01,0.005!</default-grids>
+ <default-grids>10.0,5.0,1.0,0.5,0.1,0.05,0.01,0.005!</default-grids>
  <reader-options>
   <gds2>
    <box-mode>1</box-mode>
@@ -177,7 +177,7 @@
   <connection>Metal5,TopVia1,TopMetal1</connection>
   <connection>TopMetal1,TopVia2,TopMetal2</connection>
   <symbols>SalBlock='28/0'</symbols>
-  <symbols>Activ='1/0-Salblock'</symbols>
+  <symbols>Activ='1/0-SalBlock'</symbols>
   <symbols>GatPoly='5/0-SalBlock'</symbols>
   <symbols>Diff='Activ-GatPoly'</symbols>
   <symbols>Cont='6/0'</symbols>
