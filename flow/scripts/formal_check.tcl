@@ -67,6 +67,80 @@ proc write_lec_script { step file1 file2 } {
   close $outfile
 }
 
+# Hardened sub-blocks (BLOCKS) enter the parent netlist as timing-only
+# abstracts with no logic model, so a formal check would treat every output
+# cone that reaches one as opaque. Return the instance paths of all block
+# instances in the loaded design; both netlists come from the same run, so the
+# same path exists in both and each instance can be paired with itself.
+# Escapes every unescaped `/` in an instance name as `\/`, the OpenSTA SDC
+# convention kepler-formal reads: `/` separates hierarchy levels and `\/` is a
+# literal slash inside one name. Existing escapes are kept as they are.
+proc formal_escape_slashes { name } {
+  set escaped ""
+  set length [string length $name]
+  for { set i 0 } { $i < $length } { incr i } {
+    set ch [string index $name $i]
+    if { $ch eq "\\" } {
+      incr i
+      append escaped "\\" [string index $name $i]
+    } elseif { $ch eq "/" } {
+      append escaped "\\/"
+    } else {
+      append escaped $ch
+    }
+  }
+  return $escaped
+}
+
+# Mirrors dbNetwork::stripParentPrefix: in a hierarchical database write_verilog
+# names a leaf by what follows the last unescaped `/` of its database name.
+proc formal_strip_parent_prefix { name } {
+  set pos [string last "/" $name]
+  while { $pos >= 0 } {
+    if { $pos == 0 || [string index $name [expr { $pos - 1 }]] ne "\\" } {
+      return [string range $name [expr { $pos + 1 }] end]
+    }
+    set pos [string last "/" $name [expr { $pos - 2 }]]
+  }
+  return $name
+}
+
+# Boundary path of a block instance exactly as write_verilog names it: in a flat
+# database the whole instance name is one leaf (`\u0/r0 ` in Verilog, so the
+# path is `u0\/r0`); in a hierarchical database the leaf keeps its module
+# instance path and loses the parent prefix. Paths are never reinterpreted.
+proc formal_boundary_path { inst } {
+  set name [$inst getName]
+  set prefix ""
+  if { [[ord::get_db] hasHierarchy] } {
+    set mod_inst [[$inst getModule] getModInst]
+    if { $mod_inst != "NULL" } {
+      set prefix "[$mod_inst getHierarchicalName]/"
+    }
+    set name [formal_strip_parent_prefix $name]
+  }
+  return "$prefix[formal_escape_slashes $name]"
+}
+
+proc formal_block_instance_paths { } {
+  set paths {}
+  if { ![env_var_exists_and_non_empty BLOCKS] } {
+    return $paths
+  }
+  set block [ord::get_db_block]
+  foreach inst [$block getInsts] {
+    set master [[$inst getMaster] getName]
+    if { [lsearch -exact $::env(BLOCKS) $master] >= 0 } {
+      lappend paths [formal_boundary_path $inst]
+    }
+  }
+  return [lsort $paths]
+}
+
+proc formal_yaml_quote { text } {
+  return "\"[string map {\\ \\\\ \" \\\"} $text]\""
+}
+
 proc write_sec_script { step file1 file2 } {
   set outfile [open "$::env(OBJECTS_DIR)/${step}_sec_test.yml" w]
   puts $outfile "format: verilog"
@@ -78,6 +152,17 @@ proc write_sec_script { step file1 file2 } {
   puts $outfile "liberty_files:"
   foreach libFile $::env(LIB_FILES) {
     puts $outfile " - $libFile"
+  }
+  # Each block instance becomes a proof boundary: its input pins are compared
+  # across the two netlists and its output pins are shared free inputs, so the
+  # block is checked as a black box instead of hiding the cones behind it.
+  set boundaries [formal_block_instance_paths]
+  if { [llength $boundaries] > 0 } {
+    puts $outfile "set_as_boundary:"
+    foreach path $boundaries {
+      set quoted [formal_yaml_quote $path]
+      puts $outfile "  - \[$quoted, $quoted\]"
+    }
   }
   puts $outfile "log_file: $::env(LOG_DIR)/${step}_sec_check.log"
   close $outfile
