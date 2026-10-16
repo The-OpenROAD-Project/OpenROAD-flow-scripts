@@ -152,6 +152,14 @@ proc env_var_or_empty { env_var } {
   return ""
 }
 
+# place_pins and global_placement -place_ios both read these settings.
+proc set_io_place_config { } {
+  set_place_config \
+    -io_pin_hor_layers $::env(IO_PLACER_H) \
+    -io_pin_ver_layers $::env(IO_PLACER_V) \
+    {*}[env_var_or_empty SET_PLACE_CONFIG_ARGS]
+}
+
 proc find_macros { } {
   set macros ""
 

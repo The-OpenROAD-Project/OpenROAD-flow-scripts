@@ -13,7 +13,7 @@ export PLACE_DENSITY = 0.80
 export MAX_ROUTING_LAYER = M4
 export MIN_CLK_ROUTING_LAYER = M2
 
-export PLACE_PINS_ARGS = -min_distance 6 -min_distance_in_tracks
+export SET_PLACE_CONFIG_ARGS = -io_pin_min_distance 6 -io_pin_min_distance_in_tracks
 export IO_CONSTRAINTS  = $(DESIGN_HOME)/asap7/riscv32i-mock-sram/fakeram7_256x32/io.tcl
 
 export PDN_TCL                = $(PLATFORM_DIR)/openRoad/pdn/BLOCK_grid_strategy.tcl

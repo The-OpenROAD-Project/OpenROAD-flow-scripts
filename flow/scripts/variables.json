@@ -425,6 +425,13 @@
       "place"
     ]
   },
+  "GPL_PLACE_IOS": {
+    "default": 0,
+    "description": "Place IO pins together with the cells in global placement (-place_ios).\n",
+    "stages": [
+      "place"
+    ]
+  },
   "GPL_RANDOM_SEED": {
     "description": "Specifies a random seed for global placement.  Useful for perturbation studies.\n",
     "stages": [
@@ -1162,6 +1169,12 @@
       "grt"
     ],
     "tunable": 1
+  },
+  "SET_PLACE_CONFIG_ARGS": {
+    "description": "Arguments to set_place_config\n",
+    "stages": [
+      "place"
+    ]
   },
   "SKIP_ANTENNA_REPAIR": {
     "default": 0,

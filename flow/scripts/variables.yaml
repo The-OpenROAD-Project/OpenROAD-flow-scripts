@@ -658,6 +658,11 @@ PLACE_PINS_ARGS:
     Arguments to place_pins
   stages:
     - place
+SET_PLACE_CONFIG_ARGS:
+  description: |
+    Arguments to set_place_config
+  stages:
+    - place
 PLACE_DENSITY:
   description: >
     The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread.
@@ -719,6 +724,12 @@ GPL_ROUTABILITY_DRIVEN:
   stages:
     - place
   default: 1
+GPL_PLACE_IOS:
+  description: |
+    Place IO pins together with the cells in global placement (-place_ios).
+  stages:
+    - place
+  default: 0
 GPL_KEEP_OVERFLOW:
   description: >
     Passed as -keep_resize_below_overflow to global_placement.
