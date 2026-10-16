@@ -26,6 +26,58 @@ _versionCompare() {
     test $a "$2" $b
 }
 
+# Yosys and kepler-formal are built with CMake. Yosys needs CMake >= 3.28,
+# newer than Ubuntu 22.04 ships, so fetch a release from Kitware when the
+# one on PATH is too old.
+cmakeMinVersion=3.28
+cmakeVersion=3.31.9
+cmakeChecksumX86_64=64797150473dabe9de95459cb1ce0715
+cmakeChecksumAarch64=8d426361ce8c54494c0a041a0e3bcc5c
+
+# True if version $1 >= version $2. Unlike _versionCompare, this handles
+# versions with a different number of components (3.22.1 vs 3.28).
+_versionAtLeast() {
+    [[ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -n1)" == "$2" ]]
+}
+
+# Prints the version of tool $2, looking in prefix $1 first, or 0 if absent.
+_toolVersion() {
+    local bin
+    bin=$(PATH="$1/bin:${PATH}" command -v "$2" || true)
+    if [[ -z "${bin}" ]]; then
+        echo 0
+        return
+    fi
+    "${bin}" --version | head -n1 | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -n1
+}
+
+_installCmake() {
+    local prefix=${PREFIX:-"/usr/local"}
+    local current
+    current=$(_toolVersion "${prefix}" cmake)
+    if _versionAtLeast "${current}" "${cmakeMinVersion}"; then
+        echo "CMake ${current} found, skipping install"
+        return
+    fi
+    local arch checksum installer workDir
+    arch=$(uname -m)
+    if [[ "${arch}" == "aarch64" ]]; then
+        checksum=${cmakeChecksumAarch64}
+    else
+        checksum=${cmakeChecksumX86_64}
+    fi
+    installer="cmake-${cmakeVersion}-linux-${arch}.sh"
+    workDir=$(mktemp -d)
+    (
+        cd "${workDir}"
+        wget -q "https://github.com/Kitware/CMake/releases/download/v${cmakeVersion}/${installer}"
+        md5sum -c <(echo "${checksum}  ${installer}")
+        mkdir -p "${prefix}"
+        sh "${installer}" --skip-license --prefix="${prefix}"
+    )
+    rm -rf "${workDir}"
+}
+
 _installORDependencies() {
     if [[ ${YOSYS_VER} == "" ]]; then
         YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
@@ -197,15 +249,20 @@ _installUbuntuPackages() {
     apt-get -y update
     apt-get -y install --no-install-recommends \
         bison \
+        build-essential \
+        ca-certificates \
         capnproto \
         curl \
         flex \
+        git \
         help2man \
         libboost-iostreams-dev \
         libcapnp-dev \
+        libffi-dev \
         libfl-dev \
         libfl2 \
         libgit2-dev \
+        libgmock-dev \
         libgoogle-perftools-dev \
         libgtest-dev \
         libqt5multimediawidgets5 \
@@ -217,14 +274,19 @@ _installUbuntuPackages() {
         libz-dev \
         perl \
         pkg-config \
+        python3-dev \
         python3-pip \
         python3-venv \
         qtmultimedia5-dev \
         qttools5-dev \
         ruby \
         ruby-dev \
+        tcl-dev \
         tcl-tclreadline \
+        tcllib \
         time \
+        unzip \
+        wget \
         zlib1g \
         zlib1g-dev
 
@@ -322,8 +384,13 @@ _installCI() {
         ca-certificates \
         coreutils \
         curl \
+        gnupg \
+        jq \
+        lsb-release \
+        parallel \
         python3 \
-        software-properties-common
+        software-properties-common \
+        zip
 }
 
 _help() {
@@ -368,7 +435,7 @@ EOF
 }
 
 # default args
-OR_INSTALLER_ARGS="-eqy"
+OR_INSTALLER_ARGS=""
 YOSYS_VER=""
 # default prefix
 PREFIX=""
@@ -405,6 +472,7 @@ while [ "$#" -gt 0 ]; do
             ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
+            PREFIX="${HOME}/.local"
             ;;
         -ci)
             CI="yes"
@@ -528,6 +596,9 @@ case "${os}" in
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installUbuntuPackages "${version}"
             _installUbuntuCleanUp
+        fi
+        if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCmake
         fi
         if [[ $version != "rodete" ]]; then
             if [[ "${option}" == "common" || "${option}" == "all" ]]; then
