@@ -1,0 +1,32 @@
+Bump_Types:
+  organic_simultaneous_bonding:
+    bump_size: 55
+    through_via_size: 55
+    bump_subckt: [DO_NOT_USE.subckt, DO_NOT_USE]
+    tv_subckt: [DO_NOT_USE.subckt, DO_NOT_USE]
+Chiplet_Grid:
+  pitch: 110
+Voltage_Areas:
+  Compute_Large_3_va:
+    net: VDD
+    pixel_model: default_pixel_model
+    power: 1.0
+    coords: [[0.0, 0.0], [440.0, 0.0], [440.0, 440.0], [0.0, 440.0]]
+PG_Net_Type:
+  VDD:
+    voltage: 0.8
+Pixel_Models:
+  default_pixel_model:
+    type: default
+    voltage: 0.8
+    resistances: [1.0, 1.0, 1.0]
+    model: [DO_NOT_USE.subckt, DO_NOT_USE]
+Thermal_Layers:
+  Compute_Large_3_layer1:
+    type: conductor
+    side: front
+    thickness: 10
+Thermal_Connections:
+  Compute_Large_3_conn1:
+    metal_conductivity: 200.0
+    dielectric_conductivity: 0.2

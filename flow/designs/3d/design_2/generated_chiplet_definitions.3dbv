@@ -1,0 +1,140 @@
+Header:
+  version: 2.0
+  unit: micron
+  precision: 2000
+ChipletDef:
+  Substrate_Organic:
+    type: die
+    design_area: [31642.7765, 31642.7765]
+    thickness: 100
+    shrink: 1
+    regions:
+      To_Compute_Large_0:
+        bmap: Substrate_Organic_To_Compute_Large_0.bmap
+        side: front
+        layer: M_TOP
+        gds_layer:
+        coords:
+        - [0.0, 0.0]
+        - [15811.3885, 0.0]
+        - [15811.3885, 15811.3885]
+        - [0.0, 15811.3885]
+      To_Compute_Large_1:
+        bmap: Substrate_Organic_To_Compute_Large_1.bmap
+        side: front
+        layer: M_TOP
+        gds_layer:
+        coords:
+        - [15831.3885, 0.0]
+        - [31642.7765, 0.0]
+        - [31642.7765, 15811.3885]
+        - [15831.3885, 15811.3885]
+      To_Compute_Large_2:
+        bmap: Substrate_Organic_To_Compute_Large_2.bmap
+        side: front
+        layer: M_TOP
+        gds_layer:
+        coords:
+        - [0.0, 15831.3885]
+        - [15811.3885, 15831.3885]
+        - [15811.3885, 31642.7765]
+        - [0.0, 31642.7765]
+      To_Compute_Large_3:
+        bmap: Substrate_Organic_To_Compute_Large_3.bmap
+        side: front
+        layer: M_TOP
+        gds_layer:
+        coords:
+        - [15831.3885, 15831.3885]
+        - [31642.7765, 15831.3885]
+        - [31642.7765, 31642.7765]
+        - [15831.3885, 31642.7765]
+    seal_ring_width: [0, 0, 0, 0]
+    scribe_line_remaining_width: [0, 0, 0, 0]
+    tsv: true
+    external:
+      APR_tech_file: [lef_file.lef]
+  Compute_Large_0:
+    type: die
+    design_area: [15811.3885, 15811.3885]
+    thickness: 100
+    shrink: 1
+    regions:
+      From_Substrate_Organic:
+        bmap: Compute_Large_0_From_Substrate_Organic.bmap
+        side: front
+        layer: M_TOP
+        gds_layer:
+        coords:
+        - [0.0, 0.0]
+        - [15811.3885, 0.0]
+        - [15811.3885, 15811.3885]
+        - [0.0, 15811.3885]
+    seal_ring_width: [0, 0, 0, 0]
+    scribe_line_remaining_width: [0, 0, 0, 0]
+    tsv: true
+    external:
+      APR_tech_file: [lef_file.lef]
+  Compute_Large_1:
+    type: die
+    design_area: [15811.3885, 15811.3885]
+    thickness: 100
+    shrink: 1
+    regions:
+      From_Substrate_Organic:
+        bmap: Compute_Large_1_From_Substrate_Organic.bmap
+        side: front
+        layer: M_TOP
+        gds_layer:
+        coords:
+        - [0.0, 0.0]
+        - [15811.3885, 0.0]
+        - [15811.3885, 15811.3885]
+        - [0.0, 15811.3885]
+    seal_ring_width: [0, 0, 0, 0]
+    scribe_line_remaining_width: [0, 0, 0, 0]
+    tsv: true
+    external:
+      APR_tech_file: [lef_file.lef]
+  Compute_Large_2:
+    type: die
+    design_area: [15811.3885, 15811.3885]
+    thickness: 100
+    shrink: 1
+    regions:
+      From_Substrate_Organic:
+        bmap: Compute_Large_2_From_Substrate_Organic.bmap
+        side: front
+        layer: M_TOP
+        gds_layer:
+        coords:
+        - [0.0, 0.0]
+        - [15811.3885, 0.0]
+        - [15811.3885, 15811.3885]
+        - [0.0, 15811.3885]
+    seal_ring_width: [0, 0, 0, 0]
+    scribe_line_remaining_width: [0, 0, 0, 0]
+    tsv: true
+    external:
+      APR_tech_file: [lef_file.lef]
+  Compute_Large_3:
+    type: die
+    design_area: [15811.3885, 15811.3885]
+    thickness: 100
+    shrink: 1
+    regions:
+      From_Substrate_Organic:
+        bmap: Compute_Large_3_From_Substrate_Organic.bmap
+        side: front
+        layer: M_TOP
+        gds_layer:
+        coords:
+        - [0.0, 0.0]
+        - [15811.3885, 0.0]
+        - [15811.3885, 15811.3885]
+        - [0.0, 15811.3885]
+    seal_ring_width: [0, 0, 0, 0]
+    scribe_line_remaining_width: [0, 0, 0, 0]
+    tsv: true
+    external:
+      APR_tech_file: [lef_file.lef]

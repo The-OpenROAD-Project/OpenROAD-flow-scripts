@@ -1,0 +1,121 @@
+--- UNSUPPORTED_CATCH_FEATURES ---
+# Used by reverse converter to restore static data.
+############################################
+CATCH attribute for chip 'Substrate_Organic' -> orientation: face-up
+CATCH attribute for chip 'Substrate_Organic' -> stack_side: face
+CATCH attribute for chip 'Compute_Large_0' -> orientation: face-down
+CATCH attribute for chip 'Compute_Large_0' -> stack_side: face
+CATCH attribute for chip 'Compute_Large_1' -> orientation: face-down
+CATCH attribute for chip 'Compute_Large_1' -> stack_side: face
+CATCH attribute for chip 'Compute_Large_2' -> orientation: face-down
+CATCH attribute for chip 'Compute_Large_2' -> stack_side: face
+CATCH attribute for chip 'Compute_Large_3' -> orientation: face-down
+CATCH attribute for chip 'Compute_Large_3' -> stack_side: face
+CATCH attribute for chip 'Compute_Large_0' -> assembly_process: organic_simultaneous_bonding
+CATCH attribute for chip 'Compute_Large_0' -> bb_cost: 
+CATCH attribute for chip 'Compute_Large_0' -> bb_power: 
+CATCH attribute for chip 'Compute_Large_0' -> bb_quality: 
+CATCH attribute for chip 'Compute_Large_0' -> buried: False
+CATCH attribute for chip 'Compute_Large_0' -> core_area: 250.0
+CATCH attribute for chip 'Compute_Large_0' -> core_voltage: 1.0
+CATCH attribute for chip 'Compute_Large_0' -> fraction_analog: 0.0
+CATCH attribute for chip 'Compute_Large_0' -> fraction_logic: 1.0
+CATCH attribute for chip 'Compute_Large_0' -> fraction_memory: 0.0
+CATCH attribute for chip 'Compute_Large_0' -> power: 150.0
+CATCH attribute for chip 'Compute_Large_0' -> quantity: 1000000
+CATCH attribute for chip 'Compute_Large_0' -> reg_eff: 
+CATCH attribute for chip 'Compute_Large_0' -> reg_type: 
+CATCH attribute for chip 'Compute_Large_0' -> reticle_share: 1.0
+CATCH attribute for chip 'Compute_Large_0' -> stackup: 1:combined_5nm
+CATCH attribute for chip 'Compute_Large_0' -> test_process: notest
+CATCH attribute for chip 'Compute_Large_0' -> v_rail: 
+CATCH attribute for chip 'Compute_Large_0' -> wafer_process: process_1
+CATCH attribute for chip 'Compute_Large_1' -> assembly_process: organic_simultaneous_bonding
+CATCH attribute for chip 'Compute_Large_1' -> bb_cost: 
+CATCH attribute for chip 'Compute_Large_1' -> bb_power: 
+CATCH attribute for chip 'Compute_Large_1' -> bb_quality: 
+CATCH attribute for chip 'Compute_Large_1' -> buried: False
+CATCH attribute for chip 'Compute_Large_1' -> core_area: 250.0
+CATCH attribute for chip 'Compute_Large_1' -> core_voltage: 1.0
+CATCH attribute for chip 'Compute_Large_1' -> fraction_analog: 0.0
+CATCH attribute for chip 'Compute_Large_1' -> fraction_logic: 1.0
+CATCH attribute for chip 'Compute_Large_1' -> fraction_memory: 0.0
+CATCH attribute for chip 'Compute_Large_1' -> power: 150.0
+CATCH attribute for chip 'Compute_Large_1' -> quantity: 1000000
+CATCH attribute for chip 'Compute_Large_1' -> reg_eff: 
+CATCH attribute for chip 'Compute_Large_1' -> reg_type: 
+CATCH attribute for chip 'Compute_Large_1' -> reticle_share: 1.0
+CATCH attribute for chip 'Compute_Large_1' -> stackup: 1:combined_5nm
+CATCH attribute for chip 'Compute_Large_1' -> test_process: notest
+CATCH attribute for chip 'Compute_Large_1' -> v_rail: 
+CATCH attribute for chip 'Compute_Large_1' -> wafer_process: process_1
+CATCH attribute for chip 'Compute_Large_2' -> assembly_process: organic_simultaneous_bonding
+CATCH attribute for chip 'Compute_Large_2' -> bb_cost: 
+CATCH attribute for chip 'Compute_Large_2' -> bb_power: 
+CATCH attribute for chip 'Compute_Large_2' -> bb_quality: 
+CATCH attribute for chip 'Compute_Large_2' -> buried: False
+CATCH attribute for chip 'Compute_Large_2' -> core_area: 250.0
+CATCH attribute for chip 'Compute_Large_2' -> core_voltage: 1.0
+CATCH attribute for chip 'Compute_Large_2' -> fraction_analog: 0.0
+CATCH attribute for chip 'Compute_Large_2' -> fraction_logic: 1.0
+CATCH attribute for chip 'Compute_Large_2' -> fraction_memory: 0.0
+CATCH attribute for chip 'Compute_Large_2' -> power: 150.0
+CATCH attribute for chip 'Compute_Large_2' -> quantity: 1000000
+CATCH attribute for chip 'Compute_Large_2' -> reg_eff: 
+CATCH attribute for chip 'Compute_Large_2' -> reg_type: 
+CATCH attribute for chip 'Compute_Large_2' -> reticle_share: 1.0
+CATCH attribute for chip 'Compute_Large_2' -> stackup: 1:combined_5nm
+CATCH attribute for chip 'Compute_Large_2' -> test_process: notest
+CATCH attribute for chip 'Compute_Large_2' -> v_rail: 
+CATCH attribute for chip 'Compute_Large_2' -> wafer_process: process_1
+CATCH attribute for chip 'Compute_Large_3' -> assembly_process: organic_simultaneous_bonding
+CATCH attribute for chip 'Compute_Large_3' -> bb_cost: 
+CATCH attribute for chip 'Compute_Large_3' -> bb_power: 
+CATCH attribute for chip 'Compute_Large_3' -> bb_quality: 
+CATCH attribute for chip 'Compute_Large_3' -> buried: False
+CATCH attribute for chip 'Compute_Large_3' -> core_area: 250.0
+CATCH attribute for chip 'Compute_Large_3' -> core_voltage: 1.0
+CATCH attribute for chip 'Compute_Large_3' -> fraction_analog: 0.0
+CATCH attribute for chip 'Compute_Large_3' -> fraction_logic: 1.0
+CATCH attribute for chip 'Compute_Large_3' -> fraction_memory: 0.0
+CATCH attribute for chip 'Compute_Large_3' -> power: 150.0
+CATCH attribute for chip 'Compute_Large_3' -> quantity: 1000000
+CATCH attribute for chip 'Compute_Large_3' -> reg_eff: 
+CATCH attribute for chip 'Compute_Large_3' -> reg_type: 
+CATCH attribute for chip 'Compute_Large_3' -> reticle_share: 1.0
+CATCH attribute for chip 'Compute_Large_3' -> stackup: 1:combined_5nm
+CATCH attribute for chip 'Compute_Large_3' -> test_process: notest
+CATCH attribute for chip 'Compute_Large_3' -> v_rail: 
+CATCH attribute for chip 'Compute_Large_3' -> wafer_process: process_1
+CATCH attribute for chip 'Substrate_Organic' -> assembly_process: organic_simultaneous_bonding
+CATCH attribute for chip 'Substrate_Organic' -> bb_cost: 
+CATCH attribute for chip 'Substrate_Organic' -> bb_power: 
+CATCH attribute for chip 'Substrate_Organic' -> bb_quality: 
+CATCH attribute for chip 'Substrate_Organic' -> buried: False
+CATCH attribute for chip 'Substrate_Organic' -> core_area: 0.0
+CATCH attribute for chip 'Substrate_Organic' -> core_voltage: 1.0
+CATCH attribute for chip 'Substrate_Organic' -> fraction_analog: 1.0
+CATCH attribute for chip 'Substrate_Organic' -> fraction_logic: 0.0
+CATCH attribute for chip 'Substrate_Organic' -> fraction_memory: 0.0
+CATCH attribute for chip 'Substrate_Organic' -> power: 0.5
+CATCH attribute for chip 'Substrate_Organic' -> quantity: 1000000
+CATCH attribute for chip 'Substrate_Organic' -> reg_eff: 1.0
+CATCH attribute for chip 'Substrate_Organic' -> reg_type: none
+CATCH attribute for chip 'Substrate_Organic' -> reticle_share: 1.0
+CATCH attribute for chip 'Substrate_Organic' -> stackup: 1:combined_interposer_organic,4:5nm_global_metal
+CATCH attribute for chip 'Substrate_Organic' -> test_process: notest
+CATCH attribute for chip 'Substrate_Organic' -> v_rail: 1.8
+CATCH attribute for chip 'Substrate_Organic' -> wafer_process: process_1
+
+
+--- ORIGINAL_NETLIST_DATA ---
+# Used by reverse converter to restore logical netlist.
+############################################
+- CATCH netlist entry -> average_bandwidth_utilization: 0.6, bandwidth: 1024, bb_count: , block0: Compute_Large_0, block1: Compute_Large_1, type: UCIe_advanced
+- CATCH netlist entry -> average_bandwidth_utilization: 0.6, bandwidth: 1024, bb_count: , block0: Compute_Large_0, block1: Compute_Large_2, type: UCIe_advanced
+- CATCH netlist entry -> average_bandwidth_utilization: 0.6, bandwidth: 1024, bb_count: , block0: Compute_Large_1, block1: Compute_Large_3, type: UCIe_advanced
+- CATCH netlist entry -> average_bandwidth_utilization: 0.6, bandwidth: 1024, bb_count: , block0: Compute_Large_2, block1: Compute_Large_3, type: UCIe_advanced
+- CATCH netlist entry -> average_bandwidth_utilization: 0.6, bandwidth: 2048, bb_count: , block0: Compute_Large_0, block1: external, type: UCIe_advanced
+- CATCH netlist entry -> average_bandwidth_utilization: 0.6, bandwidth: 2048, bb_count: , block0: Compute_Large_1, block1: external, type: UCIe_advanced
+- CATCH netlist entry -> average_bandwidth_utilization: 0.6, bandwidth: 2048, bb_count: , block0: Compute_Large_2, block1: external, type: UCIe_advanced
+- CATCH netlist entry -> average_bandwidth_utilization: 0.6, bandwidth: 2048, bb_count: , block0: Compute_Large_3, block1: external, type: UCIe_advanced

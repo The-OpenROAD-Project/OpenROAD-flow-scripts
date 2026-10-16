@@ -45,6 +45,7 @@ Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [--with-verific PATH]
           [--openroad-args-overwrite] [--openroad-args STRING]
           [--install-path PATH] [--clean] [--clean-force]
+          [--3d]
 
           [-c|--copy-platforms]
 
@@ -96,6 +97,10 @@ Options:
     --clean-force           Call git clean before compile. WARNING: this option
                             will not ask for confirmation. Useful to remove
                             old build files.
+
+    --3d                    Install the Python requirements of tools/YAP, needed
+                            by the 3D hybrid bonding yield flow but not by the
+                            RTL-to-GDS flow. See docs/user/ThreeDFlow.md.
 
 
 Options valid only for Docker builds:
@@ -227,6 +232,9 @@ while (( "$#" )); do
                 --clean-force)
                         CLEAN_BEFORE=1
                         CLEAN_FORCE=1
+                        ;;
+                --3d)
+                        SETUP_3D=1
                         ;;
                 --os=* )
                         DOCKER_OS_NAME="${1#*=}"
@@ -489,6 +497,17 @@ __common_setup()
         fi
 }
 
+# Set up the 3D hybrid bonding yield flow. tools/YAP comes in with the other
+# submodules; only its Python requirements are opt-in, so that a plain
+# RTL-to-GDS build does not pull them into the user's environment.
+__setup_3d()
+{
+        local venv="${DIR}/tools/install/yap-venv"
+        echo "[INFO FLW-0032] Installing YAP Python requirements for the 3D flow into ${venv}."
+        ${PYTHON_EXE:-python3} -m venv "${venv}"
+        "${venv}/bin/python" -m pip install -r "${DIR}/tools/YAP/requirements.txt"
+}
+
 __logging()
 {
         local log_file="build_openroad.log"
@@ -521,6 +540,10 @@ if [ ! -z "${CLEAN_BEFORE+x}" ]; then
 fi
 __args_setup
 __common_setup
+
+if [ ! -z "${SETUP_3D+x}" ]; then
+        __setup_3d
+fi
 
 # Choose install method
 if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then

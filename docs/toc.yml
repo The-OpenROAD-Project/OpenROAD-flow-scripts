@@ -25,6 +25,8 @@ entries:
     title: Generated Memory Macros (AUTO_MEMORIES)
   - file: user/LargeDesigns.md
     title: Tips on building large design
+  - file: user/ThreeDFlow.md
+    title: 3D Hybrid Bonding Yield Flow
   - file: contrib/Metrics.md
     title: Metrics
   - file: user/InstructionsForAutoTuner.md
