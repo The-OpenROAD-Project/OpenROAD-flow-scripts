@@ -45,6 +45,8 @@ entries:
     title: Guide to Integrate a New Platform into the OpenROAD Flow
   - file: contrib/CI.md
     title: CI Guide
+  - file: contrib/MakefileContract.md
+    title: Makefile Contract
   - file: contrib/EndpointSlackTracking.md
     title: Tracking Endpoint Slack Across Flow Steps
 
