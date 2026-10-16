@@ -431,3 +431,39 @@ proc source_step_tcl { hook_type step_name } {
   set env_var "${hook_type}_${step_name}_TCL"
   source_env_var_if_exists $env_var
 }
+
+# The Verilog files synthesis reads: VERILOG_FILES or, with
+# SYNTH_VERILOG_SURGERY, the copies its script writes. The script runs
+# here, as the RTL is read, into $(OBJECTS_DIR)/surgery: one copy per
+# source under the same file name, kept so a diff against the original
+# shows what the surgery changed. They are no make target and no build
+# output.
+proc synth_verilog_files { } {
+  if { ![env_var_exists_and_non_empty SYNTH_VERILOG_SURGERY] } {
+    return $::env(VERILOG_FILES)
+  }
+  set names [lmap f $::env(VERILOG_FILES) { file tail $f }]
+  if { [llength [lsort -unique $names]] != [llength $names] } {
+    error "SYNTH_VERILOG_SURGERY: VERILOG_FILES has two files of one name;\
+      the copies are named after the originals"
+  }
+  set dir [file join $::env(OBJECTS_DIR) surgery]
+  file delete -force $dir
+  file mkdir $dir
+  set cmd {}
+  if { [file extension [lindex $::env(SYNTH_VERILOG_SURGERY) 0]] eq ".py" } {
+    lappend cmd $::env(PYTHON_EXE)
+  }
+  lappend cmd {*}$::env(SYNTH_VERILOG_SURGERY) \
+    {*}[env_var_or_empty SYNTH_VERILOG_SURGERY_ARGS] \
+    --out-dir $dir -- {*}$::env(VERILOG_FILES)
+  puts "SYNTH_VERILOG_SURGERY: [join $cmd]"
+  exec {*}$cmd >@ stdout 2>@ stderr
+  set copies [lmap name $names { file join $dir $name }]
+  foreach copy $copies {
+    if { ![file exists $copy] } {
+      error "SYNTH_VERILOG_SURGERY wrote no $copy"
+    }
+  }
+  return $copies
+}
