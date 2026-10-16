@@ -5,7 +5,7 @@ export PLATFORM    = sky130hd
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export SET_PLACE_CONFIG_ARGS = -io_pin_min_distance 4 -io_pin_min_distance_in_tracks
+export PLACE_PINS_ARGS = -min_distance 4 -min_distance_in_tracks
 
 export CORE_UTILIZATION = 35
 export CORE_ASPECT_RATIO = 1

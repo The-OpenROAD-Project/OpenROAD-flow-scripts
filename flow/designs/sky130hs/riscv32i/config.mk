@@ -8,7 +8,7 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 export CORE_UTILIZATION = 60
 export PLACE_DENSITY_LB_ADDON = 0.1
 # many east pins cause global routing congestion
-export SET_PLACE_CONFIG_ARGS=-io_pin_min_distance 6 -io_pin_min_distance_in_tracks
+export PLACE_PINS_ARGS=-min_distance 6 -min_distance_in_tracks
 export TNS_END_PERCENT = 100
 
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl

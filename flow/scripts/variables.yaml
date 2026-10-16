@@ -658,11 +658,6 @@ PLACE_PINS_ARGS:
     Arguments to place_pins
   stages:
     - place
-SET_PLACE_CONFIG_ARGS:
-  description: |
-    Arguments to set_place_config
-  stages:
-    - place
 PLACE_DENSITY:
   description: >
     The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread.

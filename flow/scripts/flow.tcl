@@ -59,12 +59,10 @@ flow_write_db 2_floorplan.odb
 flow_write_sdc 2_floorplan.sdc
 
 # Place
-if { ![env_var_equals GPL_PLACE_IOS 1] } {
-  flow_source global_place_skip_io.tcl
-  flow_write_db 3_1_place_gp_skip_io.odb
-  flow_source io_placement.tcl
-  flow_write_db 3_2_place_iop.odb
-}
+flow_source global_place_skip_io.tcl
+flow_write_db 3_1_place_gp_skip_io.odb
+flow_source io_placement.tcl
+flow_write_db 3_2_place_iop.odb
 flow_source global_place.tcl
 flow_write_db 3_3_place_gp.odb
 flow_source resize.tcl

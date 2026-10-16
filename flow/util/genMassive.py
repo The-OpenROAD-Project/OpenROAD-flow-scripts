@@ -375,9 +375,7 @@ def writeConfigs(CurAttrs, CurChunkNum):
     if CurCoreDieMargin != "empty":
         fo.write("export CORE_MARGIN = %s\n" % CurCoreDieMargin)
     if CurPinsDistance != "empty":
-        fo.write(
-            "export SET_PLACE_CONFIG_ARGS = -io_pin_min_distance %s\n" % CurPinsDistance
-        )
+        fo.write("export PLACE_PINS_ARGS = -min_distance %s\n" % CurPinsDistance)
     if CurGpPad != "empty":
         fo.write("export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = %s\n" % CurGpPad)
     if CurDpPad != "empty":

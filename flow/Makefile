@@ -515,14 +515,7 @@ $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb,io_p
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-# -place_ios places the IO pins too, so steps 3_1 and 3_2 are skipped.
-ifeq ($(GPL_PLACE_IOS),1)
-GLOBAL_PLACE_INPUT_ODB = $(RESULTS_DIR)/2_floorplan.odb
-else
-GLOBAL_PLACE_INPUT_ODB = $(RESULTS_DIR)/3_2_place_iop.odb
-endif
-
-$(eval $(call do-step,3_3_place_gp,$(GLOBAL_PLACE_INPUT_ODB) $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
+$(eval $(call do-step,3_3_place_gp,$(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
 
 # STEP 4: Resizing & Buffering
 #-------------------------------------------------------------------------------
@@ -544,11 +537,7 @@ $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/3_5_place_dp.odb
 
 .PHONY: do-place
 do-place:
-ifeq ($(GPL_PLACE_IOS),1)
-	$(UNSET_AND_MAKE) do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place
-else
 	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place
-endif
 
 # Clean Targets
 #-------------------------------------------------------------------------------

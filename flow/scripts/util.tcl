@@ -152,12 +152,41 @@ proc env_var_or_empty { env_var } {
   return ""
 }
 
-# place_pins and global_placement -place_ios both read these settings.
-proc set_io_place_config { } {
-  set_place_config \
+proc pins_fixed_in_floorplan { } {
+  return [expr {
+    [env_var_exists_and_non_empty FLOORPLAN_DEF] ||
+    [env_var_exists_and_non_empty FOOTPRINT] ||
+    [env_var_exists_and_non_empty FOOTPRINT_TCL]
+  }]
+}
+
+# set_place_config arguments for global_placement -place_ios, from the
+# place_pins settings.
+proc place_pins_args_to_place_config { } {
+  set config_args [list \
     -io_pin_hor_layers $::env(IO_PLACER_H) \
-    -io_pin_ver_layers $::env(IO_PLACER_V) \
-    {*}[env_var_or_empty SET_PLACE_CONFIG_ARGS]
+    -io_pin_ver_layers $::env(IO_PLACER_V)]
+  set pins_args [env_var_or_empty PLACE_PINS_ARGS]
+  for { set i 0 } { $i < [llength $pins_args] } { incr i } {
+    set arg [lindex $pins_args $i]
+    switch -- $arg {
+      -corner_avoidance -
+      -min_distance {
+        lappend config_args -io_pin_[string range $arg 1 end] \
+          [lindex $pins_args [incr i]]
+      }
+      -min_distance_in_tracks {
+        lappend config_args -io_pin_min_distance_in_tracks
+      }
+      default {
+        utl::warn FLW 25 "PLACE_PINS_ARGS $arg is not used with GPL_PLACE_IOS."
+        if { ![string match -* [lindex $pins_args [expr { $i + 1 }]]] } {
+          incr i
+        }
+      }
+    }
+  }
+  return $config_args
 }
 
 proc find_macros { } {

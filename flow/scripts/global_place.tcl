@@ -1,18 +1,7 @@
 utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables place
-# Pins from a floorplan DEF or a footprint stay where they are.
-set place_ios [expr {
-  [env_var_equals GPL_PLACE_IOS 1]
-  && ![env_var_exists_and_non_empty FLOORPLAN_DEF]
-  && ![env_var_exists_and_non_empty FOOTPRINT]
-  && ![env_var_exists_and_non_empty FOOTPRINT_TCL]
-}]
-if { [env_var_equals GPL_PLACE_IOS 1] } {
-  load_design 2_floorplan.odb 2_floorplan.sdc
-} else {
-  load_design 3_2_place_iop.odb 2_floorplan.sdc
-}
+load_design 3_2_place_iop.odb 2_floorplan.sdc
 source_step_tcl PRE GLOBAL_PLACE
 
 set_dont_use $::env(DONT_USE_CELLS)
@@ -62,12 +51,9 @@ lappend global_placement_args -force_center_initial_place
 lappend global_placement_args -min_phi_coef $::env(MIN_PLACE_STEP_COEF)
 lappend global_placement_args -max_phi_coef $::env(MAX_PLACE_STEP_COEF)
 
+set place_ios [expr { $::env(GPL_PLACE_IOS) && ![pins_fixed_in_floorplan] }]
 if { $place_ios } {
-  if { [env_var_exists_and_non_empty PLACE_PINS_ARGS] } {
-    utl::warn FLW 25 "PLACE_PINS_ARGS is not used with GPL_PLACE_IOS;\
-      put set_place_config options in SET_PLACE_CONFIG_ARGS."
-  }
-  set_io_place_config
+  log_cmd set_place_config {*}[place_pins_args_to_place_config]
   lappend global_placement_args -place_ios
 }
 
@@ -83,13 +69,12 @@ proc do_placement { global_placement_args } {
 }
 
 set result [catch { do_placement $global_placement_args } errMsg]
+if { $place_ios } {
+  log_cmd reset_place_config
+}
 if { $result != 0 } {
   orfs_write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
   error $errMsg
-}
-
-if { $place_ios } {
-  write_pin_placement $::env(RESULTS_DIR)/3_3_place_gp_pins.tcl
 }
 
 log_cmd estimate_parasitics -placement

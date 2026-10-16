@@ -560,6 +560,22 @@
     <source>31/4</source>
   </properties>
   <properties>
+    <frame-color>#268c6b</frame-color>
+    <fill-color>#268c6b</fill-color>
+    <frame-brightness>0</frame-brightness>
+    <fill-brightness>0</fill-brightness>
+    <dither-pattern>C9</dither-pattern>
+    <line-style>C1</line-style>
+    <valid>false</valid>
+    <visible>true</visible>
+    <transparent>false</transparent>
+    <width>1</width>
+    <marked>false</marked>
+    <animation>0</animation>
+    <name>NWell.text</name>
+    <source>31/25</source>
+  </properties>
+  <properties>
     <frame-color>#8c8ca6</frame-color>
     <fill-color>#8c8ca6</fill-color>
     <frame-brightness>0</frame-brightness>
@@ -3316,7 +3332,7 @@
     <fill-color>#268c6b</fill-color>
     <frame-brightness>0</frame-brightness>
     <fill-brightness>0</fill-brightness>
-    <dither-pattern>C0</dither-pattern>
+    <dither-pattern>I1</dither-pattern>
     <line-style>C0</line-style>
     <valid>true</valid>
     <visible>true</visible>
@@ -3326,6 +3342,22 @@
     <animation>0</animation>
     <name>Recog.mom</name>
     <source>99/39</source>
+  </properties>
+  <properties>
+    <frame-color>#6b268c</frame-color>
+    <fill-color>#6b268c</fill-color>
+    <frame-brightness>0</frame-brightness>
+    <fill-brightness>0</fill-brightness>
+    <dither-pattern>C0</dither-pattern>
+    <line-style>C0</line-style>
+    <valid>true</valid>
+    <visible>true</visible>
+    <transparent>false</transparent>
+    <width>1</width>
+    <marked>false</marked>
+    <animation>0</animation>
+    <name>Recog.momf</name>
+    <source>99/40</source>
   </properties>
   <properties>
     <frame-color>#ffffcc</frame-color>
