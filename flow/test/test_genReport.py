@@ -156,6 +156,56 @@ class TestReportCollection(unittest.TestCase):
         self.assertIn("limit -8.0", summary)
         self.assertIn("https://dashboard.example/builds/7", summary)
 
+    def test_metrics_generation_errors_fail_a_finished_flow(self):
+        self.write_file("logs/nangate45/gcd/base/6_report.log", "Finished\n")
+        self.write_file(
+            "reports/nangate45/gcd/base/metadata-generate.log",
+            "[ERROR] Failed to open file: missing.rpt\n",
+        )
+        self.write_file(
+            "reports/nangate45/gcd/base/metadata-check.log",
+            "[INFO] QoR check: PASS\n",
+        )
+
+        summary = self.summary()
+
+        self.assertIn("Failing designs", summary)
+        self.assertIn("nangate45 gcd (base)\n  Flow reached last stage.", summary)
+        self.assertIn("Found 1 errors in the metrics logs.", summary)
+        self.assertIn("[ERROR] Failed to open file: missing.rpt", summary)
+        self.assertNotIn("Passing designs", summary)
+
+    def test_metrics_generation_warnings_do_not_fail_a_finished_flow(self):
+        self.write_file("logs/nangate45/gcd/base/6_report.log", "Finished\n")
+        self.write_file(
+            "reports/nangate45/gcd/base/metadata-generate.log",
+            "[WARNING] Optional metric not found. Will use N/A.\n",
+        )
+        self.write_file(
+            "reports/nangate45/gcd/base/metadata-check.log",
+            "[INFO] QoR check: PASS\n",
+        )
+
+        summary = self.summary()
+
+        self.assertIn("Number of designs: 1", summary)
+        self.assertNotIn("Failing designs", summary)
+
+    def test_successful_metrics_regeneration_clears_the_failure(self):
+        self.write_file("logs/nangate45/gcd/base/6_report.log", "Finished\n")
+        self.write_file(
+            "reports/nangate45/gcd/base/metadata-generate.log",
+            "[ERROR] Failed to open file: missing.rpt\n",
+        )
+        self.assertIn("Failing designs", self.summary())
+
+        self.write_file("reports/nangate45/gcd/base/metadata-generate.log", "")
+        summary = self.summary()
+
+        self.assertIn("Number of designs: 1", summary)
+        self.assertNotIn("Failing designs", summary)
+        self.assertNotIn("errors in the metrics logs", summary)
+
 
 class TestGenReport(unittest.TestCase):
     def test_incomplete_flow_reports_that_it_did_not_reach_last_stage(self):
