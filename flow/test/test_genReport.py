@@ -197,6 +197,10 @@ class TestReportCollection(unittest.TestCase):
             "reports/nangate45/gcd/base/metadata-generate.log",
             "[ERROR] Failed to open file: missing.rpt\n",
         )
+        self.write_file(
+            "reports/nangate45/gcd/base/metadata-check.log",
+            "[INFO] QoR check: PASS\n",
+        )
         self.assertIn("Failing designs", self.summary())
 
         self.write_file("reports/nangate45/gcd/base/metadata-generate.log", "")
