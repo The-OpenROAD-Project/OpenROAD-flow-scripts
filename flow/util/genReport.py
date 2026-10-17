@@ -343,7 +343,12 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
         if d["finished"]:
             print(f"Failed to open {DRC_FILENAME}.")
 
-    if d["log_errors"] or d["metrics_errors"] or d["calibre_errors"]:
+    if (
+        d["log_errors"]
+        or d["metrics_logs_errors"]
+        or d["metrics_errors"]
+        or d["calibre_errors"]
+    ):
         d["status"] = STATUS_RED
     else:
         if not d["finished"]:
