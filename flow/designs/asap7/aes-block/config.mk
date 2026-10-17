@@ -12,10 +12,11 @@ export SYNTH_SLANG_ARGS += --ignore-timing
 
 export ABC_AREA               = 1
 
-# Absolute sizes, today's result of CORE_UTILIZATION 47 with yosys's
-# Verilog frontend, so the macros keep fitting as yosys and OpenROAD
-# improve: this design is the smoke test of BLOCKS plus macro placement,
-# not of utilization.
+# aes-block is the smoke test of BLOCKS: hierarchical synthesis, two
+# hardened blocks, and their macros placed in the parent. It is not a
+# test of macro placement or of utilization. The die is fixed, with
+# headroom, so that changes in synthesis or OpenROAD do not move this
+# design onto the edge of what macro placement can pack.
 export DIE_AREA               = 0 0 113.801 113.801
 export CORE_AREA              = 2.052 2.160 111.780 111.780
 

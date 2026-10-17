@@ -9,10 +9,7 @@ export SYNTH_SLANG_ARGS += --ignore-timing
 
 export ABC_AREA               = 1
 
-# Absolute sizes, today's result of CORE_UTILIZATION 40 with yosys's
-# Verilog frontend, so the parent's macros keep their size as yosys and
-# OpenROAD improve: aes-block is the smoke test of BLOCKS plus macro
-# placement, not of utilization.
+# Fixed sizes so the parent's macros keep their size: see config.mk.
 ifeq ($(DESIGN_NAME),aes_rcon)
 export DIE_AREA               = 0 0 9.144 9.144
 export CORE_AREA              = 2.052 2.160 7.128 7.020
