@@ -426,13 +426,15 @@ __local_build()
         echo "[INFO FLW-0031] Compiling kepler-formal"
         # -march=x86-64-v3 is valid only for x86 compilers. On Arm, use the
         # Armv8-A baseline, so that the binary runs on any aarch64 machine.
+        # EL9 ships TBB 2020, where concurrent_map needs
+        # TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS; oneTBB ignores it.
         case "$(uname -m)" in
                 aarch64|arm64) KEPLER_MARCH="-march=armv8-a" ;;
                 *) KEPLER_MARCH="-march=x86-64-v3" ;;
         esac
         ${NICE} cmake -B tools/kepler-formal/build tools/kepler-formal \
                 -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast ${KEPLER_MARCH} -ffast-math -flto" \
+                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast ${KEPLER_MARCH} -ffast-math -flto -DTBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS=1" \
                 -DCMAKE_EXE_LINKER_FLAGS="-flto" \
                 -DCMAKE_BUILD_RPATH="${DIR}/tools/kepler-formal/build/thirdparty/naja/src/dnl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/optimization" \
                 -DCMAKE_INSTALL_RPATH="${INSTALL_PATH}/kepler-formal/lib" \
