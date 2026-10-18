@@ -385,6 +385,12 @@ __local_build()
                 source /opt/rh/devtoolset-8/enable
                 set -u
         fi
+        # EL8: the default GCC 8 is too old for kepler-formal.
+        if [[ -f "/opt/rh/gcc-toolset-13/enable" ]]; then
+                set +u
+                source /opt/rh/gcc-toolset-13/enable
+                set -u
+        fi
 
         if [ -z "${SKIP_OPENROAD+x}" ]; then
                 echo "[INFO FLW-0018] Compiling OpenROAD."

@@ -172,16 +172,45 @@ _install_EL8_EL9_Packages() {
 
     # EL8 and EL9 use `dnf`, instead of `yum`
     dnf -y update
+    # EPEL has tcl-tclreadline and capnproto.
+    dnf -y install "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${elVersion}.noarch.rpm"
+    # The rest builds Yosys and kepler-formal.
     dnf -y install \
-        time \
+        bison \
+        boost-devel \
+        capnproto \
+        capnproto-devel \
+        flex \
+        gcc \
+        gcc-c++ \
+        git \
+        libffi-devel \
+        make \
+        pkgconf-pkg-config \
+        python3 \
+        python3-devel \
+        python3-pip \
         readline \
         ruby \
-        ruby-devel
+        ruby-devel \
+        tbb-devel \
+        tcl-devel \
+        tcllib \
+        time \
+        wget \
+        zlib-devel
+
+    # kepler-formal and the pip lock files need Python 3.10 or newer, which
+    # is newer than the EL8 and EL9 defaults.
+    dnf -y install python3.12 python3.12-devel python3.12-pip
+    update-alternatives --install /usr/bin/python3 python3 "$(command -v python3.12)" 50
 
     if [[ "${elVersion}" == "8" ]]; then
         dnf -y install \
             tcl-tclreadline \
             tcl-tclreadline-devel
+        # The default GCC 8 is too old for kepler-formal.
+        dnf -y install gcc-toolset-13
     fi
 
     if [[ "${elVersion}" == "9" ]]; then
@@ -599,6 +628,7 @@ case "${os}" in
         esac
 
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCmake
             _installPipCommon
         fi
         ;;
