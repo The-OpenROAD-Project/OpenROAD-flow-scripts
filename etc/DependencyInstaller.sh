@@ -78,6 +78,36 @@ _installCmake() {
     rm -rf "${workDir}"
 }
 
+# Yosys needs Bison >= 3.6, newer than EL8 ships, so build the release that
+# the OpenROAD installer uses when the one on PATH is too old.
+bisonMinVersion=3.6
+bisonVersion=3.8.2
+bisonChecksum=1e541a097cda9eca675d29dd2832921f
+
+_installBison() {
+    local prefix=${PREFIX:-"/usr/local"}
+    local current
+    current=$(_toolVersion "${prefix}" bison)
+    if _versionAtLeast "${current}" "${bisonMinVersion}"; then
+        echo "Bison ${current} found, skipping install"
+        return
+    fi
+    local tarball="bison-${bisonVersion}.tar.gz"
+    local workDir
+    workDir=$(mktemp -d)
+    (
+        cd "${workDir}"
+        wget -q "https://ftp.gnu.org/gnu/bison/${tarball}"
+        md5sum -c <(echo "${bisonChecksum}  ${tarball}")
+        tar xzf "${tarball}"
+        cd "bison-${bisonVersion}"
+        ./configure --prefix="${prefix}"
+        make -j "${numThreads}"
+        make install
+    )
+    rm -rf "${workDir}"
+}
+
 _installORDependencies() {
     if [[ ${YOSYS_VER} == "" ]]; then
         YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
@@ -631,6 +661,7 @@ case "${os}" in
 
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCmake
+            _installBison
             _installPipCommon
         fi
         ;;
