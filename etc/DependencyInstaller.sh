@@ -204,6 +204,8 @@ _install_EL8_EL9_Packages() {
     # is newer than the EL8 and EL9 defaults.
     dnf -y install python3.12 python3.12-devel python3.12-pip
     update-alternatives --install /usr/bin/python3 python3 "$(command -v python3.12)" 50
+    # EL8 registers its Python 3.6 with a higher priority, so select 3.12.
+    update-alternatives --set python3 "$(command -v python3.12)"
 
     if [[ "${elVersion}" == "8" ]]; then
         dnf -y install \
