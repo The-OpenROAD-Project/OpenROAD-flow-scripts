@@ -108,6 +108,34 @@ _installBison() {
     rm -rf "${workDir}"
 }
 
+# kepler-formal needs oneTBB and its CMake package. EL8 ships TBB 2018, which
+# has neither, so build oneTBB there. Build it static, because the
+# kepler-formal RPATH does not include the prefix.
+tbbVersion=2021.13.0
+tbbChecksum=3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1
+
+_installTbb() {
+    local prefix=${PREFIX:-"/usr/local"}
+    if compgen -G "${prefix}/lib*/cmake/TBB/TBBConfig.cmake" > /dev/null; then
+        echo "oneTBB found in ${prefix}, skipping install"
+        return
+    fi
+    local tarball="oneTBB-${tbbVersion}.tar.gz"
+    local workDir
+    workDir=$(mktemp -d)
+    (
+        cd "${workDir}"
+        wget -q -O "${tarball}" "https://github.com/uxlfoundation/oneTBB/archive/refs/tags/v${tbbVersion}.tar.gz"
+        sha256sum -c <(echo "${tbbChecksum}  ${tarball}")
+        tar xzf "${tarball}"
+        cmake -S "oneTBB-${tbbVersion}" -B build -DCMAKE_BUILD_TYPE=Release \
+            -DTBB_TEST=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="${prefix}"
+        cmake --build build -j "${numThreads}"
+        cmake --install build
+    )
+    rm -rf "${workDir}"
+}
+
 _installORDependencies() {
     if [[ ${YOSYS_VER} == "" ]]; then
         YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
@@ -210,6 +238,7 @@ _install_EL8_EL9_Packages() {
         boost-devel \
         capnproto \
         capnproto-devel \
+        findutils \
         flex \
         gcc \
         gcc-c++ \
@@ -223,7 +252,6 @@ _install_EL8_EL9_Packages() {
         readline \
         ruby \
         ruby-devel \
-        tbb-devel \
         tcl-devel \
         tcllib \
         time \
@@ -239,6 +267,7 @@ _install_EL8_EL9_Packages() {
 
     if [[ "${elVersion}" == "8" ]]; then
         dnf -y install \
+            readline-devel \
             tcl-tclreadline \
             tcl-tclreadline-devel
         # The default GCC 8 is too old for kepler-formal.
@@ -246,6 +275,8 @@ _install_EL8_EL9_Packages() {
     fi
 
     if [[ "${elVersion}" == "9" ]]; then
+        # EL8 builds oneTBB instead, in -common.
+        dnf -y install tbb-devel
         dnf -y install \
             https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/readline-devel-8.1-4.el9.x86_64.rpm
     fi
@@ -662,6 +693,9 @@ case "${os}" in
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCmake
             _installBison
+            if [[ "${elVersion}" == "8" ]]; then
+                _installTbb
+            fi
             _installPipCommon
         fi
         ;;
