@@ -124,6 +124,8 @@ _installTbb() {
     local workDir
     workDir=$(mktemp -d)
     (
+        # _installCmake may have put CMake in a prefix that is not on PATH.
+        export PATH="${prefix}/bin:${PATH}"
         cd "${workDir}"
         wget -q -O "${tarball}" "https://github.com/uxlfoundation/oneTBB/archive/refs/tags/v${tbbVersion}.tar.gz"
         sha256sum -c <(echo "${tbbChecksum}  ${tarball}")
