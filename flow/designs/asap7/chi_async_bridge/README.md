@@ -21,9 +21,9 @@ with some of them at all:
 
 | feature | where | elsewhere in `flow/designs` |
 |---|---|---|
-| an asynchronous crossing that is timed: `set_clock_groups -asynchronous -allow_paths`, bounded by `set_max_delay -ignore_clock_latency` between the clocks, no hold check across | `constraint.sdc` | only `asap7/mock-cpu`; the other multi-clock designs declare their clocks exclusive or time only virtual IO clocks |
+| an asynchronous crossing that is timed: `set_clock_groups -asynchronous -allow_paths`, bounded by `set_max_delay -ignore_clock_latency` between the clocks, no hold check across | `constraint.sdc` | none; the other multi-clock designs declare their clocks exclusive or time only virtual IO clocks |
 | a constraint file that checks the netlist it names and stops the flow if synthesis renamed, merged or restructured what it constrains | `constraint.sdc`, the synchronisers | none |
-| the slang frontend, the hierarchy kept by name with `SYNTH_KEEP_MODULES` on slang's uniquified, parameterised modules, and linked with `OPENROAD_HIERARCHICAL` (`-hier`) | `config.mk` | none together; `asap7/mock-cpu` keeps its hierarchy with an RTL attribute and reads its Verilog with yosys |
+| the slang frontend, the hierarchy kept by name with `SYNTH_KEEP_MODULES` on slang's uniquified, parameterised modules, and linked with `OPENROAD_HIERARCHICAL` (`-hier`) | `config.mk` | none |
 | instance names in the constraints resolved through that hierarchy (`get_cells -hierarchical`) and written back by hierarchical name for every later stage | `constraint.sdc` | none |
 | three threshold voltages, RVT, LVT and SLVT, on a multi-clock design | `ASAP7_USE_VT` | `asap7/cva6`, single-clock; the `_lvt` designs use LVT alone |
 | the top's parameters set from the flow, one RTL for every variant | `VERILOG_TOP_PARAMS` | `asap7/uart` |
