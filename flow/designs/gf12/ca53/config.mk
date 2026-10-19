@@ -5,7 +5,7 @@ export PLATFORM    = gf12
 export VERILOG_FILES  = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
 export SYNTH_NETLIST_FILES = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
 
-export SDC_FILE      = $(PLATFORM_DIR)/$(DESIGN_NAME)/sdc/ca53_cpu.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/ca53/constraint.sdc
 
 
 export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sc9mcpp84_12lp_base_lvt_c14.lef
