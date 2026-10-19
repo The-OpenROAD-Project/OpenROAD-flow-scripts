@@ -428,6 +428,7 @@ __local_build()
         # Armv8-A baseline, so that the binary runs on any aarch64 machine.
         # EL9 ships TBB 2020, where concurrent_map needs
         # TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS; oneTBB ignores it.
+        # EL installs libraries in lib64 by default; the RPATH points to lib.
         case "$(uname -m)" in
                 aarch64|arm64) KEPLER_MARCH="-march=armv8-a" ;;
                 *) KEPLER_MARCH="-march=x86-64-v3" ;;
@@ -438,6 +439,7 @@ __local_build()
                 -DCMAKE_EXE_LINKER_FLAGS="-flto" \
                 -DCMAKE_BUILD_RPATH="${DIR}/tools/kepler-formal/build/thirdparty/naja/src/dnl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/optimization" \
                 -DCMAKE_INSTALL_RPATH="${INSTALL_PATH}/kepler-formal/lib" \
+                -DCMAKE_INSTALL_LIBDIR=lib \
                 -DCMAKE_BUILD_WITH_INSTALL_RPATH=OFF \
                 -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
                 -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}/kepler-formal"
