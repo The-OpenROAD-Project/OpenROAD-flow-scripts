@@ -11,6 +11,7 @@ export CORE_MARGIN              = 0.5
 # The goal of this design is to have a smoketest that builds quickly,
 # that said, this design will go through grt with a 0.99 placement density.
 export PLACE_DENSITY          = 0.35
+export GPL_PLACE_IOS          = 1
 
 # a smoketest for this option, there are a
 # few last gasp iterations

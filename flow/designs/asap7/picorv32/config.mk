@@ -19,3 +19,4 @@ export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
 export TNS_END_PERCENT = 100
+export GPL_PLACE_IOS = 1
