@@ -26,11 +26,12 @@ if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
 repair_design_helper
 
 if { $::env(ENABLE_PLACE_REPAIR_TIMING) } {
-  # Repair timing using placement parasitics.
-  puts "Repair setup and hold violations..."
+  # Repair setup using placement parasitics. Hold is left to CTS, where
+  # the clock tree exists.
+  puts "Repair setup violations..."
   log_cmd estimate_parasitics
 
-  repair_timing_helper
+  repair_timing_helper -setup -skip_last_gasp
 }
 
 # post report
