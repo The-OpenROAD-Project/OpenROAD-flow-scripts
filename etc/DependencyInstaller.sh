@@ -658,7 +658,7 @@ case "${os}" in
     "CentOS Linux" | "Red Hat Enterprise Linux"* | "AlmaLinux" | "Rocky Linux")
         # Enterprise Linux support - dispatch based on specific version
         if [[ ${CI} == "yes" ]]; then
-            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 24.04 and 26.04" >&2
         fi
 
         # Detect EL version to choose appropriate functions
@@ -738,7 +738,7 @@ case "${os}" in
         ;;
     "Darwin" )
         if [[ ${CI} == "yes" ]]; then
-            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 24.04 and 26.04" >&2
         fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
