@@ -425,6 +425,13 @@
       "place"
     ]
   },
+  "GPL_PLACE_IOS": {
+    "default": 0,
+    "description": "Place IO pins together with the cells in global placement (-place_ios).\n",
+    "stages": [
+      "place"
+    ]
+  },
   "GPL_RANDOM_SEED": {
     "description": "Specifies a random seed for global placement.  Useful for perturbation studies.\n",
     "stages": [

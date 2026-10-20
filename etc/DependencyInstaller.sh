@@ -78,6 +78,66 @@ _installCmake() {
     rm -rf "${workDir}"
 }
 
+# Yosys needs Bison >= 3.6, newer than EL8 ships, so build the release that
+# the OpenROAD installer uses when the one on PATH is too old.
+bisonMinVersion=3.6
+bisonVersion=3.8.2
+bisonChecksum=1e541a097cda9eca675d29dd2832921f
+
+_installBison() {
+    local prefix=${PREFIX:-"/usr/local"}
+    local current
+    current=$(_toolVersion "${prefix}" bison)
+    if _versionAtLeast "${current}" "${bisonMinVersion}"; then
+        echo "Bison ${current} found, skipping install"
+        return
+    fi
+    local tarball="bison-${bisonVersion}.tar.gz"
+    local workDir
+    workDir=$(mktemp -d)
+    (
+        cd "${workDir}"
+        wget -q "https://ftp.gnu.org/gnu/bison/${tarball}"
+        md5sum -c <(echo "${bisonChecksum}  ${tarball}")
+        tar xzf "${tarball}"
+        cd "bison-${bisonVersion}"
+        ./configure --prefix="${prefix}"
+        make -j "${numThreads}"
+        make install
+    )
+    rm -rf "${workDir}"
+}
+
+# kepler-formal needs oneTBB and its CMake package. EL8 ships TBB 2018, which
+# has neither, so build oneTBB there. Build it static, because the
+# kepler-formal RPATH does not include the prefix.
+tbbVersion=2021.13.0
+tbbChecksum=3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1
+
+_installTbb() {
+    local prefix=${PREFIX:-"/usr/local"}
+    if compgen -G "${prefix}/lib*/cmake/TBB/TBBConfig.cmake" > /dev/null; then
+        echo "oneTBB found in ${prefix}, skipping install"
+        return
+    fi
+    local tarball="oneTBB-${tbbVersion}.tar.gz"
+    local workDir
+    workDir=$(mktemp -d)
+    (
+        # _installCmake may have put CMake in a prefix that is not on PATH.
+        export PATH="${prefix}/bin:${PATH}"
+        cd "${workDir}"
+        wget -q -O "${tarball}" "https://github.com/uxlfoundation/oneTBB/archive/refs/tags/v${tbbVersion}.tar.gz"
+        sha256sum -c <(echo "${tbbChecksum}  ${tarball}")
+        tar xzf "${tarball}"
+        cmake -S "oneTBB-${tbbVersion}" -B build -DCMAKE_BUILD_TYPE=Release \
+            -DTBB_TEST=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="${prefix}"
+        cmake --build build -j "${numThreads}"
+        cmake --install build
+    )
+    rm -rf "${workDir}"
+}
+
 _installORDependencies() {
     if [[ ${YOSYS_VER} == "" ]]; then
         YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
@@ -172,19 +232,53 @@ _install_EL8_EL9_Packages() {
 
     # EL8 and EL9 use `dnf`, instead of `yum`
     dnf -y update
+    # EPEL has tcl-tclreadline and capnproto.
+    dnf -y install "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${elVersion}.noarch.rpm"
+    # The rest builds Yosys and kepler-formal.
     dnf -y install \
-        time \
+        bison \
+        boost-devel \
+        capnproto \
+        capnproto-devel \
+        findutils \
+        flex \
+        gcc \
+        gcc-c++ \
+        git \
+        libffi-devel \
+        make \
+        pkgconf-pkg-config \
+        python3 \
+        python3-devel \
+        python3-pip \
         readline \
         ruby \
-        ruby-devel
+        ruby-devel \
+        tcl-devel \
+        tcllib \
+        time \
+        wget \
+        zlib-devel
+
+    # kepler-formal and the pip lock files need Python 3.10 or newer, which
+    # is newer than the EL8 and EL9 defaults.
+    dnf -y install python3.12 python3.12-devel python3.12-pip
+    update-alternatives --install /usr/bin/python3 python3 "$(command -v python3.12)" 50
+    # EL8 registers its Python 3.6 with a higher priority, so select 3.12.
+    update-alternatives --set python3 "$(command -v python3.12)"
 
     if [[ "${elVersion}" == "8" ]]; then
         dnf -y install \
+            readline-devel \
             tcl-tclreadline \
             tcl-tclreadline-devel
+        # The default GCC 8 is too old for kepler-formal.
+        dnf -y install gcc-toolset-13
     fi
 
     if [[ "${elVersion}" == "9" ]]; then
+        # EL8 builds oneTBB instead, in -common.
+        dnf -y install tbb-devel
         dnf -y install \
             https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/readline-devel-8.1-4.el9.x86_64.rpm
     fi
@@ -371,7 +465,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib
+    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib cmake
     brew link --force libomp
     brew install --cask klayout
     brew install docker docker-buildx
@@ -411,6 +505,14 @@ Usage: $0 [-all|-base|-common] [-<ARGS>]
                                 # Installs OpenROAD's common dependencies
                                 #     (-base must be executed in another
                                 #     command).
+       $0 -bazel
+                                # Default. Installs the dependencies to
+                                #     build OpenROAD with Bazel.
+       $0 -cmake
+                                # Installs the dependencies to build
+                                #     OpenROAD with CMake instead of Bazel,
+                                #     e.g. for build_openroad.sh
+                                #     --openroad-args -cmake-build.
        $0 -prefix=DIR
                                 # Installs common dependencies in an existing
                                 #     user-specified directory. Only used
@@ -445,6 +547,8 @@ option="none"
 isLocal="false"
 constantBuildDir="false"
 CI="no"
+# OpenROAD build system to install dependencies for: bazel or cmake
+buildSystem="bazel"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -469,6 +573,12 @@ while [ "$#" -gt 0 ]; do
                 echo "WARNING: previous argument -${option} will be overwritten with -common." >&2
             fi
             option="common"
+            ;;
+        -bazel)
+            buildSystem="bazel"
+            ;;
+        -cmake)
+            buildSystem="cmake"
             ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
@@ -510,10 +620,13 @@ if [[ "${option}" == "none"  ]]; then
 fi
 
 OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
-# build_openroad.sh builds OpenROAD with Bazel, so bazelisk and its runtime
-# libraries are base dependencies. They need root, and -common may run
-# unprivileged, so they ride along with -base only.
-if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+# build_openroad.sh builds OpenROAD with Bazel by default. The Bazel runtime
+# libraries need root, and -common may run unprivileged, so they ride along
+# with -base only; -common installs bazelisk. -cmake asks for the OpenROAD
+# CMake dependencies instead.
+if [[ "${buildSystem}" == "cmake" ]]; then
+    OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -cmake"
+elif [[ "${option}" == "base" || "${option}" == "all" ]]; then
     OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -bazel"
 fi
 
@@ -580,6 +693,11 @@ case "${os}" in
         esac
 
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCmake
+            _installBison
+            if [[ "${elVersion}" == "8" ]]; then
+                _installTbb
+            fi
             _installPipCommon
         fi
         ;;
