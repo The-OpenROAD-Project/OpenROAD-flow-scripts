@@ -721,13 +721,15 @@ case "${os}" in
             _installCmake
         fi
         if [[ $version != "rodete" ]]; then
-            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                if _versionCompare ${version} -lt 23.04 ; then
+            if _versionCompare ${version} -lt 23.04 ; then
+                if [[ "${option}" == "common" || "${option}" == "all" ]]; then
                     _installPipCommon
-                else
-                    if [[ "${option}" == "base" || "${option}" == "all" ]]; then
-                        _installPipSystem
-                    fi
+                fi
+            else
+                # Python packages come from apt (PEP 668), so they belong
+                # with the other system packages in -base.
+                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+                    _installPipSystem
                 fi
             fi
         else
