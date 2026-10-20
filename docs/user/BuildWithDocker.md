@@ -31,8 +31,8 @@ docker run --rm ubuntu:22.04 nproc
 ### Build Using Docker from pre-built binaries
 
 Courtesy of [Precision Innovations](https://precisioninno.com/),
-they release `.deb` installers of OpenROAD for Ubuntu
-and Debian on a regular basis.
+pre-built `.deb` installers of OpenROAD for Ubuntu
+are available from [OpenROAD VaultLink](https://vaultlink.precisioninno.com/).
 This greatly helps to reduce the compilation time needed.
 
 We recommend to use a Docker image of a supported OS
