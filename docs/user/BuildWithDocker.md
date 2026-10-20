@@ -42,7 +42,7 @@ You can start the container in an interactive mode using
 the command below.
 
 ```shell
-docker run -it ubuntu:26.04
+docker run -it ubuntu:22.04
 ```
 
 Now you are ready to install the prebuilt binaries.
