@@ -647,6 +647,7 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     Cell padding on both sides in site widths to ease routability in detail
     placement.
   stages:
+    - floorplan
     - place
     - cts
     - grt
