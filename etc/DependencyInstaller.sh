@@ -421,8 +421,10 @@ _installUbuntuPackages() {
                 klayoutChecksum=6dfffa50f385881768dee30bdc759608
             elif [[ $1 == 24.04 ]]; then
                 klayoutChecksum=0181713e60891e461d6d1664c1b8e213
+            elif [[ $1 == 26.04 ]]; then
+                klayoutChecksum=904f60fd05c3a5029cab8a2840029f49
             else
-                echo "Unsupported Ubuntu version $1. Supported versions: 22.04, 24.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
+                echo "Unsupported Ubuntu version $1. Supported versions: 24.04, 26.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
                 exit 1
             fi
             wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
