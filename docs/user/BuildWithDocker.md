@@ -63,13 +63,13 @@ The following instructions build the docker image with Ubuntu 26.04 as the base 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
-./build_openroad.sh --os=ubuntu26.04
+./build_openroad.sh
 ```
 
 You can restrict the number of CPUs with the `-t|--threads N` argument:
 
 ``` shell
-./build_openroad.sh --os=ubuntu26.04 --threads N
+./build_openroad.sh --threads N
 ```
 
 ## Verify Installation
