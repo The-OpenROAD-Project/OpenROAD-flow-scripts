@@ -35,6 +35,7 @@ if {
 
   # Read Spef for OpenSTA
   read_spef $::env(RESULTS_DIR)/6_final.spef
+  set final_parasitics rcx
 
   # Static IR drop analysis
   if { [env_var_exists_and_non_empty PWR_NETS_VOLTAGES] } {
@@ -59,7 +60,9 @@ if {
   puts "OpenRCX is not enabled for this platform."
   puts "Falling back to global route-based estimates."
   log_cmd estimate_parasitics -global_routing
+  set final_parasitics global_routing
 }
+write_endpoint_slack 6_final $final_parasitics
 
 report_cell_usage
 

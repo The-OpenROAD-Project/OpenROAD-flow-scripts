@@ -152,6 +152,43 @@ proc env_var_or_empty { env_var } {
   return ""
 }
 
+proc pins_fixed_in_floorplan { } {
+  return [expr {
+    [env_var_exists_and_non_empty FLOORPLAN_DEF] ||
+    [env_var_exists_and_non_empty FOOTPRINT] ||
+    [env_var_exists_and_non_empty FOOTPRINT_TCL]
+  }]
+}
+
+# set_place_config arguments for global_placement -place_ios, from the
+# place_pins settings.
+proc place_pins_args_to_place_config { } {
+  set config_args [list \
+    -io_pin_hor_layers $::env(IO_PLACER_H) \
+    -io_pin_ver_layers $::env(IO_PLACER_V)]
+  set pins_args [env_var_or_empty PLACE_PINS_ARGS]
+  for { set i 0 } { $i < [llength $pins_args] } { incr i } {
+    set arg [lindex $pins_args $i]
+    switch -- $arg {
+      -corner_avoidance -
+      -min_distance {
+        lappend config_args -io_pin_[string range $arg 1 end] \
+          [lindex $pins_args [incr i]]
+      }
+      -min_distance_in_tracks {
+        lappend config_args -io_pin_min_distance_in_tracks
+      }
+      default {
+        utl::warn FLW 25 "PLACE_PINS_ARGS $arg is not used with GPL_PLACE_IOS."
+        if { ![string match -* [lindex $pins_args [expr { $i + 1 }]]] } {
+          incr i
+        }
+      }
+    }
+  }
+  return $config_args
+}
+
 proc find_macros { } {
   set macros ""
 
@@ -302,7 +339,101 @@ proc find_physical_only_masters { } {
   return $physical_only_masters
 }
 
-proc orfs_write_db { output_file } {
+proc endpoint_slack_file { step } {
+  return $::env(REPORTS_DIR)/${step}_endpoint_slack.json
+}
+
+# Write the setup and hold slack of every endpoint at the end of a flow
+# step so they can be compared across steps with
+# flow/util/endpointSlack.py. Parasitics are estimated the same way as
+# open.tcl so that every step is timed consistently, unless the caller
+# has already loaded parasitics (e.g. extracted ones) and passes their
+# name as parasitics.
+proc write_endpoint_slack { step { parasitics "" } } {
+  if { !$::env(REPORT_ENDPOINT_SLACK) || [string match "*-failed" $step] } {
+    return
+  }
+  set filename [endpoint_slack_file $step]
+  puts "Writing endpoint slack to $filename"
+
+  if { $parasitics == "" } {
+    set design_stage [lindex [split $step _] 0]
+    set parasitics none
+    if { $design_stage >= 5 } {
+      if { [grt::have_routes] } {
+        set parasitics global_routing
+      }
+    } elseif { $design_stage >= 3 } {
+      set parasitics placement
+    }
+    if { $parasitics != "none" } {
+      estimate_parasitics -$parasitics
+    }
+  }
+  # Update timing before sta::endpoints: the endpoint set is cached the
+  # first time it is requested and misses gated clock enable checks if the
+  # clock network has not been found yet.
+  sta::find_timing
+
+  set fileId [open $filename w]
+  puts $fileId "{"
+  puts $fileId "\"design\": \"$::env(DESIGN_NAME)\","
+  puts $fileId "\"step\": \"$step\","
+  puts $fileId "\"parasitics\": \"$parasitics\","
+  # Seconds per reported time unit
+  puts $fileId "\"time_unit\": [sta::time_ui_sta 1],"
+  # endpoint: [setup slack, hold slack], null if unconstrained
+  puts $fileId "\"endpoints\": {"
+  set sep ""
+  foreach pin [sta::endpoints] {
+    set name [string map {\\ \\\\ \" \\\"} [get_full_name $pin]]
+    set slacks {}
+    foreach min_max {max min} {
+      set slack [get_property $pin slack_$min_max]
+      if { $slack eq "INF" || $slack eq "-INF" } {
+        set slack null
+      }
+      lappend slacks $slack
+    }
+    puts -nonewline $fileId "$sep\"$name\": \[[join $slacks ,]\]"
+    set sep ",\n"
+  }
+  puts $fileId "\n}"
+  puts $fileId "}"
+  close $fileId
+}
+
+# A step that copies its input .odb leaves the design unchanged, so
+# re-time it if it is loaded, otherwise copy the input step's snapshot.
+proc copy_endpoint_slack { input_file output_file } {
+  if { !$::env(REPORT_ENDPOINT_SLACK) } {
+    return
+  }
+  set step [file rootname [file tail $output_file]]
+  set chip [[ord::get_db] getChip]
+  if { $chip != "NULL" && [$chip getBlock] != "NULL" } {
+    write_endpoint_slack $step
+    return
+  }
+  set input [endpoint_slack_file [file rootname [file tail $input_file]]]
+  if { ![file exists $input] } {
+    return
+  }
+  set fileId [open $input r]
+  set json [read $fileId]
+  close $fileId
+  regsub {"step": "[^"]*"} $json "\"step\": \"$step\"" json
+  set fileId [open [endpoint_slack_file $step] w]
+  puts -nonewline $fileId $json
+  close $fileId
+}
+
+# endpoint_slack 0 is for callers that write the endpoint slack snapshot
+# themselves, e.g. 6_final after parasitic extraction.
+proc orfs_write_db { output_file { endpoint_slack 1 } } {
+  if { $endpoint_slack } {
+    write_endpoint_slack [file rootname [file tail $output_file]]
+  }
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
@@ -326,6 +457,7 @@ proc orfs_write_sdc { output_file } {
 # mtime with second resolution, which breaks make's timestamp-based
 # up-to-date checks for fast builds.
 proc orfs_copy_db { input_file output_file } {
+  copy_endpoint_slack $input_file $output_file
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }

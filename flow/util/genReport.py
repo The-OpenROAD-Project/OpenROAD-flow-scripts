@@ -80,6 +80,37 @@ def parse_messages(filename, print_missing=True):
     return errors, warnings
 
 
+def parse_qor_regressions(filename):
+    """Return failed metric details from a QoR check log, if present."""
+    regressions = []
+    in_regressions = False
+    try:
+        with open(filename, "r", encoding="utf-8") as file:
+            for line in file:
+                if line.startswith("QoR regression detected for "):
+                    in_regressions = True
+                elif in_regressions and line.startswith("  ") and line.strip():
+                    regressions.append(line.strip())
+                elif in_regressions:
+                    break
+    except OSError:
+        pass
+    return regressions
+
+
+def append_metrics_errors(errors, regressions, text):
+    if not errors:
+        return text
+
+    text += f"  Found {len(errors)} metrics failures.\n"
+    for error in errors:
+        text += f"      {error}\n"
+        if error.startswith("[ERROR] ") and ": FAIL " in error:
+            for regression in regressions:
+                text += f"          {regression}\n"
+    return text
+
+
 def append_text(list_, text, sup, regex, verbose):
     """
     TODO
@@ -119,7 +150,11 @@ def gen_report(name, data):
         if data["finished"]:
             output += "  Flow reached last stage.\n"
         else:
-            output += f"  Last log file {data['last_log']}\n"
+            output += "  Flow did not reach last stage.\n"
+            if data["last_log"]:
+                output += f"  Last log file {data['last_log']}\n"
+            else:
+                output += "  No log file found.\n"
     else:
         output = ""
 
@@ -133,8 +168,8 @@ def gen_report(name, data):
         REGEX_ERROR,
         args.verbose,
     )
-    output = append_text(
-        data["metrics_errors"], output, "metrics failures", REGEX_ERROR, args.verbose
+    output = append_metrics_errors(
+        data["metrics_errors"], data["metrics_regressions"], output
     )
     output = append_text(
         data["calibre_errors"], output, "calibre failures", REGEX_ERROR, args.verbose
@@ -271,7 +306,7 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
         d["log_warnings"] += temp_w
         if name_.endswith(".log"):
             d["last_log"] = name_
-    d["finished"] = d["last_log"] in LAST_EXPECTED_LOG
+    d["finished"] = any(name in files for name in LAST_EXPECTED_LOG)
 
     # check if metrics generation had issues
     d["metrics_logs_errors"], d["metrics_logs_warnings"] = parse_messages(
@@ -282,6 +317,9 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
     # check if metrics passed
     d["metrics_errors"], d["metrics_warnings"] = parse_messages(
         METRICS_CHECK_FMT.format(report_dir), print_missing=d["finished"]
+    )
+    d["metrics_regressions"] = parse_qor_regressions(
+        METRICS_CHECK_FMT.format(report_dir)
     )
 
     # check if calibre was run and if drc check passed
@@ -311,9 +349,10 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
         if not d["finished"]:
             d["status"] = STATUS_RED
             last_lines = "Could not find last lines of the log file."
-            with open(os.path.join(log_dir, d["last_log"]), "r") as last_file:
-                last_lines = last_file.readlines()[-10:]
-                last_lines = "          ".join(last_lines)
+            if d["last_log"]:
+                with open(os.path.join(log_dir, d["last_log"]), "r") as last_file:
+                    last_lines = last_file.readlines()[-10:]
+                    last_lines = "          ".join(last_lines)
             message = "[ERROR CI-0000] No error message found. "
             message += "Here are the last 10 lines of the log.\n"
             d["log_errors"] = [message + last_lines]

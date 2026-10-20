@@ -110,6 +110,22 @@ REPORT_CLOCK_SKEW:
     - route
     - final
   default: 1
+REPORT_ENDPOINT_SLACK:
+  description: >
+    If set to 1, write the setup and hold slack of every timing endpoint at
+    the end of every flow step (e.g. 3_3_place_gp) to
+    $REPORTS_DIR/<step>_endpoint_slack.json. These snapshots can be compared
+    across steps with flow/util/endpointSlack.py. See
+    docs/contrib/EndpointSlackTracking.md.
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
+  default: 0
 SKIP_REPORT_METRICS:
   description: >
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up
@@ -703,6 +719,12 @@ GPL_ROUTABILITY_DRIVEN:
   stages:
     - place
   default: 1
+GPL_PLACE_IOS:
+  description: |
+    Place IO pins together with the cells in global placement (-place_ios).
+  stages:
+    - place
+  default: 0
 GPL_KEEP_OVERFLOW:
   description: >
     Passed as -keep_resize_below_overflow to global_placement.
@@ -1021,6 +1043,13 @@ ABC_AREA:
   stages:
     - synth
   default: 0
+ABC_SCRIPT:
+  description: |
+    Replaces the ABC script synthesis runs, so that a design can vendor and
+    change it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS
+    is set: abc_new then maps each arithmetic operator with its own script.
+  stages:
+    - synth
 PWR_NETS_VOLTAGES:
   description: |
     Used for IR Drop calculation.

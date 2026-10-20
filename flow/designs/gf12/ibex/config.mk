@@ -23,7 +23,3 @@ export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN
 endif
-
-# slack margin to address WC corner
-export SETUP_SLACK_MARGIN ?= 180
-export HOLD_SLACK_MARGIN ?= 50
