@@ -17,11 +17,12 @@ You need to enable the following options to allow WSL to use Docker.
 General > Use the WSL 2 Based engine (should be default selection)
 ![WSL1](../images/wsl_1.webp)
 
-Resources > WSL integration > Enable integration with my default WSL distro and select "Ubuntu-22.04", or the distribution you installed.  
+Resources > WSL integration > Enable integration with my default WSL distro and select "Ubuntu-26.04", or the distribution you installed.
+
 ![WSL2](../images/wsl_2.webp)
 
 ## Accessing WSL
-You may access WSL from the app named "Ubuntu 22.04 LTS". Run the following:
+You may access WSL from the app named "Ubuntu 26.04 LTS". Run the following:
 ```
 sudo apt-get update; sudo apt-get upgrade; sudo apt install -y build-essential python3 python3-venv python3-pip make
 ```

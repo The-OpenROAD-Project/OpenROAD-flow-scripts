@@ -69,7 +69,7 @@ cd OpenROAD-flow-scripts
 You can restrict the number of CPUs with the `-t|--threads N` argument:
 
 ``` shell
-./build_openroad.sh --threads N
+./build_openroad.sh --os=ubuntu26.04 --threads N
 ```
 
 ## Verify Installation
