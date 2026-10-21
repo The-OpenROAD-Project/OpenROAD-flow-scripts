@@ -331,6 +331,47 @@ class MetricFilterTest(CheckQorMetricsTest):
         _, _, payloads = self.run_check("--only-prefix", "synth__", metadata=path)
         self.assertEqual(payloads[0]["Metrics"], {"synth__design__area": 10})
 
+    def test_non_finite_metric_outside_the_prefix_is_not_named(self):
+        path = self.metadata(
+            synth__design__area=10, finish__timing__setup__tns=float("-inf")
+        )
+        _, output, payloads = self.run_check("--only-prefix", "synth__", metadata=path)
+        self.assertEqual(payloads[0]["Metrics"], {"synth__design__area": 10})
+        self.assertNotIn("non-finite", output)
+
+    def test_non_finite_metrics_are_named_without_a_baseline(self):
+        path = self.metadata(
+            finish__timing__setup__ws=1.5, finish__timing__setup__tns=float("-inf")
+        )
+        _, output, _ = self.run_check(
+            metadata=path, dashboard=Dashboard(response(status="no_baseline"))
+        )
+        self.assertIn("non-finite metric(s): finish__timing__setup__tns", output)
+
+    def test_only_non_finite_metrics_is_an_error_naming_them(self):
+        path = self.metadata(
+            finish__timing__setup__tns=float("-inf"),
+            finish__timing__setup__ws=float("nan"),
+        )
+        code, output, payloads = self.run_check(metadata=path)
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        self.assertIn(
+            "no finite numeric metrics in "
+            f"{path}; non-finite: finish__timing__setup__tns, "
+            "finish__timing__setup__ws",
+            output,
+        )
+
+    def test_no_metric_matching_the_prefix_is_an_error_naming_it(self):
+        path = self.metadata(finish__timing__setup__ws=1.5)
+        code, output, payloads = self.run_check(
+            "--only-prefix", "synth__", "constraints__", metadata=path
+        )
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        self.assertIn("starts with synth__ or constraints__", output)
+
     def test_no_numeric_metric_is_an_error(self):
         path = self.metadata(run__flow__platform="asap7")
         code, output, payloads = self.run_check(metadata=path)

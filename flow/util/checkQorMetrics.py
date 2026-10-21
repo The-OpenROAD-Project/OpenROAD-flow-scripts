@@ -202,6 +202,17 @@ def load_metadata(path, only_prefix=None):
     # reported metric count honest.
     metrics = {key: value for key, value in metrics.items() if "__iter__" not in key}
 
+    if only_prefix:
+        metrics = {
+            key: value
+            for key, value in metrics.items()
+            if any(key.startswith(prefix) for prefix in only_prefix)
+        }
+        if not metrics:
+            raise MetadataError(
+                f"no numeric metric in {path} starts with " + " or ".join(only_prefix)
+            )
+
     # ORFS writes inf/-inf/NaN for a metric it could not compute (an unconstrained
     # timing path reports -inf TNS). json.dumps renders those as bare Infinity/NaN
     # tokens, which are not JSON: the dashboard rejects the whole request with
@@ -210,14 +221,12 @@ def load_metadata(path, only_prefix=None):
     dropped = sorted(key for key, value in metrics.items() if not math.isfinite(value))
     metrics = {key: value for key, value in metrics.items() if key not in dropped}
 
-    if only_prefix:
-        metrics = {
-            key: value
-            for key, value in metrics.items()
-            if any(key.startswith(prefix) for prefix in only_prefix)
-        }
-
     if not metrics:
+        if dropped:
+            raise MetadataError(
+                f"no finite numeric metrics in {path}; non-finite: "
+                + ", ".join(dropped)
+            )
         raise MetadataError(f"no numeric metrics in {path}")
 
     commit = str(raw.get(COMMIT_KEY, ""))
@@ -421,6 +430,16 @@ def check_run(
     return result
 
 
+def dropped_lines(result):
+    """The warning naming the non-finite metrics left out of the request, if any."""
+    if not result["dropped"]:
+        return []
+    return [
+        f"[WARN] Left out {len(result['dropped'])} non-finite metric(s): "
+        + ", ".join(result["dropped"])
+    ]
+
+
 def render_run(result, verbose):
     """Builds the report lines for one run."""
     identity = f"{result['platform']}/{result['design']}/{result['variant']}"
@@ -452,6 +471,7 @@ def render_run(result, verbose):
                 "DASHBOARD_MERGE_BASE=none to compare against the latest master "
                 "build instead."
             )
+        lines.extend(dropped_lines(result))
         return lines
 
     totals = response.get("totals", {})
@@ -492,11 +512,7 @@ def render_run(result, verbose):
                 "[WARN] metadata.json records no commit, so this was compared "
                 "against the latest master build."
             )
-    if result["dropped"]:
-        lines.append(
-            f"[WARN] Left out {len(result['dropped'])} non-finite metric(s): "
-            + ", ".join(result["dropped"])
-        )
+    lines.extend(dropped_lines(result))
 
     if result["status"] == "inconclusive":
         lines.append(
