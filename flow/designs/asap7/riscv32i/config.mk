@@ -7,7 +7,7 @@ export SYNTH_HIERARCHICAL ?= 1
 export SYNTH_MINIMUM_KEEP_SIZE ?= 10000
 
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/riscv32i/*.v))
-export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/riscv32i/constraint.sdc
+export SDC_FILE     ?= $(DESIGN_HOME)/$(PLATFORM)/riscv32i/constraint.sdc
 
 ifeq ($(BLOCKS),)
 	export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_256x32.lef

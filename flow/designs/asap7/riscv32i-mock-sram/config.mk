@@ -6,4 +6,7 @@ export BLOCKS=fakeram7_256x32
 # with margin keeps them from failing together.
 export SETUP_SLACK_MARGIN ?= 30
 
+# riscv32i's constraints at the clock this design was tuned for
+export SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+
 include designs/asap7/riscv32i/config.mk
