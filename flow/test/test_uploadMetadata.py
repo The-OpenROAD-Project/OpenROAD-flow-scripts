@@ -150,7 +150,7 @@ class TestUploadMetadata(unittest.TestCase):
         self.assertEqual(payload["design_count"], 12)
         self.assertEqual(payload["no_metrics_reason"], "flow failed before metrics")
         self.assertEqual(messages[0]["attributes"]["payload_schema_version"], "3")
-        self.assertIn("empty (no-metrics)", result.stdout)
+        self.assertIn("[WARN] No design records were collected", result.stdout)
 
     def test_empty_designs_without_new_flags(self):
         result, messages = self.run_script()
@@ -216,7 +216,10 @@ class TestUploadMetadata(unittest.TestCase):
             },
         )
         self.assertNotIn("empty (no-metrics)", result.stdout)
-        self.assertIn("[WARN] --noMetricsReason was given", result.stdout)
+        self.assertIn(
+            "[WARN] Ignoring --noMetricsReason because design records were collected",
+            result.stdout,
+        )
 
     def test_blank_build_time_defaults_to_now(self):
         result, messages = self.run_script("--buildTime", "  ")
@@ -234,6 +237,71 @@ class TestUploadMetadata(unittest.TestCase):
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertIn("is negative", result.stderr)
         self.assertEqual(messages, [])
+
+    def test_zero_expected_designs_is_not_sent(self):
+        result, messages = self.run_script("--expectedDesigns", "0")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("design_count", messages[0]["data"])
+
+    def test_unpadded_build_time_is_normalized(self):
+        result, messages = self.run_script("--buildTime", "2026-1-5 1:3")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(messages[0]["data"]["build_time"], "2026-01-05 01:03")
+
+    def test_reason_at_length_limit_is_kept(self):
+        reason = "x" * 100
+        result, messages = self.run_script("--noMetricsReason", reason)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(messages[0]["data"]["no_metrics_reason"], reason)
+
+    def test_overlong_reason_is_dropped_with_warning(self):
+        result, messages = self.run_script("--noMetricsReason", "x" * 101)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("no_metrics_reason", messages[0]["data"])
+        self.assertIn("longer than 100 characters", result.stdout)
+
+    def test_report_dir_without_data_file_is_skipped(self):
+        self.add_design("nangate45", "gcd")
+        os.makedirs(os.path.join(self.flow, "reports", "nangate45", "aes", "base"))
+        result, messages = self.run_script("--expectedDesigns", "2")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        payload = messages[0]["data"]
+        self.assertEqual([d["design"] for d in payload["designs"]], ["gcd"])
+        self.assertEqual(payload["design_count"], 2)
+        self.assertIn("[WARN] No data file for nangate45 aes base.", result.stdout)
+
+    def test_failed_flow_without_data_files_publishes_empty_report(self):
+        os.makedirs(os.path.join(self.flow, "reports", "nangate45", "gcd", "base"))
+        result, messages = self.run_script(
+            "--expectedDesigns", "1", "--noMetricsReason", "no_reports_found"
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(len(messages), 1)
+        payload = messages[0]["data"]
+        self.assertEqual(payload["designs"], [])
+        self.assertEqual(payload["no_metrics_reason"], "no_reports_found")
+
+    def test_only_skipped_platforms_publishes_empty_report(self):
+        self.add_design("sky130hd_fakestack", "gcd")
+        self.add_design("src", "gcd")
+        result, messages = self.run_script()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0]["data"]["designs"], [])
+        self.assertIn(
+            "[WARN] Skiping upload sky130hd_fakestack gcd base.", result.stdout
+        )
+        self.assertIn("[WARN] No design records were collected", result.stdout)
+
+    def test_v1_fallback_warns_that_design_count_is_dropped(self):
+        # Large enough to push the pipeline payload over the 8 MB cap.
+        self.add_design("nangate45", "gcd", metrics={"blob": "x" * (9 * 1024 * 1024)})
+        result, messages = self.run_script("--expectedDesigns", "3")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(len(messages), 1)
+        self.assertNotIn("payload_schema_version", messages[0]["data"])
+        self.assertNotIn("design_count", messages[0]["data"])
+        self.assertIn("[WARN] --expectedDesigns is not sent", result.stdout)
 
     def test_design_count_with_designs(self):
         self.add_design("nangate45", "gcd")

@@ -20,6 +20,8 @@ INVOCATION_DIR = os.getcwd()
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 BUILD_TIME_FORMAT = "%Y-%m-%d %H:%M"
+# The backend drops a longer no_metrics_reason without an error.
+MAX_NO_METRICS_REASON = 100
 
 
 def _build_time(val):
@@ -28,12 +30,13 @@ def _build_time(val):
     if not val:
         return None
     try:
-        datetime.strptime(val, BUILD_TIME_FORMAT)
+        parsed = datetime.strptime(val, BUILD_TIME_FORMAT)
     except ValueError:
         raise argparse.ArgumentTypeError(
             f"'{val}' does not match the expected format 'YYYY-MM-DD HH:MM'"
         )
-    return val
+    # strptime accepts unpadded fields such as "2026-1-5 1:3".
+    return parsed.strftime(BUILD_TIME_FORMAT)
 
 
 def _non_negative_int(val):
@@ -93,16 +96,20 @@ parser.add_argument(
     "--expectedDesigns",
     type=_non_negative_int,
     default=None,
-    help="Number of designs the pipeline set out to build. When set, emitted "
-    "as design_count on the pipeline payload so the backend can tell a build "
-    "that produced fewer (or no) metrics from one that built fewer designs.",
+    help="Number of designs the pipeline set out to build. When positive, "
+    "emitted as design_count on the pipeline payload so the backend can tell "
+    "a build that produced fewer (or no) metrics from one that built fewer "
+    "designs. 0 is accepted but not sent, since the backend ignores it. Not "
+    "sent on the per-design fallback for oversized payloads.",
 )
 parser.add_argument(
     "--noMetricsReason",
     type=str,
     default=None,
-    help="Why no design produced metrics. Emitted as no_metrics_reason only "
-    "on a payload with no designs.",
+    help="Why no design produced metrics, as a short code such as "
+    "no_reports_found (at most 100 characters; a longer value is dropped with "
+    "a warning). Emitted as no_metrics_reason only on a payload with no "
+    "designs.",
 )
 
 # --- PUBSUB args ---
@@ -257,7 +264,27 @@ def resolve_build_time(args):
     return datetime.now(timezone.utc).strftime(BUILD_TIME_FORMAT)
 
 
-def build_pipeline_payload(design_records, args, provenance=None):
+def resolve_no_metrics_reason(args, design_records):
+    """The no_metrics_reason to send, and why a given reason is not sent.
+
+    Returns ``(reason, problem)``: ``reason`` is ``None`` unless it goes on the
+    payload, and ``problem`` describes a non-blank reason that was dropped.
+    """
+    reason = args.noMetricsReason.strip() if args.noMetricsReason else ""
+    if not reason:
+        return None, None
+    # A reason only describes a build that produced nothing; on a payload with
+    # designs it would contradict the metrics it carries.
+    if design_records:
+        return None, "design records were collected"
+    if len(reason) > MAX_NO_METRICS_REASON:
+        return None, f"it is longer than {MAX_NO_METRICS_REASON} characters"
+    return reason, None
+
+
+def build_pipeline_payload(
+    design_records, args, provenance=None, no_metrics_reason=None
+):
     """Return the pipeline-level payload dict.
 
     Emits schema v2 (no job name), v3 (job name) or v4 (job name plus build
@@ -279,18 +306,10 @@ def build_pipeline_payload(design_records, args, provenance=None):
     }
     if job_name:
         payload["job_name"] = job_name
-    if args.expectedDesigns is not None:
+    if args.expectedDesigns:
         payload["design_count"] = args.expectedDesigns
-    # A reason only describes a build that produced nothing; on a payload with
-    # designs it would contradict the metrics it carries.
-    reason = args.noMetricsReason.strip() if args.noMetricsReason else ""
-    if not design_records and reason:
-        payload["no_metrics_reason"] = reason
-    elif reason:
-        print(
-            "[WARN] --noMetricsReason was given but design records were "
-            "collected. Ignoring the reason."
-        )
+    if no_metrics_reason:
+        payload["no_metrics_reason"] = no_metrics_reason
     # Only a v4 payload carries provenance. Provenance without a job name cannot
     # be v4 (the backend requires job_name from v3 up), and attaching v4 keys to
     # a message labelled v2 would make payload_schema_version stop describing
@@ -337,10 +356,12 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
     for the extra keys to contradict, and the backend reads provenance here by
     key presence rather than by version.
 
-    build_time, design_count and no_metrics_reason are left off: the backend
-    reads every v1 root key it does not list as metadata as a metric, so new
-    root keys here would surface as bogus metrics. An empty build never gets
-    here anyway; its payload is far below the size cap.
+    design_count is left off: the backend reads every v1 root key it does not
+    list as metadata as a metric, and design_count is not on that list, so it
+    would surface as a bogus metric. build_time and no_metrics_reason are
+    metadata there but not needed: each design's metrics carry
+    run__flow__generate_date, which the backend prefers, and a reason only
+    applies to an empty build, whose payload is far below the size cap.
     """
     futures = []
     failed = 0
@@ -449,11 +470,16 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
 if publisher:
     if not design_records:
         print(
-            "[INFO] No design records were collected. Publishing an empty "
+            "[WARN] No design records were collected. Publishing an empty "
             "(no-metrics) pipeline report."
         )
+    no_metrics_reason, reason_problem = resolve_no_metrics_reason(args, design_records)
+    if reason_problem:
+        print(f"[WARN] Ignoring --noMetricsReason because {reason_problem}.")
     provenance = load_provenance(args.provenanceFile)
-    payload = build_pipeline_payload(design_records, args, provenance)
+    payload = build_pipeline_payload(
+        design_records, args, provenance, no_metrics_reason
+    )
     message_data = json.dumps(payload, default=str).encode("utf-8")
 
     if len(message_data) > MAX_PUBSUB_BYTES:
@@ -462,6 +488,11 @@ if publisher:
             f"{MAX_PUBSUB_BYTES // 1024} KB cap. Falling back to v1 per-design publish "
             f"({len(design_records)} messages)."
         )
+        if args.expectedDesigns:
+            print(
+                "[WARN] --expectedDesigns is not sent on the v1 fallback; the "
+                "backend will report this build's completeness as unknown."
+            )
         failed = publish_v1_per_design(
             publisher, topic_path, design_records, args, provenance
         )
