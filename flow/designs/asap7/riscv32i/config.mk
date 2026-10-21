@@ -3,7 +3,7 @@ export DESIGN_NAME = riscv_top
 export PLATFORM    = asap7
 
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/riscv32i/*.v))
-export SDC_FILE     ?= $(DESIGN_HOME)/$(PLATFORM)/riscv32i/constraint.sdc
+export SDC_FILE     ?= $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 ifeq ($(BLOCKS),)
 	export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_256x32.lef
