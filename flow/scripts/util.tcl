@@ -469,12 +469,13 @@ proc source_step_tcl { hook_type step_name } {
   source_env_var_if_exists $env_var
 }
 
-# Entry of lib_file in the binary liberty (.blib) cache. The name carries the
-# library's path, size and modification time, so a changed library gets a new
-# entry. Libraries the flow generates are cached per run.
+# Entry of lib_file in the binary liberty (.blib) cache:
+# <platform>/<library>@<size>-<mtime>-<dirhash>.blib, so a changed library gets
+# a new entry and same-named libraries from different directories don't
+# collide. Libraries the flow generates are cached per run.
 proc binary_lib_path { lib_file } {
   set source [file normalize $lib_file]
-  set root $::env(BINARY_LIBS_DIR)
+  set root [file join $::env(BINARY_LIBS_DIR) $::env(PLATFORM)]
   foreach dir {objects results} {
     set flow_dir [file normalize [file join $::env(WORK_HOME) $dir]]
     if { [string first "$flow_dir/" $source] == 0 } {
@@ -482,8 +483,11 @@ proc binary_lib_path { lib_file } {
       break
     }
   }
-  set name "[file tail $source]@[file size $source]-[file mtime $source].blib"
-  return [file join [file normalize $root] [string trimleft [file dirname $source] /] $name]
+  set name [file tail $source]
+  regsub {\.gz$} $name "" name
+  set name [file rootname $name]
+  set dir_hash [format %08x [zlib crc32 [file dirname $source] 0]]
+  return [file join $root "$name@[file size $source]-[file mtime $source]-$dir_hash.blib"]
 }
 
 # The cached .blib for lib_file, or lib_file when the .blib is missing or unusable

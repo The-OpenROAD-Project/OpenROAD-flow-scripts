@@ -171,7 +171,9 @@ LIB_FILES:
 BINARY_LIBS_DIR:
   description: >
     Directory of the binary liberty (.blib) cache the OpenROAD stages read
-    instead of the text libraries. Every design that uses the directory
+    instead of the text libraries, stored as
+    <platform>/<library>@<size>-<mtime>-<dirhash>.blib so that a changed
+    library gets a new entry. Every design that uses the directory
     shares it, so set it in the environment or settings.mk, not in a
     design's config.mk; ORFS clones that set the same directory share their
     .blib files. `make binary-libs` fills it with the current design's
