@@ -90,11 +90,27 @@ proc formal_check_label { step } {
   return "Global output"
 }
 
+# Run kepler-formal through run_command.py, as the flow runs yosys and
+# openroad, so its stdout and elapsed time/peak memory land in
+# $LOG_DIR/${step}_${kind}.log. kepler-formal still writes its detailed
+# log to the ${step}_${kind}_check.log named in its config.
+proc run_kepler_formal { step kind } {
+  if { [env_var_exists_and_non_empty RUN_CMD] } {
+    set run_cmd $::env(RUN_CMD)
+  } else {
+    set run_cmd [list $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/run_command.py]
+  }
+  # run_command.py reports the elapsed time on stderr, which exec would
+  # otherwise treat as an error.
+  exec {*}$run_cmd --log $::env(LOG_DIR)/${step}_${kind}.log -- \
+    {*}$::env(KEPLER_FORMAL_EXE) --config $::env(OBJECTS_DIR)/${step}_${kind}_test.yml \
+    2>@ stderr
+}
+
 proc run_lec_test { step file1 file2 } {
   check_kepler_formal
   write_lec_script $step $file1 $file2
-  # tclint-disable-next-line command-args
-  eval exec $::env(KEPLER_FORMAL_EXE) --config $::env(OBJECTS_DIR)/${step}_lec_test.yml
+  run_kepler_formal $step lec
   try {
     set count [exec grep -c "Found difference" $::env(LOG_DIR)/${step}_lec_check.log]
   } trap CHILDSTATUS {results options} {
@@ -112,8 +128,7 @@ proc run_lec_test { step file1 file2 } {
 proc run_sec_test { step file1 file2 } {
   check_kepler_formal
   write_sec_script $step $file1 $file2
-  # tclint-disable-next-line command-args
-  eval exec $::env(KEPLER_FORMAL_EXE) --config $::env(OBJECTS_DIR)/${step}_sec_test.yml
+  run_kepler_formal $step sec
   try {
     set count [exec grep -c "SEC found a counterexample" $::env(LOG_DIR)/${step}_sec_check.log]
   } trap CHILDSTATUS {results options} {

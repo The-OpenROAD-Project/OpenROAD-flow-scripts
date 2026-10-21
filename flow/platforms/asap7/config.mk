@@ -60,8 +60,6 @@ export PLACE_DENSITY ?= 0.60
 # Endcap and Welltie cells
 export TAPCELL_TCL             ?= $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
-export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
-
 # Route options
 export MIN_ROUTING_LAYER        ?= M2
 export MIN_CLK_ROUTING_LAYER    ?= M4

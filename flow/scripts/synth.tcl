@@ -284,8 +284,13 @@ if {
 } {
   log_cmd abc {*}$abc_args
 } else {
+  # Not dead code: abc_new mistakes the "-script" in /OpenROAD-flow-scripts/...
+  # paths for a given -script and drops its default (YosysHQ/yosys#6320).
   scratchpad -set abc9.script $::env(SCRIPTS_DIR)/abc_speed_gia_only.script
-  # crop out -script from arguments
+  # abc_new maps each arithmetic operator module with the abc9_script
+  # attribute synth_wrap_operators.tcl sets on it, and every other module
+  # with the script above. An explicit -script overrides both, so it is
+  # cropped from the arguments and ABC_SCRIPT does not apply here.
   set abc_args [lrange $abc_args 2 end]
   log_cmd abc_new {*}$abc_args
   delete {t:$specify*}

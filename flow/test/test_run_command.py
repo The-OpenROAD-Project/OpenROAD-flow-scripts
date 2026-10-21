@@ -196,10 +196,18 @@ class TestRunCommand(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        # Wait a bit for first line to be flushed
-        time.sleep(0.3)
-        with open(self.log_path) as f:
-            content = f.read()
+        # Poll until the first line is flushed. Interpreter start-up time
+        # varies, so a fixed sleep is racy. The child sleeps 1.5s in total,
+        # so line1 must show up before the deadline while it still runs.
+        content = ""
+        deadline = time.monotonic() + 1.0
+        while time.monotonic() < deadline:
+            if os.path.exists(self.log_path):
+                with open(self.log_path) as f:
+                    content = f.read()
+                if "line1" in content:
+                    break
+            time.sleep(0.05)
         self.assertIn(
             "line1", content, "line1 should appear before subprocess finishes"
         )
@@ -309,9 +317,9 @@ class TestRunCommand(unittest.TestCase):
         with patch("sys.stdout", new_callable=StringIO) as mock_out:
             genElapsedTime.scan_logs(["--logDir", log_dir, "--noHeader"])
         output = mock_out.getvalue()
-        # 0:04.26 is 4 seconds, and 671508KB is 655MB; the prefix is not
-        # part of either.
-        self.assertRegex(output, r"1_test\s+\S*\s+4\s+655")
+        # 0:04.26 is 4 seconds, 4.08 + 0.17 is 4 CPU seconds at a 1.00
+        # ratio, and 671508KB is 655MB; the prefix is not part of any.
+        self.assertRegex(output, r"1_test\s+\S*\s+4\s+4\s+1\.00\s+655")
 
     def test_genElapsedTime_parses_hours(self):
         """Verify genElapsedTime.py understands the optional hours field."""
@@ -332,7 +340,7 @@ class TestRunCommand(unittest.TestCase):
         with patch("sys.stdout", new_callable=StringIO) as mock_out:
             genElapsedTime.scan_logs(["--logDir", log_dir, "--noHeader"])
         output = mock_out.getvalue()
-        self.assertRegex(output, r"1_test\s+\S*\s+3661\s+655")
+        self.assertRegex(output, r"1_test\s+\S*\s+3661\s+4\s+0\.00\s+655")
 
 
 if __name__ == "__main__":

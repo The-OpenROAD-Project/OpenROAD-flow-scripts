@@ -5,7 +5,6 @@ export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/tpu/*.sv))
 export SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # Synthesis
-export ABC_CLOCK_PERIOD_IN_PS = 1000
 export SYNTH_HDL_FRONTEND = slang
 export LEC_CHECK = 0
 

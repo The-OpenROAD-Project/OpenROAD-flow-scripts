@@ -8,6 +8,7 @@ from utils.class_process import Process
 from utils.memory_config import MemoryConfig
 from utils.memory_factory import MemoryFactory
 from utils.timing_data import TimingData
+from orfs_asap7.generate import run_orfs_asap7
 
 
 def get_args() -> argparse.Namespace:
@@ -26,10 +27,22 @@ def get_args() -> argparse.Namespace:
         required=False,
         default="results",
     )
+    parser.add_argument(
+        "--orfs_asap7_backend",
+        action="store_true",
+        help="Use ORFS ASAP7 backend (expects JSON in memories.json format)",
+    )
     return parser.parse_args()
 
 
 def main(args: argparse.Namespace):
+    if args.orfs_asap7_backend:
+        from pathlib import Path
+
+        return run_orfs_asap7(
+            platform="asap7", out_dir=Path(args.output_dir), json_path=Path(args.config)
+        )
+
     json_data = RunUtils.get_config(args.config)
     # Create a process object (shared by all srams)
     process = Process(json_data)
@@ -50,4 +63,4 @@ def main(args: argparse.Namespace):
 ### Entry point
 if __name__ == "__main__":
     args = get_args()
-    main(args)
+    sys.exit(main(args))

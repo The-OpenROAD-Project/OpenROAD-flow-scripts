@@ -204,6 +204,7 @@ do-klayout:
 		--template $(KLAYOUT_TECH_FILE) \
 		--output $(OBJECTS_DIR)/klayout.lyt \
 		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS) \
+		  $(if $(filter 1,$(AUTO_MEMORIES)),$(wildcard $(RESULTS_DIR)/memories/*.lef)) \
 		--map-files $(wildcard $(FLOW_HOME)/platforms/$(PLATFORM)/*map)
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
@@ -258,14 +259,6 @@ memory:
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
 
-$(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
-	$(UNSET_AND_MAKE) do-sdc-clock-period
-
-.PHONY: do-sdc-clock-period
-do-sdc-clock-period:
-	mkdir -p $(dir $(SDC_FILE_CLOCK_PERIOD))
-	echo $(ABC_CLOCK_PERIOD_IN_PS) > $(SDC_FILE_CLOCK_PERIOD)
-
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
@@ -282,10 +275,10 @@ do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	mkdir -p $(RESULTS_DIR)
 	$(PYTHON_EXE) $(SCRIPTS_DIR)/memories/gen_memories.py \
 	  --platform $(PLATFORM) \
+	  --top $(DESIGN_NAME) \
 	  --yosys-json $(RESULTS_DIR)/memories_inferred.json \
 	  --out-dir $(RESULTS_DIR)/memories \
 	  --json $(RESULTS_DIR)/memories.json \
-	  $(foreach file,$(VERILOG_FILES),--verilog $(file)) \
 	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file))
 
 $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \
@@ -294,6 +287,9 @@ $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL
 
 yosys-dependencies: $(RESULTS_DIR)/memories.json
 $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
+# The generated LEFs are part of the KLayout technology the GDS merge
+# reads the final DEF with.
+$(OBJECTS_DIR)/klayout.lyt: $(RESULTS_DIR)/memories.json
 endif
 
 .PHONY: do-yosys
@@ -320,7 +316,6 @@ clean_synth:
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STATS)
-	rm -f $(SDC_FILE_CLOCK_PERIOD)
 
 # ==============================================================================
 #  _____ _     ___   ___  ____  ____  _        _    _   _
