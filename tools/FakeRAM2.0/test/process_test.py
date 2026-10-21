@@ -114,6 +114,14 @@ class ProcessTest(unittest.TestCase):
             + (process.get_pin_width_um() / 2.0),
         )
 
+    def test_process_optional_column_mux(self):
+        """Tests that column_mux_factor is left to be picked per memory"""
+
+        process_data = self._base_data.copy()
+        del process_data["column_mux_factor"]
+        process = Process(process_data)
+        self.assertIsNone(process.get_column_mux_factor())
+
     def test_process_misaligned_pin_mfg_grid_pitch(self):
         """
         Tests detection that pin pitch is not a multiple of the metal track

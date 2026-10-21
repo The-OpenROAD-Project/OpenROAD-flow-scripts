@@ -18,6 +18,12 @@
       "synth"
     ]
   },
+  "ABC_SCRIPT": {
+    "description": "Replaces the ABC script synthesis runs, so that a design can vendor and\nchange it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS\nis set: abc_new then maps each arithmetic operator with its own script.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "ABSTRACT_SOURCE": {
     "description": "Which .odb file to use to create abstract\n",
     "stages": [
@@ -415,6 +421,13 @@
   },
   "GPL_KEEP_OVERFLOW": {
     "description": "Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "GPL_PLACE_IOS": {
+    "default": 0,
+    "description": "Place IO pins together with the cells in global placement (-place_ios).\n",
     "stages": [
       "place"
     ]
