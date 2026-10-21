@@ -151,8 +151,10 @@ if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
   log_cmd replace_arith_modules
 }
 
-# Skip clone & split
-repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
+if { !$::env(SKIP_FLOORPLAN_REPAIR_TIMING) } {
+  # Skip clone & split
+  repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
+}
 
 puts "Default units for flow"
 report_units
