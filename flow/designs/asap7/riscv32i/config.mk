@@ -2,16 +2,19 @@ export DESIGN_NICKNAME ?= riscv32i
 export DESIGN_NAME = riscv_top
 export PLATFORM    = asap7
 
-export SYNTH_HIERARCHICAL ?= 1
-
-export SYNTH_MINIMUM_KEEP_SIZE ?= 10000
-
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/riscv32i/*.v))
 export SDC_FILE     ?= $(DESIGN_HOME)/$(PLATFORM)/riscv32i/constraint.sdc
 
 ifeq ($(BLOCKS),)
 	export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_256x32.lef
 	export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_256x32.lib
+else
+	# A hardened block (riscv32i-mock-sram) needs hierarchical synthesis.
+	# Otherwise flat: SYNTH_MINIMUM_KEEP_SIZE kept dmem for its four SRAMs'
+	# area, and its boundary cut the worst path, from the address adder to
+	# the SRAMs' enable decode.
+	export SYNTH_HIERARCHICAL ?= 1
+	export SYNTH_MINIMUM_KEEP_SIZE ?= 10000
 endif
 
 export CORE_UTILIZATION = 62
