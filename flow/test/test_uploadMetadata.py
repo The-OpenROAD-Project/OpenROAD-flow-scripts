@@ -296,5 +296,13 @@ class TestUploadMetadata(unittest.TestCase):
         self.assertEqual(messages[0]["data"]["change_author_email"], "bob@example.com")
 
 
+    def test_requester_keys_win_over_same_named_v1_metric(self):
+        metrics = dict(OVERSIZED_METRICS, build_user_email="metric")
+        self.add_design("nangate45", "gcd", metrics=metrics)
+        result, messages = self.run_script("--buildUserEmail", "ada@example.com")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(messages[0]["data"]["build_user_email"], "ada@example.com")
+
+
 if __name__ == "__main__":
     unittest.main()

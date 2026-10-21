@@ -320,6 +320,9 @@ def publish_v1_per_design(
     requirement: a v1 message declares no schema version, so there is nothing
     for the extra keys to contradict, and the backend reads provenance here by
     key presence rather than by version.
+
+    The requester keys go on after the metrics, so a metric that happened to
+    share their name could not replace who asked for the build.
     """
     futures = []
     failed = 0
@@ -335,9 +338,9 @@ def publish_v1_per_design(
         }
         if provenance:
             payload.update(provenance)
+        payload.update(d["metrics"])
         if requester:
             payload.update(requester)
-        payload.update(d["metrics"])
 
         message_data = json.dumps(payload, default=str).encode("utf-8")
         try:
