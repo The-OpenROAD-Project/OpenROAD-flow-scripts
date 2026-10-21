@@ -81,6 +81,13 @@
       "place"
     ]
   },
+  "BINARY_LIBS_DIR": {
+    "default": "$(WORK_HOME)/objects/binary_libs",
+    "description": "Directory of the binary liberty (.blib) cache the OpenROAD stages read instead of the text libraries. Every design that uses the directory shares it, so set it in the environment or settings.mk, not in a design's config.mk; ORFS clones that set the same directory share their .blib files. `make binary-libs` fills it with the current design's libraries and `make clean_binary_libs` deletes it. Libraries the flow generates, such as BLOCKS abstracts, are cached per run in $(OBJECTS_DIR)/binary_libs.\n",
+    "stages": [
+      "All stages"
+    ]
+  },
   "BLOCKS": {
     "description": "Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.\n"
   },
@@ -1500,6 +1507,13 @@
     "description": "List of cells to unset the abc9_box attribute on\n",
     "stages": [
       "synth"
+    ]
+  },
+  "USE_BINARY_LIBS": {
+    "default": 1,
+    "description": "Read binary liberty (.blib) files in the OpenROAD stages instead of parsing the text libraries. Before 1_synth, the flow converts every library missing from BINARY_LIBS_DIR. Set to 0 when the flow should read LIB_FILES as given, for example when bazel-orfs provides the binary libraries itself.\n",
+    "stages": [
+      "All stages"
     ]
   },
   "USE_FILL": {

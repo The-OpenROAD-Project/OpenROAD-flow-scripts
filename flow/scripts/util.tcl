@@ -468,3 +468,37 @@ proc source_step_tcl { hook_type step_name } {
   set env_var "${hook_type}_${step_name}_TCL"
   source_env_var_if_exists $env_var
 }
+
+# Entry of lib_file in the binary liberty (.blib) cache. The name carries the
+# library's path, size and modification time, so a changed library gets a new
+# entry. Libraries the flow generates are cached per run.
+proc binary_lib_path { lib_file } {
+  set source [file normalize $lib_file]
+  set root $::env(BINARY_LIBS_DIR)
+  foreach dir {objects results} {
+    set flow_dir [file normalize [file join $::env(WORK_HOME) $dir]]
+    if { [string first "$flow_dir/" $source] == 0 } {
+      set root [file join $::env(OBJECTS_DIR) binary_libs]
+      break
+    }
+  }
+  set name "[file tail $source]@[file size $source]-[file mtime $source].blib"
+  return [file join [file normalize $root] [string trimleft [file dirname $source] /] $name]
+}
+
+# The cached .blib for lib_file, or lib_file when the .blib is missing or unusable
+proc lib_file_to_read { lib_file } {
+  if { ![env_var_equals USE_BINARY_LIBS 1] || ![file exists $lib_file] } {
+    return $lib_file
+  }
+  set blib [binary_lib_path $lib_file]
+  if { ![file exists $blib] } {
+    utl::warn FLW 26 "$blib not found, reading $lib_file."
+    return $lib_file
+  }
+  if { [catch { liberty_binary_info $blib } msg] } {
+    utl::warn FLW 27 "$blib is unusable, reading $lib_file: $msg"
+    return $lib_file
+  }
+  return $blib
+}

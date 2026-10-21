@@ -168,6 +168,29 @@ LIB_FILES:
     A Liberty file of the standard cell library with PVT characterization,
     input and output characteristics, timing and power definitions for each
     cell.
+BINARY_LIBS_DIR:
+  description: >
+    Directory of the binary liberty (.blib) cache the OpenROAD stages read
+    instead of the text libraries. Every design that uses the directory
+    shares it, so set it in the environment or settings.mk, not in a
+    design's config.mk; ORFS clones that set the same directory share their
+    .blib files. `make binary-libs` fills it with the current design's
+    libraries and `make clean_binary_libs` deletes it. Libraries the flow
+    generates, such as BLOCKS abstracts, are cached per run in
+    $(OBJECTS_DIR)/binary_libs.
+  default: $(WORK_HOME)/objects/binary_libs
+  stages:
+    - All stages
+USE_BINARY_LIBS:
+  description: >
+    Read binary liberty (.blib) files in the OpenROAD stages instead of
+    parsing the text libraries. Before 1_synth, the flow converts every
+    library missing from BINARY_LIBS_DIR. Set to 0 when the flow should
+    read LIB_FILES as given, for example when bazel-orfs provides the
+    binary libraries itself.
+  default: 1
+  stages:
+    - All stages
 LIB_MODEL:
   description: >
     Selects between NLDM and CCS timing models for the ASAP7 platform.
