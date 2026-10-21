@@ -169,7 +169,7 @@ class MetadataError(Exception):
 
 
 def load_metadata(path, only_prefix=None):
-    """Returns (metrics, commit_sha, dropped). Raises MetadataError if the file is unusable.
+    """Returns (metrics, commit_sha, dropped), or raises MetadataError.
 
     dropped names the metrics left out because their value is not finite.
 
@@ -871,6 +871,11 @@ def run_check(argv=None):
         )
     if base_commit:
         header.append(f"[INFO] Baseline pinned to commit {base_commit}")
+    elif args.job_name and branch == "HEAD":
+        header.append(
+            f"[WARN] Checking as a build of {args.job_name} with a detached HEAD "
+            "(no --branch): resolved as a feature branch."
+        )
     elif args.job_name and branch:
         header.append(
             f"[INFO] Checking as a build of {args.job_name}, branch {branch}"
@@ -890,6 +895,11 @@ def run_check(argv=None):
         header.append(
             f"[INFO] A commit on no remote branch is pinned to its merge base with "
             f"{merge_base_ref} (DASHBOARD_MERGE_BASE=none turns this off)"
+        )
+    if args.branch and not args.job_name:
+        header.append(
+            "[WARN] --branch (DASHBOARD_BRANCH) is ignored without --job-name: "
+            "a checkout is resolved from its commit."
         )
     if args.only_prefix:
         prefixes = " ".join(args.only_prefix)

@@ -149,8 +149,9 @@ class PayloadTest(CheckQorMetricsTest):
         self.assertEqual(payload["Metrics"], {"finish__timing__setup__ws": 1.5})
 
     def test_branch_is_dropped_without_a_job_name(self):
-        _, _, payloads = self.run_check("--branch", "feature")
+        _, output, payloads = self.run_check("--branch", "feature")
         self.assertEqual(payloads[0]["BranchName"], "")
+        self.assertIn("--branch (DASHBOARD_BRANCH) is ignored", output)
 
     def test_job_name_sends_the_branch(self):
         _, _, payloads = self.run_check("--job-name", "orfs-ci", "--branch", "feature")
@@ -233,8 +234,11 @@ class BranchTest(CheckQorMetricsTest):
         repository, master, _ = self.repository()
         git(repository, "checkout", "-q", "--detach", master)
         self.enter(repository)
-        _, _, payloads = self.run_check("--job-name", "orfs-ci")
+        _, output, payloads = self.run_check("--job-name", "orfs-ci")
         self.assertEqual(payloads[0]["BranchName"], "HEAD")
+        self.assertIn(
+            "[WARN] Checking as a build of orfs-ci with a detached HEAD", output
+        )
 
     def test_no_branch_outside_a_repository_warns(self):
         _, output, payloads = self.run_check("--job-name", "orfs-ci")
