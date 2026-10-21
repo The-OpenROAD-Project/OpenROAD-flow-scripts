@@ -198,6 +198,22 @@ class CommitValidationTest(CheckQorMetricsTest):
         self.assertEqual(payloads, [])
         self.assertIn("is not a full 40-character SHA", output)
 
+    def test_short_base_commit_is_rejected_before_any_request(self):
+        code, output, payloads = self.run_check("--base-commit", "abc1234")
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        self.assertIn("--base-commit 'abc1234' is not a full 40-character SHA", output)
+
+    def test_short_base_commit_from_the_environment_is_rejected(self):
+        os.environ["DASHBOARD_BASE_COMMIT"] = "abc1234"
+        code, _, payloads = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+
+    def test_base_commit_is_sent_lowercased(self):
+        _, _, payloads = self.run_check("--base-commit", f" {BASE.upper()} ")
+        self.assertEqual(payloads[0]["BaseCommitSha"], BASE)
+
 
 class BranchTest(CheckQorMetricsTest):
     def test_branch_comes_from_git(self):

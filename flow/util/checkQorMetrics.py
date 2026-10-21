@@ -822,21 +822,22 @@ def run_check(argv=None):
     api_url = args.api_url or (BETA_API_URL if args.beta else API_URL)
     endpoint = api_url.rstrip("/") + CHECK_PATH
     api_key = os.environ.get("DASHBOARD_API_KEY", "")
-    # The dashboard matches the commit exactly and silently falls back to the
-    # latest master build on a miss, so anything but a full SHA is an error.
-    commit = args.commit.strip().lower()
-    if commit and not SHA_RE.match(commit):
-        line = (
-            f"[ERROR] --commit {args.commit.strip()!r} is not a full 40-character SHA."
-        )
-        print(line)
-        if not args.metadata and os.path.isdir(REPORTS_FOLDER):
-            write_log([line])
-        return 1
+    # The dashboard matches both commits exactly. A missed --commit falls back to
+    # the latest master build and a missed --base-commit to no baseline, both
+    # silently, so anything but a full SHA is an error.
+    commit = (args.commit or "").strip().lower()
+    base_commit = (args.base_commit or "").strip().lower()
+    for flag, value in (("--commit", commit), ("--base-commit", base_commit)):
+        if value and not SHA_RE.match(value):
+            line = f"[ERROR] {flag} {value!r} is not a full 40-character SHA."
+            print(line)
+            if not args.metadata and os.path.isdir(REPORTS_FOLDER):
+                write_log([line])
+            return 1
     # A pipeline run follows its CI branch rules, and CI checkouts often fetch
     # no remote branches, so every commit there would look unpushed.
     merge_base_ref = None
-    if not (args.base_commit or args.job_name) and args.merge_base.lower() != "none":
+    if not (base_commit or args.job_name) and args.merge_base.lower() != "none":
         merge_base_ref = args.merge_base
     # Only a pipeline run uses the branch; a checkout is resolved from the commit.
     branch = ""
@@ -868,8 +869,8 @@ def run_check(argv=None):
             "[INFO] No DASHBOARD_API_KEY set — checking public data only. "
             "Private platforms will report as inconclusive, not as an auth error."
         )
-    if args.base_commit:
-        header.append(f"[INFO] Baseline pinned to commit {args.base_commit}")
+    if base_commit:
+        header.append(f"[INFO] Baseline pinned to commit {base_commit}")
     elif args.job_name and branch:
         header.append(
             f"[INFO] Checking as a build of {args.job_name}, branch {branch}"
@@ -906,7 +907,7 @@ def run_check(argv=None):
                     run,
                     endpoint,
                     api_key,
-                    args.base_commit,
+                    base_commit,
                     args.job_name,
                     args.only_prefix,
                     commit,
