@@ -33,9 +33,14 @@ to follow.
   places that do the same thing.
 - **A command's arguments are never hidden from the log.** They are built in
   a list and run through `log_cmd`, so the log shows the full command line.
-  A `<STEP>_ARGS` variable replaces the arguments the flow would pass, so a
-  user can copy the line from the log into `config.mk` and edit it.
-  *Breaks:* a user cannot see what a step ran with, or reproduce it.
+  A `<STEP>_ARGS` variable either replaces the arguments the flow would pass
+  (`CTS_ARGS`, `RTLMP_ARGS`, `DETAILED_ROUTE_ARGS`) or is appended to them
+  (`GLOBAL_PLACEMENT_ARGS`, `PLACE_PINS_ARGS`, `BUFFER_PORTS_ARGS`,
+  `CLUSTER_FLOPS_ARGS`, `DETAIL_PLACEMENT_ARGS`); either way a user can copy
+  the line from the log into `config.mk` and edit it. Which of the two a
+  step does is part of its interface, and a change never switches it.
+  *Breaks:* a user cannot see what a step ran with, or reproduce it; a
+  `config.mk` written for one behavior silently does something else.
 - **A proc never takes its input from a global or the caller's scope.** It
   takes it as an argument and returns its result. State that must last
   across steps is in the `.odb`.
@@ -70,10 +75,17 @@ to follow.
   *Breaks:* make, and any flow built on it, takes the file as proof that the
   step succeeded.
 - **A script never adds error numbers or checks that belong in OpenROAD.**
-  OpenROAD allocates error numbers; ORFS reports with `error`. A check on
-  what a tool did belongs in the tool.
-  *Breaks:* numbers that collide with OpenROAD's, and a check that only one
-  flow runs.
+  Message IDs are OpenROAD's: each tool owns its range, and OpenROAD checks
+  that every ID is unique (`docs/contrib/Logger.md`). Nothing checks ORFS's,
+  and its errors come from many tools besides OpenROAD (yosys, the memory
+  generators, Python, Tcl, make), so ORFS reports with `error` and a message
+  that says what failed. The numbered messages already in the scripts
+  (`FLW`, and `GPL 200` in `global_place.tcl`) are not a precedent; they
+  stay until a change of their own removes them, and `genMetrics.py` reads
+  one. A check on what a tool did belongs in the tool.
+  *Breaks:* numbers that collide, unnoticed: `FLW 25` already names two
+  different messages, and `GPL 200` sits in GPL's own range; and a check
+  that only one flow runs.
 
 ## Interface
 
