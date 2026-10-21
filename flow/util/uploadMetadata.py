@@ -58,14 +58,17 @@ parser.add_argument(
     default=None,
     help="Email of the Jenkins user who started the build by hand "
     "(BUILD_USER_EMAIL). Omitted for SCM, timer and branch-scan triggers. "
-    "The dashboard attributes the build to this user.",
+    "The dashboard attributes the build to this user. Defaults to "
+    "$UPLOAD_BUILD_USER_EMAIL, which keeps the address out of a traced "
+    "(sh -x) command line.",
 )
 parser.add_argument(
     "--changeAuthorEmail",
     type=str,
     default=None,
     help="Email of the pull request's author on a PR build "
-    "(CHANGE_AUTHOR_EMAIL). Empty when the author's GitHub email is private.",
+    "(CHANGE_AUTHOR_EMAIL). Empty when the author's GitHub email is private. "
+    "Defaults to $UPLOAD_CHANGE_AUTHOR_EMAIL.",
 )
 
 # --- PUBSUB args ---
@@ -212,18 +215,32 @@ def resolve_schema_version(args, provenance):
 def resolve_requester(args):
     """Who asked for the build, as the payload keys the backend reads.
 
-    Blank values are left out rather than sent empty, and a value without an
+    Each value comes from its flag or, when the flag is absent, from its
+    environment variable. An empty flag counts as given, so it suppresses the
+    variable. Blank values are left out rather than sent empty, and a value without an
     "@" is dropped with a warning: an unset Groovy variable interpolates as the
     string "null", which must not be stored as an email. The keys ride on every
     schema version: the backend reads them by presence, and they describe the
     build rather than the payload's shape, so they do not bump the version.
     """
     requester = {}
-    for key, flag, value in (
-        ("build_user_email", "--buildUserEmail", args.buildUserEmail),
-        ("change_author_email", "--changeAuthorEmail", args.changeAuthorEmail),
+    for key, flag, value, env_var in (
+        (
+            "build_user_email",
+            "--buildUserEmail",
+            args.buildUserEmail,
+            "UPLOAD_BUILD_USER_EMAIL",
+        ),
+        (
+            "change_author_email",
+            "--changeAuthorEmail",
+            args.changeAuthorEmail,
+            "UPLOAD_CHANGE_AUTHOR_EMAIL",
+        ),
     ):
-        value = (value or "").strip()
+        if value is None:
+            value = os.environ.get(env_var, "")
+        value = value.strip()
         if not value:
             continue
         if "@" not in value:

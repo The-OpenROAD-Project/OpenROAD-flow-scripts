@@ -55,6 +55,8 @@ class Credentials:
         return None
 """
 
+REQUESTER_ENV = ("UPLOAD_BUILD_USER_EMAIL", "UPLOAD_CHANGE_AUTHOR_EMAIL")
+
 # Large enough to push the pipeline payload over the 8 MB cap, so the script
 # falls back to one v1 message per design.
 OVERSIZED_METRICS = {"blob": "x" * (9 * 1024 * 1024)}
@@ -94,8 +96,11 @@ class TestUploadMetadata(unittest.TestCase):
         with open(os.path.join(report_dir, "metadata.json"), "w") as f:
             json.dump(metrics or {"finish:area": 1.0}, f)
 
-    def run_script(self, *extra):
+    def run_script(self, *extra, extra_env=None):
         env = dict(os.environ)
+        for name in REQUESTER_ENV:
+            env.pop(name, None)
+        env.update(extra_env or {})
         env["PYTHONPATH"] = self.stubs
         env["STUB_PUBSUB_OUT"] = self.out
         cmd = [
@@ -238,6 +243,57 @@ class TestUploadMetadata(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertNotIn("build_user_email", messages[0]["data"])
         self.assertEqual(result.stdout.count("Not sending --buildUserEmail"), 1)
+
+
+    def test_requester_is_read_from_environment(self):
+        self.add_design("nangate45", "gcd")
+        result, messages = self.run_script(
+            extra_env={
+                "UPLOAD_BUILD_USER_EMAIL": "ada@example.com",
+                "UPLOAD_CHANGE_AUTHOR_EMAIL": " bob@example.com ",
+            }
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        payload = messages[0]["data"]
+        self.assertEqual(payload["build_user_email"], "ada@example.com")
+        self.assertEqual(payload["change_author_email"], "bob@example.com")
+
+    def test_requester_flag_overrides_environment(self):
+        self.add_design("nangate45", "gcd")
+        result, messages = self.run_script(
+            "--buildUserEmail",
+            "ada@example.com",
+            extra_env={"UPLOAD_BUILD_USER_EMAIL": "other@example.com"},
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(messages[0]["data"]["build_user_email"], "ada@example.com")
+
+    def test_empty_requester_flag_suppresses_environment(self):
+        self.add_design("nangate45", "gcd")
+        result, messages = self.run_script(
+            "--buildUserEmail",
+            "",
+            extra_env={"UPLOAD_BUILD_USER_EMAIL": "ada@example.com"},
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("build_user_email", messages[0]["data"])
+
+    def test_environment_requester_is_validated(self):
+        self.add_design("nangate45", "gcd")
+        result, messages = self.run_script(
+            extra_env={"UPLOAD_BUILD_USER_EMAIL": "null"}
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("build_user_email", messages[0]["data"])
+        self.assertIn("[WARN] Not sending --buildUserEmail: 'null'", result.stdout)
+
+    def test_environment_requester_reaches_v1_messages(self):
+        self.add_design("nangate45", "gcd", metrics=OVERSIZED_METRICS)
+        result, messages = self.run_script(
+            extra_env={"UPLOAD_CHANGE_AUTHOR_EMAIL": "bob@example.com"}
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(messages[0]["data"]["change_author_email"], "bob@example.com")
 
 
 if __name__ == "__main__":
