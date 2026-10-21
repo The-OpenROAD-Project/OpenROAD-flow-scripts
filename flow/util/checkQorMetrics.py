@@ -808,9 +808,12 @@ def run_check(argv=None):
     # latest master build on a miss, so anything but a full SHA is an error.
     commit = args.commit.strip().lower()
     if commit and not SHA_RE.match(commit):
-        print(
+        line = (
             f"[ERROR] --commit {args.commit.strip()!r} is not a full 40-character SHA."
         )
+        print(line)
+        if not args.metadata and os.path.isdir(REPORTS_FOLDER):
+            write_log([line])
         return 1
     # A pipeline run follows its CI branch rules, and CI checkouts often fetch
     # no remote branches, so every commit there would look unpushed.

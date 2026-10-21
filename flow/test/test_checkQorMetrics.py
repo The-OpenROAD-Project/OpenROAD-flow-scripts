@@ -446,6 +446,23 @@ class SweepTest(CheckQorMetricsTest):
         with open(checkQorMetrics.LOG_FILENAME, encoding="utf-8") as log_file:
             self.assertIn("QoR check: PASS", log_file.read())
 
+    def test_bad_commit_replaces_a_stale_log(self):
+        self.metadata("reports/asap7/gcd/base/metadata.json")
+        with open(checkQorMetrics.LOG_FILENAME, "w", encoding="utf-8") as log_file:
+            log_file.write("QoR check: PASS\n")
+        code, _, payloads = self.run_sweep("--commit", "abc1234")
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        with open(checkQorMetrics.LOG_FILENAME, encoding="utf-8") as log_file:
+            log = log_file.read()
+        self.assertIn("is not a full 40-character SHA", log)
+        self.assertNotIn("QoR check: PASS", log)
+
+    def test_bad_commit_without_reports_writes_no_log(self):
+        code, _, _ = self.run_sweep("--commit", "abc1234")
+        self.assertEqual(code, 1)
+        self.assertFalse(os.path.exists(checkQorMetrics.REPORTS_FOLDER))
+
     def test_sweep_filters_by_design(self):
         self.metadata("reports/asap7/gcd/base/metadata.json")
         self.metadata("reports/asap7/aes/base/metadata.json")
