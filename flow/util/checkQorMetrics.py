@@ -36,7 +36,8 @@ commit's base; the report warns when that happens.
 its CI rules for the branch checked out here (--branch overrides it): the
 previous build on a trunk branch, the merge base on any other branch. CI
 passes --branch and --commit (or DASHBOARD_BRANCH and DASHBOARD_COMMIT), since
-its checkout has no branch.
+its checkout has no branch. A local run of a private platform does not need it:
+DASHBOARD_API_KEY alone lets the default pipelines resolve it.
 
 Exit status: 1 when the dashboard reports a failed rule for any checked run,
 or when a metadata.json is missing, malformed, or holds no numeric metric.
@@ -713,7 +714,8 @@ def parse_args(argv):
         default=os.environ.get("DASHBOARD_JOB_NAME") or None,
         help="Check as a build of this CI pipeline, with its rules for the "
         "branch. Default: the dashboard searches its default baseline "
-        "pipelines and takes the first with a build of the design. "
+        "pipelines and takes the first with a build of the design, private "
+        "ones included with DASHBOARD_API_KEY. Meant for CI. "
         "Env: DASHBOARD_JOB_NAME.",
     )
     parser.add_argument(

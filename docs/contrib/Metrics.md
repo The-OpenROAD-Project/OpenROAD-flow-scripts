@@ -70,15 +70,20 @@ happens; set `DASHBOARD_BASE_COMMIT` to compare against an exact build instead.
 
 These environment variables shape the comparison:
 
-- `DASHBOARD_API_KEY` grants access to private platforms. Without it, a
-  private design has no baseline and reports as inconclusive, not as an
-  authentication error.
+- `DASHBOARD_API_KEY` grants access to private platforms. With it, a private
+  design is resolved like a public one: the dashboard's default baseline
+  pipelines include the private ones, and only a caller with a key can see
+  their builds. Without it, a private design has no baseline and reports as
+  inconclusive, not as an authentication error.
 - `DASHBOARD_JOB_NAME` checks the run as a build of that CI pipeline instead,
   with the pipeline's rules for the branch checked out in this repository: the
   previous build on a trunk branch such as `master`, the merge base on any
-  other branch. A CI job, whose checkout has no branch, also sets
-  `DASHBOARD_BRANCH` and `DASHBOARD_COMMIT` (or passes `--branch` and
-  `--commit`).
+  other branch. It is meant for CI jobs, which also set `DASHBOARD_BRANCH` and
+  `DASHBOARD_COMMIT` (or pass `--branch` and `--commit`) since their checkout
+  has no branch. Earlier versions of the check used it to pick the pipeline
+  that holds a private platform's baseline; that is no longer needed, so leave
+  it unset for a local run, private or not. With it set, an unpushed commit is
+  not pinned to its local merge base.
 - `DASHBOARD_MERGE_BASE` (`--merge-base`) names the ref an unpushed commit's
   merge base is computed against, `origin/master` by default. Set it to your
   upstream ref if `origin` is a fork with an outdated `master`, or to `none` to
