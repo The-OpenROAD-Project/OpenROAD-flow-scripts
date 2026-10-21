@@ -220,5 +220,25 @@ class TestUploadMetadata(unittest.TestCase):
         self.assertNotIn("change_author_email", payload)
 
 
+    def test_requester_without_at_sign_is_dropped(self):
+        self.add_design("nangate45", "gcd")
+        result, messages = self.run_script(
+            "--buildUserEmail", "null", "--changeAuthorEmail", "None"
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        payload = messages[0]["data"]
+        self.assertNotIn("build_user_email", payload)
+        self.assertNotIn("change_author_email", payload)
+        self.assertIn("[WARN] Not sending --buildUserEmail: 'null'", result.stdout)
+        self.assertIn("[WARN] Not sending --changeAuthorEmail: 'None'", result.stdout)
+
+    def test_v1_fallback_warns_about_requester_once(self):
+        self.add_design("nangate45", "gcd", metrics=OVERSIZED_METRICS)
+        result, messages = self.run_script("--buildUserEmail", "null")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("build_user_email", messages[0]["data"])
+        self.assertEqual(result.stdout.count("Not sending --buildUserEmail"), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

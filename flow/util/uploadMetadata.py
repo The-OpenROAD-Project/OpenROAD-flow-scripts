@@ -212,21 +212,28 @@ def resolve_schema_version(args, provenance):
 def resolve_requester(args):
     """Who asked for the build, as the payload keys the backend reads.
 
-    Blank values are left out rather than sent empty. The keys ride on every
+    Blank values are left out rather than sent empty, and a value without an
+    "@" is dropped with a warning: an unset Groovy variable interpolates as the
+    string "null", which must not be stored as an email. The keys ride on every
     schema version: the backend reads them by presence, and they describe the
     build rather than the payload's shape, so they do not bump the version.
     """
     requester = {}
-    for key, value in (
-        ("build_user_email", args.buildUserEmail),
-        ("change_author_email", args.changeAuthorEmail),
+    for key, flag, value in (
+        ("build_user_email", "--buildUserEmail", args.buildUserEmail),
+        ("change_author_email", "--changeAuthorEmail", args.changeAuthorEmail),
     ):
-        if value and value.strip():
-            requester[key] = value.strip()
+        value = (value or "").strip()
+        if not value:
+            continue
+        if "@" not in value:
+            print(f"[WARN] Not sending {flag}: '{value}' is not an email address.")
+            continue
+        requester[key] = value
     return requester
 
 
-def build_pipeline_payload(design_records, args, provenance=None):
+def build_pipeline_payload(design_records, args, provenance=None, requester=None):
     """Return the pipeline-level payload dict.
 
     Emits schema v2 (no job name), v3 (job name) or v4 (job name plus build
@@ -253,7 +260,8 @@ def build_pipeline_payload(design_records, args, provenance=None):
     # the payload.
     if schema_version == 4:
         payload.update(provenance)
-    payload.update(resolve_requester(args))
+    if requester:
+        payload.update(requester)
     return payload
 
 
@@ -277,7 +285,9 @@ def publish_pipeline_report(
     print(f"[INFO] Published pipeline report to Pub/Sub (message ID: {message_id}).")
 
 
-def publish_v1_per_design(publisher, topic_path, design_records, args, provenance=None):
+def publish_v1_per_design(
+    publisher, topic_path, design_records, args, provenance=None, requester=None
+):
     """Fallback path used when the v2 pipeline payload exceeds MAX_PUBSUB_BYTES.
 
     Emits one v1-format message per design (no payload_schema_version, metrics
@@ -295,7 +305,6 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
     key presence rather than by version.
     """
     futures = []
-    requester = resolve_requester(args)
     failed = 0
     for d in design_records:
         payload = {
@@ -309,7 +318,8 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
         }
         if provenance:
             payload.update(provenance)
-        payload.update(requester)
+        if requester:
+            payload.update(requester)
         payload.update(d["metrics"])
 
         message_data = json.dumps(payload, default=str).encode("utf-8")
@@ -398,7 +408,8 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
 # builds are compared against.
 if publisher and design_records:
     provenance = load_provenance(args.provenanceFile)
-    payload = build_pipeline_payload(design_records, args, provenance)
+    requester = resolve_requester(args)
+    payload = build_pipeline_payload(design_records, args, provenance, requester)
     message_data = json.dumps(payload, default=str).encode("utf-8")
 
     if len(message_data) > MAX_PUBSUB_BYTES:
@@ -408,7 +419,7 @@ if publisher and design_records:
             f"({len(design_records)} messages)."
         )
         failed = publish_v1_per_design(
-            publisher, topic_path, design_records, args, provenance
+            publisher, topic_path, design_records, args, provenance, requester
         )
         if failed:
             print(
