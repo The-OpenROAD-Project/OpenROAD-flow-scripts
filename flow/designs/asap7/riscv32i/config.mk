@@ -27,6 +27,8 @@ export TNS_END_PERCENT   = 100
 export CTS_CLUSTER_SIZE = 10
 export CTS_CLUSTER_DIAMETER = 50
 
+# Adder architectures swapped during repair: at 780 ps the reg2reg
+# period is 11 % shorter than with swapping off (835.6 against 943.4 ps).
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
 
