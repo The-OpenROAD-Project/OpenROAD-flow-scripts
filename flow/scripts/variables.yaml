@@ -886,6 +886,13 @@ SKIP_CTS_REPAIR_TIMING:
   stages:
     - cts
   default: 0
+SKIP_FLOORPLAN_REPAIR_TIMING:
+  description: >
+    Skipping floorplan repair which sometimes does too much optimization
+    too early.
+  stages:
+    - floorplan
+  default: 0
 ENABLE_PLACE_REPAIR_TIMING:
   description: >
     Run repair_timing during the placement resize stage using placement

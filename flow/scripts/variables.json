@@ -1208,6 +1208,13 @@
       "final"
     ]
   },
+  "SKIP_FLOORPLAN_REPAIR_TIMING": {
+    "default": 0,
+    "description": "Skipping floorplan repair which sometimes does too much optimization too early.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
   "SKIP_GATE_CLONING": {
     "description": "Do not use gate cloning transform to fix timing violations (default: use gate cloning).\n",
     "stages": [
