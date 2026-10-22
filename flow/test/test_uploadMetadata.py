@@ -303,9 +303,7 @@ class TestUploadMetadata(unittest.TestCase):
         self.assertIn("[WARN] No design records were collected", result.stdout)
 
     def test_v1_fallback_warns_that_design_count_is_dropped(self):
-        REQUESTER_ENV = ("UPLOAD_BUILD_USER_EMAIL", "UPLOAD_CHANGE_AUTHOR_EMAIL")
-
-# Large enough to push the pipeline payload over the 8 MB cap.
+        # Large enough to push the pipeline payload over the 8 MB cap.
         self.add_design("nangate45", "gcd", metrics={"blob": "x" * (9 * 1024 * 1024)})
         result, messages = self.run_script("--expectedDesigns", "3")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -450,7 +448,6 @@ class TestUploadMetadata(unittest.TestCase):
         self.assertEqual(payload["build_user_email"], "ada@example.com")
         self.assertNotIn("change_author_email", payload)
 
-
     def test_requester_without_at_sign_is_dropped(self):
         self.add_design("nangate45", "gcd")
         result, messages = self.run_script(
@@ -469,7 +466,6 @@ class TestUploadMetadata(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertNotIn("build_user_email", messages[0]["data"])
         self.assertEqual(result.stdout.count("Not sending --buildUserEmail"), 1)
-
 
     def test_requester_is_read_from_environment(self):
         self.add_design("nangate45", "gcd")
@@ -520,7 +516,6 @@ class TestUploadMetadata(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(messages[0]["data"]["change_author_email"], "bob@example.com")
-
 
     def test_requester_keys_win_over_same_named_v1_metric(self):
         metrics = dict(OVERSIZED_METRICS, build_user_email="metric")
