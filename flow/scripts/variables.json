@@ -1106,7 +1106,7 @@
     "description": "Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.\n"
   },
   "SAVE_IMAGES_VIEWER": {
-    "default": "qt",
+    "default": "web",
     "description": "Which viewer draws the images of the final report: qt for the Qt GUI in an offscreen window, or web for the web viewer, which needs no display. OpenROAD built without Qt always uses the web viewer.\n",
     "stages": [
       "final"

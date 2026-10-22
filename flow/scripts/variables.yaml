@@ -601,7 +601,7 @@ SAVE_IMAGES_VIEWER:
     Which viewer draws the images of the final report: qt for the Qt GUI in
     an offscreen window, or web for the web viewer, which needs no display.
     OpenROAD built without Qt always uses the web viewer.
-  default: qt
+  default: web
   stages:
     - final
 FILL_CELLS:

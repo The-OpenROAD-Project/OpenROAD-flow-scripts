@@ -306,26 +306,27 @@ abc.constr klayout.lyt klayout_tech.lef lib
     Reports directory, which contains congestion report, DRC
     report, design statistics and antenna log for reference.
 
-| `reports`         |                     |                        |
-|-------------------|---------------------|------------------------|
-| `congestion.rpt`  | `VDD.rpt`           | `VSS.rpt`              |
-| `5_route_drc.rpt` | `final_clocks.webp` | `final_placement.webp` |
-| `antenna.log`     | `final_clocks.webp` | `final.webp`           |
-| `synth_stat.txt`  | `synth_check.txt`   | `final_resizer.webp`   |
+| `reports`         |                    |                       |
+|-------------------|--------------------|-----------------------|
+| `congestion.rpt`  | `VDD.rpt`          | `VSS.rpt`             |
+| `5_route_drc.rpt` | `final_clocks.png` | `final_placement.png` |
+| `antenna.log`     | `final_all.png`    | `final_routing.png`   |
+| `synth_stat.txt`  | `synth_check.txt`  | `final_resizer.png`   |
 
-The table below briefly describes the reports directory files.
+The table below briefly describes the reports directory files. The images
+are `.webp` instead when `SAVE_IMAGES_VIEWER=qt`.
 
-| File Name              | Description                                              |
-|------------------------|----------------------------------------------------------|
-| `congestion.rpt`       | Global routing congestion if occurred.                   |
-| `5_route_drc.rpt`      | DRC violations if occurred.                              |
-| `final_clocks.webp`    | OR extracted image reference after clock tree synthesis. |
-| `final_resizer.webp`   | OR extracted image reference after resizer.              |
-| `synth_check.txt`      | Synthesis warning/error messages.                        |
-| `antenna.log`          | Antenna check log report.                                |
-| `final_placement.webp` | Extracted image after final placement.                   |
-| `final.webp`           | Extracted image after routing.                           |
-| `synth_stat.txt`       | Post synthesis design statistics log saved here.         |
+| File Name             | Description                                              |
+|-----------------------|----------------------------------------------------------|
+| `congestion.rpt`      | Global routing congestion if occurred.                   |
+| `5_route_drc.rpt`     | DRC violations if occurred.                              |
+| `final_clocks.png`    | OR extracted image reference after clock tree synthesis. |
+| `final_resizer.png`   | OR extracted image reference after resizer.              |
+| `synth_check.txt`     | Synthesis warning/error messages.                        |
+| `antenna.log`         | Antenna check log report.                                |
+| `final_placement.png` | Extracted image after final placement.                   |
+| `final_routing.png`   | Extracted image after routing.                           |
+| `synth_stat.txt`      | Post synthesis design statistics log saved here.         |
 
 The flow completes with the message below by creating a merged final GDS file.
 
