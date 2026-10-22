@@ -48,6 +48,8 @@ proc read_checkpoint { file } {
 # um^2. The list is produced by scripts/memories/gen_memories.py before
 # canonicalization, one `<module> <area>` per line; see
 # docs/user/AutoMemories.md.
+source $::env(SCRIPTS_DIR)/memories/check_blackboxed.tcl
+
 proc auto_memories_areas { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
@@ -142,6 +144,7 @@ proc read_design_sources { } {
     lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
 
     yosys read_slang {*}$slang_args
+    auto_memories_check_blackboxed [auto_memories_blackboxes]
 
     # Workaround for yosys-slang#119
     setattr -unset init
@@ -192,6 +195,8 @@ proc read_design_sources { } {
     set auto_blackboxes [auto_memories_blackboxes]
     if { [llength $auto_blackboxes] > 0 } {
       hierarchy -top $::env(DESIGN_NAME)
+      # Not checked with auto_memories_check_blackboxed: slang is the
+      # supported frontend for AUTO_MEMORIES.
       foreach m $auto_blackboxes {
         blackbox $m
       }
