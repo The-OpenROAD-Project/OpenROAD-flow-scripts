@@ -72,8 +72,8 @@ source_step_tcl POST FINAL_REPORT
 
 # Save the final images: in a Qt window already open, in an offscreen one, or
 # with the web viewer, which OpenROAD built without Qt always uses.
-set images_viewer [env_var_or_empty SAVE_IMAGES_VIEWER]
-if { $images_viewer ni {"" qt web} } {
+set images_viewer $::env(SAVE_IMAGES_VIEWER)
+if { $images_viewer ni {qt web} } {
   utl::error FLW 34 "SAVE_IMAGES_VIEWER must be qt or web, not $images_viewer."
 }
 if { $images_viewer eq "web" || ![ord::openroad_gui_compiled] || [gui::has_ui] } {
