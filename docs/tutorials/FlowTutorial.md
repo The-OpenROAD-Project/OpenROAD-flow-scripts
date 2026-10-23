@@ -325,6 +325,7 @@ are `.webp` instead when `SAVE_IMAGES_VIEWER=qt`.
 | `synth_check.txt`     | Synthesis warning/error messages.                        |
 | `antenna.log`         | Antenna check log report.                                |
 | `final_placement.png` | Extracted image after final placement.                   |
+| `final_all.png`       | Extracted image after routing with power/ground nets.    |
 | `final_routing.png`   | Extracted image after routing.                           |
 | `synth_stat.txt`      | Post synthesis design statistics log saved here.         |
 

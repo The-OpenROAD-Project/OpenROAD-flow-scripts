@@ -76,7 +76,7 @@ set images_viewer $::env(SAVE_IMAGES_VIEWER)
 if { $images_viewer ni {qt web} } {
   utl::error FLW 34 "SAVE_IMAGES_VIEWER must be qt or web, not $images_viewer."
 }
-if { $images_viewer ne "qt" || ![ord::openroad_gui_compiled] || [gui::has_ui] } {
+if { $images_viewer eq "web" || ![ord::openroad_gui_compiled] || [gui::has_ui] } {
   source $::env(SCRIPTS_DIR)/save_images.tcl
 } else {
   gui::show "source $::env(SCRIPTS_DIR)/save_images.tcl" false
