@@ -111,6 +111,24 @@ parser.add_argument(
     "a warning). Emitted as no_metrics_reason only on a payload with no "
     "designs.",
 )
+parser.add_argument(
+    "--buildUserEmail",
+    type=str,
+    default=None,
+    help="Email of the Jenkins user who started the build by hand "
+    "(BUILD_USER_EMAIL). Omitted for SCM, timer and branch-scan triggers. "
+    "The dashboard attributes the build to this user. Defaults to "
+    "$UPLOAD_BUILD_USER_EMAIL, which keeps the address out of a traced "
+    "(sh -x) command line.",
+)
+parser.add_argument(
+    "--changeAuthorEmail",
+    type=str,
+    default=None,
+    help="Email of the pull request's author on a PR build "
+    "(CHANGE_AUTHOR_EMAIL). Empty when the author's GitHub email is private. "
+    "Defaults to $UPLOAD_CHANGE_AUTHOR_EMAIL.",
+)
 
 # --- PUBSUB args ---
 parser.add_argument(
@@ -253,6 +271,45 @@ def resolve_schema_version(args, provenance):
     return 4 if provenance else 3
 
 
+def resolve_requester(args):
+    """Who asked for the build, as the payload keys the backend reads.
+
+    Each value comes from its flag or, when the flag is absent, from its
+    environment variable. An empty flag counts as given, so it suppresses the
+    variable. Blank values are left out rather than sent empty, and a value
+    without an "@" is dropped with a warning: an unset Groovy variable
+    interpolates as the string "null", which must not be stored as an email.
+    The keys ride on every schema version: the backend reads them by presence,
+    and they describe the build rather than the payload's shape, so they do
+    not bump the version.
+    """
+    requester = {}
+    for key, flag, value, env_var in (
+        (
+            "build_user_email",
+            "--buildUserEmail",
+            args.buildUserEmail,
+            "UPLOAD_BUILD_USER_EMAIL",
+        ),
+        (
+            "change_author_email",
+            "--changeAuthorEmail",
+            args.changeAuthorEmail,
+            "UPLOAD_CHANGE_AUTHOR_EMAIL",
+        ),
+    ):
+        if value is None:
+            value = os.environ.get(env_var, "")
+        value = value.strip()
+        if not value:
+            continue
+        if "@" not in value:
+            print(f"[WARN] Not sending {flag}: '{value}' is not an email address.")
+            continue
+        requester[key] = value
+    return requester
+
+
 def resolve_build_time(args):
     """The build time to report, defaulting to now in genMetrics.py's format.
 
@@ -283,7 +340,7 @@ def resolve_no_metrics_reason(args, design_records):
 
 
 def build_pipeline_payload(
-    design_records, args, provenance=None, no_metrics_reason=None
+    design_records, args, provenance=None, no_metrics_reason=None, requester=None
 ):
     """Return the pipeline-level payload dict.
 
@@ -316,6 +373,8 @@ def build_pipeline_payload(
     # the payload.
     if schema_version == 4:
         payload.update(provenance)
+    if requester:
+        payload.update(requester)
     return payload
 
 
@@ -339,7 +398,9 @@ def publish_pipeline_report(
     print(f"[INFO] Published pipeline report to Pub/Sub (message ID: {message_id}).")
 
 
-def publish_v1_per_design(publisher, topic_path, design_records, args, provenance=None):
+def publish_v1_per_design(
+    publisher, topic_path, design_records, args, provenance=None, requester=None
+):
     """Fallback path used when the v2 pipeline payload exceeds MAX_PUBSUB_BYTES.
 
     Emits one v1-format message per design (no payload_schema_version, metrics
@@ -362,6 +423,9 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
     metadata there but not needed: each design's metrics carry
     run__flow__generate_date, which the backend prefers, and a reason only
     applies to an empty build, whose payload is far below the size cap.
+
+    The requester keys go on after the metrics, so a metric that happened to
+    share their name could not replace who asked for the build.
     """
     futures = []
     failed = 0
@@ -378,6 +442,8 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
         if provenance:
             payload.update(provenance)
         payload.update(d["metrics"])
+        if requester:
+            payload.update(requester)
 
         message_data = json.dumps(payload, default=str).encode("utf-8")
         try:
@@ -477,8 +543,9 @@ if publisher:
     if reason_problem:
         print(f"[WARN] Ignoring --noMetricsReason because {reason_problem}.")
     provenance = load_provenance(args.provenanceFile)
+    requester = resolve_requester(args)
     payload = build_pipeline_payload(
-        design_records, args, provenance, no_metrics_reason
+        design_records, args, provenance, no_metrics_reason, requester
     )
     message_data = json.dumps(payload, default=str).encode("utf-8")
 
@@ -494,7 +561,7 @@ if publisher:
                 "backend will report this build's completeness as unknown."
             )
         failed = publish_v1_per_design(
-            publisher, topic_path, design_records, args, provenance
+            publisher, topic_path, design_records, args, provenance, requester
         )
         if failed:
             print(
