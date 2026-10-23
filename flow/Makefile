@@ -292,6 +292,24 @@ $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
 $(OBJECTS_DIR)/klayout.lyt: $(RESULTS_DIR)/memories.json
 endif
 
+# OpenROAD stages read binary liberty (.blib) files from a cache shared by
+# all designs, see scripts/write_binary_libs.tcl. Yosys reads the text libraries.
+.PHONY: binary-libs
+binary-libs:
+	$(UNSET_AND_MAKE) do-binary-libs
+
+.PHONY: do-binary-libs
+do-binary-libs:
+	@mkdir -p $(LOG_DIR)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/write_binary_libs.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_binary_libs.tcl
+
+# Order-only, so filling the cache never reruns the flow.
+$(RESULTS_DIR)/1_synth.odb: | binary-libs
+
+.PHONY: clean_binary_libs
+clean_binary_libs:
+	rm -rf $(if $(strip $(BINARY_LIBS_DIR)),$(BINARY_LIBS_DIR),$(error BINARY_LIBS_DIR is empty))
+
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
 	$(SCRIPTS_DIR)/synth.sh $(SYNTH_SCRIPT) $(LOG_DIR)/1_2_yosys.log

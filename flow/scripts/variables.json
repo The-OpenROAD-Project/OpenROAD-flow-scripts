@@ -81,6 +81,13 @@
       "place"
     ]
   },
+  "BINARY_LIBS_DIR": {
+    "default": "$(WORK_HOME)/objects/binary_libs",
+    "description": "Directory of the binary liberty (.blib) cache shared by the designs of each platform, as `<platform>/<library>@<size>-<mtime>-<dirhash>.blib` so that a changed library gets a new entry. Libraries in DESIGN_DIR and libraries the flow generates are cached per run in `$(OBJECTS_DIR)/binary_libs` instead. Before 1_synth the flow converts every library that has no cached .blib, which `make binary-libs` also does on its own, and the OpenROAD stages read the .blib files instead of parsing the text libraries. A library with no usable .blib is read as given. Set it in the environment or settings.mk, not in a design's config.mk; ORFS clones that set the same directory share their .blib files. `make clean_binary_libs` deletes it.\n",
+    "stages": [
+      "All stages"
+    ]
+  },
   "BLOCKS": {
     "description": "Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.\n"
   },

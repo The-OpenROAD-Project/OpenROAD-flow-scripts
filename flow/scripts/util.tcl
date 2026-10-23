@@ -468,3 +468,49 @@ proc source_step_tcl { hook_type step_name } {
   set env_var "${hook_type}_${step_name}_TCL"
   source_env_var_if_exists $env_var
 }
+
+# Entry of lib_file in the binary liberty (.blib) cache:
+# <platform>/<library>@<size>-<mtime>-<dirhash>.blib, so a changed library gets
+# a new entry and same-named libraries from different directories don't
+# collide. Libraries in the design's directory and those the flow generates
+# are cached per run.
+proc binary_lib_path { lib_file } {
+  set source [file normalize $lib_file]
+  set root [file join $::env(BINARY_LIBS_DIR) $::env(PLATFORM)]
+  set run_dirs [list $::env(DESIGN_DIR) \
+    [file join $::env(WORK_HOME) objects] [file join $::env(WORK_HOME) results]]
+  foreach dir $run_dirs {
+    if { [string first "[file normalize $dir]/" $source] == 0 } {
+      set root [file join $::env(OBJECTS_DIR) binary_libs]
+      break
+    }
+  }
+  set name [file tail $source]
+  regsub {\.gz$} $name "" name
+  set name [file rootname $name]
+  set dir_hash [format %08x [zlib crc32 [file dirname $source] 0]]
+  return [file join $root "$name@[file size $source]-[file mtime $source]-$dir_hash.blib"]
+}
+
+# Whether this OpenROAD reads blib. An entry missing or written by another
+# version is expected, so its error is not reported.
+proc binary_lib_usable { blib } {
+  suppress_message STA 1900
+  suppress_message STA 1902
+  set usable [expr { ![catch { liberty_binary_info $blib }] }]
+  unsuppress_message STA 1900
+  unsuppress_message STA 1902
+  return $usable
+}
+
+# The cached .blib for lib_file, or lib_file when there is no usable .blib
+proc lib_file_to_read { lib_file } {
+  if { ![file exists $lib_file] } {
+    return $lib_file
+  }
+  set blib [binary_lib_path $lib_file]
+  if { [binary_lib_usable $blib] } {
+    return $blib
+  }
+  return $lib_file
+}
