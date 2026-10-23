@@ -542,16 +542,6 @@ BUFFER_PORTS_ARGS:
     Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.
   stages:
     - place
-REMOVE_ABC_BUFFERS:
-  description: >
-    Remove abc buffers from the netlist. If timing repair in floorplanning is
-    taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early
-    instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.
-    Some designs still need it to reach their QoR targets.
-  stages:
-    - floorplan
-  deprecated: 1
-  default: 0
 BALANCE_ROWS:
   description: |
     Balance rows during placement.
@@ -672,6 +662,7 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     Cell padding on both sides in site widths to ease routability in detail
     placement.
   stages:
+    - floorplan
     - place
     - cts
     - grt
@@ -919,6 +910,13 @@ SKIP_CTS_REPAIR_TIMING:
     architectural exploration or when getting CI up and running.
   stages:
     - cts
+  default: 0
+SKIP_FLOORPLAN_REPAIR_TIMING:
+  description: >
+    Skipping floorplan repair which sometimes does too much optimization
+    too early.
+  stages:
+    - floorplan
   default: 0
 ENABLE_PLACE_REPAIR_TIMING:
   description: >

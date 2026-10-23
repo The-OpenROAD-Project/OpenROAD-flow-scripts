@@ -10,6 +10,7 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/co
 export SYNTH_BLACKBOXES = dummy
 
 export PLACE_DENSITY          = 0.70
+export GPL_PLACE_IOS          = 1
 export DIE_AREA               = 0 0 17 17
 export CORE_AREA              = 1.08 1.08 16 16
 export TNS_END_PERCENT        = 100

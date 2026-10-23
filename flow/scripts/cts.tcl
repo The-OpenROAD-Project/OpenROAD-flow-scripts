@@ -77,7 +77,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
     error "Detailed placement failed in CTS: $msg"
   }
 
-  check_placement -verbose
+  log_cmd check_placement -placeable -verbose
 
   log_cmd estimate_parasitics -placement
 }
