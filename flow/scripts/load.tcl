@@ -51,6 +51,11 @@ proc load_design { design_file sdc_file } {
     log_cmd source $::env(PLATFORM_DIR)/setRC.tcl
   }
 
+  if { [env_var_exists_and_non_empty WIRE_LOAD_MODEL] } {
+    # OpenSTA applies a wire-load model only to nets without parasitics.
+    log_cmd set_wire_load_model -name $::env(WIRE_LOAD_MODEL)
+  }
+
   if { [env_var_equals LIB_MODEL CCS] } {
     puts "Using CCS delay calculation"
     log_cmd set_delay_calculator prima

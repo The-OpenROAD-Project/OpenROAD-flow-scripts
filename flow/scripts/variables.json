@@ -18,6 +18,12 @@
       "synth"
     ]
   },
+  "ABC_SCRIPT": {
+    "description": "Replaces the ABC script synthesis runs, so that a design can vendor and\nchange it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS\nis set: abc_new then maps each arithmetic operator with its own script.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "ABSTRACT_SOURCE": {
     "description": "Which .odb file to use to create abstract\n",
     "stages": [
@@ -107,6 +113,7 @@
     "default": 0,
     "description": "Cell padding on both sides in site widths to ease routability in detail placement.\n",
     "stages": [
+      "floorplan",
       "place",
       "cts",
       "grt"
@@ -415,6 +422,13 @@
   },
   "GPL_KEEP_OVERFLOW": {
     "description": "Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "GPL_PLACE_IOS": {
+    "default": 0,
+    "description": "Place IO pins together with the cells in global placement (-place_ios).\n",
     "stages": [
       "place"
     ]
@@ -929,14 +943,6 @@
     "default": 0,
     "description": "Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].\n"
   },
-  "REMOVE_ABC_BUFFERS": {
-    "default": 0,
-    "deprecated": 1,
-    "description": "Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1. Some designs still need it to reach their QoR targets.\n",
-    "stages": [
-      "floorplan"
-    ]
-  },
   "REMOVE_CELLS_FOR_LEC": {
     "description": "String patterns directly passed to write_verilog -remove_cells <> for lec checks.\n",
     "type": "string"
@@ -948,6 +954,19 @@
     "default": 1,
     "description": "Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.\n",
     "stages": [
+      "cts",
+      "grt",
+      "route",
+      "final"
+    ]
+  },
+  "REPORT_ENDPOINT_SLACK": {
+    "default": 0,
+    "description": "If set to 1, write the setup and hold slack of every timing endpoint at the end of every flow step (e.g. 3_3_place_gp) to $REPORTS_DIR/<step>_endpoint_slack.json. These snapshots can be compared across steps with flow/util/endpointSlack.py. See docs/contrib/EndpointSlackTracking.md.\n",
+    "stages": [
+      "synth",
+      "floorplan",
+      "place",
       "cts",
       "grt",
       "route",
@@ -1194,6 +1213,13 @@
     "stages": [
       "route",
       "final"
+    ]
+  },
+  "SKIP_FLOORPLAN_REPAIR_TIMING": {
+    "default": 0,
+    "description": "Skipping floorplan repair which sometimes does too much optimization too early.\n",
+    "stages": [
+      "floorplan"
     ]
   },
   "SKIP_GATE_CLONING": {

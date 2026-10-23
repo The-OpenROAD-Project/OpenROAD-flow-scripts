@@ -35,6 +35,7 @@ if {
 
   # Read Spef for OpenSTA
   read_spef $::env(RESULTS_DIR)/6_final.spef
+  set final_parasitics rcx
 
   # Static IR drop analysis
   if { [env_var_exists_and_non_empty PWR_NETS_VOLTAGES] } {
@@ -59,7 +60,9 @@ if {
   puts "OpenRCX is not enabled for this platform."
   puts "Falling back to global route-based estimates."
   log_cmd estimate_parasitics -global_routing
+  set final_parasitics global_routing
 }
+write_endpoint_slack 6_final $final_parasitics
 
 report_cell_usage
 
@@ -69,8 +72,8 @@ source_step_tcl POST FINAL_REPORT
 
 # Save the final images: in a Qt window already open, in an offscreen one, or
 # with the web viewer, which OpenROAD built without Qt always uses.
-set images_viewer [env_var_or_empty SAVE_IMAGES_VIEWER]
-if { $images_viewer ni {"" qt web} } {
+set images_viewer $::env(SAVE_IMAGES_VIEWER)
+if { $images_viewer ni {qt web} } {
   utl::error FLW 34 "SAVE_IMAGES_VIEWER must be qt or web, not $images_viewer."
 }
 if { $images_viewer ne "qt" || ![ord::openroad_gui_compiled] || [gui::has_ui] } {

@@ -99,6 +99,11 @@ def fmt_value(value):
         return str(value)
 
 
+def fmt_exact_value(value):
+    """Render a metric value without rounding away dashboard precision."""
+    return "n/a" if value is None else str(value)
+
+
 def fmt_delta(value):
     """Same tolerance as fmt_value, with the sign the delta column wants."""
     if value is None:
@@ -364,6 +369,19 @@ def render_run(result, verbose):
                     fmt_value(metric.get("thresholdValue")),
                     fmt_delta(delta),
                 )
+            )
+
+    failed_metrics = [m for m in metrics if m.get("status") == "fail"]
+    if failed_metrics:
+        lines.append(
+            f"QoR regression detected for {result['platform']}/{result['design']}:"
+        )
+        for metric in sorted(failed_metrics, key=lambda m: m.get("metricName", "")):
+            lines.append(
+                f"  {metric.get('metricName', '?')} "
+                f"{fmt_exact_value(metric.get('targetValue'))} "
+                f"(base {fmt_exact_value(metric.get('baseValue'))}, "
+                f"limit {fmt_exact_value(metric.get('thresholdValue'))})"
             )
 
     # A design can have hundreds of absent metrics, so name them only on request.
