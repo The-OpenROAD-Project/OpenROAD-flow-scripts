@@ -472,13 +472,18 @@ proc source_step_tcl { hook_type step_name } {
 # Entry of lib_file in the binary liberty (.blib) cache:
 # <platform>/<library>@<size>-<mtime>-<dirhash>.blib, so a changed library gets
 # a new entry and same-named libraries from different directories don't
-# collide. Libraries the flow generates are cached per run.
+# collide. Libraries in the design's directory and those the flow generates
+# are cached per run.
 proc binary_lib_path { lib_file } {
   set source [file normalize $lib_file]
   set root [file join $::env(BINARY_LIBS_DIR) $::env(PLATFORM)]
-  foreach dir {objects results} {
-    set flow_dir [file normalize [file join $::env(WORK_HOME) $dir]]
-    if { [string first "$flow_dir/" $source] == 0 } {
+  set run_dirs [list \
+    [file join $::env(WORK_HOME) objects] [file join $::env(WORK_HOME) results]]
+  if { [env_var_exists_and_non_empty DESIGN_DIR] } {
+    lappend run_dirs $::env(DESIGN_DIR)
+  }
+  foreach dir $run_dirs {
+    if { [string first "[file normalize $dir]/" $source] == 0 } {
       set root [file join $::env(OBJECTS_DIR) binary_libs]
       break
     }

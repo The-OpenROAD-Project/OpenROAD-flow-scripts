@@ -177,9 +177,9 @@ BINARY_LIBS_DIR:
     shares it, so set it in the environment or settings.mk, not in a
     design's config.mk; ORFS clones that set the same directory share their
     .blib files. `make binary-libs` fills it with the current design's
-    libraries and `make clean_binary_libs` deletes it. Libraries the flow
-    generates, such as BLOCKS abstracts, are cached per run in
-    $(OBJECTS_DIR)/binary_libs.
+    libraries and `make clean_binary_libs` deletes it. Libraries in the
+    design's directory (DESIGN_DIR) and libraries the flow generates, such
+    as BLOCKS abstracts, are cached per run in $(OBJECTS_DIR)/binary_libs.
   default: $(WORK_HOME)/objects/binary_libs
   stages:
     - All stages
