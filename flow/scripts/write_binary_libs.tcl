@@ -23,7 +23,7 @@ foreach lib_file $lib_files {
     continue
   }
   set seen($blib) 1
-  if { [file exists $blib] && ![catch { liberty_binary_info $blib }] } {
+  if { [binary_lib_usable $blib] } {
     incr cached
     continue
   }
@@ -37,7 +37,7 @@ foreach lib_file $lib_files {
     } msg]
   } {
     file delete -force $tmp
-    utl::warn FLW 28 "Could not write $blib: $msg"
+    puts "Could not write $blib: $msg"
     continue
   }
   incr written

@@ -174,21 +174,14 @@ BINARY_LIBS_DIR:
     each platform, as `<platform>/<library>@<size>-<mtime>-<dirhash>.blib`
     so that a changed library gets a new entry. Libraries in DESIGN_DIR and
     libraries the flow generates are cached per run in
-    `$(OBJECTS_DIR)/binary_libs` instead. Set it in the environment or
-    settings.mk, not in a design's config.mk; ORFS clones that set the same
-    directory share their .blib files. `make clean_binary_libs` deletes it.
+    `$(OBJECTS_DIR)/binary_libs` instead. Before 1_synth the flow converts
+    every library that has no cached .blib, which `make binary-libs` also
+    does on its own, and the OpenROAD stages read the .blib files instead of
+    parsing the text libraries. A library with no usable .blib is read as
+    given. Set it in the environment or settings.mk, not in a design's
+    config.mk; ORFS clones that set the same directory share their .blib
+    files. `make clean_binary_libs` deletes it.
   default: $(WORK_HOME)/objects/binary_libs
-  stages:
-    - All stages
-USE_BINARY_LIBS:
-  description: >
-    Read binary liberty (.blib) files in the OpenROAD stages instead of
-    parsing the text libraries. Before 1_synth the flow converts every
-    library that has no cached .blib, which `make binary-libs` also does on
-    its own. A missing or unusable .blib is read from the text library with
-    a warning. Set to 0 to read LIB_FILES and `<CORNER>_LIB_FILES` as given,
-    for example when bazel-orfs provides binary libraries itself.
-  default: 1
   stages:
     - All stages
 LIB_MODEL:

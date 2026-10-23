@@ -105,7 +105,7 @@ configuration file.
 | <a name="ASAP7_USE_VT"></a>ASAP7_USE_VT| A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.| RVT|
 | <a name="AUTO_MEMORIES"></a>AUTO_MEMORIES| Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM macro — given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.| 0|
 | <a name="BALANCE_ROWS"></a>BALANCE_ROWS| Balance rows during placement.| 0|
-| <a name="BINARY_LIBS_DIR"></a>BINARY_LIBS_DIR| Directory of the binary liberty (.blib) cache shared by the designs of each platform, as `<platform>/<library>@<size>-<mtime>-<dirhash>.blib` so that a changed library gets a new entry. Libraries in DESIGN_DIR and libraries the flow generates are cached per run in `$(OBJECTS_DIR)/binary_libs` instead. Set it in the environment or settings.mk, not in a design's config.mk; ORFS clones that set the same directory share their .blib files. `make clean_binary_libs` deletes it.| $(WORK_HOME)/objects/binary_libs|
+| <a name="BINARY_LIBS_DIR"></a>BINARY_LIBS_DIR| Directory of the binary liberty (.blib) cache shared by the designs of each platform, as `<platform>/<library>@<size>-<mtime>-<dirhash>.blib` so that a changed library gets a new entry. Libraries in DESIGN_DIR and libraries the flow generates are cached per run in `$(OBJECTS_DIR)/binary_libs` instead. Before 1_synth the flow converts every library that has no cached .blib, which `make binary-libs` also does on its own, and the OpenROAD stages read the .blib files instead of parsing the text libraries. A library with no usable .blib is read as given. Set it in the environment or settings.mk, not in a design's config.mk; ORFS clones that set the same directory share their .blib files. `make clean_binary_libs` deletes it.| $(WORK_HOME)/objects/binary_libs|
 | <a name="BLOCKS"></a>BLOCKS| Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.| |
 | <a name="BUFFER_PORTS_ARGS"></a>BUFFER_PORTS_ARGS| Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.| |
 | <a name="CACHED_REPORTS"></a>CACHED_REPORTS| List of pre-existing report files to copy into the reports directory before synthesis. Used when reusing prior synthesis results with SYNTH_NETLIST_FILES.| |
@@ -328,7 +328,6 @@ configuration file.
 | <a name="TIE_SEPARATION"></a>TIE_SEPARATION| Distance separating tie high/low instances from the load.| 0|
 | <a name="TNS_END_PERCENT"></a>TNS_END_PERCENT| Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.| 100|
 | <a name="UNSET_ABC9_BOX_CELLS"></a>UNSET_ABC9_BOX_CELLS| List of cells to unset the abc9_box attribute on| |
-| <a name="USE_BINARY_LIBS"></a>USE_BINARY_LIBS| Read binary liberty (.blib) files in the OpenROAD stages instead of parsing the text libraries. Before 1_synth the flow converts every library that has no cached .blib, which `make binary-libs` also does on its own. A missing or unusable .blib is read from the text library with a warning. Set to 0 to read LIB_FILES and `<CORNER>_LIB_FILES` as given, for example when bazel-orfs provides binary libraries itself.| 1|
 | <a name="USE_FILL"></a>USE_FILL| Whether to perform metal density filling.| 0|
 | <a name="VERILOG_DEFINES"></a>VERILOG_DEFINES| Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`| |
 | <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog/SystemVerilog files providing a description of modules.| |
@@ -640,7 +639,6 @@ configuration file.
 - [OPENROAD_HIERARCHICAL](#OPENROAD_HIERARCHICAL)
 - [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
 - [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
-- [USE_BINARY_LIBS](#USE_BINARY_LIBS)
 - [WRITE_ODB_AND_SDC_EACH_STAGE](#WRITE_ODB_AND_SDC_EACH_STAGE)
 
 ## generate_abstract variables
