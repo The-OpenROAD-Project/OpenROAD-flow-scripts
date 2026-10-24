@@ -1,5 +1,14 @@
 source $::env(SCRIPTS_DIR)/util.tcl
 
+# With no Qt window up, the web viewer draws the images; it writes only PNG.
+if { [gui::has_ui] } {
+  set web_flag {}
+  set ext webp
+} else {
+  set web_flag -web
+  set ext png
+}
+
 gui::save_display_controls
 
 set height [[[ord::get_db_block] getBBox] getDY]
@@ -30,22 +39,22 @@ gui::set_display_controls "Misc/Highlight selected" visible true
 gui::set_display_controls "Misc/Detailed view" visible true
 
 # The routing view
-save_image -resolution $resolution $::env(REPORTS_DIR)/final_all.webp
+save_image {*}$web_flag -resolution $resolution $::env(REPORTS_DIR)/final_all.$ext
 gui::set_display_controls "Nets/Power" visible false
 gui::set_display_controls "Nets/Ground" visible false
-save_image -resolution $resolution $::env(REPORTS_DIR)/final_routing.webp
+save_image {*}$web_flag -resolution $resolution $::env(REPORTS_DIR)/final_routing.$ext
 
 # The placement view without routing
 gui::set_display_controls "Shape Types/Routing/*" visible false
 gui::set_display_controls "Instances/Physical/Fill cell" visible false
 gui::set_display_controls "Misc/Instances/*" visible false
-save_image -resolution $resolution $::env(REPORTS_DIR)/final_placement.webp
+save_image {*}$web_flag -resolution $resolution $::env(REPORTS_DIR)/final_placement.$ext
 
 if { [env_var_exists_and_non_empty PWR_NETS_VOLTAGES] } {
   gui::set_display_controls "Heat Maps/IR Drop" visible true
   gui::set_heatmap IRDrop Layer $::env(IR_DROP_LAYER)
   gui::set_heatmap IRDrop ShowLegend 1
-  save_image -resolution $resolution $::env(REPORTS_DIR)/final_ir_drop.webp
+  save_image {*}$web_flag -resolution $resolution $::env(REPORTS_DIR)/final_ir_drop.$ext
   gui::set_display_controls "Heat Maps/IR Drop" visible false
 }
 
@@ -58,7 +67,7 @@ gui::set_display_controls "Instances/StdCells/Clock tree/*" visible true
 gui::set_display_controls "Instances/StdCells/Sequential" visible true
 gui::set_display_controls "Instances/Macro" visible true
 select -name "clk*" -type Inst
-save_image -resolution $resolution $::env(REPORTS_DIR)/final_clocks.webp
+save_image {*}$web_flag -resolution $resolution $::env(REPORTS_DIR)/final_clocks.$ext
 gui::clear_selections
 
 gui::show_widget "Clock Tree Viewer"
@@ -70,10 +79,10 @@ foreach scene [get_scenes] {
       save_clocktree_image -clock $clock_name \
         -width 1024 -height 1024 \
         -scene $scene \
-        $::env(REPORTS_DIR)/cts_${scene_name}_${clock_name}.webp
+        $::env(REPORTS_DIR)/cts_${scene_name}_${clock_name}.$ext
       gui::select_clockviewer_clock $clock_name
-      save_image -resolution $resolution \
-        $::env(REPORTS_DIR)/cts_${scene_name}_${clock_name}_layout.webp
+      save_image {*}$web_flag -resolution $resolution \
+        $::env(REPORTS_DIR)/cts_${scene_name}_${clock_name}_layout.$ext
     }
   }
 }
@@ -98,7 +107,7 @@ select -name "wire*" -type Inst -highlight 3
 select -name "rebuffer*" -type Inst -highlight 4 ;# red
 select -name "split*" -type Inst -highlight 5 ;# dark green
 
-save_image -resolution $resolution $::env(REPORTS_DIR)/final_resizer.webp
+save_image {*}$web_flag -resolution $resolution $::env(REPORTS_DIR)/final_resizer.$ext
 
 gui::clear_highlights -1
 gui::clear_selections
@@ -109,7 +118,7 @@ gui::set_display_controls "Instances/Physical/*" visible false
 gui::set_display_controls "Nets/*" visible false
 gui::set_display_controls "Heat Maps/Routing Congestion" visible true
 
-save_image -resolution $resolution $::env(REPORTS_DIR)/final_congestion.webp
+save_image {*}$web_flag -resolution $resolution $::env(REPORTS_DIR)/final_congestion.$ext
 
 # The worst timing path view
 gui::set_display_controls "Heat Maps/Routing Congestion" visible false
@@ -119,7 +128,7 @@ gui::set_display_controls "Instances/*" visible true
 gui::set_display_controls "Shape Types/Routing/*" visible false
 
 gui::show_worst_path
-save_image -resolution $resolution $::env(REPORTS_DIR)/final_worst_path.webp
+save_image {*}$web_flag -resolution $resolution $::env(REPORTS_DIR)/final_worst_path.$ext
 gui::set_display_controls "Timing Path/*" visible false
 
 gui::restore_display_controls

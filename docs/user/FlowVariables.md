@@ -272,6 +272,7 @@ configuration file.
 | <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0|
 | <a name="RUN_LOG_NAME_STEM"></a>RUN_LOG_NAME_STEM| Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.| run|
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
+| <a name="SAVE_IMAGES_VIEWER"></a>SAVE_IMAGES_VIEWER| Which viewer draws the images of the final report: qt for the Qt GUI in an offscreen window, or web for the web viewer, which needs no display. OpenROAD built without Qt always uses the web viewer.| qt|
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.| |
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| |
@@ -628,6 +629,7 @@ configuration file.
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SAVE_IMAGES_VIEWER](#SAVE_IMAGES_VIEWER)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
