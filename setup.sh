@@ -19,13 +19,13 @@ tmpfile=$(mktemp)
 # any error messages from this command will stand out
 # more clearly when run as a separate command rather than
 # being piped
-git submodule status --recursive > "$tmpfile"
+git -C "$DIR" submodule status --recursive > "$tmpfile"
 
 if grep -q "^-" "$tmpfile"; then
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    git submodule update --init --recursive
+    git -C "$DIR" submodule update --init --recursive
   else
-    sudo -u $SUDO_USER git submodule update --init --recursive
+    sudo -u "${SUDO_USER:-root}" git -C "$DIR" submodule update --init --recursive
   fi
 elif grep -q "^+" "$tmpfile"; then
   # Make it easy for users who are not hacking ORFS to do the right thing,
@@ -51,5 +51,5 @@ fi
 if [[ "$OSTYPE" == "darwin"* ]]; then
   "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
 else
-  sudo -u $SUDO_USER "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
+  sudo -u "${SUDO_USER:-root}" "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
 fi
