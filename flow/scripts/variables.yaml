@@ -1397,6 +1397,16 @@ ABSTRACT_SOURCE:
     Which .odb file to use to create abstract
   stages:
     - generate_abstract
+WRITE_ABSTRACT_LEF_ARGS:
+  description: |
+    Arguments to write_abstract_lef when it writes a block's abstract.
+    The default obstructs every layer the block uses over its whole
+    outline. Empty, the abstract obstructs only the shapes the block
+    occupies, so a block whose outline holds a notch, where other macros
+    sit, leaves the notch free for them.
+  stages:
+    - generate_abstract
+  default: -bloat_occupied_layers
 PRE_GLOBAL_ROUTE_TCL:
   description: |
     Specifies a Tcl script with commands to run before global route.

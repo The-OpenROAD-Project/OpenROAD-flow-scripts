@@ -34,7 +34,8 @@ if { [env_var_exists_and_non_empty CORNERS] } {
 } else {
   log_cmd write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_typ.lib
 }
-log_cmd write_abstract_lef -bloat_occupied_layers $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lef
+log_cmd write_abstract_lef {*}$::env(WRITE_ABSTRACT_LEF_ARGS) \
+  $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lef
 
 if { [env_var_exists_and_non_empty CDL_FILES] } {
   cdl read_masters $::env(CDL_FILES)

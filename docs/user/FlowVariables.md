@@ -337,6 +337,7 @@ configuration file.
 | <a name="VIA_IN_PIN_MAX_LAYER"></a>VIA_IN_PIN_MAX_LAYER| Passed as -via_in_pin_top_layer to pin_access and detailed_route.| |
 | <a name="VIA_IN_PIN_MIN_LAYER"></a>VIA_IN_PIN_MIN_LAYER| Passed as -via_in_pin_bottom_layer to pin_access and detailed_route.| |
 | <a name="WIRE_LOAD_MODEL"></a>WIRE_LOAD_MODEL| Name of a Liberty wire_load group applied with set_wire_load_model whenever open.tcl reads timing. OpenSTA applies a wire-load model only to nets without parasitics, so it gives wire delay to timing read before placement and leaves placed and routed timing unaffected. An unknown name is an error. Empty, the default, applies none. A platform whose libraries define no wire_load group can supply one in a Liberty file listed in ADDITIONAL_LIBS.| |
+| <a name="WRITE_ABSTRACT_LEF_ARGS"></a>WRITE_ABSTRACT_LEF_ARGS| Arguments to write_abstract_lef when it writes a block's abstract. The default obstructs every layer the block uses over its whole outline. Empty, the abstract obstructs only the shapes the block occupies, so a block whose outline holds a notch, where other macros sit, leaves the notch free for them.| -bloat_occupied_layers|
 | <a name="WRITE_ODB_AND_SDC_EACH_STAGE"></a>WRITE_ODB_AND_SDC_EACH_STAGE| Save out .sdc and .odb file after each stage, useful to disable when using a single OpenROAD instance to run all stages of the flow.| 1|
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3|
 ## synth variables
@@ -646,6 +647,7 @@ configuration file.
 ## generate_abstract variables
 
 - [ABSTRACT_SOURCE](#ABSTRACT_SOURCE)
+- [WRITE_ABSTRACT_LEF_ARGS](#WRITE_ABSTRACT_LEF_ARGS)
 
 ## Uncategorized variables
 
