@@ -9,5 +9,5 @@ tensorboard>=2.17.0
 protobuf>=5.26.1
 SQLAlchemy==1.4.17
 urllib3>=2.7.0
-matplotlib==3.10.0
+matplotlib==3.10.9
 pyyaml==6.0.1
