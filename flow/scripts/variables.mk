@@ -39,6 +39,13 @@ endif
 
 include $(PLATFORM_DIR)/config.mk
 
+# defaults.py below runs with PYTHON_EXE, so set it first. See the dragons
+# comment near "setup all commands used within this flow" for why.
+ifeq ($(origin PYTHON_EXE), undefined)
+  PYTHON_EXE := $(shell command -v python3)
+endif
+export PYTHON_EXE
+
 # __SPACE__ is a workaround for whitespace hell in "foreach"; there
 # is no way to escape space in defaults.py and get "foreach" to work.
 $(foreach line,$(shell $(PYTHON_EXE) $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
@@ -104,12 +111,9 @@ export NUM_CORES
 # Python is not built by ORFS, and as such its absolute path has to be fetched
 # from the environment. Use `ifeq ($(origin PYTHON_EXE), undefined)` to check if
 # the variable hasn't been defined yet and run a single shell instance to fetch
-# the absolute path if so. The other tools should've been built by ORFS, and can
-# use a pre-specified path, which we can just use ?= for.
-ifeq ($(origin PYTHON_EXE), undefined)
-  PYTHON_EXE := $(shell command -v python3)
-endif
-export PYTHON_EXE
+# the absolute path if so. That is done further up, before defaults.py runs.
+# The other tools should've been built by ORFS, and can use a pre-specified
+# path, which we can just use ?= for.
 
 export RUN_CMD = $(PYTHON_EXE) $(FLOW_HOME)/scripts/run_command.py
 
