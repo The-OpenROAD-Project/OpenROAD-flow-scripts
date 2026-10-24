@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" role="img" aria-label="tpu array of abutted tiles inside a C-shaped parent macro: weights and zero partial sums from the band above, clock entering each row from the west and running east tile to tile, bottom row clocking the deskew registers below" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="ck" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#eb6834"/></marker>
+    <marker id="da" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+  </defs>
+  <rect width="900" height="500" fill="#fcfcfb"/>
+  <text x="50" y="16" font-size="12" font-weight="600" fill="#0b0b0b">tpu: macros only, abutted; every pin on the bottom edge</text>
+  <g transform="translate(0,30)">
+  <path d="M50,20 L850,20 L850,50 L170,50 L170,358 L850,358 L850,430 L50,430 Z" fill="#f3ead8" stroke="#8a5a14" stroke-width="2"/>
+  <text x="110" y="180" font-size="12" font-weight="600" fill="#8a5a14" text-anchor="middle">parent macro</text>
+  <text x="110" y="196" font-size="11" fill="#8a5a14" text-anchor="middle">(C-shaped)</text>
+  <text x="110" y="216" font-size="11" fill="#8a5a14" text-anchor="middle">skew registers,</text>
+  <text x="110" y="231" font-size="11" fill="#8a5a14" text-anchor="middle">clock root</text>
+  <text x="510" y="402" font-size="12" fill="#8a5a14" text-anchor="middle">parent macro: deskew registers, clocked from the tile above them</text>
+  <path d="M50,20 L850,20 L850,50 L170,50 L170,358 L850,358 L850,430 L50,430 Z" fill="none" stroke="#8a5a14" stroke-width="3"/>
+  <rect x="170" y="50" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="255" y="50" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="340" y="50" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="425" y="50" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="510" y="50" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="595" y="50" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="680" y="50" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="765" y="50" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="170" y="127" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="255" y="127" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="340" y="127" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="425" y="127" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="510" y="127" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="595" y="127" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="680" y="127" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="765" y="127" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="170" y="204" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="255" y="204" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="340" y="204" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="425" y="204" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="510" y="204" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="595" y="204" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="680" y="204" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="765" y="204" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="170" y="281" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="255" y="281" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="340" y="281" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="425" y="281" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="510" y="281" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="595" y="281" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="680" y="281" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <rect x="765" y="281" width="85" height="77" fill="#e3eef2" stroke="#1f6f8b"/>
+  <line x1="160" y1="88.5" x2="176" y2="88.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="243" y1="88.5" x2="265" y2="88.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="328" y1="88.5" x2="350" y2="88.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="413" y1="88.5" x2="435" y2="88.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="498" y1="88.5" x2="520" y2="88.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="583" y1="88.5" x2="605" y2="88.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="668" y1="88.5" x2="690" y2="88.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="753" y1="88.5" x2="775" y2="88.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="190" y1="74.5" x2="840" y2="74.5" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="160" y1="165.5" x2="176" y2="165.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="243" y1="165.5" x2="265" y2="165.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="328" y1="165.5" x2="350" y2="165.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="413" y1="165.5" x2="435" y2="165.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="498" y1="165.5" x2="520" y2="165.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="583" y1="165.5" x2="605" y2="165.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="668" y1="165.5" x2="690" y2="165.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="753" y1="165.5" x2="775" y2="165.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="190" y1="151.5" x2="840" y2="151.5" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="160" y1="242.5" x2="176" y2="242.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="243" y1="242.5" x2="265" y2="242.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="328" y1="242.5" x2="350" y2="242.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="413" y1="242.5" x2="435" y2="242.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="498" y1="242.5" x2="520" y2="242.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="583" y1="242.5" x2="605" y2="242.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="668" y1="242.5" x2="690" y2="242.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="753" y1="242.5" x2="775" y2="242.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="190" y1="228.5" x2="840" y2="228.5" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="160" y1="319.5" x2="176" y2="319.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="243" y1="319.5" x2="265" y2="319.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="328" y1="319.5" x2="350" y2="319.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="413" y1="319.5" x2="435" y2="319.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="498" y1="319.5" x2="520" y2="319.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="583" y1="319.5" x2="605" y2="319.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="668" y1="319.5" x2="690" y2="319.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="753" y1="319.5" x2="775" y2="319.5" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/>
+  <line x1="190" y1="305.5" x2="840" y2="305.5" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="212.5" y1="344" x2="212.5" y2="388" stroke="#eb6834" stroke-width="2" marker-end="url(#ck)"/>
+  <line x1="230.5" y1="26" x2="230.5" y2="352" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="297.5" y1="344" x2="297.5" y2="388" stroke="#eb6834" stroke-width="2" marker-end="url(#ck)"/>
+  <line x1="315.5" y1="26" x2="315.5" y2="352" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="382.5" y1="344" x2="382.5" y2="388" stroke="#eb6834" stroke-width="2" marker-end="url(#ck)"/>
+  <line x1="400.5" y1="26" x2="400.5" y2="352" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="467.5" y1="344" x2="467.5" y2="388" stroke="#eb6834" stroke-width="2" marker-end="url(#ck)"/>
+  <line x1="485.5" y1="26" x2="485.5" y2="352" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="552.5" y1="344" x2="552.5" y2="388" stroke="#eb6834" stroke-width="2" marker-end="url(#ck)"/>
+  <line x1="570.5" y1="26" x2="570.5" y2="352" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="637.5" y1="344" x2="637.5" y2="388" stroke="#eb6834" stroke-width="2" marker-end="url(#ck)"/>
+  <line x1="655.5" y1="26" x2="655.5" y2="352" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="722.5" y1="344" x2="722.5" y2="388" stroke="#eb6834" stroke-width="2" marker-end="url(#ck)"/>
+  <line x1="740.5" y1="26" x2="740.5" y2="352" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <line x1="807.5" y1="344" x2="807.5" y2="388" stroke="#eb6834" stroke-width="2" marker-end="url(#ck)"/>
+  <line x1="825.5" y1="26" x2="825.5" y2="352" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/>
+  <text x="850" y="6" font-size="11" fill="#52514e" text-anchor="end">every macro touches its neighbours: no channel, no gap</text>
+  <rect x="50" y="20" width="800" height="410" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+  <text x="520" y="39" font-size="12" fill="#8a5a14" text-anchor="middle">parent macro: the top row's weights in, its partial sums tied to zero</text>
+  <g font-size="10" fill="#1f6f8b" text-anchor="middle" font-weight="600">
+    <text x="212" y="116">tile macro</text><text x="297" y="116">tile macro</text><text x="382" y="116">tile macro</text><text x="467" y="116">…</text>
+  </g>
+  <g font-size="11" fill="#0b0b0b">
+    <circle cx="170" cy="340" r="5" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+    <line x1="166" y1="344" x2="140" y2="372" stroke="#0b0b0b"/>
+    <text x="60" y="386">shared edge,</text><text x="60" y="400">parent to tile:</text><text x="60" y="414">pin meets pin</text>
+  </g>
+  <g font-size="11">
+    <line x1="620" y1="452" x2="650" y2="452" stroke="#eb6834" stroke-width="2.5" marker-end="url(#ck)"/><text x="656" y="456" fill="#0b0b0b">clock, reset, load: one buffer per tile</text>
+    <line x1="250" y1="452" x2="280" y2="452" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#da)"/><text x="286" y="456" fill="#0b0b0b">data: activations east, weights and sums south</text>
+  </g>
+</g>
+</svg>

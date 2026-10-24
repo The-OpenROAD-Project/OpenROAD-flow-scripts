@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 590 610" width="590" height="610" font-family="Helvetica, Arial, sans-serif">
+<rect width="590" height="610" fill="#fcfcfb"/>
+<text x="70" y="26" font-size="15" font-weight="600" fill="#0b0b0b">tpu: clock arrival at each tile's registers, ps</text>
+<text x="70" y="44" font-size="11" fill="#52514e">stitched at global route; the clock enters each row from the west and runs east through the tiles</text>
+<rect x="70" y="60" width="120" height="120" fill="#dbe8f7" stroke="#fcfcfb" stroke-width="2"/>
+<text x="130" y="125" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">148</text>
+<rect x="190" y="60" width="120" height="120" fill="#b4cdee" stroke="#fcfcfb" stroke-width="2"/>
+<text x="250" y="125" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">225</text>
+<rect x="310" y="60" width="120" height="120" fill="#5a8ed4" stroke="#fcfcfb" stroke-width="2"/>
+<text x="370" y="125" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">302</text>
+<rect x="430" y="60" width="120" height="120" fill="#2f6dbf" stroke="#fcfcfb" stroke-width="2"/>
+<text x="490" y="125" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">379</text>
+<rect x="70" y="180" width="120" height="120" fill="#dbe8f7" stroke="#fcfcfb" stroke-width="2"/>
+<text x="130" y="245" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">148</text>
+<rect x="190" y="180" width="120" height="120" fill="#b4cdee" stroke="#fcfcfb" stroke-width="2"/>
+<text x="250" y="245" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">225</text>
+<rect x="310" y="180" width="120" height="120" fill="#5a8ed4" stroke="#fcfcfb" stroke-width="2"/>
+<text x="370" y="245" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">302</text>
+<rect x="430" y="180" width="120" height="120" fill="#2f6dbf" stroke="#fcfcfb" stroke-width="2"/>
+<text x="490" y="245" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">379</text>
+<rect x="70" y="300" width="120" height="120" fill="#dbe8f7" stroke="#fcfcfb" stroke-width="2"/>
+<text x="130" y="365" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">154</text>
+<rect x="190" y="300" width="120" height="120" fill="#b4cdee" stroke="#fcfcfb" stroke-width="2"/>
+<text x="250" y="365" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">231</text>
+<rect x="310" y="300" width="120" height="120" fill="#5a8ed4" stroke="#fcfcfb" stroke-width="2"/>
+<text x="370" y="365" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">308</text>
+<rect x="430" y="300" width="120" height="120" fill="#2f6dbf" stroke="#fcfcfb" stroke-width="2"/>
+<text x="490" y="365" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">385</text>
+<rect x="70" y="420" width="120" height="120" fill="#dbe8f7" stroke="#fcfcfb" stroke-width="2"/>
+<text x="130" y="485" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">150</text>
+<rect x="190" y="420" width="120" height="120" fill="#b4cdee" stroke="#fcfcfb" stroke-width="2"/>
+<text x="250" y="485" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">227</text>
+<rect x="310" y="420" width="120" height="120" fill="#5a8ed4" stroke="#fcfcfb" stroke-width="2"/>
+<text x="370" y="485" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">304</text>
+<rect x="430" y="420" width="120" height="120" fill="#2f6dbf" stroke="#fcfcfb" stroke-width="2"/>
+<text x="490" y="485" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="middle">381</text>
+<rect x="167" y="141" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="190" y="154" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="107" y="171" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="130" y="184" font-size="11" fill="#0b0b0b" text-anchor="middle">+0 &#8595;</text>
+<rect x="287" y="141" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="310" y="154" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="227" y="171" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="250" y="184" font-size="11" fill="#0b0b0b" text-anchor="middle">+0 &#8595;</text>
+<rect x="407" y="141" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="430" y="154" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="347" y="171" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="370" y="184" font-size="11" fill="#0b0b0b" text-anchor="middle">+0 &#8595;</text>
+<rect x="467" y="171" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="490" y="184" font-size="11" fill="#0b0b0b" text-anchor="middle">+0 &#8595;</text>
+<rect x="167" y="261" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="190" y="274" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="107" y="291" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="130" y="304" font-size="11" fill="#0b0b0b" text-anchor="middle">+6 &#8595;</text>
+<rect x="287" y="261" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="310" y="274" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="227" y="291" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="250" y="304" font-size="11" fill="#0b0b0b" text-anchor="middle">+6 &#8595;</text>
+<rect x="407" y="261" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="430" y="274" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="347" y="291" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="370" y="304" font-size="11" fill="#0b0b0b" text-anchor="middle">+6 &#8595;</text>
+<rect x="467" y="291" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="490" y="304" font-size="11" fill="#0b0b0b" text-anchor="middle">+6 &#8595;</text>
+<rect x="167" y="381" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="190" y="394" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="107" y="411" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="130" y="424" font-size="11" fill="#0b0b0b" text-anchor="middle">-4 &#8595;</text>
+<rect x="287" y="381" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="310" y="394" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="227" y="411" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="250" y="424" font-size="11" fill="#0b0b0b" text-anchor="middle">-4 &#8595;</text>
+<rect x="407" y="381" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="430" y="394" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="347" y="411" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="370" y="424" font-size="11" fill="#0b0b0b" text-anchor="middle">-4 &#8595;</text>
+<rect x="467" y="411" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="490" y="424" font-size="11" fill="#0b0b0b" text-anchor="middle">-4 &#8595;</text>
+<rect x="167" y="501" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="190" y="514" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="287" y="501" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="310" y="514" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<rect x="407" y="501" width="46" height="18" rx="9" fill="#fcfcfb" stroke="#52514e" stroke-width="0.5"/>
+<text x="430" y="514" font-size="11" fill="#0b0b0b" text-anchor="middle">+77 &#8594;</text>
+<text x="70" y="570" font-size="11" fill="#52514e">step to the east neighbour: the skew activations flowing east see; to the south: weights and sums</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 210" width="760" height="210" font-family="Helvetica, Arial, sans-serif">
+  <rect width="760" height="210" fill="#fcfcfb"/>
+  <text x="20" y="26" font-size="15" font-weight="600" fill="#0b0b0b">tpu: an RTL edit in the processing element, warm cache, to global route</text>
+  <g font-size="12" fill="#0b0b0b">
+    <text x="20" y="74">tiles in a C</text>
+    <text x="20" y="134">flat</text>
+  </g>
+  <!-- scale: 487 s = 560 px from x = 150 -->
+  <rect x="150" y="56" width="78.2" height="28" rx="4" fill="#2a78d6"/>
+  <rect x="230.2" y="56" width="10.3" height="28" rx="4" fill="#7fb2ec"/>
+  <rect x="242.5" y="56" width="25.4" height="28" rx="4" fill="#c9dcf3"/>
+  <text x="276" y="75" font-size="12" fill="#0b0b0b">99 s: one tile 68 s, the top level 9 s, the carve and the timing read 22 s</text>
+  <rect x="150" y="116" width="548.5" height="28" rx="4" fill="#52514e"/>
+  <text x="700" y="135" font-size="12" fill="#0b0b0b" text-anchor="end" dx="-8" style="fill:#fcfcfb">487 s</text>
+  <text x="150" y="172" font-size="11" fill="#52514e">Bazel's wall time; what re-ran from the flows' own logs. The tile, built once for its 16 instances, is the only</text>
+  <text x="150" y="188" font-size="11" fill="#52514e">macro the edit touches; the C-shaped parent stayed cached, or rebuilds beside the tile (24 s) if its netlist reorders.</text>
+</svg>
