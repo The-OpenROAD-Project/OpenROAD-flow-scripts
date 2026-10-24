@@ -421,8 +421,10 @@ _installUbuntuPackages() {
                 klayoutChecksum=6dfffa50f385881768dee30bdc759608
             elif [[ $1 == 24.04 ]]; then
                 klayoutChecksum=0181713e60891e461d6d1664c1b8e213
+            elif [[ $1 == 26.04 ]]; then
+                klayoutChecksum=904f60fd05c3a5029cab8a2840029f49
             else
-                echo "Unsupported Ubuntu version $1. Supported versions: 22.04, 24.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
+                echo "Unsupported Ubuntu version $1. KLayout ${klayoutVersion} packages are pinned for 22.04, 24.04, and 26.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
                 exit 1
             fi
             wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
@@ -656,7 +658,7 @@ case "${os}" in
     "CentOS Linux" | "Red Hat Enterprise Linux"* | "AlmaLinux" | "Rocky Linux")
         # Enterprise Linux support - dispatch based on specific version
         if [[ ${CI} == "yes" ]]; then
-            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 24.04 and 26.04" >&2
         fi
 
         # Detect EL version to choose appropriate functions
@@ -719,13 +721,15 @@ case "${os}" in
             _installCmake
         fi
         if [[ $version != "rodete" ]]; then
-            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                if _versionCompare ${version} -lt 23.04 ; then
+            if _versionCompare ${version} -lt 23.04 ; then
+                if [[ "${option}" == "common" || "${option}" == "all" ]]; then
                     _installPipCommon
-                else
-                    if [[ "${option}" == "base" || "${option}" == "all" ]]; then
-                        _installPipSystem
-                    fi
+                fi
+            else
+                # Python packages come from apt (PEP 668), so they belong
+                # with the other system packages in -base.
+                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+                    _installPipSystem
                 fi
             fi
         else
@@ -734,7 +738,7 @@ case "${os}" in
         ;;
     "Darwin" )
         if [[ ${CI} == "yes" ]]; then
-            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 24.04 and 26.04" >&2
         fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
