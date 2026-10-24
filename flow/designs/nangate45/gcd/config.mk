@@ -14,5 +14,8 @@ export TNS_END_PERCENT        = 100
 export GPL_PLACE_IOS          = 1
 export SYNTH_REPEATABLE_BUILD ?= 1
 
+# CI runs the non-default image viewer on this design.
+export SAVE_IMAGES_VIEWER ?= qt
+
 # This needs a smaller pitch to accomodate a small block
 export PDN_TCL ?= $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/grid_strategy-M1-M4-M7.tcl
