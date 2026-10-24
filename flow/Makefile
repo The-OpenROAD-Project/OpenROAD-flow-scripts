@@ -724,7 +724,7 @@ clean_abstract:
 check-klayout:
 	@if [ -z "$(KLAYOUT_CMD)" ]; then \
 		echo "Error: KLayout not found. Install KLayout or set KLAYOUT_CMD."; \
-		echo "Hint: KLayout is needed for GDS/DRC/LVS targets."; \
+		echo "Hint: KLayout is needed for DRC, LVS, the gallery and the viewers."; \
 		exit 1; \
 	fi
 
@@ -747,7 +747,7 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
-$(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS) $(SEAL_GDSOAS) | check-klayout
+$(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS) $(SEAL_GDSOAS)
 	$(UNSET_AND_MAKE) do-gds-merged
 
 .PHONY: do-gds-merged
@@ -775,7 +775,7 @@ $(GDS_FINAL_FILE): $(GDS_MERGED_FILE)
 .PHONY: drc
 drc: $(REPORTS_DIR)/6_drc.lyrdb
 
-$(REPORTS_DIR)/6_drc.lyrdb: $(GDS_FINAL_FILE) $(KLAYOUT_DRC_FILE)
+$(REPORTS_DIR)/6_drc.lyrdb: $(GDS_FINAL_FILE) $(KLAYOUT_DRC_FILE) | check-klayout
 ifneq ($(KLAYOUT_DRC_FILE),)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_drc.log) --tee -- \
 	        $(SCRIPTS_DIR)/klayout.sh -zz -rd in_gds="$<" \
@@ -796,7 +796,7 @@ $(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
 .PHONY: lvs
 lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
-$(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
+$(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl | check-klayout
 ifneq ($(KLAYOUT_LVS_FILE),)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_lvs.log) --tee -- \
 	        $(SCRIPTS_DIR)/klayout.sh -b -rd in_gds="$<" \
