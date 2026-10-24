@@ -1615,6 +1615,7 @@ SKIP_DETAILED_ROUTE:
   stages:
     - route
     - final
+    - generate_abstract
 MAX_REPAIR_ANTENNAS_ITER_DRT:
   default: 5
   description: >
