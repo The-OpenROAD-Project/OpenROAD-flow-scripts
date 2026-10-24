@@ -1,4 +1,8 @@
 firebase-admin
 pyyaml
-tclint==0.7.0
+tclint==0.9.0
 yamlfix==1.19.1
+# Keep yamlfix compatible with Tclint's tomli constraint on Python 3.10.
+maison==2.0.0 ; python_version < "3.11"
+# Remove the emSign roots covered by GHSA-6q48-6c7w-9gw2.
+certifi>=2026.10.19

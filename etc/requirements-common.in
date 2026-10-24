@@ -1,6 +1,9 @@
-pandas
-numpy
+# Keep the shared lock compatible with Python 3.10 on Ubuntu 22.04.
+pandas<3
+numpy<2.3
 google-cloud-pubsub
 click
 pyyaml
 yamlfix
+# Remove the emSign roots covered by GHSA-6q48-6c7w-9gw2.
+certifi>=2026.10.19

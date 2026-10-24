@@ -1,8 +1,13 @@
-sphinx-external-toc==0.3.1
-sphinx
-sphinx-autobuild
-myst-parser
+sphinx-external-toc==1.1.0
+# Keep the current Sphinx 5 and MyST 1 documentation stack.
+sphinx>=5,<6
+# Read the Docs uses Python 3.10; newer autobuild releases need Python 3.11.
+sphinx-autobuild<2025
+myst-parser<2
 sphinx-book-theme
 sphinx-copybutton
 sphinxcontrib-mermaid
-sphinx-llm
+# MyST 1 requires markdown-it-py below 3; sphinx-llm 1 requires 3 or later.
+sphinx-llm==0.4.1
+# Remove the emSign roots covered by GHSA-6q48-6c7w-9gw2.
+certifi>=2026.10.19
