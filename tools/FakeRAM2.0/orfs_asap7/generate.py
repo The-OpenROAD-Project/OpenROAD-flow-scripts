@@ -1,4 +1,20 @@
+"""ORFS asap7 backend: emit .lib/.lef views for the memories AUTO_MEMORIES converts.
+
+The input is memories.json, ORFS's inventory. Every converted memory
+carries the pin list of the module the flow blackboxes, and the macro has
+to expose exactly those pins or the blackboxed module never links to its
+liberty view. So the macro is built from the declared pins: a single
+read-write port -- clock, address, enable, write mode, data in, data out
+and an optional write mask with one lane per mask bit -- becomes a
+single-port RAM whose ports carry the module's names.
+
+A memory whose pins were synthesized by the detector rather than read off
+the module (port_convention "") has no such names and gets FakeRAM's
+historical single-port pins, which is what earlier ORFS releases emitted.
+"""
+
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -32,6 +48,57 @@ ASAP7_TIMING_CONFIG = {
     "leakage": 0.001,
 }
 
+# memories.json pin function -> the role SinglePortRAM names its port by.
+_ROLE_OF_FUNCTION = {
+    "clk": "clk",
+    "addr": "addr",
+    "en": "ce",
+    "wmode": "we",
+    "data_in": "din",
+    "data_out": "dout",
+    "mask": "mask",
+}
+
+
+def single_port_pins(mem: dict):
+    """The (pin_names, mask_lanes) of a memory declared as one RW port.
+
+    Returns None when the pins are not a single read-write port carrying
+    the functions a single-port RAM has: the caller then falls back to
+    FakeRAM's historical pin names.
+    """
+    pins = mem.get("pins") or []
+    groups = {p["port_id"] for p in pins}
+    if len(groups) != 1 or not next(iter(groups)).startswith("RW"):
+        return None
+    names = {}
+    lanes = 0
+    for p in pins:
+        role = _ROLE_OF_FUNCTION.get(p["function"])
+        if role is None or role in names:
+            return None
+        names[role] = p["name"]
+        if role == "mask":
+            lanes = int(p["width"])
+    if not {"clk", "addr", "ce", "we", "din", "dout"} <= set(names):
+        return None
+    return names, lanes
+
+
+def additional_height_for_pins(process: Process, bits: int, rows: int, lanes: int):
+    """Height to add so every pin gets a track on the macro's left edge.
+
+    FakeRAM sizes the macro from its bit cells and then fails when the
+    pins do not fit; a memory folded square by the column mux with a
+    per-bit mask is exactly that case. The extra height is computed here
+    rather than left to the caller to discover one macro at a time.
+    """
+    addr_w = max(1, math.ceil(math.log2(rows))) if rows > 1 else 1
+    num_pins = 2 * bits + addr_w + 3 + lanes
+    _, height = process.get_macro_dimensions(bits, rows, 1, 0)
+    needed = (num_pins + 1) * process.pin_pitch_um + 2 * process.y_offset
+    return max(0.0, needed - height)
+
 
 def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
     if platform != "asap7":
@@ -56,14 +123,29 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
     blackboxes = []
     for m in converted:
         name = m["name"]
-        bits = m.get("bits", 32)
-        rows = m.get("rows", 128)
+        bits = int(m.get("bits", 32))
+        rows = int(m.get("rows", 128))
+
+        pin_names = {}
+        lanes = 0
+        declared = single_port_pins(m)
+        if declared is not None:
+            pin_names, lanes = declared
+        elif m.get("port_convention"):
+            sys.stderr.write(
+                f"FakeRAM2.0 orfs_asap7: {name} declares pins that are not a "
+                "single read-write port; nothing this backend emits would link\n"
+            )
+            return 1
 
         sram_dict = {
             "name": name,
             "width": bits,
             "depth": rows,
             "banks": 1,
+            "additional_height": additional_height_for_pins(process, bits, rows, lanes),
+            "pin_names": pin_names,
+            "mask_lanes": lanes,
         }
         mem_config = MemoryConfig.from_json(sram_dict)
         ram = MemoryFactory.create(mem_config, "RAM", "SP", process, timing_data)
