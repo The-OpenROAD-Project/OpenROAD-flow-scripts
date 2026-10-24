@@ -282,7 +282,12 @@ if {
   ![env_var_equals SYNTH_WRAPPED_OPERATORS 1] &&
   ![env_var_equals SWAP_ARITH_OPERATORS 1]
 } {
-  log_cmd abc {*}$abc_args
+  if { [env_var_exists_and_non_empty SYNTH_ABC_PARTITION] && $::env(SYNTH_ABC_PARTITION) > 0 } {
+    source $::env(SCRIPTS_DIR)/synth_abc_partition.tcl
+    synth_abc_partition $abc_args $::env(SYNTH_ABC_PARTITION)
+  } else {
+    log_cmd abc {*}$abc_args
+  }
 } else {
   # Not dead code: abc_new mistakes the "-script" in /OpenROAD-flow-scripts/...
   # paths for a given -script and drops its default (YosysHQ/yosys#6320).

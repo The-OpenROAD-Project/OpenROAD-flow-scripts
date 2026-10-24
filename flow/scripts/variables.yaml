@@ -1070,6 +1070,18 @@ ABC_AREA:
   stages:
     - synth
   default: 0
+SYNTH_ABC_PARTITION:
+  description: |
+    Map the top module with one abc call per register group instead of one
+    for the whole module, so that each group is optimised against its own
+    critical delay rather than the module's (abc area-recovers every cone
+    that is faster than its single critical path). Flops are grouped by
+    name; the value is the minimum cone size, in cells, for a group to get
+    its own call. 0 disables. Ignored when SYNTH_WRAPPED_OPERATORS or
+    SWAP_ARITH_OPERATORS is set.
+  stages:
+    - synth
+  default: 0
 ABC_SCRIPT:
   description: |
     Replaces the ABC script synthesis runs, so that a design can vendor and
