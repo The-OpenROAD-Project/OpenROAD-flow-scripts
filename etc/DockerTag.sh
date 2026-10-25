@@ -27,9 +27,9 @@ elif [[ "$@" == "-tools" ]]; then
         cat ./build_openroad.sh ./dev_env.sh ./etc/setup_compiler_wrappers.sh
         cat "${ignore_file}"
         # Drop the trailing describe output, which depends on fetched tags.
-        git submodule status tools/yosys tools/kepler-formal | awk '{print $1, $2}'
+        git submodule status tools/yosys | awk '{print $1, $2}'
         git ls-tree HEAD tools/ | grep -v -e 'tools/OpenROAD$' -e 'tools/AutoTuner$' \
-            -e 'tools/yosys$' -e 'tools/kepler-formal$'
+            -e 'tools/yosys$'
         # The kepler-formal version and the Bazel settings that install it.
         git ls-tree -r HEAD etc/kepler-formal
     } | sha256sum | awk '{print substr($1, 1, 6)}'

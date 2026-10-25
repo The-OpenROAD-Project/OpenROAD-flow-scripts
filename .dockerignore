@@ -1,6 +1,5 @@
 # Build working directories
 tools/OpenROAD/build/
-tools/kepler-formal/build/
 # Local Bazel outputs; the image builds its own.
 etc/kepler-formal/bazel-*
 etc/kepler-formal/MODULE.bazel.lock
