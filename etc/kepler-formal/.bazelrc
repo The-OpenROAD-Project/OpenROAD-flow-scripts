@@ -1,0 +1,9 @@
+common --registry=https://bcr.bazel.build/
+
+build --cxxopt=-std=c++20
+build --host_cxxopt=-std=c++20
+build -c opt
+
+# As kepler-formal's own .bazelrc.
+common --enable_platform_specific_config
+build:linux --dynamic_mode=off

@@ -104,6 +104,8 @@ bazel-out
 bazel-OpenROAD-flow-scripts
 bazel-testlogs
 MODULE.bazel.lock
+# etc/kepler-formal
+bazel-kepler-formal
 
 # python venv
 venv/
