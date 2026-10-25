@@ -26,7 +26,7 @@ _versionCompare() {
     test $a "$2" $b
 }
 
-# Yosys and kepler-formal are built with CMake. Yosys needs CMake >= 3.28,
+# Yosys is built with CMake and needs CMake >= 3.28,
 # newer than Ubuntu 22.04 ships, so fetch a release from Kitware when the
 # one on PATH is too old.
 cmakeMinVersion=3.28
@@ -104,36 +104,6 @@ _installBison() {
         ./configure --prefix="${prefix}"
         make -j "${numThreads}"
         make install
-    )
-    rm -rf "${workDir}"
-}
-
-# kepler-formal needs oneTBB and its CMake package. EL8 ships TBB 2018, which
-# has neither, so build oneTBB there. Build it static, because the
-# kepler-formal RPATH does not include the prefix.
-tbbVersion=2021.13.0
-tbbChecksum=3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1
-
-_installTbb() {
-    local prefix=${PREFIX:-"/usr/local"}
-    if compgen -G "${prefix}/lib*/cmake/TBB/TBBConfig.cmake" > /dev/null; then
-        echo "oneTBB found in ${prefix}, skipping install"
-        return
-    fi
-    local tarball="oneTBB-${tbbVersion}.tar.gz"
-    local workDir
-    workDir=$(mktemp -d)
-    (
-        # _installCmake may have put CMake in a prefix that is not on PATH.
-        export PATH="${prefix}/bin:${PATH}"
-        cd "${workDir}"
-        wget -q -O "${tarball}" "https://github.com/uxlfoundation/oneTBB/archive/refs/tags/v${tbbVersion}.tar.gz"
-        sha256sum -c <(echo "${tbbChecksum}  ${tarball}")
-        tar xzf "${tarball}"
-        cmake -S "oneTBB-${tbbVersion}" -B build -DCMAKE_BUILD_TYPE=Release \
-            -DTBB_TEST=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="${prefix}"
-        cmake --build build -j "${numThreads}"
-        cmake --install build
     )
     rm -rf "${workDir}"
 }
@@ -232,14 +202,12 @@ _install_EL8_EL9_Packages() {
 
     # EL8 and EL9 use `dnf`, instead of `yum`
     dnf -y update
-    # EPEL has tcl-tclreadline and capnproto.
+    # EPEL has tcl-tclreadline.
     dnf -y install "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${elVersion}.noarch.rpm"
-    # The rest builds Yosys and kepler-formal.
+    # The rest builds Yosys.
     dnf -y install \
         bison \
         boost-devel \
-        capnproto \
-        capnproto-devel \
         findutils \
         flex \
         gcc \
@@ -260,7 +228,7 @@ _install_EL8_EL9_Packages() {
         wget \
         zlib-devel
 
-    # kepler-formal and the pip lock files need Python 3.10 or newer, which
+    # The pip lock files need Python 3.10 or newer, which
     # is newer than the EL8 and EL9 defaults.
     dnf -y install python3.12 python3.12-devel python3.12-pip
     update-alternatives --install /usr/bin/python3 python3 "$(command -v python3.12)" 50
@@ -272,13 +240,9 @@ _install_EL8_EL9_Packages() {
             readline-devel \
             tcl-tclreadline \
             tcl-tclreadline-devel
-        # The default GCC 8 is too old for kepler-formal.
-        dnf -y install gcc-toolset-13
     fi
 
     if [[ "${elVersion}" == "9" ]]; then
-        # EL8 builds oneTBB instead, in -common.
-        dnf -y install tbb-devel
         dnf -y install \
             https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/readline-devel-8.1-4.el9.x86_64.rpm
     fi
@@ -345,13 +309,11 @@ _installUbuntuPackages() {
         bison \
         build-essential \
         ca-certificates \
-        capnproto \
         curl \
         flex \
         git \
         help2man \
         libboost-iostreams-dev \
-        libcapnp-dev \
         libffi-dev \
         libfl-dev \
         libfl2 \
@@ -364,7 +326,6 @@ _installUbuntuPackages() {
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
         libreadline-dev \
-        libtbb-dev \
         libz-dev \
         perl \
         pkg-config \
@@ -467,7 +428,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib cmake
+    brew install python libomp doxygen bison flex boost spdlog zlib cmake
     brew link --force libomp
     brew install --cask klayout
     brew install docker docker-buildx
@@ -697,9 +658,6 @@ case "${os}" in
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCmake
             _installBison
-            if [[ "${elVersion}" == "8" ]]; then
-                _installTbb
-            fi
             _installPipCommon
         fi
         ;;
