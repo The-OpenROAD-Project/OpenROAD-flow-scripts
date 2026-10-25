@@ -385,12 +385,6 @@ __local_build()
                 source /opt/rh/devtoolset-8/enable
                 set -u
         fi
-        # EL8: the default GCC 8 is too old for kepler-formal.
-        if [[ -f "/opt/rh/gcc-toolset-13/enable" ]]; then
-                set +u
-                source /opt/rh/gcc-toolset-13/enable
-                set -u
-        fi
 
         if [ -z "${SKIP_OPENROAD+x}" ]; then
                 echo "[INFO FLW-0018] Compiling OpenROAD."
@@ -423,34 +417,19 @@ __local_build()
                 ${YOSYS_ARGS}
         ${NICE} cmake --build tools/yosys/build --target install -j "${PROC}"
 
-        echo "[INFO FLW-0031] Compiling kepler-formal"
-        # -march=x86-64-v3 is valid only for x86 compilers. On Arm, use the
-        # Armv8-A baseline, so that the binary runs on any aarch64 machine.
-        # EL9 ships TBB 2020, where concurrent_map needs
-        # TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS; oneTBB ignores it.
-        # EL installs libraries in lib64 by default; the RPATH points to lib.
-        # The RPATH is relative to bin/, so a moved install still loads its
-        # own libraries (#4717); macOS spells $ORIGIN as @loader_path.
-        case "$(uname -m)" in
-                aarch64|arm64) KEPLER_MARCH="-march=armv8-a" ;;
-                *) KEPLER_MARCH="-march=x86-64-v3" ;;
-        esac
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-                KEPLER_RPATH="@loader_path/../lib"
-        else
-                KEPLER_RPATH="\$ORIGIN/../lib"
+        echo "[INFO FLW-0031] Installing kepler-formal"
+        # etc/kepler-formal pins kepler-formal; Bazel downloads it, its
+        # dependencies and the compiler. See etc/kepler-formal/README.md.
+        if ! command -v bazelisk &> /dev/null; then
+                echo "[ERROR FLW-0034] kepler-formal needs bazelisk; run etc/DependencyInstaller.sh -common." >&2
+                exit 1
         fi
-        ${NICE} cmake -B tools/kepler-formal/build tools/kepler-formal \
-                -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast ${KEPLER_MARCH} -ffast-math -flto -DTBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS=1" \
-                -DCMAKE_EXE_LINKER_FLAGS="-flto" \
-                -DCMAKE_BUILD_RPATH="${DIR}/tools/kepler-formal/build/thirdparty/naja/src/dnl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/optimization" \
-                -DCMAKE_INSTALL_RPATH="${KEPLER_RPATH}" \
-                -DCMAKE_INSTALL_LIBDIR=lib \
-                -DCMAKE_BUILD_WITH_INSTALL_RPATH=OFF \
-                -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
-                -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}/kepler-formal"
-        ${NICE} cmake --build tools/kepler-formal/build --target install -j "${PROC}"
+        KEPLER_PREFIX="${INSTALL_PATH}/kepler-formal"
+        if [[ "${KEPLER_PREFIX}" != /* ]]; then
+                KEPLER_PREFIX="$(pwd)/${KEPLER_PREFIX}"
+        fi
+        (cd "${DIR}/etc/kepler-formal" && \
+                ${NICE} bazelisk run --jobs="${PROC}" //:install -- "${KEPLER_PREFIX}")
 
         if [ ${WITH_VERIFIC} -eq 1 ]; then
                 echo "[INFO FLW-0032] Cleaning up Verific components."

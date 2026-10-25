@@ -16,7 +16,8 @@ if [[ "$@" == "-dev" ]]; then
 elif [[ "$@" == "-tools" ]]; then
     # Everything the orfs-tools target of Dockerfile.builder depends on:
     # the dev image, the build scripts, the ignore file that filters the
-    # build context, and the checked-out tools except OpenROAD.
+    # build context, the checked-out tools except OpenROAD, and the
+    # pinned kepler-formal.
     ignore_file=./docker/Dockerfile.builder.dockerignore
     if [[ ! -f "${ignore_file}" ]]; then
         ignore_file=./.dockerignore
@@ -29,6 +30,8 @@ elif [[ "$@" == "-tools" ]]; then
         git submodule status tools/yosys tools/kepler-formal | awk '{print $1, $2}'
         git ls-tree HEAD tools/ | grep -v -e 'tools/OpenROAD$' -e 'tools/AutoTuner$' \
             -e 'tools/yosys$' -e 'tools/kepler-formal$'
+        # The kepler-formal version and the Bazel settings that install it.
+        git ls-tree -r HEAD etc/kepler-formal
     } | sha256sum | awk '{print substr($1, 1, 6)}'
 elif [[ "$@" == "-master" ]]; then
     git fetch --tags >&2
