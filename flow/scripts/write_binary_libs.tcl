@@ -14,10 +14,6 @@ set written 0
 set cached 0
 array set seen {}
 foreach lib_file $lib_files {
-  # Libraries the flow has not generated yet are converted on a later run
-  if { ![file exists $lib_file] } {
-    continue
-  }
   set blib [binary_lib_path $lib_file]
   if { [info exists seen($blib)] } {
     continue

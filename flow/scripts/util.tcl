@@ -541,9 +541,6 @@ proc binary_lib_usable { blib } {
 
 # The cached .blib for lib_file, or lib_file when there is no usable .blib
 proc lib_file_to_read { lib_file } {
-  if { ![file exists $lib_file] } {
-    return $lib_file
-  }
   set blib [binary_lib_path $lib_file]
   if { [binary_lib_usable $blib] } {
     return $blib
