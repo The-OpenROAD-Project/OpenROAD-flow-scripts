@@ -21,7 +21,7 @@ usage: $0 [CMD] [OPTIONS]
   push                          Push the docker image to Docker Hub
 
   OPTIONS:
-  -os=OS_NAME                   Use ubuntu22.04 (default).
+  -os=OS_NAME                   Use ubuntu26.04 (default) or ubuntu24.04.
   -target=TARGET                Choose target for the Docker image:
                                   'dev': os + packages to compile app
                                   'builder': os + packages to compile app +
@@ -45,8 +45,11 @@ EOF
 
 _setup() {
     case "${os}" in
-        "ubuntu22.04")
-            osBaseImage="ubuntu:22.04"
+        "ubuntu24.04")
+            osBaseImage="ubuntu:24.04"
+            ;;
+        "ubuntu26.04")
+            osBaseImage="ubuntu:26.04"
             ;;
         *)
             echo "Target OS ${os} not supported" >&2
@@ -183,7 +186,7 @@ if [[ -z $(command -v "${_rule}") ]]; then
 fi
 
 # default values, can be overwritten by command line arguments
-os="ubuntu22.04"
+os="ubuntu26.04"
 target="dev"
 numThreads="-1"
 tag=""

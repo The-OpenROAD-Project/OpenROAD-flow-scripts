@@ -26,7 +26,7 @@ YOSYS_ARGS=""
 OPENROAD_APP_USER_ARGS=()
 OPENROAD_APP_ARGS=()
 
-DOCKER_OS_NAME="ubuntu22.04"
+DOCKER_OS_NAME="ubuntu26.04"
 PROC=-1
 
 WITH_VERIFIC=0
@@ -101,7 +101,7 @@ Options:
 Options valid only for Docker builds:
     -c, --copy-platforms    Copy platforms to inside docker image.
 
-    --os=DOCKER_OS_NAME     Use ubuntu22.04 (default).
+    --os=DOCKER_OS_NAME     Use ubuntu26.04 (default) or ubuntu24.04.
 
     This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
     By default, the tools will be built from the linked submodule hashes.
