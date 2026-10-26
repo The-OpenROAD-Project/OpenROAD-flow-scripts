@@ -293,7 +293,8 @@ $(OBJECTS_DIR)/klayout.lyt: $(RESULTS_DIR)/memories.json
 endif
 
 # OpenROAD stages read binary liberty (.blib) files from a cache shared by
-# all designs, see scripts/write_binary_libs.tcl. Yosys reads the text libraries.
+# all designs in $(WORK_HOME)/objects/binary_libs, see
+# scripts/write_binary_libs.tcl. Yosys reads the text libraries.
 .PHONY: binary-libs
 binary-libs:
 	$(UNSET_AND_MAKE) do-binary-libs
@@ -303,12 +304,15 @@ do-binary-libs:
 	@mkdir -p $(LOG_DIR)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/write_binary_libs.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_binary_libs.tcl
 
-# Order-only, so filling the cache never reruns the flow.
-$(RESULTS_DIR)/1_synth.odb: | binary-libs
+$(LOG_DIR)/write_binary_libs.log: $(LIB_FILES)
+	$(UNSET_AND_MAKE) do-binary-libs
+
+# Order-only, so converting never reruns the flow.
+$(RESULTS_DIR)/1_synth.odb: | $(LOG_DIR)/write_binary_libs.log
 
 .PHONY: clean_binary_libs
 clean_binary_libs:
-	rm -rf $(if $(strip $(BINARY_LIBS_DIR)),$(BINARY_LIBS_DIR),$(error BINARY_LIBS_DIR is empty))
+	rm -rf $(WORK_HOME)/objects/binary_libs
 
 .PHONY: do-yosys
 do-yosys: yosys-dependencies

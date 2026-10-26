@@ -168,22 +168,6 @@ LIB_FILES:
     A Liberty file of the standard cell library with PVT characterization,
     input and output characteristics, timing and power definitions for each
     cell.
-BINARY_LIBS_DIR:
-  description: >
-    Directory of the binary liberty (.blib) cache shared by the designs of
-    each platform, as `<platform>/<library>@<size>-<mtime>-<dirhash>.blib`
-    so that a changed library gets a new entry. Libraries in DESIGN_DIR and
-    libraries the flow generates are cached per run in
-    `$(OBJECTS_DIR)/binary_libs` instead. Before 1_synth the flow converts
-    every library that has no cached .blib, which `make binary-libs` also
-    does on its own, and the OpenROAD stages read the .blib files instead of
-    parsing the text libraries. A library with no usable .blib is read as
-    given. Set it in the environment or settings.mk, not in a design's
-    config.mk; ORFS clones that set the same directory share their .blib
-    files. `make clean_binary_libs` deletes it.
-  default: $(WORK_HOME)/objects/binary_libs
-  stages:
-    - All stages
 LIB_MODEL:
   description: >
     Selects between NLDM and CCS timing models for the ASAP7 platform.

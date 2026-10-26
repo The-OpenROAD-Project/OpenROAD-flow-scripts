@@ -505,16 +505,16 @@ proc synth_verilog_files { } {
   return $copies
 }
 
-# Entry of lib_file in the binary liberty (.blib) cache:
-# <platform>/<library>@<size>-<mtime>-<dirhash>.blib, so a changed library gets
-# a new entry and same-named libraries from different directories don't
-# collide. Libraries in the design's directory and those the flow generates
-# are cached per run.
+# Entry of lib_file in the binary liberty (.blib) cache shared by all designs:
+# objects/binary_libs/<platform>/<library>@<size>-<mtime>-<dirhash>.blib, so a
+# changed library gets a new entry and same-named libraries from different
+# directories don't collide. Libraries in the design's directory and those the
+# flow generates are cached per run.
 proc binary_lib_path { lib_file } {
   set source [file normalize $lib_file]
-  set root [file join $::env(BINARY_LIBS_DIR) $::env(PLATFORM)]
-  set run_dirs [list $::env(DESIGN_DIR) \
-    [file join $::env(WORK_HOME) objects] [file join $::env(WORK_HOME) results]]
+  set objects [file join $::env(WORK_HOME) objects]
+  set root [file join $objects binary_libs $::env(PLATFORM)]
+  set run_dirs [list $::env(DESIGN_DIR) $objects [file join $::env(WORK_HOME) results]]
   foreach dir $run_dirs {
     if { [string first "[file normalize $dir]/" $source] == 0 } {
       set root [file join $::env(OBJECTS_DIR) binary_libs]
