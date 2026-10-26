@@ -66,16 +66,30 @@ def _spec_value(spec: Path, key: str) -> list[list[str]]:
 
 
 def _spec_mode(spec: Path) -> str:
-    """`mode macro` (the default) or `mode netlist` of a register-file spec."""
+    """`mode netlist`, the only mode, of a register-file spec.
+
+    `mode macro` stops: it wrote the macro's timing model from
+    generate_ram's netlist before any clock tree was built, so its clock
+    pin was the whole unbuffered clock net (8.5 pF for 64 x 256 bits on
+    asap7). A register file wanted as a macro is a design of its own:
+    run it through the flow and give its abstract to the parent as a
+    macro."""
     for line in spec.read_text().splitlines():
         parts = line.split("#", 1)[0].split()
         if len(parts) == 2 and parts[0] == "mode":
-            if parts[1] not in ("macro", "netlist"):
+            if parts[1] == "macro":
                 raise SystemExit(
-                    f"gen_memories: {spec}: mode is macro or netlist, not {parts[1]}"
+                    f"gen_memories: {spec}: mode macro is gone. A register file "
+                    "wanted as a macro is a design of its own: run it through "
+                    "the flow (in bazel-orfs, its own orfs_flow) and give the "
+                    "parent its abstract as a macro. Here, mode netlist "
+                    "dissolves it into this design."
                 )
-            return parts[1]
-    return "macro"
+            if parts[1] != "netlist":
+                raise SystemExit(
+                    f"gen_memories: {spec}: mode is netlist, not {parts[1]}"
+                )
+    return "netlist"
 
 
 def _lib_area(lib: Path) -> str:

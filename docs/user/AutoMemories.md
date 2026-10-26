@@ -164,16 +164,21 @@ to place as macros:
 - **Listed: a macro.** `<m>_ram` is a macro to synthesis and macro
   placement: its abstract `<m>_ram.lef` and a liberty of its area and
   pins land beside the FakeRAM views and it joins `blackboxes.txt`. In
-  `mode netlist` (the usual one) `generate_ram` places only the array's
+  `mode netlist` (the only one) `generate_ram` places only the array's
   core and leaves its periphery (decode, select and input buffers) to
   the parent, and the macro dissolves into its cells at the end of macro
   placement (`regfile_dissolve.tcl`): the core lands FIRM where the
   macro was placed, flipped as the macro was, on the parent's rows; the
   periphery is left to global placement and the resizer, and dead logic
-  is eliminated as at synthesis. `mode macro` keeps the macro to the
-  end, its pins placed on its edges, a power grid with `VDD`/`VSS` pins
-  and a timing model from `write_timing_model`. A large design whose
-  floorplan plans its register files lists them.
+  is eliminated as at synthesis. A large design whose floorplan plans
+  its register files lists them.
+- **A macro of its own.** A register file wanted as a macro to the end
+  is a design of its own: run its module through the flow (in
+  bazel-orfs, its own `orfs_flow`, its spec listed and macro-placed so
+  it dissolves there) and give the parent its abstract as a macro. Its
+  clock tree is then built and its timing model is written from it.
+  `mode macro`, which wrote the model from `generate_ram`'s netlist
+  before any clock tree, stops with that advice.
 
 A word holds its value between writes either through a hold mux per
 bit (`write_style mux`, the default here) or through one integrated
