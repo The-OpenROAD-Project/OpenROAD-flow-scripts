@@ -1,0 +1,57 @@
+load("@rules_chisel//chisel:defs.bzl", "chisel_binary")
+load("@rules_chisel//verilog:defs.bzl", "fir_library", "verilog_file")
+load("@rules_java//java:java_import.bzl", "java_import")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+
+genrule(
+    name = "resources_jar",
+    srcs = [
+        "@common_cells//:all_srcs",
+        "@coralnpu//:blackboxes",
+        "@cvfpu//:all_srcs",
+        "@fpu_div_sqrt_mvp//:all_srcs",
+    ],
+    outs = ["resources.jar"],
+    cmd = "python3 $(location resources.py) $@ $(SRCS)",
+    tools = ["resources.py"],
+)
+
+java_import(
+    name = "resources",
+    jars = [":resources.jar"],
+)
+
+chisel_binary(
+    name = "generator",
+    srcs = ["CoreMiniAxiGenerator.scala"],
+    main_class = "orfs.coralnpu.CoreMiniAxiGenerator",
+    deps = [
+        ":resources",
+        "@coralnpu",
+    ],
+)
+
+fir_library(
+    name = "CoreMiniAxi_hw",
+    generator = ":generator",
+    opts = [
+        "--disable-all-randomization",
+        "--disable-layers=Verification",
+    ],
+)
+
+verilog_file(
+    name = "CoreMiniAxi_generated.sv",
+    srcs = [":CoreMiniAxi_hw"],
+    opts = [
+        "--disable-all-randomization",
+        "--disable-layers=Verification",
+        "--lowering-options=disallowLocalVariables,locationInfoStyle=none",
+    ],
+)
+
+sh_binary(
+    name = "update",
+    srcs = ["update.sh"],
+    data = [":CoreMiniAxi_generated.sv"],
+)
