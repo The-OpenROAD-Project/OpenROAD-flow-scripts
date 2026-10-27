@@ -1361,7 +1361,7 @@
   },
   "SYNTH_MEMORY_MAX_BITS": {
     "default": 4096,
-    "description": "Maximum number of bits for memory synthesis. Ideally, real RAM or realistic fakeram should be used for RAMs much larger than 1024 bits. To temporarily ignore the RAM concerns and investigate other aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`, or adjusting `SYNTH_MEMORY_MAX_BITS`.\n",
+    "description": "Maximum number of bits for memory synthesis. Ideally, real RAM or realistic fakeram should be used for RAMs much larger than 1024 bits. To temporarily ignore the RAM concerns and investigate other aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`, or adjusting `SYNTH_MEMORY_MAX_BITS`. ROMs, inferred memories with no write port, are not counted: a ROM holds constants that synthesis maps to logic like any other, and it goes through the normal flow. The limit is there so that a read/write memory, which belongs in a macro (`AUTO_MEMORIES`, fakeram) or a mock, does not go undetected into flip-flops; raising it to admit a large ROM would let read/write memories of that size through too.\n",
     "stages": [
       "synth"
     ]
