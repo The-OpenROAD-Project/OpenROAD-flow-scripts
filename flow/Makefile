@@ -292,6 +292,32 @@ $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
 $(OBJECTS_DIR)/klayout.lyt: $(RESULTS_DIR)/memories.json
 endif
 
+# OpenROAD stages read binary liberty (.blib) files from a cache shared by
+# all designs in $(WORK_HOME)/objects/binary_libs, see
+# scripts/write_binary_libs.tcl. Yosys reads the text libraries.
+.PHONY: binary-libs
+binary-libs:
+	$(UNSET_AND_MAKE) do-binary-libs
+
+.PHONY: do-binary-libs
+do-binary-libs:
+	@mkdir -p $(LOG_DIR)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/write_binary_libs.tmp.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_binary_libs.tcl
+	mv $(LOG_DIR)/write_binary_libs.tmp.log $(LOG_DIR)/write_binary_libs.log
+
+# do-binary-libs renames its log into place only when it succeeds, so a
+# failed conversion runs again.
+$(LOG_DIR)/write_binary_libs.log: $(LIB_FILES) \
+  $(foreach corner,$(shell echo $(CORNERS) | tr '[:lower:]' '[:upper:]'),$($(corner)_LIB_FILES))
+	$(UNSET_AND_MAKE) do-binary-libs
+
+# Order-only, so converting never reruns the flow.
+$(RESULTS_DIR)/1_synth.odb: | $(LOG_DIR)/write_binary_libs.log
+
+.PHONY: clean_binary_libs
+clean_binary_libs:
+	rm -rf $(WORK_HOME)/objects/binary_libs
+
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
 	$(SCRIPTS_DIR)/synth.sh $(SYNTH_SCRIPT) $(LOG_DIR)/1_2_yosys.log
