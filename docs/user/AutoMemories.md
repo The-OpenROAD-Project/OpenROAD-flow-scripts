@@ -213,10 +213,11 @@ own module, the seam a spec needs, measured as flops against
 | asap7/cva6 | `ariane_regfile` (`ariane_regfile_ff.sv`) | flip-flops: cv32a65x has `FpgaEn` 0 | 32 x 32, 2R1W | Not yet: the ports are packed arrays (`raddr_i[1:0][4:0]`), one port per slice, which a spec cannot yet address; asynchronous reset as ibex. |
 | asap7/swerv_wrapper | `dec_gpr_ctl_*` | flip-flops | 32 x 32, 4R3W | Not yet: read enables, bank ids and scan ports around the array need a seam in the RTL. |
 
-coralnpu's `Regfile` (8R4W) and `FRegfile` (3R2W) carry their
-scoreboard and bypass logic in the same module, and picorv32 and
-tinyRocket keep their register file inside the CPU module: those need a
-seam in their RTL first.
+coralnpu's `Regfile` (9R6W) and `FRegfile` (4R2W) carry their
+scoreboard and bypass logic in the same module; asap7/coralnpu gives
+their words modules of their own with `SYNTH_VERILOG_SURGERY` and
+generates both. picorv32 and tinyRocket keep their register file inside
+the CPU module: those need a seam in their RTL first.
 
 ### Status: at parity on riscv32i, on a smaller core
 
