@@ -96,31 +96,11 @@ proc extract_stage { input_file } {
   }
 }
 
-proc find_sdc_file { input_file } {
-  # canonicalize input file, sometimes it is called with an input
-  # file relative to $::env(RESULTS_DIR), other times with
-  # an absolute path
-  if { ![file exists $input_file] } {
-    set input_file [file join $::env(RESULTS_DIR) $input_file]
-  }
-  set input_file [file normalize $input_file]
-
-  set stage [extract_stage $input_file]
-  set design_stage [lindex $stage 0]
-  set sdc_file ""
-
-  set exact_sdc [string map {.odb .sdc} $input_file]
-  set sdc_files \
-    [glob -nocomplain -directory $::env(RESULTS_DIR) -types f "\[1-9+\]_\[1-9_A-Za-z\]*\.sdc"]
-  set sdc_files [lsort -decreasing -dictionary $sdc_files]
-  set sdc_files [lmap file $sdc_files { file normalize $file }]
-  foreach name $sdc_files {
-    if { [lindex [lsort -decreasing -dictionary [list $name $exact_sdc]] 0] == $exact_sdc } {
-      set sdc_file $name
-      break
-    }
-  }
-  return [list $design_stage $sdc_file]
+# The stem ends at the first dot of the file name, so 4_cts.odb,
+# 4_cts.odb.def and 4_cts.odb.v all have 4_cts.sdc
+proc sdc_file_of { design_file } {
+  regsub {\.[^/]*$} $design_file .sdc sdc_file
+  return $sdc_file
 }
 
 proc env_var_equals { env_var value } {
@@ -438,6 +418,7 @@ proc orfs_write_db { output_file { endpoint_slack 1 } } {
     return
   }
   log_cmd write_db $output_file
+  orfs_write_sdc [sdc_file_of $output_file]
 }
 
 proc orfs_write_sdc { output_file } {
@@ -448,8 +429,8 @@ proc orfs_write_sdc { output_file } {
 }
 
 # For a stage that leaves the design unchanged, copying the input .odb
-# forward is much faster than serializing the in-memory database again
-# with write_db. Gated like orfs_write_db: in a single-process flow
+# and .sdc forward is much faster than serializing the in-memory database
+# again with write_db. Gated like orfs_write_db: in a single-process flow
 # (WRITE_ODB_AND_SDC_EACH_STAGE=0) the input file may not exist and no
 # stage file should be produced.
 #
@@ -462,6 +443,7 @@ proc orfs_copy_db { input_file output_file } {
     return
   }
   log_cmd exec cp $input_file $output_file
+  log_cmd exec cp [sdc_file_of $input_file] [sdc_file_of $output_file]
 }
 
 proc source_step_tcl { hook_type step_name } {

@@ -1,7 +1,7 @@
 utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 1_synth.odb 1_synth.sdc
+load_design 1_synth.odb
 source_step_tcl PRE FLOORPLAN
 
 proc report_unused_masters { } {
@@ -166,4 +166,3 @@ source_step_tcl POST FLOORPLAN
 source_env_var_if_exists IO_CONSTRAINTS
 
 orfs_write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
-orfs_write_sdc $::env(RESULTS_DIR)/2_1_floorplan.sdc

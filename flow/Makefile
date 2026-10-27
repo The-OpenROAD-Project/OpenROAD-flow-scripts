@@ -325,8 +325,7 @@ clean_synth:
 # |_|   |_____\___/ \___/|_| \_\_|   |_____/_/   \_\_| \_|
 #
 .PHONY: floorplan
-floorplan: $(RESULTS_DIR)/2_floorplan.odb \
-           $(RESULTS_DIR)/2_floorplan.sdc
+floorplan: $(RESULTS_DIR)/2_floorplan.odb
 
 # ==============================================================================
 
@@ -407,33 +406,32 @@ do-$(1): $(DO_STEP_DEPS_$(1)) $(OBJECTS_DIR)/copyright.txt
 	$(SCRIPTS_DIR)/flow.sh $(1) $(3)
 endef
 
-# generate make rules to copy a file, if a dependency change and
-# a do- sibling rule that copies the file unconditionally.
+# generate make rules to copy an .odb and its .sdc, if a dependency
+# change and a do- sibling rule that copies them unconditionally.
 #
-# The file is copied within the $(RESULTS_DIR)
+# The files are copied within the $(RESULTS_DIR)
 #
-# $(1) stem of target, e.g. 2_1_floorplan
-# $(2) basename of file to be copied
-# $(3) further dependencies
-# $(4) target extension, default .odb
+# $(1) stem of target, e.g. 2_floorplan
+# $(2) stem of the files to be copied, e.g. 2_4_floorplan_pdn
 define do-copy
-$(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb): $(RESULTS_DIR)/$(2) $(3)
-	$$(UNSET_AND_MAKE) do-$(1)$(if $(4),$(4),)
+$(RESULTS_DIR)/$(1).odb: $(RESULTS_DIR)/$(2).odb
+	$$(UNSET_AND_MAKE) do-$(1)
 
-.PHONY: do-$(1)$(if $(4),$(4),)
-do-$(1)$(if $(4),$(4),):
-	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
+.PHONY: do-$(1)
+do-$(1):
+	cp $(RESULTS_DIR)/$(2).odb $(RESULTS_DIR)/$(1).odb
+	cp $(RESULTS_DIR)/$(2).sdc $(RESULTS_DIR)/$(1).sdc
 endef
 
 # ==============================================================================
 
 # Custom target to go from synthesis to placement in a single OpenROAD run
-$(eval $(call do-step,1_3_floorplan_to_place, $(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc,floorplan_to_place))
+$(eval $(call do-step,1_3_floorplan_to_place, $(RESULTS_DIR)/1_synth.odb,floorplan_to_place))
 
 $(eval $(call OPEN_GUI_SHORTCUT,yosys,1_2_yosys.v))
 
 .PHONY: floorplan_to_place
-floorplan_to_place: $(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc
+floorplan_to_place: $(RESULTS_DIR)/1_synth.odb
 	$(UNSET_AND_MAKE) do-1_3_floorplan_to_place
 
 # ==============================================================================
@@ -443,8 +441,6 @@ $(eval $(call do-step,1_synth,$(VERILOG_FILES) $(SDC_FILE) $(TECH_LEF) $(SC_LEF)
 else
 $(eval $(call do-step,1_synth,$(RESULTS_DIR)/1_2_yosys.v $(RESULTS_DIR)/1_2_yosys.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(LIB_FILES),synth_odb))
 endif
-
-$(RESULTS_DIR)/1_synth.sdc: $(RESULTS_DIR)/1_synth.odb
 
 FORMAL_CHECK_DEPS =
 ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
@@ -459,20 +455,18 @@ check-kepler-formal:
 		exit 1; \
 	fi
 
-$(RESULTS_DIR)/1_synth_lec.v: $(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc
+$(RESULTS_DIR)/1_synth_lec.v: $(RESULTS_DIR)/1_synth.odb
 	$(UNSET_AND_MAKE) do-1_synth
 
 ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
 $(RESULTS_DIR)/1_synth_lec.v: | check-kepler-formal
 endif
 
-$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(LIB_FILES) $(IO_CONSTRAINTS),floorplan))
-
-$(eval $(call do-copy,2_floorplan,2_1_floorplan.sdc,,.sdc))
+$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.odb $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(LIB_FILES) $(IO_CONSTRAINTS),floorplan))
 
 # STEP 2: Macro Placement
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_2_floorplan_macro,$(RESULTS_DIR)/2_1_floorplan.odb $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
+$(eval $(call do-step,2_2_floorplan_macro,$(RESULTS_DIR)/2_1_floorplan.odb $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
 
 # STEP 3: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
@@ -482,17 +476,15 @@ $(eval $(call do-step,2_3_floorplan_tapcell,$(RESULTS_DIR)/2_2_floorplan_macro.o
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_4_floorplan_pdn,$(RESULTS_DIR)/2_3_floorplan_tapcell.odb $(PDN_TCL),pdn))
 
-$(eval $(call do-copy,2_floorplan,2_4_floorplan_pdn.odb,))
-
-$(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
+$(eval $(call do-copy,2_floorplan,2_4_floorplan_pdn))
 
 .PHONY: do-floorplan
 do-floorplan:
-	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_macro do-2_3_floorplan_tapcell do-2_4_floorplan_pdn do-2_floorplan do-2_floorplan.sdc
+	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_macro do-2_3_floorplan_tapcell do-2_4_floorplan_pdn do-2_floorplan
 
 .PHONY: clean_floorplan
 clean_floorplan:
-	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/2_*.v $(RESULTS_DIR)/2_*.def
+	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_*floorplan*.sdc $(RESULTS_DIR)/2_*.v $(RESULTS_DIR)/2_*.def
 	rm -f $(REPORTS_DIR)/2_*
 	rm -f $(LOG_DIR)/2_*
 
@@ -504,22 +496,21 @@ clean_floorplan:
 # |_|   |_____/_/   \_\____|_____|
 #
 .PHONY: place
-place: $(RESULTS_DIR)/3_place.odb \
-       $(RESULTS_DIR)/3_place.sdc
+place: $(RESULTS_DIR)/3_place.odb
 # ==============================================================================
 # STEP 1: Global placement without placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place_skip_io))
+$(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(LIB_FILES),global_place_skip_io))
 
 $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb,io_placement))
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_3_place_gp,$(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
+$(eval $(call do-step,3_3_place_gp,$(RESULTS_DIR)/3_2_place_iop.odb $(LIB_FILES),global_place))
 
 # STEP 4: Resizing & Buffering
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_4_place_resized,$(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc,resize))
+$(eval $(call do-step,3_4_place_resized,$(RESULTS_DIR)/3_3_place_gp.odb,resize))
 
 .PHONY: clean_resize
 clean_resize:
@@ -529,11 +520,7 @@ clean_resize:
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,3_5_place_dp,$(RESULTS_DIR)/3_4_place_resized.odb,detail_place))
 
-$(eval $(call do-copy,3_place,3_5_place_dp.odb,))
-
-# detail_place writes 3_place.sdc alongside 3_5_place_dp.odb (constraints
-# are unchanged during placement), mirroring how synth writes 1_synth.sdc.
-$(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/3_5_place_dp.odb
+$(eval $(call do-copy,3_place,3_5_place_dp))
 
 .PHONY: do-place
 do-place:
@@ -544,7 +531,7 @@ do-place:
 .PHONY: clean_place
 clean_place:
 	rm -f $(RESULTS_DIR)/3_*place*.odb
-	rm -f $(RESULTS_DIR)/3_place.sdc
+	rm -f $(RESULTS_DIR)/3_*place*.sdc
 	rm -f $(RESULTS_DIR)/3_*.def $(RESULTS_DIR)/3_*.v
 	rm -f $(REPORTS_DIR)/3_*
 	rm -f $(LOG_DIR)/3_*
@@ -558,8 +545,7 @@ clean_place:
 #  \____| |_| |____/
 #
 .PHONY: cts
-cts: $(RESULTS_DIR)/4_cts.odb \
-     $(RESULTS_DIR)/4_cts.sdc
+cts: $(RESULTS_DIR)/4_cts.odb
 # ==============================================================================
 
 # Run TritonCTS
@@ -568,15 +554,13 @@ ifeq ($(LEC_CHECK),1)
 DO_STEP_DEPS_4_1_cts += check-kepler-formal
 endif
 
-$(eval $(call do-step,4_1_cts,$(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc,cts))
+$(eval $(call do-step,4_1_cts,$(RESULTS_DIR)/3_place.odb,cts))
 
 ifeq ($(LEC_CHECK),1)
 $(RESULTS_DIR)/4_1_cts.odb: | check-kepler-formal
 endif
 
-$(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
-
-$(eval $(call do-copy,4_cts,4_1_cts.odb))
+$(eval $(call do-copy,4_cts,4_1_cts))
 
 .PHONY: do-cts
 do-cts:
@@ -584,7 +568,7 @@ do-cts:
 
 .PHONY: clean_cts
 clean_cts:
-	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_*.v $(RESULTS_DIR)/4_*.def
+	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_*cts*.sdc $(RESULTS_DIR)/4_*.v $(RESULTS_DIR)/4_*.def
 	rm -f  $(REPORTS_DIR)/4_*
 	rm -rf $(LOG_DIR)/4_*
 
@@ -597,8 +581,7 @@ clean_cts:
 # |_| \_\\___/ \___/  |_| |___|_| \_|\____|
 #
 .PHONY: route
-route: $(RESULTS_DIR)/5_route.odb \
-       $(RESULTS_DIR)/5_route.sdc
+route: $(RESULTS_DIR)/5_route.odb
 
 .PHONY: grt globalroute
 globalroute: grt
@@ -617,13 +600,11 @@ $(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
 
 $(eval $(call do-step,5_3_fillcell,$(RESULTS_DIR)/5_2_route.odb,fillcell))
 
-$(eval $(call do-copy,5_route,5_3_fillcell.odb))
-
-$(eval $(call do-copy,5_route,5_1_grt.sdc,,.sdc))
+$(eval $(call do-copy,5_route,5_3_fillcell))
 
 .PHONY: do-route
 do-route:
-	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_3_fillcell do-5_route do-5_route.sdc
+	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_3_fillcell do-5_route
 
 .PHONY: do-grt
 do-grt:
@@ -632,7 +613,7 @@ do-grt:
 .PHONY: clean_route
 clean_route:
 	rm -rf $(RESULTS_DIR)/route.guide $(RESULTS_DIR)/output_guide.mod $(RESULTS_DIR)/updated_clks.sdc
-	rm -rf $(RESULTS_DIR)/5_*.odb $(RESULTS_DIR)/5_route.sdc $(RESULTS_DIR)/5_*.def $(RESULTS_DIR)/5_*.v
+	rm -rf $(RESULTS_DIR)/5_*.odb $(RESULTS_DIR)/5_*.sdc $(RESULTS_DIR)/5_*.def $(RESULTS_DIR)/5_*.v
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
@@ -661,7 +642,6 @@ klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 .PHONY: finish
 finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
-        $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
 	$(UNSET_AND_MAKE) elapsed
 
@@ -674,23 +654,17 @@ elapsed:
 elapsed-all:
 	@$(PYTHON_EXE) $(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
 
-$(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
-
-$(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
+$(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(FILL_CONFIG),density_fill))
 
 ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
 DO_STEP_DEPS_6_report += check-kepler-formal
 endif
 
-$(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc $(FORMAL_CHECK_DEPS),final_report,.log,$(LOG_DIR)))
+$(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(FORMAL_CHECK_DEPS),final_report,.log,$(LOG_DIR)))
 
 ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
 $(LOG_DIR)/6_report.log: | check-kepler-formal
 endif
-
-# final_report writes 6_final.sdc alongside 6_final.odb (constraints are
-# unchanged during finishing), mirroring how synth writes 1_synth.sdc.
-$(RESULTS_DIR)/6_final.sdc: $(LOG_DIR)/6_report.log
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
@@ -704,10 +678,10 @@ final: finish
 
 .PHONY: do-finish
 do-finish:
-	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_report elapsed
+	$(UNSET_AND_MAKE) do-6_1_fill do-6_report elapsed
 
 .PHONY: generate_abstract
-generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/6_final.sdc
+generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
 	$(UNSET_AND_MAKE) do-generate_abstract
 
 # Set ABSTRACT_SOURCE if you want to create an abstract from another stage than 6_final.
