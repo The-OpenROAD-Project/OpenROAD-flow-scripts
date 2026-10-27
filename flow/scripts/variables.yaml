@@ -110,6 +110,22 @@ REPORT_CLOCK_SKEW:
     - route
     - final
   default: 1
+REPORT_ENDPOINT_SLACK:
+  description: >
+    If set to 1, write the setup and hold slack of every timing endpoint at
+    the end of every flow step (e.g. 3_3_place_gp) to
+    $REPORTS_DIR/<step>_endpoint_slack.json. These snapshots can be compared
+    across steps with flow/util/endpointSlack.py. See
+    docs/contrib/EndpointSlackTracking.md.
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
+  default: 0
 SKIP_REPORT_METRICS:
   description: >
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up
@@ -192,9 +208,9 @@ SYNTH_USE_SYN:
   default: 0
 AUTO_MEMORIES:
   description: >
-    Experimental. When set to 1, memory-shaped modules in the RTL
-    (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only)
-    are detected pre-synthesis, inventoried in
+    Experimental. When set to 1, memories that yosys infers in the RTL
+    (`$mem_v2` cells, module boundary only) are detected
+    pre-synthesis, inventoried in
     `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM
     macro — given generated .lib/.lef views under
     `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and
@@ -209,6 +225,35 @@ ADDITIONAL_MEMORIES:
     AUTO_MEMORIES detects — to force-convert a memory the idiomatic
     gate rejects, or to describe one the scanner cannot find. See
     docs/user/AutoMemories.md.
+  stages:
+    - synth
+SYNTH_VERILOG_SURGERY:
+  description: >
+    RTL surgery as a step of the flow: a script that copies VERILOG_FILES
+    and edits the copies before synthesis reads them, so vendored RTL
+    stays byte-identical to upstream and the OpenROAD- and PDK-specific
+    changes live in one script next to the design's config.mk. Typical
+    surgery gives a memory or register file a module of its own that
+    AUTO_MEMORIES can convert, maps a clock gate onto the platform's,
+    rewrites a pragma for the frontend, or removes a simulation
+    construct. A new upstream version is then a plain copy: the surgery
+    reapplies, or stops where upstream moved. Best on generated or
+    regular RTL (firtool, sv2v, netlists); a text edit cannot see the
+    meaning of include files, macros, packages or `bind`. As the RTL is
+    read (canonicalization, memory extraction, and the SYNTH_USE_SYN
+    frontend), it runs with SYNTH_VERILOG_SURGERY_ARGS, then
+    `--out-dir $(OBJECTS_DIR)/surgery --` and the VERILOG_FILES (by
+    PYTHON_EXE when it ends in .py), and writes one copy per source under
+    the same file name; synthesis reads the copies. Input file names must
+    be unique. Diff a copy against its original to see exactly what the
+    surgery changed. The script should fail when it does not recognise
+    its input; a failing script, or a copy it did not write, stops
+    synthesis.
+  stages:
+    - synth
+SYNTH_VERILOG_SURGERY_ARGS:
+  description: >
+    Arguments to SYNTH_VERILOG_SURGERY, before the ones the flow adds.
   stages:
     - synth
 SYNTH_MEMORY_MAX_BITS:
@@ -437,12 +482,6 @@ MIN_BUF_CELL_AND_PORTS:
     Used to insert a buffer cell to pass through wires. Used in synthesis.
   stages:
     - synth
-ABC_CLOCK_PERIOD_IN_PS:
-  description: >
-    Clock period to be used by STA during synthesis. Default value read from
-    `constraint.sdc`.
-  stages:
-    - synth
 ABC_DRIVER_CELL:
   description: |
     Default driver cell used during ABC synthesis.
@@ -507,15 +546,6 @@ BUFFER_PORTS_ARGS:
     Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.
   stages:
     - place
-REMOVE_ABC_BUFFERS:
-  description: >
-    Remove abc buffers from the netlist. If timing repair in floorplanning is
-    taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early
-    instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.
-  stages:
-    - floorplan
-  deprecated: 1
-  default: 0
 BALANCE_ROWS:
   description: |
     Balance rows during placement.
@@ -538,6 +568,16 @@ LAYER_PARASITICS_FILE:
   description: |
     Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.
   type: string
+WIRE_LOAD_MODEL:
+  description: |
+    Name of a Liberty wire_load group applied with set_wire_load_model
+    whenever open.tcl reads timing. OpenSTA applies a wire-load model only
+    to nets without parasitics, so it gives wire delay to timing read
+    before placement and leaves placed and routed timing unaffected. An
+    unknown name is an error. Empty, the default, applies none. A platform
+    whose libraries define no wire_load group can supply one in a Liberty
+    file listed in ADDITIONAL_LIBS.
+  type: string
 TAPCELL_TCL:
   description: |
     Path to Endcap and Welltie cells file.
@@ -553,21 +593,6 @@ MACRO_PLACEMENT_TCL:
     the macro placer: the macro placement file does not contain the
     locations that the macro placer generates for the standard cells,
     and those locations impact global placement.
-  stages:
-    - floorplan
-MACRO_PLACE_HALO:
-  description: >
-    Horizontal/vertical halo around macros (microns). Used by automatic macro
-    placement.
-  stages:
-    - floorplan
-MACRO_BLOCKAGE_HALO:
-  description: >
-    Distance beyond the edges of a macro that will also be covered by the
-    blockage generated for that macro.
-    Note that the default macro blockage halo comes from the largest of the
-    specified MACRO_PLACE_HALO x or y values. This variable overrides that
-    calculation.
   stages:
     - floorplan
 PDN_TCL:
@@ -641,6 +666,7 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     Cell padding on both sides in site widths to ease routability in detail
     placement.
   stages:
+    - floorplan
     - place
     - cts
     - grt
@@ -688,10 +714,14 @@ ENABLE_DPO:
   description: |
     Enable detail placement with improve_placement feature.
   default: 1
+  stages:
+    - place
 DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
+  stages:
+    - place
 GPL_RANDOM_SEED:
   description: |
     Specifies a random seed for global placement.  Useful for perturbation studies.
@@ -709,6 +739,12 @@ GPL_ROUTABILITY_DRIVEN:
   stages:
     - place
   default: 1
+GPL_PLACE_IOS:
+  description: |
+    Place IO pins together with the cells in global placement (-place_ios).
+  stages:
+    - place
+  default: 0
 GPL_KEEP_OVERFLOW:
   description: >
     Passed as -keep_resize_below_overflow to global_placement.
@@ -879,6 +915,13 @@ SKIP_CTS_REPAIR_TIMING:
   stages:
     - cts
   default: 0
+SKIP_FLOORPLAN_REPAIR_TIMING:
+  description: >
+    Skipping floorplan repair which sometimes does too much optimization
+    too early.
+  stages:
+    - floorplan
+  default: 0
 ENABLE_PLACE_REPAIR_TIMING:
   description: >
     Run repair_timing during the placement resize stage using placement
@@ -940,9 +983,6 @@ DISABLE_VIA_GEN:
     Passed as -disable_via_gen to detailed_route.
   stages:
     - route
-MACRO_EXTENSION:
-  description: |
-    Sets the number of GCells added to the blockages boundaries from macros.
 DETAILED_ROUTE_END_ITERATION:
   description: >
     Maximum number of iterations.
@@ -962,9 +1002,6 @@ OR_SEED:
 RCX_RULES:
   description: |
     RC Extraction rules file path.
-SET_RC_TCL:
-  description: |
-    Metal & Via RC definition file path.
 FILL_CONFIG:
   description: |
     JSON rule file for metal fill during chip finishing.
@@ -1001,14 +1038,6 @@ SDC_FILE:
     The path to design constraint (SDC) file.
   stages:
     - synth
-SDC_GUT:
-  description: >
-    Load design and remove all internal logic before doing synthesis. This is
-    useful when creating a mock .lef abstract that has a smaller area than the
-    amount of logic would allow. bazel-orfs uses this to mock SRAMs, for
-    instance.
-  stages:
-    - synth
 ADDITIONAL_FILES:
   description: |
     Additional files to be added to `make issue` archive.
@@ -1041,6 +1070,13 @@ ABC_AREA:
   stages:
     - synth
   default: 0
+ABC_SCRIPT:
+  description: |
+    Replaces the ABC script synthesis runs, so that a design can vendor and
+    change it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS
+    is set: abc_new then maps each arithmetic operator with its own script.
+  stages:
+    - synth
 PWR_NETS_VOLTAGES:
   description: |
     Used for IR Drop calculation.
@@ -1189,11 +1225,6 @@ CTS_CLUSTER_SIZE:
 CTS_LIB_NAME:
   description: |
     Name of the Liberty library to use in selecting the clock buffers.
-  stages:
-    - cts
-CTS_SNAPSHOT:
-  description: |
-    Creates ODB/SDC files prior to clock net and setup/hold repair.
   stages:
     - cts
 POST_CTS_TCL:
@@ -1432,6 +1463,21 @@ RTLMP_MIN_MACRO:
     calculate a value based on the design attributes.
   stages:
     - floorplan
+RTLMP_MIN_CHANNEL_SIZE:
+  description: >
+    Minimum channel width and height between macros (microns), given as one
+    value for both, or two values "width height".
+  stages:
+    - floorplan
+RTLMP_PIN_AWARE_CHANNELS:
+  description: >
+    Set to 1 to trim macro channels based on the pin locations of macros,
+    instead of using full channels. Requires RTLMP_MIN_CHANNEL_SIZE to also be set.
+    Defaults to 1 whenever RTLMP_MIN_CHANNEL_SIZE is set and
+    this variable is not explicitly set to 0.
+  default: 1
+  stages:
+    - floorplan
 RTLMP_MIN_AR:
   description: >
     Specifies the minimum aspect ratio (height/width).
@@ -1550,12 +1596,6 @@ FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.
   default: base
-SKIP_ANTENNA_REPAIR_PRE_GRT:
-  default: 0
-  description: >
-    Skips antenna repair pre-global routing.
-  stages:
-    - grt
 SKIP_ANTENNA_REPAIR_POST_DRT:
   default: 0
   description: >

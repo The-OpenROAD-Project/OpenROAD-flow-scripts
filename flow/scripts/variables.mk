@@ -71,40 +71,50 @@ export NUM_CORES
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
 #
-# HERE BE DRAGONS: use bare `export VAR`, never `export VAR := $(VAR)`.
+# Nix and Bazel (or whatever else environment) should explicitly set the
+# variables OPENROAD_EXE, OPENSTA_EXE, YOSYS_EXE and PYTHON_EXE to point to
+# installed tools. If those are not defined, tools built by ORFS are used and
+# referred to by absolute paths.
 #
-# `export VAR := $(VAR)` rebinds the variable to origin "file", which makes
-# get_variables (below) include it in UNSET_VARIABLES_NAMES. UNSET_AND_MAKE
-# then unsets it before the sub-make runs, so any `?=` fallback here fires
-# with the wrong value in the sub-make (e.g. the in-tree tools/install path
-# that does not exist in a Bazel sandbox). A bare `export` preserves the
-# original origin (environment when bazel-orfs supplies it, file when the
-# local default fills in), so the value survives UNSET_VARS.
-PYTHON_EXE ?= $(shell command -v python3)
+# Avoid exporting deferred shell commands, for example something like
+#
+#   export PYTHON_EXE ?= $(shell command -v python3)
+#
+# causes Make to start up a new shell whenever PYTHON_EXE is expanded. An
+# annoying side-effect of this is that whenever a shell is launched, all
+# exported variables are expanded, which causes PYTHON_EXE to launch a shell,
+# which causes other exported variables to be expanded, and if those launch
+# shells, PYTHON_EXE is re-expanded which launches a shell, and so on.
+#
+# This is not an infinite loop, as there are rules in place to stop expansion
+# under certain circumstances, but the effect is nonetheless cumulative.
+# Previous versions of this file caused ~28k shell instances to be spawned for
+# `make DESIGN_CONFIG=... clean_all`, which could be reduced to 41.
+#
+# The 'obvious' solution here is to just run each shell command once by forcing
+# an immediate expansion with `:=`, something like
+#
+#   PYTHON_EXE ?= $(shell command -v python3)
+#   export PYTHON_EXE := $(PYTHON_EXE)
+#
+# but this changes 'where' PYTHON_EXE was defined, command line/environment
+# versus in a file, which messes with `get_variables` and causes command
+# line/environment variables to not be propagated to submakes.
+#
+# Python is not built by ORFS, and as such its absolute path has to be fetched
+# from the environment. Use `ifeq ($(origin PYTHON_EXE), undefined)` to check if
+# the variable hasn't been defined yet and run a single shell instance to fetch
+# the absolute path if so. The other tools should've been built by ORFS, and can
+# use a pre-specified path, which we can just use ?= for.
+ifeq ($(origin PYTHON_EXE), undefined)
+  PYTHON_EXE := $(shell command -v python3)
+endif
 export PYTHON_EXE
 
 export RUN_CMD = $(PYTHON_EXE) $(FLOW_HOME)/scripts/run_command.py
 
-# The following determine the executable location for each tool used by this flow.
-# Priority is given to
-#       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
-#       2 either
-#          2.1 if in Nix shell: openroad, yosys from the environment
-#          2.2 ORFS compiled tools: openroad, yosys
-ifneq (${IN_NIX_SHELL},)
-  OPENROAD_EXE ?= $(shell command -v openroad)
-else
-  OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
-endif
-ifneq (${IN_NIX_SHELL},)
-  OPENSTA_EXE ?= $(shell command -v sta)
-else
-  OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
-endif
-
-# See dragons comment near PYTHON_EXE: bare `export`, not `export VAR := $(VAR)`.
-export OPENROAD_EXE
-export OPENSTA_EXE
+export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+export OPENSTA_EXE  ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 
 OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && echo "true"),)
 
@@ -114,14 +124,7 @@ export OPENROAD_NO_EXIT_CMD = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 export OPENROAD_GUI_CMD = $(OPENROAD_EXE) -gui -threads $(NUM_CORES) $(OR_ARGS)
 export OPENROAD_WEB_CMD = $(OPENROAD_EXE) -web -threads $(NUM_CORES) $(OR_ARGS)
 
-ifneq (${IN_NIX_SHELL},)
-  YOSYS_EXE ?= $(shell command -v yosys)
-else
-  YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
-endif
-
-# See dragons comment near PYTHON_EXE: bare `export`, not `export VAR := $(VAR)`.
-export YOSYS_EXE
+export YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
 YOSYS_IS_VALID := $(if $(YOSYS_EXE),$(shell test -x $(YOSYS_EXE) && echo "true"),)
 
@@ -174,23 +177,8 @@ export WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
 export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
 
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
-export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
-export YOSYS_DEPENDENCIES=$(LIB_FILES) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
-
-# Ubuntu 22.04 ships with older than 0.28.11, so support older versions
-# for a while still.
-export KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
-export KLAYOUT_VERSION := $(if $(KLAYOUT_CMD),$(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2),)
-
-export KLAYOUT_ENV_VAR_IN_PATH = $(shell \
-	if [ -z "$(KLAYOUT_VERSION)" ]; then \
-		echo "not_found"; \
-	elif [ "$$(echo -e "$(KLAYOUT_VERSION)\n$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" | sort -V | head -n1)" = "$(KLAYOUT_VERSION)" ] && [ "$(KLAYOUT_VERSION)" != "$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" ]; then \
-		echo "invalid"; \
-	else \
-		echo "valid"; \
-	fi)
+export YOSYS_DEPENDENCIES=$(LIB_FILES) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 
 export GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 export RESULTS_ODB = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.odb)))
@@ -213,13 +201,6 @@ define newline
 endef
 export ISSUE_VARIABLES := $(foreach V, $(ISSUE_VARIABLES_NAMES), $(if $($V),$V=$($V),$V='')$(newline))
 export COMMAND_LINE_ARGS := $(foreach V,$(.VARIABLES),$(if $(filter command% line, $(origin $V)),$(V)))
-
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
-   ifneq ($(wildcard $(SDC_FILE)),)
-      export ABC_CLOCK_PERIOD_IN_PS := $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
-   endif
-endif
 
 .PHONY: vars
 vars:

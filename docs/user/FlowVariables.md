@@ -91,9 +91,9 @@ configuration file.
 | Variable | Description | Default |
 | --- | --- | --- |
 | <a name="ABC_AREA"></a>ABC_AREA| Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.| 0|
-| <a name="ABC_CLOCK_PERIOD_IN_PS"></a>ABC_CLOCK_PERIOD_IN_PS| Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.| |
 | <a name="ABC_DRIVER_CELL"></a>ABC_DRIVER_CELL| Default driver cell used during ABC synthesis.| |
 | <a name="ABC_LOAD_IN_FF"></a>ABC_LOAD_IN_FF| During synthesis set_load value used.| |
+| <a name="ABC_SCRIPT"></a>ABC_SCRIPT| Replaces the ABC script synthesis runs, so that a design can vendor and change it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS is set: abc_new then maps each arithmetic operator with its own script.| |
 | <a name="ABSTRACT_SOURCE"></a>ABSTRACT_SOURCE| Which .odb file to use to create abstract| |
 | <a name="ADDER_MAP_FILE"></a>ADDER_MAP_FILE| Optional mapping file supplied to Yosys to map adders| |
 | <a name="ADDITIONAL_FILES"></a>ADDITIONAL_FILES| Additional files to be added to `make issue` archive.| |
@@ -103,7 +103,7 @@ configuration file.
 | <a name="ADDITIONAL_MEMORIES"></a>ADDITIONAL_MEMORIES| Experimental. Space-separated list of user-supplied `.memories` files (the memories.json JSON schema) merged onto the set AUTO_MEMORIES detects — to force-convert a memory the idiomatic gate rejects, or to describe one the scanner cannot find. See docs/user/AutoMemories.md.| |
 | <a name="ADDITIONAL_SITES"></a>ADDITIONAL_SITES| Passed as -additional_sites to initialize_floorplan.| |
 | <a name="ASAP7_USE_VT"></a>ASAP7_USE_VT| A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.| RVT|
-| <a name="AUTO_MEMORIES"></a>AUTO_MEMORIES| Experimental. When set to 1, memory-shaped modules in the RTL (firtool/CIRCT `R*/W*/RW*_` port convention, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM macro — given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.| 0|
+| <a name="AUTO_MEMORIES"></a>AUTO_MEMORIES| Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM macro — given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.| 0|
 | <a name="BALANCE_ROWS"></a>BALANCE_ROWS| Balance rows during placement.| 0|
 | <a name="BLOCKS"></a>BLOCKS| Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.| |
 | <a name="BUFFER_PORTS_ARGS"></a>BUFFER_PORTS_ARGS| Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.| |
@@ -128,7 +128,6 @@ configuration file.
 | <a name="CTS_CLUSTER_DIAMETER"></a>CTS_CLUSTER_DIAMETER| Maximum diameter (in microns) of sink cluster.| |
 | <a name="CTS_CLUSTER_SIZE"></a>CTS_CLUSTER_SIZE| Maximum number of sinks per cluster.| |
 | <a name="CTS_LIB_NAME"></a>CTS_LIB_NAME| Name of the Liberty library to use in selecting the clock buffers.| |
-| <a name="CTS_SNAPSHOT"></a>CTS_SNAPSHOT| Creates ODB/SDC files prior to clock net and setup/hold repair.| |
 | <a name="CTS_SNAPSHOTS"></a>CTS_SNAPSHOTS| Create ODB/SDC files at different stages of CTS.| 0|
 | <a name="DESIGN_NAME"></a>DESIGN_NAME| The name of the top-level module of the design.| |
 | <a name="DESIGN_NICKNAME"></a>DESIGN_NICKNAME| DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a different design.| |
@@ -162,6 +161,7 @@ configuration file.
 | <a name="GLOBAL_ROUTE_USE_CUGR"></a>GLOBAL_ROUTE_USE_CUGR| Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.| 0|
 | <a name="GND_NETS_VOLTAGES"></a>GND_NETS_VOLTAGES| Used for IR Drop calculation.| |
 | <a name="GPL_KEEP_OVERFLOW"></a>GPL_KEEP_OVERFLOW| Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.| |
+| <a name="GPL_PLACE_IOS"></a>GPL_PLACE_IOS| Place IO pins together with the cells in global placement (-place_ios).| 0|
 | <a name="GPL_RANDOM_SEED"></a>GPL_RANDOM_SEED| Specifies a random seed for global placement.  Useful for perturbation studies.| |
 | <a name="GPL_ROUTABILITY_DRIVEN"></a>GPL_ROUTABILITY_DRIVEN| Specifies whether the placer should use routability driven placement.| 1|
 | <a name="GPL_TIMING_DRIVEN"></a>GPL_TIMING_DRIVEN| Specifies whether the placer should use timing driven placement.| 1|
@@ -181,10 +181,7 @@ configuration file.
 | <a name="LEC_CHECK"></a>LEC_CHECK| Perform formal equivalence checks between before and after netlists. This checks CTS repair timing and the initial synthesis netlist against the final netlist. If this fails, report an issue to OpenROAD.| $(if $(wildcard $(KEPLER_FORMAL_EXE)),1,0)|
 | <a name="LIB_FILES"></a>LIB_FILES| A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.| |
 | <a name="LIB_MODEL"></a>LIB_MODEL| Selects between NLDM and CCS timing models for the ASAP7 platform. Valid values: NLDM (default), CCS. Used in flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list, and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.| NLDM|
-| <a name="MACRO_BLOCKAGE_HALO"></a>MACRO_BLOCKAGE_HALO| Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.| |
-| <a name="MACRO_EXTENSION"></a>MACRO_EXTENSION| Sets the number of GCells added to the blockages boundaries from macros.| |
 | <a name="MACRO_PLACEMENT_TCL"></a>MACRO_PLACEMENT_TCL| Specifies the path of a TCL file on how to place macros manually. The user may choose to place just some of the macros in the design. The macro placer will handle the remaining unplaced macros. Note that using the macro placement file generated by the macro placer will not result in the same global placement as actually running the macro placer: the macro placement file does not contain the locations that the macro placer generates for the standard cells, and those locations impact global placement.| |
-| <a name="MACRO_PLACE_HALO"></a>MACRO_PLACE_HALO| Horizontal/vertical halo around macros (microns). Used by automatic macro placement.| |
 | <a name="MACRO_ROWS_HALO_X"></a>MACRO_ROWS_HALO_X| Horizontal distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.| |
 | <a name="MACRO_ROWS_HALO_Y"></a>MACRO_ROWS_HALO_Y| Vertical distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.| |
 | <a name="MACRO_WRAPPERS"></a>MACRO_WRAPPERS| The wrapper file that replaces existing macros with their wrapped version.| |
@@ -248,10 +245,10 @@ configuration file.
 | <a name="PWR_NETS_VOLTAGES"></a>PWR_NETS_VOLTAGES| Used for IR Drop calculation.| |
 | <a name="RCX_RULES"></a>RCX_RULES| RC Extraction rules file path.| |
 | <a name="RECOVER_POWER"></a>RECOVER_POWER| Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].| 0|
-| <a name="REMOVE_ABC_BUFFERS"></a>REMOVE_ABC_BUFFERS (deprecated)| Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.| 0|
 | <a name="REMOVE_CELLS_FOR_LEC"></a>REMOVE_CELLS_FOR_LEC| String patterns directly passed to write_verilog -remove_cells <> for lec checks.| |
 | <a name="REPAIR_PDN_VIA_LAYER"></a>REPAIR_PDN_VIA_LAYER| Remove power grid vias which generate DRC violations after detailed routing.| |
 | <a name="REPORT_CLOCK_SKEW"></a>REPORT_CLOCK_SKEW| Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.| 1|
+| <a name="REPORT_ENDPOINT_SLACK"></a>REPORT_ENDPOINT_SLACK| If set to 1, write the setup and hold slack of every timing endpoint at the end of every flow step (e.g. 3_3_place_gp) to $REPORTS_DIR/<step>_endpoint_slack.json. These snapshots can be compared across steps with flow/util/endpointSlack.py. See docs/contrib/EndpointSlackTracking.md.| 0|
 | <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically (entirely design specific, but going from hours to minutes has been observed) when the value is low (such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/whittle.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. whittle.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.| 0.5|
 | <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT| Weight for the area of the current floorplan.| 0.1|
 | <a name="RTLMP_ARGS"></a>RTLMP_ARGS| Overrides all other RTL macro placer arguments.| |
@@ -265,29 +262,29 @@ configuration file.
 | <a name="RTLMP_MAX_LEVEL"></a>RTLMP_MAX_LEVEL| Maximum depth of the physical hierarchy tree.| 2|
 | <a name="RTLMP_MAX_MACRO"></a>RTLMP_MAX_MACRO| Maximum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
 | <a name="RTLMP_MIN_AR"></a>RTLMP_MIN_AR| Specifies the minimum aspect ratio (height/width).| 0.33|
+| <a name="RTLMP_MIN_CHANNEL_SIZE"></a>RTLMP_MIN_CHANNEL_SIZE| Minimum channel width and height between macros (microns), given as one value for both, or two values "width height".| |
 | <a name="RTLMP_MIN_INST"></a>RTLMP_MIN_INST| Minimum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
 | <a name="RTLMP_MIN_MACRO"></a>RTLMP_MIN_MACRO| Minimum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
 | <a name="RTLMP_NOTCH_WT"></a>RTLMP_NOTCH_WT| Weight for the notch, or the existence of dead space that cannot be used for placement and routing.| 50.0|
 | <a name="RTLMP_OUTLINE_WT"></a>RTLMP_OUTLINE_WT| Weight for violating the fixed outline constraint, meaning that all clusters should be placed within the shape of their parent cluster.| 100.0|
+| <a name="RTLMP_PIN_AWARE_CHANNELS"></a>RTLMP_PIN_AWARE_CHANNELS| Set to 1 to trim macro channels based on the pin locations of macros, instead of using full channels. Requires RTLMP_MIN_CHANNEL_SIZE to also be set. Defaults to 1 whenever RTLMP_MIN_CHANNEL_SIZE is set and this variable is not explicitly set to 0.| 1|
 | <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR| Path to the directory where reports are saved.| |
 | <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0|
 | <a name="RUN_LOG_NAME_STEM"></a>RUN_LOG_NAME_STEM| Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.| run|
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.| |
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| |
-| <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| |
 | <a name="SEC_CHECK"></a>SEC_CHECK| Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. Hardened sub-blocks listed in BLOCKS are checked as black boxes (proof boundaries), since their abstracts carry no logic. If this fails, report an issue to OpenROAD.| $(if $(wildcard $(KEPLER_FORMAL_EXE)),1,0)|
 | <a name="SETUP_MOVE_SEQUENCE"></a>SETUP_MOVE_SEQUENCE| Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas.| |
 | <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). See HOLD_SLACK_MARGIN for more details.| 0|
-| <a name="SET_RC_TCL"></a>SET_RC_TCL| Metal & Via RC definition file path.| |
 | <a name="SKIP_ANTENNA_REPAIR"></a>SKIP_ANTENNA_REPAIR| Skips antenna repair entirely.| 0|
 | <a name="SKIP_ANTENNA_REPAIR_POST_DRT"></a>SKIP_ANTENNA_REPAIR_POST_DRT| Skips antenna repair post-detailed routing.| 0|
-| <a name="SKIP_ANTENNA_REPAIR_PRE_GRT"></a>SKIP_ANTENNA_REPAIR_PRE_GRT| Skips antenna repair pre-global routing.| 0|
 | <a name="SKIP_BUFFER_REMOVAL"></a>SKIP_BUFFER_REMOVAL| Passed as -skip_buffer_removal to repair_timing. Do not remove buffers as a transform to fix timing violations (default: allow buffer removal).| |
 | <a name="SKIP_CRIT_VT_SWAP"></a>SKIP_CRIT_VT_SWAP| Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap). This is an additional VT swap on critical cells that remain near the end of setup fixing. If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.| |
 | <a name="SKIP_CTS_REPAIR_TIMING"></a>SKIP_CTS_REPAIR_TIMING| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running.| 0|
 | <a name="SKIP_DETAILED_ROUTE"></a>SKIP_DETAILED_ROUTE| Skips detailed route.| 0|
+| <a name="SKIP_FLOORPLAN_REPAIR_TIMING"></a>SKIP_FLOORPLAN_REPAIR_TIMING| Skipping floorplan repair which sometimes does too much optimization too early.| 0|
 | <a name="SKIP_GATE_CLONING"></a>SKIP_GATE_CLONING| Do not use gate cloning transform to fix timing violations (default: use gate cloning).| |
 | <a name="SKIP_INCREMENTAL_REPAIR"></a>SKIP_INCREMENTAL_REPAIR| Skip incremental repair in global route.| 0|
 | <a name="SKIP_LAST_GASP"></a>SKIP_LAST_GASP| Do not use last gasp optimization to fix timing violations (default: use gate last gasp).| |
@@ -319,6 +316,8 @@ configuration file.
 | <a name="SYNTH_SKIP_KEEP"></a>SYNTH_SKIP_KEEP| Only meaningful together with SYNTH_CHECKPOINT. When set, signals that the supplied checkpoint is still canonical RTLIL (coarse synth and `keep_hierarchy` have not been run yet), so synth.tcl runs the full coarse+fine synthesis flattened. When unset and SYNTH_CHECKPOINT is used, synth.tcl assumes the checkpoint already has coarse synth + `keep_hierarchy` done and resumes from `coarse:fine`.| 0|
 | <a name="SYNTH_SLANG_ARGS"></a>SYNTH_SLANG_ARGS| Additional arguments passed to the slang frontend during synthesis.| |
 | <a name="SYNTH_USE_SYN"></a>SYNTH_USE_SYN| If set to 1, run synthesis using the "syn" tool built into OpenROAD (the synth_syn.tcl flow) instead of the default Yosys-based flow. Defaults to 0 (Yosys flow).| 0|
+| <a name="SYNTH_VERILOG_SURGERY"></a>SYNTH_VERILOG_SURGERY| RTL surgery as a step of the flow: a script that copies VERILOG_FILES and edits the copies before synthesis reads them, so vendored RTL stays byte-identical to upstream and the OpenROAD- and PDK-specific changes live in one script next to the design's config.mk. Typical surgery gives a memory or register file a module of its own that AUTO_MEMORIES can convert, maps a clock gate onto the platform's, rewrites a pragma for the frontend, or removes a simulation construct. A new upstream version is then a plain copy: the surgery reapplies, or stops where upstream moved. Best on generated or regular RTL (firtool, sv2v, netlists); a text edit cannot see the meaning of include files, macros, packages or `bind`. As the RTL is read (canonicalization, memory extraction, and the SYNTH_USE_SYN frontend), it runs with SYNTH_VERILOG_SURGERY_ARGS, then `--out-dir $(OBJECTS_DIR)/surgery --` and the VERILOG_FILES (by PYTHON_EXE when it ends in .py), and writes one copy per source under the same file name; synthesis reads the copies. Input file names must be unique. Diff a copy against its original to see exactly what the surgery changed. The script should fail when it does not recognise its input; a failing script, or a copy it did not write, stops synthesis.| |
+| <a name="SYNTH_VERILOG_SURGERY_ARGS"></a>SYNTH_VERILOG_SURGERY_ARGS| Arguments to SYNTH_VERILOG_SURGERY, before the ones the flow adds.| |
 | <a name="SYNTH_WRAPPED_ADDERS"></a>SYNTH_WRAPPED_ADDERS| Specify the adder modules that can be used for synthesis, separated by commas. The default adder module is determined by the first element of this variable.| |
 | <a name="SYNTH_WRAPPED_MULTIPLIERS"></a>SYNTH_WRAPPED_MULTIPLIERS| Specify the multiplier modules that can be used for synthesis, separated by commas. The default multiplier module is determined by the first element of this variable.| |
 | <a name="SYNTH_WRAPPED_OPERATORS"></a>SYNTH_WRAPPED_OPERATORS| Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.| 0|
@@ -337,14 +336,15 @@ configuration file.
 | <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist). Passed in as a list of key value pairs in tcl syntax; separated by spaces: PARAM1 VALUE1 PARAM2 VALUE2| |
 | <a name="VIA_IN_PIN_MAX_LAYER"></a>VIA_IN_PIN_MAX_LAYER| Passed as -via_in_pin_top_layer to pin_access and detailed_route.| |
 | <a name="VIA_IN_PIN_MIN_LAYER"></a>VIA_IN_PIN_MIN_LAYER| Passed as -via_in_pin_bottom_layer to pin_access and detailed_route.| |
+| <a name="WIRE_LOAD_MODEL"></a>WIRE_LOAD_MODEL| Name of a Liberty wire_load group applied with set_wire_load_model whenever open.tcl reads timing. OpenSTA applies a wire-load model only to nets without parasitics, so it gives wire delay to timing read before placement and leaves placed and routed timing unaffected. An unknown name is an error. Empty, the default, applies none. A platform whose libraries define no wire_load group can supply one in a Liberty file listed in ADDITIONAL_LIBS.| |
 | <a name="WRITE_ODB_AND_SDC_EACH_STAGE"></a>WRITE_ODB_AND_SDC_EACH_STAGE| Save out .sdc and .odb file after each stage, useful to disable when using a single OpenROAD instance to run all stages of the flow.| 1|
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3|
 ## synth variables
 
 - [ABC_AREA](#ABC_AREA)
-- [ABC_CLOCK_PERIOD_IN_PS](#ABC_CLOCK_PERIOD_IN_PS)
 - [ABC_DRIVER_CELL](#ABC_DRIVER_CELL)
 - [ABC_LOAD_IN_FF](#ABC_LOAD_IN_FF)
+- [ABC_SCRIPT](#ABC_SCRIPT)
 - [ADDER_MAP_FILE](#ADDER_MAP_FILE)
 - [ADDITIONAL_MEMORIES](#ADDITIONAL_MEMORIES)
 - [CACHED_REPORTS](#CACHED_REPORTS)
@@ -360,8 +360,8 @@ configuration file.
 - [POST_SYNTH_TCL](#POST_SYNTH_TCL)
 - [POS_CLKGATE_AND_PORTS](#POS_CLKGATE_AND_PORTS)
 - [PRE_SYNTH_TCL](#PRE_SYNTH_TCL)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [SDC_FILE](#SDC_FILE)
-- [SDC_GUT](#SDC_GUT)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SYNTH_ARGS](#SYNTH_ARGS)
@@ -386,6 +386,8 @@ configuration file.
 - [SYNTH_SKIP_KEEP](#SYNTH_SKIP_KEEP)
 - [SYNTH_SLANG_ARGS](#SYNTH_SLANG_ARGS)
 - [SYNTH_USE_SYN](#SYNTH_USE_SYN)
+- [SYNTH_VERILOG_SURGERY](#SYNTH_VERILOG_SURGERY)
+- [SYNTH_VERILOG_SURGERY_ARGS](#SYNTH_VERILOG_SURGERY_ARGS)
 - [SYNTH_WRAPPED_ADDERS](#SYNTH_WRAPPED_ADDERS)
 - [SYNTH_WRAPPED_MULTIPLIERS](#SYNTH_WRAPPED_MULTIPLIERS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
@@ -400,6 +402,7 @@ configuration file.
 ## floorplan variables
 
 - [ADDITIONAL_SITES](#ADDITIONAL_SITES)
+- [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [CELL_PAD_IN_SITES_GLOBAL_PLACEMENT](#CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 - [CORE_AREA](#CORE_AREA)
 - [CORE_ASPECT_RATIO](#CORE_ASPECT_RATIO)
@@ -411,9 +414,7 @@ configuration file.
 - [FOOTPRINT_TCL](#FOOTPRINT_TCL)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [IO_CONSTRAINTS](#IO_CONSTRAINTS)
-- [MACRO_BLOCKAGE_HALO](#MACRO_BLOCKAGE_HALO)
 - [MACRO_PLACEMENT_TCL](#MACRO_PLACEMENT_TCL)
-- [MACRO_PLACE_HALO](#MACRO_PLACE_HALO)
 - [MACRO_ROWS_HALO_X](#MACRO_ROWS_HALO_X)
 - [MACRO_ROWS_HALO_Y](#MACRO_ROWS_HALO_Y)
 - [MACRO_WRAPPERS](#MACRO_WRAPPERS)
@@ -433,7 +434,7 @@ configuration file.
 - [PRE_MACRO_PLACE_TCL](#PRE_MACRO_PLACE_TCL)
 - [PRE_PDN_TCL](#PRE_PDN_TCL)
 - [PRE_TAPCELL_TCL](#PRE_TAPCELL_TCL)
-- [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
 - [RTLMP_ARGS](#RTLMP_ARGS)
@@ -447,16 +448,19 @@ configuration file.
 - [RTLMP_MAX_LEVEL](#RTLMP_MAX_LEVEL)
 - [RTLMP_MAX_MACRO](#RTLMP_MAX_MACRO)
 - [RTLMP_MIN_AR](#RTLMP_MIN_AR)
+- [RTLMP_MIN_CHANNEL_SIZE](#RTLMP_MIN_CHANNEL_SIZE)
 - [RTLMP_MIN_INST](#RTLMP_MIN_INST)
 - [RTLMP_MIN_MACRO](#RTLMP_MIN_MACRO)
 - [RTLMP_NOTCH_WT](#RTLMP_NOTCH_WT)
 - [RTLMP_OUTLINE_WT](#RTLMP_OUTLINE_WT)
+- [RTLMP_PIN_AWARE_CHANNELS](#RTLMP_PIN_AWARE_CHANNELS)
 - [RTLMP_RPT_DIR](#RTLMP_RPT_DIR)
 - [RTLMP_WIRELENGTH_WT](#RTLMP_WIRELENGTH_WT)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_BUFFER_REMOVAL](#SKIP_BUFFER_REMOVAL)
 - [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
+- [SKIP_FLOORPLAN_REPAIR_TIMING](#SKIP_FLOORPLAN_REPAIR_TIMING)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
@@ -479,11 +483,14 @@ configuration file.
 - [CLUSTER_FLOPS_ARGS](#CLUSTER_FLOPS_ARGS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [DONT_BUFFER_PORTS](#DONT_BUFFER_PORTS)
+- [DPO_MAX_DISPLACEMENT](#DPO_MAX_DISPLACEMENT)
 - [EARLY_SIZING_CAP_RATIO](#EARLY_SIZING_CAP_RATIO)
+- [ENABLE_DPO](#ENABLE_DPO)
 - [ENABLE_PLACE_REPAIR_TIMING](#ENABLE_PLACE_REPAIR_TIMING)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GPL_KEEP_OVERFLOW](#GPL_KEEP_OVERFLOW)
+- [GPL_PLACE_IOS](#GPL_PLACE_IOS)
 - [GPL_RANDOM_SEED](#GPL_RANDOM_SEED)
 - [GPL_ROUTABILITY_DRIVEN](#GPL_ROUTABILITY_DRIVEN)
 - [GPL_TIMING_DRIVEN](#GPL_TIMING_DRIVEN)
@@ -507,6 +514,7 @@ configuration file.
 - [PRE_GLOBAL_PLACE_TCL](#PRE_GLOBAL_PLACE_TCL)
 - [PRE_IO_PLACEMENT_TCL](#PRE_IO_PLACEMENT_TCL)
 - [PRE_RESIZE_TCL](#PRE_RESIZE_TCL)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
@@ -520,7 +528,6 @@ configuration file.
 - [CTS_CLUSTER_DIAMETER](#CTS_CLUSTER_DIAMETER)
 - [CTS_CLUSTER_SIZE](#CTS_CLUSTER_SIZE)
 - [CTS_LIB_NAME](#CTS_LIB_NAME)
-- [CTS_SNAPSHOT](#CTS_SNAPSHOT)
 - [CTS_SNAPSHOTS](#CTS_SNAPSHOTS)
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
@@ -531,6 +538,7 @@ configuration file.
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [PRE_CTS_TCL](#PRE_CTS_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_BUFFER_REMOVAL](#SKIP_BUFFER_REMOVAL)
@@ -560,11 +568,11 @@ configuration file.
 - [POST_GLOBAL_ROUTE_TCL](#POST_GLOBAL_ROUTE_TCL)
 - [PRE_GLOBAL_ROUTE_TCL](#PRE_GLOBAL_ROUTE_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_ANTENNA_REPAIR](#SKIP_ANTENNA_REPAIR)
-- [SKIP_ANTENNA_REPAIR_PRE_GRT](#SKIP_ANTENNA_REPAIR_PRE_GRT)
 - [SKIP_BUFFER_REMOVAL](#SKIP_BUFFER_REMOVAL)
 - [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
@@ -594,6 +602,7 @@ configuration file.
 - [PRE_DETAIL_ROUTE_TCL](#PRE_DETAIL_ROUTE_TCL)
 - [PRE_FILLCELL_TCL](#PRE_FILLCELL_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_ANTENNA_REPAIR_POST_DRT](#SKIP_ANTENNA_REPAIR_POST_DRT)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
@@ -617,6 +626,7 @@ configuration file.
 - [PRE_FINAL_REPORT_TCL](#PRE_FINAL_REPORT_TCL)
 - [PWR_NETS_VOLTAGES](#PWR_NETS_VOLTAGES)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
@@ -650,8 +660,6 @@ configuration file.
 - [DESIGN_NAME](#DESIGN_NAME)
 - [DESIGN_NICKNAME](#DESIGN_NICKNAME)
 - [DONT_USE_CELLS](#DONT_USE_CELLS)
-- [DPO_MAX_DISPLACEMENT](#DPO_MAX_DISPLACEMENT)
-- [ENABLE_DPO](#ENABLE_DPO)
 - [FASTROUTE_TCL](#FASTROUTE_TCL)
 - [FILL_CONFIG](#FILL_CONFIG)
 - [FLOW_VARIANT](#FLOW_VARIANT)
@@ -663,7 +671,6 @@ configuration file.
 - [LAYER_PARASITICS_FILE](#LAYER_PARASITICS_FILE)
 - [LIB_FILES](#LIB_FILES)
 - [LIB_MODEL](#LIB_MODEL)
-- [MACRO_EXTENSION](#MACRO_EXTENSION)
 - [MIN_CLK_ROUTING_LAYER](#MIN_CLK_ROUTING_LAYER)
 - [PLATFORM](#PLATFORM)
 - [PLATFORM_TCL](#PLATFORM_TCL)
@@ -676,9 +683,9 @@ configuration file.
 - [RUN_SCRIPT](#RUN_SCRIPT)
 - [SC_LEF](#SC_LEF)
 - [SEAL_GDS](#SEAL_GDS)
-- [SET_RC_TCL](#SET_RC_TCL)
 - [SLEW_MARGIN](#SLEW_MARGIN)
 - [TAP_CELL_NAME](#TAP_CELL_NAME)
 - [TECH_LEF](#TECH_LEF)
 - [USE_FILL](#USE_FILL)
+- [WIRE_LOAD_MODEL](#WIRE_LOAD_MODEL)
 

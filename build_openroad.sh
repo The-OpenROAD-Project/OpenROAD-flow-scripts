@@ -26,7 +26,7 @@ YOSYS_ARGS=""
 OPENROAD_APP_USER_ARGS=()
 OPENROAD_APP_ARGS=()
 
-DOCKER_OS_NAME="ubuntu22.04"
+DOCKER_OS_NAME="ubuntu26.04"
 PROC=-1
 
 WITH_VERIFIC=0
@@ -39,6 +39,7 @@ function usage() {
 
 Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [--or_branch BRANCH_NAME] [--or_repo REPO_URL] [--no_init]
+          [-s|--skip_openroad] [--openroad_only]
           [-n|--nice] [-t|--threads N]
           [--yosys-args-overwrite] [--yosys-args STRING]
           [--with-verific PATH]
@@ -56,6 +57,9 @@ Options:
                             by default for tools/OpenROAD.
 
     -s, --skip_openroad     Skip building and all git operations on OpenROAD.
+
+    --openroad_only         Build only OpenROAD; skip Yosys, Verific and
+                            kepler-formal. Requires --local.
 
     --or_branch BRANCH_NAME Use the head of branch BRANCH for tools/OpenROAD.
 
@@ -97,7 +101,7 @@ Options:
 Options valid only for Docker builds:
     -c, --copy-platforms    Copy platforms to inside docker image.
 
-    --os=DOCKER_OS_NAME     Choose between ubuntu22.04 (default), ubuntu20.04.
+    --os=DOCKER_OS_NAME     Use ubuntu26.04 (default) or ubuntu24.04.
 
     This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
     By default, the tools will be built from the linked submodule hashes.
@@ -164,6 +168,9 @@ while (( "$#" )); do
                         ;;
                 -s|--skip_openroad)
                         SKIP_OPENROAD=1
+                        ;;
+                --openroad_only)
+                        OPENROAD_ONLY=1
                         ;;
                 --or_branch)
                         OPENROAD_APP_BRANCH="$2"
@@ -233,6 +240,17 @@ while (( "$#" )); do
         shift
 done
 
+if [ ! -z "${OPENROAD_ONLY+x}" ]; then
+        if [ -z "${LOCAL_BUILD+x}" ]; then
+                echo "[ERROR FLW-0033] --openroad_only requires --local." >&2
+                exit 1
+        fi
+        if [ ! -z "${SKIP_OPENROAD+x}" ]; then
+                echo "[ERROR FLW-0033] --openroad_only and --skip_openroad are mutually exclusive." >&2
+                exit 1
+        fi
+fi
+
 if [[ "$PROC" == "-1" ]]; then
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then
                 PROC=$(nproc --all)
@@ -251,13 +269,11 @@ echo "[INFO FLW-0028] Compiling with ${PROC} threads."
 
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" -DCMAKE_INSTALL_PREFIX=\"${INSTALL_PATH}/yosys\""
-# -lto selects Bazel --config=opt (-O3 and LTO). The default Bazel build is
-# -O2 without LTO, which produces a slower binary with different QoR than the
-# previous CMake RELEASE build.
+# Build.sh always builds with Bazel --config=release, which includes
+# --config=opt (-O3 and ThinLTO).
 OPENROAD_APP_ARGS=(
         "-prefix=${INSTALL_PATH}/OpenROAD"
         "-threads=${PROC}"
-        "-lto"
 )
 
 __args_setup() {
@@ -369,10 +385,20 @@ __local_build()
                 source /opt/rh/devtoolset-8/enable
                 set -u
         fi
+        # EL8: the default GCC 8 is too old for kepler-formal.
+        if [[ -f "/opt/rh/gcc-toolset-13/enable" ]]; then
+                set +u
+                source /opt/rh/gcc-toolset-13/enable
+                set -u
+        fi
 
         if [ -z "${SKIP_OPENROAD+x}" ]; then
                 echo "[INFO FLW-0018] Compiling OpenROAD."
                 ${NICE} ./tools/OpenROAD/etc/Build.sh "${OPENROAD_APP_ARGS[@]}"
+        fi
+
+        if [ ! -z "${OPENROAD_ONLY+x}" ]; then
+                return
         fi
 
         YOSYS_ABC_PATH=tools/yosys/abc
@@ -398,12 +424,22 @@ __local_build()
         ${NICE} cmake --build tools/yosys/build --target install -j "${PROC}"
 
         echo "[INFO FLW-0031] Compiling kepler-formal"
+        # -march=x86-64-v3 is valid only for x86 compilers. On Arm, use the
+        # Armv8-A baseline, so that the binary runs on any aarch64 machine.
+        # EL9 ships TBB 2020, where concurrent_map needs
+        # TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS; oneTBB ignores it.
+        # EL installs libraries in lib64 by default; the RPATH points to lib.
+        case "$(uname -m)" in
+                aarch64|arm64) KEPLER_MARCH="-march=armv8-a" ;;
+                *) KEPLER_MARCH="-march=x86-64-v3" ;;
+        esac
         ${NICE} cmake -B tools/kepler-formal/build tools/kepler-formal \
                 -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
+                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast ${KEPLER_MARCH} -ffast-math -flto -DTBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS=1" \
                 -DCMAKE_EXE_LINKER_FLAGS="-flto" \
                 -DCMAKE_BUILD_RPATH="${DIR}/tools/kepler-formal/build/thirdparty/naja/src/dnl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/optimization" \
                 -DCMAKE_INSTALL_RPATH="${INSTALL_PATH}/kepler-formal/lib" \
+                -DCMAKE_INSTALL_LIBDIR=lib \
                 -DCMAKE_BUILD_WITH_INSTALL_RPATH=OFF \
                 -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
                 -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}/kepler-formal"

@@ -2,10 +2,7 @@ current_design jpeg_encoder
 
 set clk_name clk
 set clk_port_name clk
-# GT2N lib uses time_unit = 1 ps. 1500 ps -> 667 MHz. Loose first-pass
-# target with the analytical-RC stand-in -- tighten once the optimize-ppa
-# loop has the baseline period_min.
-set clk_period 1000
+set clk_period 400
 set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_port_name]

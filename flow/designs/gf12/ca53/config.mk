@@ -50,7 +50,7 @@ export PLACE_DENSITY_LB_ADDON = 0.05
 
 export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/ca53/io.tcl
 
-export MACRO_PLACE_HALO = 10 10
+export RTLMP_MIN_CHANNEL_SIZE = 20 20
 
 export MACRO_WRAPPERS = $(DESIGN_DIR)/wrappers.tcl
 

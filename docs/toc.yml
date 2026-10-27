@@ -41,10 +41,16 @@ entries:
   entries:
   - file: contrib/GitGuide.md
     title: Git Quickstart
+  - file: contrib/TclContract.md
+    title: Tcl Contract
   - file: contrib/PlatformBringUp.md
     title: Guide to Integrate a New Platform into the OpenROAD Flow
   - file: contrib/CI.md
     title: CI Guide
+  - file: contrib/MakefileContract.md
+    title: Makefile Contract
+  - file: contrib/EndpointSlackTracking.md
+    title: Tracking Endpoint Slack Across Flow Steps
 
 - file: contrib/CODE_OF_CONDUCT.md
   title: Code of Conduct

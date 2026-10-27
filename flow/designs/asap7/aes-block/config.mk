@@ -16,6 +16,7 @@ export BLOCKS ?= aes_rcon aes_sbox
 export SYNTH_HIERARCHICAL = 1
 
 export PLACE_PINS_ARGS = -annealing
+export GPL_PLACE_IOS = 1
 
 # Generous routing at top level
 export MIN_ROUTING_LAYER      = M2
@@ -26,7 +27,7 @@ export GND_NETS_VOLTAGES      =
 export PWR_NETS_VOLTAGES      =
 
 # The macros are very small so use a smaller halo
-export MACRO_PLACE_HALO        ?= 3 3
+export RTLMP_MIN_CHANNEL_SIZE  ?= 6 6
 
 export ROUTING_LAYER_ADJUSTMENT = 0.3
 export HOLD_SLACK_MARGIN        = -30

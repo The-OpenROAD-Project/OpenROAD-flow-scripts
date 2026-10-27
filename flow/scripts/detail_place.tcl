@@ -4,8 +4,6 @@ erase_non_stage_variables place
 load_design 3_4_place_resized.odb 2_floorplan.sdc
 source_step_tcl PRE DETAIL_PLACE
 
-source $::env(PLATFORM_DIR)/setRC.tcl
-
 proc do_dpl { } {
   # Only for use with hybrid rows
   if { $::env(BALANCE_ROWS) } {
@@ -26,7 +24,7 @@ proc do_dpl { } {
   }
   log_cmd optimize_mirroring
 
-  utl::info FLW 12 "Placement violations [check_placement -verbose]."
+  utl::info FLW 12 "Placement violations [check_placement -placeable -verbose]."
 
   log_cmd estimate_parasitics -placement
 }

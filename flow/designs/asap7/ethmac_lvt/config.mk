@@ -11,6 +11,7 @@ export CORE_UTILIZATION       = 40
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.60
+export GPL_PLACE_IOS          = 1
 
 export ASAP7_USE_VT           = LVT
 

@@ -155,6 +155,15 @@ class LibertyExporter(Exporter):
                     bus_data["msb"] - bus_data["lsb"] + 1,
                     bus_data["msb"],
                 )
+        for rw_port_group in mem.get_rw_port_groups():
+            if rw_port_group.get_write_mask_bus_name():
+                lanes = rw_port_group.get_write_mask_lanes()
+                self.write_bus_def(
+                    out_fh,
+                    mem.get_name() + "_" + rw_port_group.get_write_mask_bus_name(),
+                    lanes,
+                    lanes - 1,
+                )
         for bus_name, bus_data in mem.get_misc_busses().items():
             self.write_bus_def(
                 out_fh,
@@ -441,6 +450,10 @@ class LibertyExporter(Exporter):
                 clk_pin_name,
                 is_ram,
                 addr_bus_name,
+            )
+        if rw_port_group.get_write_mask_bus_name():
+            self.write_generic_bus(
+                out_fh, name, rw_port_group.get_write_mask_bus_name(), clk_pin_name
             )
         if rw_port_group.get_data_output_bus_name():
             self.write_output_bus(

@@ -26,6 +26,118 @@ _versionCompare() {
     test $a "$2" $b
 }
 
+# Yosys and kepler-formal are built with CMake. Yosys needs CMake >= 3.28,
+# newer than Ubuntu 22.04 ships, so fetch a release from Kitware when the
+# one on PATH is too old.
+cmakeMinVersion=3.28
+cmakeVersion=3.31.9
+cmakeChecksumX86_64=64797150473dabe9de95459cb1ce0715
+cmakeChecksumAarch64=8d426361ce8c54494c0a041a0e3bcc5c
+
+# True if version $1 >= version $2. Unlike _versionCompare, this handles
+# versions with a different number of components (3.22.1 vs 3.28).
+_versionAtLeast() {
+    [[ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -n1)" == "$2" ]]
+}
+
+# Prints the version of tool $2, looking in prefix $1 first, or 0 if absent.
+_toolVersion() {
+    local bin
+    bin=$(PATH="$1/bin:${PATH}" command -v "$2" || true)
+    if [[ -z "${bin}" ]]; then
+        echo 0
+        return
+    fi
+    "${bin}" --version | head -n1 | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -n1
+}
+
+_installCmake() {
+    local prefix=${PREFIX:-"/usr/local"}
+    local current
+    current=$(_toolVersion "${prefix}" cmake)
+    if _versionAtLeast "${current}" "${cmakeMinVersion}"; then
+        echo "CMake ${current} found, skipping install"
+        return
+    fi
+    local arch checksum installer workDir
+    arch=$(uname -m)
+    if [[ "${arch}" == "aarch64" ]]; then
+        checksum=${cmakeChecksumAarch64}
+    else
+        checksum=${cmakeChecksumX86_64}
+    fi
+    installer="cmake-${cmakeVersion}-linux-${arch}.sh"
+    workDir=$(mktemp -d)
+    (
+        cd "${workDir}"
+        wget -q "https://github.com/Kitware/CMake/releases/download/v${cmakeVersion}/${installer}"
+        md5sum -c <(echo "${checksum}  ${installer}")
+        mkdir -p "${prefix}"
+        sh "${installer}" --skip-license --prefix="${prefix}"
+    )
+    rm -rf "${workDir}"
+}
+
+# Yosys needs Bison >= 3.6, newer than EL8 ships, so build the release that
+# the OpenROAD installer uses when the one on PATH is too old.
+bisonMinVersion=3.6
+bisonVersion=3.8.2
+bisonChecksum=1e541a097cda9eca675d29dd2832921f
+
+_installBison() {
+    local prefix=${PREFIX:-"/usr/local"}
+    local current
+    current=$(_toolVersion "${prefix}" bison)
+    if _versionAtLeast "${current}" "${bisonMinVersion}"; then
+        echo "Bison ${current} found, skipping install"
+        return
+    fi
+    local tarball="bison-${bisonVersion}.tar.gz"
+    local workDir
+    workDir=$(mktemp -d)
+    (
+        cd "${workDir}"
+        wget -q "https://ftp.gnu.org/gnu/bison/${tarball}"
+        md5sum -c <(echo "${bisonChecksum}  ${tarball}")
+        tar xzf "${tarball}"
+        cd "bison-${bisonVersion}"
+        ./configure --prefix="${prefix}"
+        make -j "${numThreads}"
+        make install
+    )
+    rm -rf "${workDir}"
+}
+
+# kepler-formal needs oneTBB and its CMake package. EL8 ships TBB 2018, which
+# has neither, so build oneTBB there. Build it static, because the
+# kepler-formal RPATH does not include the prefix.
+tbbVersion=2021.13.0
+tbbChecksum=3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1
+
+_installTbb() {
+    local prefix=${PREFIX:-"/usr/local"}
+    if compgen -G "${prefix}/lib*/cmake/TBB/TBBConfig.cmake" > /dev/null; then
+        echo "oneTBB found in ${prefix}, skipping install"
+        return
+    fi
+    local tarball="oneTBB-${tbbVersion}.tar.gz"
+    local workDir
+    workDir=$(mktemp -d)
+    (
+        # _installCmake may have put CMake in a prefix that is not on PATH.
+        export PATH="${prefix}/bin:${PATH}"
+        cd "${workDir}"
+        wget -q -O "${tarball}" "https://github.com/uxlfoundation/oneTBB/archive/refs/tags/v${tbbVersion}.tar.gz"
+        sha256sum -c <(echo "${tbbChecksum}  ${tarball}")
+        tar xzf "${tarball}"
+        cmake -S "oneTBB-${tbbVersion}" -B build -DCMAKE_BUILD_TYPE=Release \
+            -DTBB_TEST=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="${prefix}"
+        cmake --build build -j "${numThreads}"
+        cmake --install build
+    )
+    rm -rf "${workDir}"
+}
+
 _installORDependencies() {
     if [[ ${YOSYS_VER} == "" ]]; then
         YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
@@ -120,19 +232,53 @@ _install_EL8_EL9_Packages() {
 
     # EL8 and EL9 use `dnf`, instead of `yum`
     dnf -y update
+    # EPEL has tcl-tclreadline and capnproto.
+    dnf -y install "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${elVersion}.noarch.rpm"
+    # The rest builds Yosys and kepler-formal.
     dnf -y install \
-        time \
+        bison \
+        boost-devel \
+        capnproto \
+        capnproto-devel \
+        findutils \
+        flex \
+        gcc \
+        gcc-c++ \
+        git \
+        libffi-devel \
+        make \
+        pkgconf-pkg-config \
+        python3 \
+        python3-devel \
+        python3-pip \
         readline \
         ruby \
-        ruby-devel
+        ruby-devel \
+        tcl-devel \
+        tcllib \
+        time \
+        wget \
+        zlib-devel
+
+    # kepler-formal and the pip lock files need Python 3.10 or newer, which
+    # is newer than the EL8 and EL9 defaults.
+    dnf -y install python3.12 python3.12-devel python3.12-pip
+    update-alternatives --install /usr/bin/python3 python3 "$(command -v python3.12)" 50
+    # EL8 registers its Python 3.6 with a higher priority, so select 3.12.
+    update-alternatives --set python3 "$(command -v python3.12)"
 
     if [[ "${elVersion}" == "8" ]]; then
         dnf -y install \
+            readline-devel \
             tcl-tclreadline \
             tcl-tclreadline-devel
+        # The default GCC 8 is too old for kepler-formal.
+        dnf -y install gcc-toolset-13
     fi
 
     if [[ "${elVersion}" == "9" ]]; then
+        # EL8 builds oneTBB instead, in -common.
+        dnf -y install tbb-devel
         dnf -y install \
             https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/readline-devel-8.1-4.el9.x86_64.rpm
     fi
@@ -197,15 +343,20 @@ _installUbuntuPackages() {
     apt-get -y update
     apt-get -y install --no-install-recommends \
         bison \
+        build-essential \
+        ca-certificates \
         capnproto \
         curl \
         flex \
+        git \
         help2man \
         libboost-iostreams-dev \
         libcapnp-dev \
+        libffi-dev \
         libfl-dev \
         libfl2 \
         libgit2-dev \
+        libgmock-dev \
         libgoogle-perftools-dev \
         libgtest-dev \
         libqt5multimediawidgets5 \
@@ -217,14 +368,19 @@ _installUbuntuPackages() {
         libz-dev \
         perl \
         pkg-config \
+        python3-dev \
         python3-pip \
         python3-venv \
         qtmultimedia5-dev \
         qttools5-dev \
         ruby \
         ruby-dev \
+        tcl-dev \
         tcl-tclreadline \
+        tcllib \
         time \
+        unzip \
+        wget \
         zlib1g \
         zlib1g-dev
 
@@ -261,14 +417,14 @@ _installUbuntuPackages() {
                 echo "Klayout is already installed"
         fi
         else
-            if [[ $1 == 20.04 ]]; then
-                klayoutChecksum=146f51de7fcc760e51c7438998934d9d
-            elif [[ $1 == 22.04 ]]; then
+            if [[ $1 == 22.04 ]]; then
                 klayoutChecksum=6dfffa50f385881768dee30bdc759608
             elif [[ $1 == 24.04 ]]; then
                 klayoutChecksum=0181713e60891e461d6d1664c1b8e213
+            elif [[ $1 == 26.04 ]]; then
+                klayoutChecksum=904f60fd05c3a5029cab8a2840029f49
             else
-                echo "Unsupported Ubuntu version $1. Supported versions: 20.04, 22.04, 24.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
+                echo "Unsupported Ubuntu version $1. KLayout ${klayoutVersion} packages are pinned for 22.04, 24.04, and 26.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
                 exit 1
             fi
             wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
@@ -311,7 +467,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib
+    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib cmake
     brew link --force libomp
     brew install --cask klayout
     brew install docker docker-buildx
@@ -324,8 +480,13 @@ _installCI() {
         ca-certificates \
         coreutils \
         curl \
+        gnupg \
+        jq \
+        lsb-release \
+        parallel \
         python3 \
-        software-properties-common
+        software-properties-common \
+        zip
 }
 
 _help() {
@@ -346,6 +507,14 @@ Usage: $0 [-all|-base|-common] [-<ARGS>]
                                 # Installs OpenROAD's common dependencies
                                 #     (-base must be executed in another
                                 #     command).
+       $0 -bazel
+                                # Default. Installs the dependencies to
+                                #     build OpenROAD with Bazel.
+       $0 -cmake
+                                # Installs the dependencies to build
+                                #     OpenROAD with CMake instead of Bazel,
+                                #     e.g. for build_openroad.sh
+                                #     --openroad-args -cmake-build.
        $0 -prefix=DIR
                                 # Installs common dependencies in an existing
                                 #     user-specified directory. Only used
@@ -370,7 +539,7 @@ EOF
 }
 
 # default args
-OR_INSTALLER_ARGS="-eqy"
+OR_INSTALLER_ARGS=""
 YOSYS_VER=""
 # default prefix
 PREFIX=""
@@ -380,6 +549,8 @@ option="none"
 isLocal="false"
 constantBuildDir="false"
 CI="no"
+# OpenROAD build system to install dependencies for: bazel or cmake
+buildSystem="bazel"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -405,8 +576,15 @@ while [ "$#" -gt 0 ]; do
             fi
             option="common"
             ;;
+        -bazel)
+            buildSystem="bazel"
+            ;;
+        -cmake)
+            buildSystem="cmake"
+            ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
+            PREFIX="${HOME}/.local"
             ;;
         -ci)
             CI="yes"
@@ -444,10 +622,13 @@ if [[ "${option}" == "none"  ]]; then
 fi
 
 OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
-# build_openroad.sh builds OpenROAD with Bazel, so bazelisk and its runtime
-# libraries are base dependencies. They need root, and -common may run
-# unprivileged, so they ride along with -base only.
-if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+# build_openroad.sh builds OpenROAD with Bazel by default. The Bazel runtime
+# libraries need root, and -common may run unprivileged, so they ride along
+# with -base only; -common installs bazelisk. -cmake asks for the OpenROAD
+# CMake dependencies instead.
+if [[ "${buildSystem}" == "cmake" ]]; then
+    OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -cmake"
+elif [[ "${option}" == "base" || "${option}" == "all" ]]; then
     OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -bazel"
 fi
 
@@ -477,7 +658,7 @@ case "${os}" in
     "CentOS Linux" | "Red Hat Enterprise Linux"* | "AlmaLinux" | "Rocky Linux")
         # Enterprise Linux support - dispatch based on specific version
         if [[ ${CI} == "yes" ]]; then
-            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 24.04 and 26.04" >&2
         fi
 
         # Detect EL version to choose appropriate functions
@@ -514,6 +695,11 @@ case "${os}" in
         esac
 
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCmake
+            _installBison
+            if [[ "${elVersion}" == "8" ]]; then
+                _installTbb
+            fi
             _installPipCommon
         fi
         ;;
@@ -531,14 +717,19 @@ case "${os}" in
             _installUbuntuPackages "${version}"
             _installUbuntuCleanUp
         fi
+        if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCmake
+        fi
         if [[ $version != "rodete" ]]; then
-            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                if _versionCompare ${version} -lt 23.04 ; then
+            if _versionCompare ${version} -lt 23.04 ; then
+                if [[ "${option}" == "common" || "${option}" == "all" ]]; then
                     _installPipCommon
-                else
-                    if [[ "${option}" == "base" || "${option}" == "all" ]]; then
-                        _installPipSystem
-                    fi
+                fi
+            else
+                # Python packages come from apt (PEP 668), so they belong
+                # with the other system packages in -base.
+                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+                    _installPipSystem
                 fi
             fi
         else
@@ -547,7 +738,7 @@ case "${os}" in
         ;;
     "Darwin" )
         if [[ ${CI} == "yes" ]]; then
-            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 24.04 and 26.04" >&2
         fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then

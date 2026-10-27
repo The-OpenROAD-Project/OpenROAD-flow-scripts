@@ -7,31 +7,27 @@ Instructions for installing:
 - [Klayout>=0.28.8](https://www.klayout.de/build.html)
 - [Yosys>=0.58](https://github.com/YosysHQ/oss-cad-suite-build/blob/master/README.md#installation)
 
-```{tip} Unfortunately KLayout maintainers do not provide Debian 11 compatible packages. You can follow the build-from-sources instruction (Version >=0.25) and Ubuntu 22 instructions [here](https://www.klayout.de/build.html#:~:text=Building%20KLayout%20on%20Linux%20(Version%20%3E%3D%200.25)).
-```
-
 ## Install OpenROAD
 Download pre-built binaries with self-contained dependencies
-included from the Precision Innovations' GitHub releases
-[here](https://github.com/Precision-Innovations/OpenROAD/releases).
+from [OpenROAD VaultLink](https://vaultlink.precisioninno.com/).
 
 Thanks to [Precision Innovations](https://precisioninno.com/) for hosting and maintaining these binaries.
 
-The following platforms are supported currently:
-- Ubuntu 20.04/22.04
-- Debian 11
+Pre-built binaries are available for these platforms:
+- Ubuntu 22.04
+- Ubuntu 24.04
 
 Use the following steps to download:
 
-Step 1: Click on the [Precision Innovations Github releases link](https://github.com/Precision-Innovations/OpenROAD/releases).
+Step 1: Open [OpenROAD VaultLink](https://vaultlink.precisioninno.com/).
 
-Step 2: Download the artifacts for your distribution.
+Step 2: Download the `.deb` package for your Ubuntu version.
 
-Step 3: Run the install command based on platform use package installer.
-        For example Ubuntu 20.04 use:
+Step 3: Install the package with `apt`.
+        For example, on Ubuntu 22.04:
 
 ```shell
-sudo apt install ./openroad_2.0_amd64-ubuntu20.04.deb
+sudo apt install ./openroad_<version>_amd64-ubuntu-22.04.deb
 ```
 
 ## Verify Installation
