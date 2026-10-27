@@ -305,6 +305,23 @@ def scan_yosys_json(
     return dedupe(out)
 
 
+def initialized_modules(data: dict | str | Path, top: str | None = None) -> set[str]:
+    """Modules holding a memory with an initial value: a $mem_v2 whose INIT
+    has a 0 or 1 bit (yosys writes an uninitialized memory's INIT as x)."""
+    if isinstance(data, (str, Path)):
+        data = json.loads(Path(data).read_text())
+    out = set()
+    for mod_name, mod_info in data.get("modules", {}).items():
+        name = mod_name[1:] if mod_name.startswith("\\") else mod_name
+        for cell in mod_info.get("cells", {}).values():
+            if cell.get("type", "") not in ("$mem_v2", "$mem"):
+                continue
+            init = str(cell.get("parameters", {}).get("INIT", ""))
+            if "0" in init or "1" in init:
+                out.add(definition_name(name, top))
+    return out
+
+
 def definition_name(module: str, top: str | None) -> str:
     """`array_64x114$top.u0` -> `array_64x114` for top module `top`.
 

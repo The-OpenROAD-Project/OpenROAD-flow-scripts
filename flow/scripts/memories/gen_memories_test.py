@@ -114,9 +114,12 @@ class GenMemoriesTest(unittest.TestCase):
             sorted(p.name for p in mems_dir.iterdir()),
             [
                 "blackboxes.txt",
+                "inline.txt",
                 "mem_128x32.lef",
                 "mem_128x32.lib",
                 "mem_128x32_pre_layout.lib",
+                "regfile_cores.txt",
+                "regfiles.txt",
             ],
         )
         # one `<module> <area>` line; the area is the one the .lib states,
@@ -224,6 +227,50 @@ class GenMemoriesTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(json.loads((d / "memories.json").read_text())["memories"], [])
         self.assertEqual((d / "memories" / "blackboxes.txt").read_text(), "")
+        self.assertEqual((d / "memories" / "regfiles.txt").read_text(), "")
+        self.assertEqual((d / "memories" / "inline.txt").read_text(), "")
+        self.assertEqual((d / "memories" / "regfile_cores.txt").read_text(), "")
+
+    def test_regfile_area_is_the_lib_cell_area(self):
+        # a register file's blackboxes.txt line carries the area its
+        # generated .lib states, as FakeRAM's do
+        with tempfile.TemporaryDirectory() as d:
+            lib = Path(d) / "RegFile.lib"
+            lib.write_text(
+                "library (RegFile) {\n  cell (RegFile) {\n"
+                "    area : 153.527400;\n  }\n}\n"
+            )
+            self.assertEqual(gen_memories._lib_area(lib), "153.527400")
+
+    def test_regfile_lib_without_area_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            lib = Path(d) / "RegFile.lib"
+            lib.write_text("library (RegFile) {\n  cell (RegFile) {\n  }\n}\n")
+            with self.assertRaises(SystemExit):
+                gen_memories._lib_area(lib)
+
+    def test_initialized_register_file_stops(self):
+        # a spec naming a module whose memory has an initial value stops:
+        # generate_ram's storage has none, and the value would be lost
+        d = Path(self.tmp.name)
+        netlist = json.loads(json.dumps(SAMPLE_YOSYS_NETLIST))
+        cell = netlist["modules"]["\\cache_tags"]["cells"]["\\$mem_0"]
+        cell["parameters"]["INIT"] = "x" * 75 + "01" * 12 + "1"
+        netlist_json = d / "memories_inferred.json"
+        netlist_json.write_text(json.dumps(netlist))
+        spec = d / "cache_tags.regfile"
+        spec.write_text("module cache_tags\n")
+        with self.assertRaises(SystemExit) as stop:
+            gen_memories.run(
+                netlist_json,
+                [],
+                "asap7",
+                d / "memories",
+                d / "memories.json",
+                regfile_specs=[spec],
+            )
+        self.assertIn("cache_tags", str(stop.exception))
+        self.assertIn("initial value", str(stop.exception))
 
 
 if __name__ == "__main__":
