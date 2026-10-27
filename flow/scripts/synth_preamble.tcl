@@ -117,17 +117,22 @@ proc auto_memories_regfile_cores { } {
   return [regexp -all -inline {\S+} $content]
 }
 
+# The instances of a parameterized RTL module (ibex_register_file_ff
+# #(...), coralnpu's Sram #(NUM_ENTRIES)) carry parameters its generated
+# view has no declaration for: hierarchy refuses them, and a netlist
+# that writes them out is one OpenROAD cannot read. The view is that
+# module at the instance's widths, as detection sized it: drop the
+# parameters from its instances.
+proc drop_auto_memories_parameters { m } {
+  set dump [tee -q -s result.string dump t:$m]
+  foreach {- name} [regexp -all -inline -- {parameter \\(\S+)} $dump] {
+    setparam -unset $name t:$m
+  }
+}
+
 proc read_auto_memories_inline { } {
   foreach m [auto_memories_inline] {
-    # A parameterized RTL module (ibex_register_file_ff #(...)) is
-    # instantiated with parameters the generated netlist has no
-    # declaration for, which hierarchy refuses. The netlist is that module
-    # at the instance's widths, as regfile_ram.py's port check has
-    # confirmed: drop the parameters from its instances.
-    set dump [tee -q -s result.string dump t:$m]
-    foreach {- name} [regexp -all -inline -- {parameter \\(\S+)} $dump] {
-      setparam -unset $name t:$m
-    }
+    drop_auto_memories_parameters $m
     read_verilog -overwrite "$::env(RESULTS_DIR)/memories/$m.v"
   }
 }
@@ -201,6 +206,9 @@ proc read_design_sources { } {
       }
     }
     auto_memories_check_blackboxed $sourced
+    foreach m $sourced {
+      drop_auto_memories_parameters $m
+    }
     read_auto_memories_inline
 
     # Workaround for yosys-slang#119
