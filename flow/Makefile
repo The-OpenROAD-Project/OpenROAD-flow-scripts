@@ -246,13 +246,6 @@ synth-report: synth
 do-synth-report:
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/1_2_yosys_metrics.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl
 
-.PHONY: memory
-memory:
-	if [ -f $(RESULTS_DIR)/mem_hierarchical.json ]; then \
-		$(PYTHON_EXE) $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem_hierarchical.json; \
-	fi
-	$(PYTHON_EXE) $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
-
 # ==============================================================================
 
 
