@@ -1288,10 +1288,11 @@
   },
   "SYNTH_ABC_PARTITION": {
     "default": 0,
-    "description": "Map the top module with one abc call per register group instead of one\nfor the whole module, so that each group is optimised against its own\ncritical delay rather than the module's (abc area-recovers every cone\nthat is faster than its single critical path). Flops are grouped by\nname; the value is the minimum cone size, in cells, for a group to get\nits own call. 0 disables. Ignored when SYNTH_WRAPPED_OPERATORS or\nSWAP_ARITH_OPERATORS is set.\n",
+    "description": "Map the top module with one abc call per register group instead of one\nfor the whole module. abc maps each call against that call's own\ncritical path and sees neither the SDC (clocks, false paths) nor the\narrival times at cells mapped before it, such as extract_fa's adders.\nWhen that critical path is the wrong one, the real cones are\narea-recovered into slow structures; separate calls limit this to one\ngroup. Flops are grouped by name; the value is the minimum cone size,\nin cells, for a group to get its own call. 0 disables. Ignored when\nSYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS is set.\n",
     "stages": [
       "synth"
-    ]
+    ],
+    "type": "int"
   },
   "SYNTH_ARGS": {
     "description": "Optional synthesis variables for yosys.\n",

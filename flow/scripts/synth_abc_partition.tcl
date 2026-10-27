@@ -3,9 +3,10 @@
 #
 # abc maps a netlist against a single delay target, the netlist's own
 # critical path, and recovers area on every cone that is faster than that.
-# A cone that is not the deepest one in the module is rebuilt smaller and
-# slower, even when it limits the design.  Mapping each register group
-# separately gives every group its own critical path.
+# It sees no SDC and no arrival times at cells mapped before it (extract_fa's
+# adders), so that critical path can be a false path, or shorter than the
+# real one; the real cones are then rebuilt smaller and slower.  Mapping each
+# register group separately gives every group its own critical path.
 #
 # Flops (liberty cells after dfflibmap) are grouped by name with bit indices
 # and the "$_DFF..." suffix removed.  A group's cone is the still-unmapped
@@ -38,6 +39,7 @@ proc synth_abc_partition { abc_args min_cells } {
     }
     select -set abc_partition_group {*}$sel
     # select -count returns "<n> objects."
+    set n 0
     regexp {[0-9]+} [tee -q -s result.string select -count \
       @abc_partition_group %ci1 %cie* "$top/t:\$_*" %i] n
     lappend sized [list $key $n $sel]
@@ -52,6 +54,7 @@ proc synth_abc_partition { abc_args min_cells } {
     select -set abc_partition_group {*}$sel
     select -set abc_partition_cone \
       @abc_partition_group %ci1 %cie* "$top/t:\$_*" %i
+    set left 0
     regexp {[0-9]+} [tee -q -s result.string select -count @abc_partition_cone] left
     if { $left < $min_cells } {
       continue
