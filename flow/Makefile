@@ -307,7 +307,8 @@ do-binary-libs:
 
 # do-binary-libs renames its log into place only when it succeeds, so a
 # failed conversion runs again.
-$(LOG_DIR)/write_binary_libs.log: $(LIB_FILES)
+$(LOG_DIR)/write_binary_libs.log: $(LIB_FILES) \
+  $(foreach corner,$(shell echo $(CORNERS) | tr '[:lower:]' '[:upper:]'),$($(corner)_LIB_FILES))
 	$(UNSET_AND_MAKE) do-binary-libs
 
 # Order-only, so converting never reruns the flow.
