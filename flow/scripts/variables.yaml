@@ -1103,6 +1103,7 @@ DFF_LIB_FILE:
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
+    A name that matches no module of the design stops synthesis.
   stages:
     - synth
 SYNTH_ARGS:

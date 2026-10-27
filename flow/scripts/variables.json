@@ -1354,7 +1354,7 @@
     ]
   },
   "SYNTH_KEEP_MODULES": {
-    "description": "Mark modules to keep from getting removed in flattening.\n",
+    "description": "Mark modules to keep from getting removed in flattening.\nA name that matches no module of the design stops synthesis.\n",
     "stages": [
       "synth"
     ]
