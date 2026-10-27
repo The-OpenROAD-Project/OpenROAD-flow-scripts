@@ -1,0 +1,68 @@
+load("@rules_chisel//chisel:defs.bzl", "chisel_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(glob(["third_party/**/*.patch"]))
+
+# rocket-chip's AsyncQueue, which coralnpu's TileLink bridges use.
+chisel_library(
+    name = "asyncqueue",
+    srcs = [
+        "@diplomacy//:diplomacy/src/diplomacy/nodes/HeterogeneousBag.scala",
+        "@rocket_chip//:src/main/scala/util/AsyncQueue.scala",
+        "@rocket_chip//:src/main/scala/util/AsyncResetReg.scala",
+        "@rocket_chip//:src/main/scala/util/Counters.scala",
+        "@rocket_chip//:src/main/scala/util/Crossing.scala",
+        "@rocket_chip//:src/main/scala/util/ShiftReg.scala",
+        "@rocket_chip//:src/main/scala/util/SynchronizerReg.scala",
+        "@rocket_chip//:src/main/scala/util/package.scala",
+    ],
+    scalacopts = ["-Wconf:cat=deprecation:s"],
+)
+
+# The revision the core reports in a CSR, which coralnpu's build stamps
+# from git: here the commit this archive is.
+genrule(
+    name = "scm_info",
+    outs = ["ScmInfo.scala"],
+    cmd = """cat > $@ <<'EOF'
+package coralnpu
+
+class ScmInfo {
+  val revision = BigInt("b50b85a96925576b907b6cdec110d9f4b0a08695", 16)
+}
+EOF""",
+)
+
+# common, bus and the core compiled together: the packages refer to
+# each other. Tests, specs, simulation helpers and the SoC-only TCMs
+# are left out.
+chisel_library(
+    name = "coralnpu",
+    srcs = [":scm_info"] + glob(
+        [
+            "hdl/chisel/src/common/*.scala",
+            "hdl/chisel/src/bus/*.scala",
+            "hdl/chisel/src/coralnpu/*.scala",
+            "hdl/chisel/src/coralnpu/float/*.scala",
+            "hdl/chisel/src/coralnpu/rvv/*.scala",
+            "hdl/chisel/src/coralnpu/scalar/*.scala",
+        ],
+        exclude = [
+            "**/*Spec.scala",
+            "**/*Test*.scala",
+            "hdl/chisel/src/common/FpTestUtils.scala",
+            "hdl/chisel/src/common/SvGenerationUtils.scala",
+            "hdl/chisel/src/common/TestingUtils.scala",
+            "hdl/chisel/src/coralnpu/BankedDtcm.scala",
+            "hdl/chisel/src/coralnpu/BankedItcm.scala",
+        ],
+    ),
+    scalacopts = ["-Wconf:cat=deprecation:s"],
+    deps = [":asyncqueue"],
+)
+
+filegroup(
+    name = "blackboxes",
+    srcs = glob(["hdl/verilog/**/*.sv", "hdl/verilog/**/*.svh", "hdl/verilog/**/*.v"]),
+)

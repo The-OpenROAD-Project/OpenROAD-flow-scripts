@@ -1,0 +1,102 @@
+"""CoreMiniAxi.sv generated from coralnpu's Chisel source.
+
+    bazelisk run //:update
+
+writes ../CoreMiniAxi.sv: coralnpu's CoreMiniAxi as upstream's
+core_mini_axi_cc_library configures it, through firtool, without the
+verification layers, randomization or debug ports a synthesis build
+does not use, and with the test enable tied low. To move to a newer
+coralnpu, change the coralnpu archive below and run it again.
+"""
+
+module(name = "orfs_coralnpu")
+
+bazel_dep(name = "rules_chisel", version = "0.4.2")
+bazel_dep(name = "rules_java", version = "8.14.0")
+bazel_dep(name = "rules_scala", version = "7.1.5")
+bazel_dep(name = "rules_shell", version = "0.8.0")
+
+# coralnpu pins Chisel 7.0.0-RC1. rules_scala carries Scala 2.13.17,
+# and Chisel's compiler plugin is published for it from 7.2.0 on.
+chisel = use_extension("@rules_chisel//chisel:extensions.bzl", "chisel")
+chisel.toolchain(
+    chisel_version = "7.2.0",
+    scala_version = "2.13.17",
+)
+use_repo(chisel, "chisel_firtool", "chisel_maven")
+
+scala_config = use_extension("@rules_scala//scala/extensions:config.bzl", "scala_config")
+scala_config.settings(scala_version = "2.13.17")
+use_repo(scala_config, "rules_scala_config")
+
+scala_deps = use_extension("@rules_scala//scala/extensions:deps.bzl", "scala_deps")
+scala_deps.scala()
+use_repo(scala_deps, "rules_scala_toolchains")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "coralnpu",
+    build_file = "//:coralnpu.BUILD.bazel",
+    # coralnpu's own BUILD files load its rules and toolchains; this
+    # build compiles the sources with coralnpu.BUILD.bazel alone.
+    patch_cmds = ["find . -mindepth 2 \\( -name BUILD -o -name BUILD.bazel \\) -delete"],
+    sha256 = "86d5a9be2ca00d6ced6f2a2cd63fe35f7fd6e00443860c7855dc37cf0c793c63",
+    strip_prefix = "coralnpu-b50b85a96925576b907b6cdec110d9f4b0a08695",
+    urls = ["https://github.com/google-coral/coralnpu/archive/b50b85a96925576b907b6cdec110d9f4b0a08695.tar.gz"],
+)
+
+# The rest at the commits coralnpu's rules/repo_defs.bzl and
+# rules/repos.bzl pin, cvfpu with coralnpu's patches.
+http_archive(
+    name = "rocket_chip",
+    build_file = "//:rocket_chip.BUILD.bazel",
+    sha256 = "76076a7e7538dd347074d7dc056cfa6219a6dfdeed58bb47c848b435f27c30f8",
+    strip_prefix = "rocket-chip-f517abbf41abb65cea37421d3559f9739efd00a9",
+    urls = ["https://github.com/chipsalliance/rocket-chip/archive/f517abbf41abb65cea37421d3559f9739efd00a9.tar.gz"],
+)
+
+http_archive(
+    name = "diplomacy",
+    build_file_content = 'exports_files(glob(["**/*.scala"]))',
+    sha256 = "33a66aa60e565b9665dcfc93020f5acf64710a7dc4f2b164752544ec5a946256",
+    strip_prefix = "diplomacy-6590276fa4dac315ae7c7c01371b954c5687a473",
+    urls = ["https://github.com/chipsalliance/diplomacy/archive/6590276fa4dac315ae7c7c01371b954c5687a473.tar.gz"],
+)
+
+http_archive(
+    name = "cvfpu",
+    build_file_content = 'filegroup(name = "all_srcs", srcs = glob(["**/*.sv", "**/*.svh", "**/*.v"], allow_empty = True), visibility = ["//visibility:public"])',
+    patch_args = ["-p1"],
+    patches = [
+        "@coralnpu//:third_party/cvfpu/0001-Fix-max_num_lanes-issue-in-DC.patch",
+        "@coralnpu//:third_party/cvfpu/0002-Remove-SVH-includes.patch",
+        "@coralnpu//:third_party/cvfpu/0003-Fill-in-unreachable-state-in-fpnew_divsqrt_th_32-fsm.patch",
+        "@coralnpu//:third_party/cvfpu/0004-Remove-ternary-operator-from-pkg-causing-dc-crash.patch",
+        "@coralnpu//:third_party/cvfpu/0005-Fix-fsm-complete.patch",
+        "@coralnpu//:third_party/cvfpu/0006-Fix-syn-tool-compatibility-issues.patch",
+        "@coralnpu//:third_party/cvfpu/0007-Fix-nan-boxing-divsqrt.patch",
+        "@coralnpu//:third_party/cvfpu/0008-Fix-num-lanes-multifmt-slice.patch",
+        "@coralnpu//:third_party/cvfpu/0009-Rebalance-fpnew-fma-pipeline-stages.patch",
+        "@coralnpu//:third_party/cvfpu/0010-Move-LZA-leading-zero-counter-to-norm-stage.patch",
+    ],
+    sha256 = "42f7852a8df79cd08999a42ca338ef8017e87f513229a4e34aca754f8aedea26",
+    strip_prefix = "cvfpu-bb65bdedd07711dfd41c621382f940a5cbb93046",
+    urls = ["https://github.com/openhwgroup/cvfpu/archive/bb65bdedd07711dfd41c621382f940a5cbb93046.tar.gz"],
+)
+
+http_archive(
+    name = "common_cells",
+    build_file_content = 'filegroup(name = "all_srcs", srcs = glob(["**/*.sv", "**/*.svh", "**/*.v"], allow_empty = True), visibility = ["//visibility:public"])',
+    sha256 = "ea112e598908b9cfd03254aeb676ff8b51196b186ab00bdb5e2ad90a73a3055e",
+    strip_prefix = "common_cells-6aeee85d0a34fedc06c14f04fd6363c9f7b4eeea",
+    urls = ["https://github.com/pulp-platform/common_cells/archive/6aeee85d0a34fedc06c14f04fd6363c9f7b4eeea.tar.gz"],
+)
+
+http_archive(
+    name = "fpu_div_sqrt_mvp",
+    build_file_content = 'filegroup(name = "all_srcs", srcs = glob(["**/*.sv", "**/*.svh", "**/*.v"], allow_empty = True), visibility = ["//visibility:public"])',
+    sha256 = "2647be453d3dbb7315d7018235ab64b9178ed387c3ff0d2f48d106bac6ab2ece",
+    strip_prefix = "fpu_div_sqrt_mvp-86e1f558b3c95e91577c41b2fc452c86b04e85ac",
+    urls = ["https://github.com/pulp-platform/fpu_div_sqrt_mvp/archive/86e1f558b3c95e91577c41b2fc452c86b04e85ac.tar.gz"],
+)
