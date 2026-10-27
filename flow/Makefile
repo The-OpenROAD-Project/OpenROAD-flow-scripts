@@ -302,8 +302,11 @@ binary-libs:
 .PHONY: do-binary-libs
 do-binary-libs:
 	@mkdir -p $(LOG_DIR)
-	$(RUN_CMD) --log $(abspath $(LOG_DIR)/write_binary_libs.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_binary_libs.tcl
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/write_binary_libs.tmp.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_binary_libs.tcl
+	mv $(LOG_DIR)/write_binary_libs.tmp.log $(LOG_DIR)/write_binary_libs.log
 
+# do-binary-libs renames its log into place only when it succeeds, so a
+# failed conversion runs again.
 $(LOG_DIR)/write_binary_libs.log: $(LIB_FILES)
 	$(UNSET_AND_MAKE) do-binary-libs
 

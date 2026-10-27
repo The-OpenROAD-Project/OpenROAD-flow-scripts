@@ -33,8 +33,7 @@ foreach lib_file $lib_files {
     } msg]
   } {
     file delete -force $tmp
-    puts "Could not write $blib: $msg"
-    continue
+    error "Could not write $blib: $msg"
   }
   incr written
 }
