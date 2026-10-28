@@ -735,15 +735,13 @@ gds: $(GDS_FINAL_FILE)
 #-------------------------------------------------------------------------------
 $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log) --tee -- \
-	        $(SCRIPTS_DIR)/klayout.sh -zz -rd design_name=$(basename $(notdir $@)) \
-	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:$(STREAM_SYSTEM_EXT)=def)) \
-	        -rd in_files="$(ADDITIONAL_GDSOAS)" \
-	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_file="" \
-	        -rd out_file=$@ \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
-	        -rd layer_map=$(GDS_LAYER_MAP) \
-	        -r $(UTILS_DIR)/def2stream.py
+	        $(PYTHON_EXE) $(UTILS_DIR)/def2stream.py \
+	        --design-name=$(basename $(notdir $@)) \
+	        --in-def=$(OBJECTS_DIR)/def/$(notdir $(@:$(STREAM_SYSTEM_EXT)=def)) \
+	        --in-files="$(ADDITIONAL_GDSOAS)" \
+	        --out-file=$@ \
+	        --tech-file=$(OBJECTS_DIR)/klayout_wrap.lyt \
+	        --layer-map=$(GDS_LAYER_MAP)
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
@@ -753,14 +751,14 @@ $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSO
 .PHONY: do-gds-merged
 do-gds-merged:
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_1_merge.log) --tee -- \
-	        $(SCRIPTS_DIR)/klayout.sh -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_def=$(RESULTS_DIR)/6_final.def \
-	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
-	        -rd seal_file="$(SEAL_GDSOAS)" \
-	        -rd out_file=$(GDS_MERGED_FILE) \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rd layer_map=$(GDS_LAYER_MAP) \
-	        -r $(UTILS_DIR)/def2stream.py
+	        $(PYTHON_EXE) $(UTILS_DIR)/def2stream.py \
+	        --design-name=$(DESIGN_NAME) \
+	        --in-def=$(RESULTS_DIR)/6_final.def \
+	        --in-files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
+	        --seal-file="$(SEAL_GDSOAS)" \
+	        --out-file=$(GDS_MERGED_FILE) \
+	        --tech-file=$(OBJECTS_DIR)/klayout.lyt \
+	        --layer-map=$(GDS_LAYER_MAP)
 
 $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 

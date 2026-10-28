@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""klayout.sh without KLayout: streaming out GDS writes an empty file and
-warns, so the flow runs to the end for those who don't need or want a GDS
-file. Every other KLayout call, DRC and LVS among them, still stops with
-an error. With KLayout, the call goes to it unchanged.
+"""klayout.sh runs a KLayout executable: DRC, LVS, the gallery and the
+viewers. Without KLayout it stops with an error. With KLayout, the call
+goes to it unchanged.
 """
 
 import os
@@ -40,16 +39,6 @@ class TestKlayoutSh(unittest.TestCase):
             "-r",
             "/flow/util/def2stream.py",
         ]
-
-    def test_stream_out_writes_an_empty_file_and_warns(self):
-        result = self.run_klayout("", *self.stream_args())
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn(
-            "WARNING: klayout not found, mocking klayout by writing empty file "
-            + self.out_file,
-            result.stdout,
-        )
-        self.assertEqual(os.path.getsize(self.out_file), 0)
 
     def test_drc_still_needs_klayout(self):
         result = self.run_klayout(

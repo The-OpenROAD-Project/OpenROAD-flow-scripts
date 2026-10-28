@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import io
 import unittest
 from unittest.mock import MagicMock, patch, call
 import sys
 import os
+import subprocess
 import tempfile
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "util"))
@@ -537,6 +539,108 @@ class TestGdsFileMerging(unittest.TestCase):
         # read is called for DEF + 3 GDS files = 4 total
         read_calls = main_layout.read.call_args_list
         self.assertEqual(len(read_calls), 4)  # 1 DEF + 3 GDS
+
+
+class TestMain(unittest.TestCase):
+    """The stream file is written by the klayout Python module, else by a
+    KLayout executable, else it is written empty with a warning."""
+
+    def setUp(self):
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.out_file = os.path.join(self.tmp_dir.name, "6_1_merged.gds")
+        self.argv = [
+            "--design-name=gcd",
+            "--in-def=6_final.def",
+            "--in-files=a.gds b.gds",
+            f"--out-file={self.out_file}",
+            "--tech-file=klayout.lyt",
+        ]
+
+    def tearDown(self):
+        self.tmp_dir.cleanup()
+
+    def fake_klayout(self, exit_status=0, version_status=0):
+        """A KLayout executable that logs its arguments, one call a line."""
+        log = os.path.join(self.tmp_dir.name, "klayout.log")
+        path = os.path.join(self.tmp_dir.name, "klayout")
+        with open(path, "w") as f:
+            f.write(
+                f'#!/bin/sh\necho "$* $GDS_ALLOW_EMPTY" >> {log}\n'
+                f'[ "$1" = -v ] && exit {version_status}\nexit {exit_status}\n'
+            )
+        os.chmod(path, 0o755)
+        return path, log
+
+    def test_python_module_merges(self):
+        pya_mod = MagicMock()
+        with patch.object(def2stream, "pya", pya_mod), patch.object(
+            def2stream, "merge_gds", return_value=0
+        ) as merge_gds:
+            self.assertEqual(def2stream.main(self.argv, environ={}), 0)
+        kwargs = merge_gds.call_args.kwargs
+        self.assertIs(kwargs["pya_mod"], pya_mod)
+        self.assertEqual(kwargs["design_name"], "gcd")
+        self.assertEqual(kwargs["in_files"], "a.gds b.gds")
+        self.assertEqual(kwargs["out_file"], self.out_file)
+        self.assertEqual(kwargs["seal_file"], "")
+        self.assertEqual(kwargs["layer_map"], "")
+
+    def test_klayout_executable_on_path(self):
+        klayout, log = self.fake_klayout()
+        environ = {"PATH": self.tmp_dir.name}
+        with patch.object(def2stream, "pya", None):
+            self.assertEqual(def2stream.main(self.argv, environ=environ), 0)
+        with open(log) as f:
+            version, stream = f.read().splitlines()
+        self.assertEqual(version.strip(), "-v")
+        self.assertIn("-zz", stream)
+        self.assertIn("-rd design_name=gcd", stream)
+        self.assertIn("-rd in_files=a.gds b.gds", stream)
+        self.assertIn(f"-rd out_file={self.out_file}", stream)
+        self.assertIn("def2stream.py", stream)
+        self.assertFalse(os.path.exists(self.out_file))
+
+    def test_klayout_cmd_exit_status_is_returned(self):
+        klayout, _ = self.fake_klayout(exit_status=3)
+        environ = {"KLAYOUT_CMD": klayout, "PATH": ""}
+        with patch.object(def2stream, "pya", None):
+            self.assertEqual(def2stream.main(self.argv, environ=environ), 3)
+
+    def test_klayout_executable_gets_the_environment(self):
+        klayout, log = self.fake_klayout()
+        environ = {"KLAYOUT_CMD": klayout, "PATH": "", "GDS_ALLOW_EMPTY": "fakeram.*"}
+        with patch.object(def2stream, "pya", None):
+            self.assertEqual(def2stream.main(self.argv, environ=environ), 0)
+        with open(log) as f:
+            for line in f.read().splitlines():
+                self.assertTrue(line.endswith(" fakeram.*"), line)
+
+    def test_klayout_without_a_version_is_an_error(self):
+        klayout, _ = self.fake_klayout(version_status=1)
+        environ = {"KLAYOUT_CMD": klayout, "PATH": ""}
+        with patch.object(def2stream, "pya", None):
+            with self.assertRaises(subprocess.CalledProcessError):
+                def2stream.main(self.argv, environ=environ)
+        self.assertFalse(os.path.exists(self.out_file))
+
+    def test_missing_klayout_cmd_is_an_error(self):
+        environ = {"KLAYOUT_CMD": os.path.join(self.tmp_dir.name, "nope"), "PATH": ""}
+        with patch.object(def2stream, "pya", None):
+            with self.assertRaises(FileNotFoundError):
+                def2stream.main(self.argv, environ=environ)
+        self.assertFalse(os.path.exists(self.out_file))
+
+    def test_without_klayout_writes_an_empty_file_and_warns(self):
+        with patch.object(def2stream, "pya", None), patch(
+            "sys.stdout", new_callable=io.StringIO
+        ) as stdout:
+            self.assertEqual(def2stream.main(self.argv, environ={"PATH": ""}), 0)
+        self.assertIn(
+            "WARNING: klayout not found, mocking klayout by writing empty file "
+            + self.out_file,
+            stdout.getvalue(),
+        )
+        self.assertEqual(os.path.getsize(self.out_file), 0)
 
 
 if __name__ == "__main__":
