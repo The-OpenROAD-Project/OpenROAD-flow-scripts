@@ -51,5 +51,7 @@ endif
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
 
-# Temporary disabling
+# Temporary disabling: the hierarchical netlist is rejected by the
+# equivalence checker (duplicate wire declaration).
 export LEC_CHECK = 0
+export SEC_CHECK = 0

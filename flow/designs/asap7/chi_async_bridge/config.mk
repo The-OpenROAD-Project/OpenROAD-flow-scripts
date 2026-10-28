@@ -37,3 +37,7 @@ export VERILOG_TOP_PARAMS     = REQ_W 32 RSP_W 16 DAT_W 64 SNP_W 24 DEPTH 4
 else ifeq ($(FLOW_VARIANT),medium)
 export VERILOG_TOP_PARAMS     = DEPTH 4
 endif
+
+# Temporary disabling: the asynchronous clock-domain crossings are outside
+# the sequential check.
+export SEC_CHECK = 0
