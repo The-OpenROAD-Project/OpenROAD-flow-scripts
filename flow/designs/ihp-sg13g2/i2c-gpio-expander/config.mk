@@ -55,3 +55,7 @@ export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/pdn.tcl
 
 export BLOCKS = I2cDeviceCtrl
 
+
+# Temporary disabling: the bidirectional IO pads are outside the sequential
+# check.
+export SEC_CHECK = 0

@@ -1138,8 +1138,8 @@
     "description": "Seal macro to place around the design.\n"
   },
   "SEC_CHECK": {
-    "default": 0,
-    "description": "Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. If this fails, report an issue to OpenROAD.\n",
+    "default": "$(if $(wildcard $(KEPLER_FORMAL_EXE)),1,0)",
+    "description": "Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. Hard macros, the sub-blocks listed in BLOCKS and every BLOCK-class cell such as SRAM macros, are checked as black boxes (proof boundaries): they are the same cells in both netlists and their abstracts carry no logic. If this fails, report an issue to OpenROAD.\n",
     "stages": [
       "synth",
       "final"
