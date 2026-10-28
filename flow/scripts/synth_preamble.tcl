@@ -49,6 +49,7 @@ proc read_checkpoint { file } {
 # canonicalization, one `<module> <area>` per line; see
 # docs/user/AutoMemories.md.
 source $::env(SCRIPTS_DIR)/memories/check_blackboxed.tcl
+source $::env(SCRIPTS_DIR)/memories/max_bits.tcl
 
 proc auto_memories_areas { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {

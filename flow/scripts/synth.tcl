@@ -149,37 +149,22 @@ if { [env_var_equals SYNTH_HDL_FRONTEND slang] } {
   opt_clean
 }
 
+# Fail early if this synthesis run is doomed
+set mocked [synth_memory_max_bits $::env(SYNTH_MEMORY_MAX_BITS) \
+  $::env(SYNTH_MOCK_LARGE_MEMORIES) $::env(SYNTH_KEEP_MOCKED_MEMORIES)]
 if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
-  memory_collect
-  set select [tee -q -s result.string select -list t:\$mem_v2]
   set report_file [open $::env(REPORTS_DIR)/synth_mocked_memories.txt "w"]
-  foreach path [split [string trim $select] "\n"] {
-    set index [string first "/" $path]
-    set module [string range $path 0 [expr { $index - 1 }]]
-    set instance [string range $path [expr { $index + 1 }] end]
-
-    set width [rtlil::get_param -uint $module $instance WIDTH]
-    set size [rtlil::get_param -uint $module $instance SIZE]
-    set nbits [expr $width * $size]
-    puts "Memory $path has dimensions $size x $width = $nbits"
-    if { $nbits > $::env(SYNTH_MEMORY_MAX_BITS) } {
-      rtlil::set_param -uint $module $instance SIZE 1
-      puts "Shrunk memory $path from $size rows to 1"
-      puts -nonewline $report_file "$module:\n  width: $width\n  size: $size\n"
-      if { $::env(SYNTH_KEEP_MOCKED_MEMORIES) } {
-        select -module $module
-        setattr -mod -set keep_hierarchy 1
-        select -clear
-      }
-    }
+  foreach memory $mocked {
+    lassign $memory module width size
+    puts -nonewline $report_file "$module:\n  width: $width\n  size: $size\n"
   }
   close $report_file
 }
 
-json -o $::env(RESULTS_DIR)/mem.json
-# Run report and check here so as to fail early if this synthesis run is doomed
-exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py \
-  --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
+# A yosys backend sorts the design by name before it writes, and the passes
+# below depend on that order; json -o mem.json did it here. The sort stays,
+# the file goes: dropping the sort changes results and is its own change.
+write_json /dev/null
 
 if { [env_var_exists_and_non_empty SYNTH_RETIME_MODULES] } {
   select {*}$::env(SYNTH_RETIME_MODULES)
