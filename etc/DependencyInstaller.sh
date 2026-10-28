@@ -12,8 +12,6 @@ fi
 # Make sure we are on the correct folder before beginning
 cd "${_script_dir}/../"
 
-# package versions
-klayoutVersion=0.30.12
 if [[ "$OSTYPE" == "darwin"* ]]; then
     numThreads=$(sysctl -n hw.logicalcpu)
 else
@@ -199,19 +197,6 @@ _install_EL7_Packages() {
         ruby-devel \
         tcl-tclreadline \
         tcl-tclreadline-devel
-
-    if ! [ -x "$(command -v klayout)" ]; then
-      yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-    else
-      currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-      if _versionCompare $currentVersion -ge $klayoutVersion; then
-        echo "KLayout version greater than or equal to ${klayoutVersion}"
-      else
-        echo "KLayout version less than ${klayoutVersion}"
-        sudo yum remove -y klayout
-        yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-      fi
-    fi
 }
 
 
@@ -222,7 +207,7 @@ _install_EL8_EL9_CleanUp() {
 
 # Enterprise Linux 8/9 package installation (EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8 as no CentOS 9 exists)
 _install_EL8_EL9_Packages() {
-    # Re-detect EL version for appropriate KLayout package
+    # Re-detect EL version
     if [[ -f /etc/os-release ]]; then
         elVersion=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g' | cut -d. -f1)
     else
@@ -282,60 +267,11 @@ _install_EL8_EL9_Packages() {
         dnf -y install \
             https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/readline-devel-8.1-4.el9.x86_64.rpm
     fi
-
-    # Install KLayout based on EL version, note the different URLs
-    case "${elVersion}" in
-        "8")
-            if ! [ -x "$(command -v klayout)" ]; then
-                dnf -y install https://www.klayout.org/downloads/CentOS_8/klayout-${klayoutVersion}-0.x86_64.rpm
-            else
-                currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-                if _versionCompare "$currentVersion" -ge $klayoutVersion; then
-                    echo "KLayout version greater than or equal to ${klayoutVersion}"
-                else
-                    echo "KLayout version less than ${klayoutVersion}"
-                    sudo dnf remove -y klayout
-                    dnf -y install https://www.klayout.org/downloads/CentOS_8/klayout-${klayoutVersion}-0.x86_64.rpm
-                fi
-            fi
-            ;;
-        "9")
-            if ! [ -x "$(command -v klayout)" ]; then
-                dnf -y install https://www.klayout.org/downloads/RockyLinux_9/klayout-${klayoutVersion}-0.x86_64.rpm
-            else
-                currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-                if _versionCompare "$currentVersion" -ge $klayoutVersion; then
-                    echo "KLayout version greater than or equal to ${klayoutVersion}"
-                else
-                    echo "KLayout version less than ${klayoutVersion}"
-                    sudo dnf remove -y klayout
-                    dnf -y install https://www.klayout.org/downloads/RockyLinux_9/klayout-${klayoutVersion}-0.x86_64.rpm
-                fi
-            fi
-            ;;
-        *)
-            echo "ERROR: Unsupported Enterprise Linux version: ${elVersion}"
-            exit 1
-            ;;
-    esac
 }
 
 _installUbuntuCleanUp() {
     apt-get autoclean -y
     apt-get autoremove -y
-}
-
-_installKlayoutDependenciesUbuntuAarch64() {
-    echo "Installing Klayout dependencies"
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get -y update
-    apt-get -y install  build-essential \
-                        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
-                        ruby ruby-dev \
-                        python3 python3-dev \
-                        libz-dev\
-                        libgit2-dev
-    echo "All dependencies installed successfully"
 }
 
 _installUbuntuPackages() {
@@ -395,44 +331,8 @@ _installUbuntuPackages() {
     fi
     apt-get install -y --no-install-recommends ${packages[@]}
 
-    # install KLayout
-    if  [[ $1 == "rodete" ]]; then
-        apt-get -y install --no-install-recommends klayout python3-pandas
-    else
-        arch=$(uname -m)
-        lastDir="$(pwd)"
-        # temp dir to download and compile
-        baseDir=/tmp/installers
-        klayoutPrefix=${PREFIX:-"/usr/local"}
-        mkdir -p "${baseDir}"
-        cd "${baseDir}"
-        if [[ $arch == "aarch64" ]]; then
-            if [ ! -f ${klayoutPrefix}/klayout ]; then
-                _installKlayoutDependenciesUbuntuAarch64
-                echo "Installing KLayout for aarch64 architecture"
-                git clone --depth=1 -b "v${klayoutVersion}" https://github.com/KLayout/klayout.git
-                cd klayout
-                ./build.sh -bin "${klayoutPrefix}" -option -j "${numThreads}"
-            else
-                echo "Klayout is already installed"
-        fi
-        else
-            if [[ $1 == 22.04 ]]; then
-                klayoutChecksum=6dfffa50f385881768dee30bdc759608
-            elif [[ $1 == 24.04 ]]; then
-                klayoutChecksum=0181713e60891e461d6d1664c1b8e213
-            elif [[ $1 == 26.04 ]]; then
-                klayoutChecksum=904f60fd05c3a5029cab8a2840029f49
-            else
-                echo "Unsupported Ubuntu version $1. KLayout ${klayoutVersion} packages are pinned for 22.04, 24.04, and 26.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
-                exit 1
-            fi
-            wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
-            md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-            dpkg -i klayout_${klayoutVersion}-1_amd64.deb
-        fi
-        cd "${lastDir}"
-        rm -rf "${baseDir}"
+    if [[ $1 == "rodete" ]]; then
+        apt-get -y install --no-install-recommends python3-pandas
     fi
 
     if command -v docker &> /dev/null; then
@@ -469,7 +369,6 @@ _installDarwinPackages() {
     brew install libffi tcl-tk ruby
     brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib cmake
     brew link --force libomp
-    brew install --cask klayout
     brew install docker docker-buildx
 }
 
@@ -672,7 +571,7 @@ case "${os}" in
         # First install OpenROAD base
         _installORDependencies
 
-        # Determine between EL7 vs EL8/9, since yum vs dnf should be used, and different Klayout builds exist
+        # Determine between EL7 vs EL8/9, since yum vs dnf should be used
         case "${elVersion}" in
             "7")
                 # EL7 = RHEL 7 or CentOS 7
