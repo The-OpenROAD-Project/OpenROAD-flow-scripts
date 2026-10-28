@@ -122,15 +122,21 @@ proc formal_boundary_path { inst } {
   return "$prefix[formal_escape_slashes $name]"
 }
 
+# Hard macros are proof boundaries: the instances of the masters listed in
+# BLOCKS, and every instance of a BLOCK-class master (SRAM macros, hardened
+# sub-blocks). A macro is the same cell in both netlists, so only its
+# connections need checking; expanding its contents into state would only make
+# the proof slower.
 proc formal_block_instance_paths { } {
   set paths {}
-  if { ![env_var_exists_and_non_empty BLOCKS] } {
-    return $paths
+  set blocks {}
+  if { [env_var_exists_and_non_empty BLOCKS] } {
+    set blocks $::env(BLOCKS)
   }
   set block [ord::get_db_block]
   foreach inst [$block getInsts] {
-    set master [[$inst getMaster] getName]
-    if { [lsearch -exact $::env(BLOCKS) $master] >= 0 } {
+    set master [$inst getMaster]
+    if { [$master isBlock] || [lsearch -exact $blocks [$master getName]] >= 0 } {
       lappend paths [formal_boundary_path $inst]
     }
   }
@@ -153,9 +159,9 @@ proc write_sec_script { step file1 file2 } {
   foreach libFile $::env(LIB_FILES) {
     puts $outfile " - $libFile"
   }
-  # Each block instance becomes a proof boundary: its input pins are compared
+  # Each macro instance becomes a proof boundary: its input pins are compared
   # across the two netlists and its output pins are shared free inputs, so the
-  # block is checked as a black box instead of hiding the cones behind it.
+  # macro is checked as a black box instead of hiding the cones behind it.
   set boundaries [formal_block_instance_paths]
   if { [llength $boundaries] > 0 } {
     puts $outfile "set_as_boundary:"
