@@ -631,6 +631,14 @@ GUI_TIMING:
     quite time consuming. Useful to disable when investigating non-timing
     aspects like floorplan, placement, routing, etc.
   default: 1
+SAVE_IMAGES_VIEWER:
+  description: >
+    Which viewer draws the images of the final report: qt for the Qt GUI in
+    an offscreen window, or web for the web viewer, which needs no display.
+    OpenROAD built without Qt always uses the web viewer.
+  default: web
+  stages:
+    - final
 FILL_CELLS:
   description: >
     Fill cells are used to fill empty sites. If not set or empty, fill cell

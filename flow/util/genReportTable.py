@@ -120,12 +120,21 @@ def image_view_name(file):
 def collect_images():
     """Map design -> platform -> view -> image path, relative to reports/."""
     images = defaultdict(lambda: defaultdict(dict))
+    # A view saved as both .webp and .png (SAVE_IMAGES_VIEWER changed between
+    # runs) shows the newer one.
+    mtimes = {}
     for parents, dirs, files in sorted(os.walk("reports", topdown=False)):
         for file in files:
             if file.lower().endswith(IMAGE_EXTENSIONS):
+                mtime = os.path.getmtime(os.path.join(parents, file))
                 path = os.path.join(parents, file).replace("reports", ".")
                 platform, design = path.split(os.sep)[1:3]
-                images[design][platform][image_view_name(file)] = path
+                view = image_view_name(file)
+                key = (design, platform, view)
+                if key in mtimes and mtimes[key] >= mtime:
+                    continue
+                mtimes[key] = mtime
+                images[design][platform][view] = path
     return images
 
 
