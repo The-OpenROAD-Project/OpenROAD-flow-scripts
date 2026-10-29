@@ -48,6 +48,8 @@ proc read_checkpoint { file } {
 # um^2. The list is produced by scripts/memories/gen_memories.py before
 # canonicalization, one `<module> <area>` per line; see
 # docs/user/AutoMemories.md.
+source $::env(SCRIPTS_DIR)/memories/check_blackboxed.tcl
+
 proc auto_memories_areas { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
@@ -101,7 +103,7 @@ proc read_design_sources { } {
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
 
     # slang requires all files at once
-    lappend slang_args {*}$::env(VERILOG_FILES)
+    lappend slang_args {*}[synth_verilog_files]
 
     # Add clock gate cell definition, if available
     if { [env_var_exists_and_non_empty CLKGATE_MAP_FILE] } {
@@ -142,6 +144,7 @@ proc read_design_sources { } {
     lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
 
     yosys read_slang {*}$slang_args
+    auto_memories_check_blackboxed [auto_memories_blackboxes]
 
     # Workaround for yosys-slang#119
     setattr -unset init
@@ -152,7 +155,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
       verific -vlog-define {*}$::env(VERILOG_DEFINES)
     }
-    verific -sv2012 {*}$::env(VERILOG_FILES)
+    verific -sv2012 {*}[synth_verilog_files]
     verific -import -no-split-complex-ports $::env(DESIGN_NAME)
 
     dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
@@ -171,7 +174,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
       verilog_defaults -add {*}$::env(VERILOG_DEFINES)
     }
-    foreach file $::env(VERILOG_FILES) {
+    foreach file [synth_verilog_files] {
       read_verilog -defer -sv {*}$vIdirsArgs $file
     }
     # Read platform specific mapfile for OPENROAD_CLKGATE cells
@@ -192,6 +195,8 @@ proc read_design_sources { } {
     set auto_blackboxes [auto_memories_blackboxes]
     if { [llength $auto_blackboxes] > 0 } {
       hierarchy -top $::env(DESIGN_NAME)
+      # Not checked with auto_memories_check_blackboxed: slang is the
+      # supported frontend for AUTO_MEMORIES.
       foreach m $auto_blackboxes {
         blackbox $m
       }

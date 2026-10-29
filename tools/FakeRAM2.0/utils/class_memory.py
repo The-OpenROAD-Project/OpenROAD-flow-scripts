@@ -36,6 +36,7 @@ class Memory(NamedObject):
         self.width_in_bytes = math.ceil(self.width_in_bits / 8.0)
         self.total_size = self.width_in_bytes * self.depth
         self.additional_height = mem_config.get_additional_height()
+        self.mask_lanes = mem_config.get_mask_lanes()
         self.timing_data = timing_data
         self.physical = PhysicalData()
         if self.process.calc_dimensions():

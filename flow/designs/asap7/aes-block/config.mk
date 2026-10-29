@@ -16,6 +16,7 @@ export BLOCKS ?= aes_rcon aes_sbox
 export SYNTH_HIERARCHICAL = 1
 
 export PLACE_PINS_ARGS = -annealing
+export GPL_PLACE_IOS = 1
 
 # Generous routing at top level
 export MIN_ROUTING_LAYER      = M2

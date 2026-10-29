@@ -8,7 +8,6 @@ export ASAP7_USE_VT = RVT LVT SLVT
 
 # Synthesis
 export SYNTH_OPERATIONS_ARGS = -booth
-export REMOVE_ABC_BUFFERS = 1
 export SYNTH_RETIME_MODULES = $(DESIGN_NAME)
 export SYNTH_HDL_FRONTEND = slang
 export LEC_CHECK = 0
@@ -19,3 +18,4 @@ export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
 export TNS_END_PERCENT = 100
+export GPL_PLACE_IOS = 1
