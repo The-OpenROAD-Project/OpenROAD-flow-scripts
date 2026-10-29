@@ -7,6 +7,7 @@ proc report_puts { out } {
 }
 
 proc report_metrics { stage when { include_erc true } { include_clock_skew true } } {
+  report_design_area_metrics
   if { $::env(SKIP_REPORT_METRICS) } {
     return
   }
@@ -17,7 +18,7 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   report_puts "\n=========================================================================="
   report_puts "$when report_tns"
   report_puts "--------------------------------------------------------------------------"
-  report_tns >> $filename
+  log_cmd report_tns >> $filename
   report_tns_metric
   report_tns_metric -hold
 
@@ -36,7 +37,7 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   report_puts "\n=========================================================================="
   report_puts "$when report_clock_min_period"
   report_puts "--------------------------------------------------------------------------"
-  report_clock_min_period -include_port_paths >> $filename
+  log_cmd report_clock_min_period -include_port_paths >> $filename
   report_fmax_metric
 
   if { $include_clock_skew && $::env(REPORT_CLOCK_SKEW) } {
@@ -70,9 +71,9 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
     report_puts "\n=========================================================================="
     report_puts "$when report_check_types -max_slew -max_cap -max_fanout -violators"
     report_puts "--------------------------------------------------------------------------"
-    report_check_types -max_slew -max_capacitance -max_fanout -violators >> $filename
+    log_cmd report_check_types -max_slew -max_capacitance -max_fanout -violators >> $filename
 
-    report_erc_metrics
+    log_cmd report_erc_metrics
 
     report_puts "\n=========================================================================="
     report_puts "$when max_slew_check_slack"
@@ -163,16 +164,18 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
       report_puts "\n=========================================================================="
       report_puts "$when report_checks -path_delay max reg to reg"
       report_puts "--------------------------------------------------------------------------"
-      report_checks -path_delay max -from [all_registers] -to [all_registers] \
-        -format full_clock_expanded >> $filename
+      log_cmd eval { report_checks -path_delay max -from [all_registers] -to [all_registers] \
+        -format full_clock_expanded >> $filename }
       report_puts "\n=========================================================================="
       report_puts "$when report_checks -path_delay min reg to reg"
       report_puts "--------------------------------------------------------------------------"
-      report_checks -path_delay min -from [all_registers] -to [all_registers] \
-        -format full_clock_expanded >> $filename
+      log_cmd eval { report_checks -path_delay min -from [all_registers] -to [all_registers] \
+        -format full_clock_expanded >> $filename }
 
       set inp_to_reg_critical_path \
-        [lindex [find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]] 0]
+        [lindex [log_cmd eval {
+          find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]
+        }] 0]
       if { $inp_to_reg_critical_path != "" } {
         set target_clock_latency_max \
           [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
@@ -182,7 +185,9 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
 
 
       set inp_to_reg_critical_path [lindex \
-        [find_timing_paths -path_delay min -from [all_inputs] -to [all_registers]] 0]
+        [log_cmd eval {
+          find_timing_paths -path_delay min -from [all_inputs] -to [all_registers]
+        }] 0]
       if { $inp_to_reg_critical_path != "" } {
         set target_clock_latency_min \
           [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
@@ -237,12 +242,12 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   if { [env_var_exists_and_non_empty CORNERS] } {
     foreach corner $::env(CORNERS) {
       report_puts "Corner: $corner"
-      report_power -corner $corner >> $filename
+      log_cmd report_power -corner $corner >> $filename
       report_power_metric -corner $corner
     }
     unset corner
   } else {
-    report_power >> $filename
+    log_cmd report_power >> $filename
     report_power_metric
   }
 
@@ -251,5 +256,4 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   puts "$when report_design_area"
   puts "--------------------------------------------------------------------------"
   report_design_area
-  report_design_area_metrics
 }
