@@ -1161,6 +1161,15 @@
       "grt"
     ]
   },
+  "SETUP_REPAIR_PHASES": {
+    "description": "Passed as -phases to repair_timing. This should be a string of setup repair phase names separated by spaces. Set to PARALLEL_EVAL to repair setup timing with the experimental parallel evaluation policy. When unset, repair_timing runs its default phases.\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt",
+      "place"
+    ]
+  },
   "SETUP_SLACK_MARGIN": {
     "default": 0,
     "description": "Specifies a time margin for the slack when fixing setup violations.\nThis option allows you to overfix or underfix(negative value, terminate\nretiming before 0 or positive slack).\nSee HOLD_SLACK_MARGIN for more details.\n",

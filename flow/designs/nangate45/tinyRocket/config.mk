@@ -21,3 +21,4 @@ export CORE_UTILIZATION       = 60
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.75
+export SETUP_REPAIR_PHASES = PARALLEL_EVAL
