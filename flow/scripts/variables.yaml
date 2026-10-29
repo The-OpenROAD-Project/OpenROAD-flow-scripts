@@ -1741,3 +1741,18 @@ GRT_SEED:
     - grt
   tunable: 1
   type: int
+SAIF_FILE:
+  description: >
+    Specifies the Switching Activity Interchange Format (SAIF) file containing pin
+    activities and duty cycles for use in power calculation.
+  type: string
+POWER_FILE_SCOPE:
+  description: >
+    The SAIF or VCD scope of the current design. Typically the test bench name and
+    design under the test instance name. Scope levels are separated with '/'.
+  type: string
+VCD_FILE:
+  description: >
+    Specifies the Value Change Dump (VCD) file containing pin activities and duty
+    cycles for use in power calculation.
+  type: string
