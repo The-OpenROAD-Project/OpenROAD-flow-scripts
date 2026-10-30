@@ -33,6 +33,15 @@ table_rows = ""
 for key in sorted(data):
     value = data[key]
     description = value.get("description", "").replace("\n", " ").strip()
+    replacement = value.get("replacement")
+    if isinstance(replacement, dict):
+        description += (
+            " Instead of "
+            + ", ".join(f"{key}={v}, write `{r}`" for v, r in replacement.items())
+            + "."
+        )
+    elif replacement:
+        description += " Instead, write `" + replacement.format(value="<value>") + "`."
     table_rows += (
         f'| <a name="{key}"></a>{key}'
         + f'{" (deprecated)" if value.get("deprecated", 0) == 1 else ""}'
