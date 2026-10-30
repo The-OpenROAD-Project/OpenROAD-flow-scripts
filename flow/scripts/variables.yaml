@@ -1081,6 +1081,21 @@ ABC_AREA:
   stages:
     - synth
   default: 0
+SYNTH_ABC_PARTITION:
+  description: |
+    Map the top module with one abc call per register group instead of one
+    for the whole module. abc maps each call against that call's own
+    critical path and sees neither the SDC (clocks, false paths) nor the
+    arrival times at cells mapped before it, such as extract_fa's adders.
+    When that critical path is the wrong one, the real cones are
+    area-recovered into slow structures; separate calls limit this to one
+    group. Flops are grouped by name; the value is the minimum cone size,
+    in cells, for a group to get its own call. 0 disables. Ignored when
+    SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS is set.
+  type: int
+  stages:
+    - synth
+  default: 0
 ABC_SCRIPT:
   description: |
     Replaces the ABC script synthesis runs, so that a design can vendor and
