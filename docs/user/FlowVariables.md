@@ -92,6 +92,7 @@ configuration file.
 | --- | --- | --- |
 | <a name="ABC_AREA"></a>ABC_AREA| Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.| 0|
 | <a name="ABC_DRIVER_CELL"></a>ABC_DRIVER_CELL| Default driver cell used during ABC synthesis.| |
+| <a name="ABC_LIBERTY_ARGS"></a>ABC_LIBERTY_ARGS| Extra arguments for ABC's read_lib, passed with Yosys's abc -liberty_args. Without -S/-G, ABC's mapping library gives every cell a delay of 1, so mapping minimizes gate count, not delay. "-a -G 250" derives a delay for each cell from the liberty tables (all cells, gain 250). Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS is set: abc_new has no such option.| |
 | <a name="ABC_LOAD_IN_FF"></a>ABC_LOAD_IN_FF| During synthesis set_load value used.| |
 | <a name="ABC_SCRIPT"></a>ABC_SCRIPT| Replaces the ABC script synthesis runs, so that a design can vendor and change it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS is set: abc_new then maps each arithmetic operator with its own script.| |
 | <a name="ABSTRACT_SOURCE"></a>ABSTRACT_SOURCE| Which .odb file to use to create abstract| |
@@ -347,6 +348,7 @@ configuration file.
 
 - [ABC_AREA](#ABC_AREA)
 - [ABC_DRIVER_CELL](#ABC_DRIVER_CELL)
+- [ABC_LIBERTY_ARGS](#ABC_LIBERTY_ARGS)
 - [ABC_LOAD_IN_FF](#ABC_LOAD_IN_FF)
 - [ABC_SCRIPT](#ABC_SCRIPT)
 - [ADDER_MAP_FILE](#ADDER_MAP_FILE)

@@ -1081,6 +1081,16 @@ ABC_AREA:
   stages:
     - synth
   default: 0
+ABC_LIBERTY_ARGS:
+  description: |
+    Extra arguments for ABC's read_lib, passed with Yosys's
+    abc -liberty_args. Without -S/-G, ABC's mapping library gives every
+    cell a delay of 1, so mapping minimizes gate count, not delay.
+    "-a -G 250" derives a delay for each cell from the liberty tables
+    (all cells, gain 250). Ignored when SYNTH_WRAPPED_OPERATORS or
+    SWAP_ARITH_OPERATORS is set: abc_new has no such option.
+  stages:
+    - synth
 ABC_SCRIPT:
   description: |
     Replaces the ABC script synthesis runs, so that a design can vendor and

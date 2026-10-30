@@ -285,6 +285,9 @@ if {
   ![env_var_equals SYNTH_WRAPPED_OPERATORS 1] &&
   ![env_var_equals SWAP_ARITH_OPERATORS 1]
 } {
+  if { [env_var_exists_and_non_empty ABC_LIBERTY_ARGS] } {
+    lappend abc_args -liberty_args $::env(ABC_LIBERTY_ARGS)
+  }
   log_cmd abc {*}$abc_args
 } else {
   # Not dead code: abc_new mistakes the "-script" in /OpenROAD-flow-scripts/...
