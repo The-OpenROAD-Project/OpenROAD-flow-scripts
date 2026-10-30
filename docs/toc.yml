@@ -21,6 +21,8 @@ entries:
     title: Adding New Designs to the ORFS
   - file: user/FlowVariables.md
     title: Flow Variables
+  - file: user/CommandArguments.md
+    title: Command Arguments
   - file: user/AutoMemories.md
     title: Generated Memory Macros (AUTO_MEMORIES)
   - file: user/LargeDesigns.md

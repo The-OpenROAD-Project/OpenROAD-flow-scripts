@@ -18,6 +18,9 @@ The actual value used is determined by the priority rules set by `make`:
 3. **Environment Variables**: Variables exported in the shell environment are used if not overridden by the command line.
 4. **Default Values**: Variables defined with the `?=` operator in the `Makefile` are used only if the variable is not already defined elsewhere.
 
+To change the arguments ORFS passes to an OpenROAD command, see
+[Command Arguments](./CommandArguments.md).
+
 ## Effects of variables
 
 The variables for ORFS are not fully independent and can interact in complex ways. Small changes to a combination of variables can have large consequences, such as on macro placement, which can lead to vastly different quality of results.
