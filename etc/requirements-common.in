@@ -2,5 +2,6 @@ pandas
 numpy
 google-cloud-pubsub
 click
+klayout
 pyyaml
 yamlfix
