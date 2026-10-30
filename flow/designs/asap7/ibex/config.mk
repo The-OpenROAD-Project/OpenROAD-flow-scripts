@@ -29,6 +29,11 @@ export ENABLE_DPO = 0
 export TNS_END_PERCENT        = 100
 export SETUP_REPAIR_PHASES = PARALLEL_EVAL
 
+# Fix #3885: Bound TritonCTS sink clustering to stabilize clock tree geometry
+# and prevent wide CTS TNS variance during clock frequency sweeps
+export CTS_CLUSTER_SIZE       = 15
+export CTS_CLUSTER_DIAMETER   = 50
+
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
 
