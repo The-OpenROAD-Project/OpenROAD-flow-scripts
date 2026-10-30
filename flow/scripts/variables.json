@@ -1272,7 +1272,7 @@
   },
   "SKIP_REPORT_METRICS": {
     "default": 0,
-    "description": "If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.\n",
+    "description": "If set to 1, report_metrics writes only the metrics that cost no analysis: design area, instance counts and utilization. Timing, power, clock skew, the max slew/cap/fanout checks and the `reports/<stage>_*.rpt` text reports are skipped; they need a timing update and a power analysis at every stage that calls it. The counters the tools record as they run (placement, legalization, routing, repair, warnings) are written either way.\n",
     "stages": [
       "synth",
       "floorplan",
