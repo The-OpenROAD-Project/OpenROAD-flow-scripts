@@ -7,11 +7,9 @@ set stem [expr {
   "6_final"
 }]
 
-set result [find_sdc_file $stem.odb]
-set design_stage [lindex $result 0]
-set sdc_file [lindex $result 1]
+set design_stage [lindex [extract_stage $stem.odb] 0]
 
-log_cmd load_design $stem.odb [file tail $sdc_file]
+log_cmd load_design $stem.odb
 
 if { $design_stage >= 6 && [file exists $::env(RESULTS_DIR)/$stem.spef] } {
   log_cmd read_spef $::env(RESULTS_DIR)/$stem.spef

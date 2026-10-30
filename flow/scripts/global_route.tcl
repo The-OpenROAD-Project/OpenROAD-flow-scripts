@@ -1,7 +1,7 @@
 utl::set_metrics_stage "globalroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables grt
-load_design 4_cts.odb 4_cts.sdc
+load_design 4_cts.odb
 
 # This proc is here to allow us to use 'return' to return early from this
 # file which is sourced
@@ -36,9 +36,9 @@ proc global_route_helper { } {
     if { $result != 0 } {
       if { !$::env(GENERATE_ARTIFACTS_ON_FAILURE) } {
         log_cmd write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
+        log_cmd write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt-failed.sdc
         error $errMsg
       }
-      orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
       orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
       return 0
     }
@@ -182,7 +182,6 @@ proc global_route_helper { } {
   write_guides $::env(RESULTS_DIR)/route.guide
   source_step_tcl POST GLOBAL_ROUTE
   orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
-  orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
 }
 
 global_route_helper
