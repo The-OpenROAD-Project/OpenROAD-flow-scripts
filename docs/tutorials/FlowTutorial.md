@@ -365,7 +365,7 @@ The log structure is as follows:
 View design area and its core utilization:
 
 ```shell
-make gui_final
+make gui_final DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 ```
 
 In the `Tcl Commands` section:
@@ -387,7 +387,7 @@ the OpenROAD GUI to visualize further and debug. Learn more about the
 [GUI](https://openroad.readthedocs.io/en/latest/main/README.html#gui).
 
 ```shell
-make gui_final
+make gui_final DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 ```
 
 Use the following commands in the `Tcl Commands` section of GUI:
