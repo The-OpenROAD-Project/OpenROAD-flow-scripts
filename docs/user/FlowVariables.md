@@ -654,6 +654,7 @@ configuration file.
 ## generate_abstract variables
 
 - [ABSTRACT_SOURCE](#ABSTRACT_SOURCE)
+- [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
 
 ## Uncategorized variables
 
