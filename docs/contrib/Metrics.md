@@ -8,8 +8,9 @@ a small set of example designs through our complete RTL-to-GDS flow.
 To keep track of the quality of the results, every CI run uploads its metrics
 to the [QoR dashboard](https://dashboard.precisioninno.com). The dashboard
 stores one rule per tracked metric and design (a comparison direction and a
-tolerance), and judges a run against a real baseline build: the latest
-`master` build by default. That check is the QoR gate in `make metadata`.
+tolerance), and judges a run against a real baseline build: the `master`
+build at the run's merge base by default. That check is the QoR gate in
+`make metadata`.
 
 The values a run is measured against are collected by
 `flow/util/genMetrics.py` into `$(REPORTS_DIR)/metadata.json`
@@ -47,12 +48,52 @@ check did not run. Read the `[WARN]` lines to see which. Pass `--strict` to
 `checkQorMetrics.py` to get distinct exit codes instead (2 inconclusive,
 3 unreachable).
 
-Two environment variables shape the comparison:
+The check runs as the commit `metadata.json` records. The dashboard searches
+its default baseline pipelines in order and takes a `master` build that has the
+design: the one at the commit's merge base with `master`. A commit on `master`
+is its own merge base, so a run of a `master` commit, such as a downloaded CI
+artifact, is compared against that commit's own build.
 
-- `DASHBOARD_API_KEY` grants access to private platforms. Without it, a
-  private design reports as inconclusive, not as an authentication error.
-- `DASHBOARD_JOB_NAME` names the Jenkins pipeline whose `master` builds are the
-  baseline. The default is `OpenROAD-flow-scripts-Public`.
+The dashboard finds the merge base through GitHub, so it cannot find one for a
+commit that was never pushed. The check handles that commit itself: when no
+remote branch in your checkout contains the commit, it computes
+`git merge-base <commit> origin/master` locally and pins the baseline to that
+build. A commit that is on a remote, or that is not in your checkout at all, is
+left to the dashboard.
+
+When the dashboard has no `master` build at the merge base, or no merge base,
+it compares against the latest `master` build instead (the latest one before
+the commit, if it knows the commit's date). That build may be newer than the
+commit's base, so changes merged since then can show up as regressions or hide
+real ones, and the result moves with `master`. The report warns whenever this
+happens; set `DASHBOARD_BASE_COMMIT` to compare against an exact build instead.
+
+These environment variables shape the comparison:
+
+- `DASHBOARD_API_KEY` grants access to private platforms. With it, a private
+  design is resolved like a public one: the dashboard's default baseline
+  pipelines include the private ones, and only a caller with a key can see
+  their builds. Without it, a private design has no baseline and reports as
+  inconclusive, not as an authentication error.
+- `DASHBOARD_JOB_NAME` checks the run as a build of that CI pipeline instead,
+  with the pipeline's rules for the branch checked out in this repository: the
+  previous build on a trunk branch such as `master`, the merge base on any
+  other branch. It is meant for CI jobs, which also set `DASHBOARD_BRANCH` and
+  `DASHBOARD_COMMIT` (or pass `--branch` and `--commit`) since their checkout
+  has no branch. Earlier versions of the check used it to pick the pipeline
+  that holds a private platform's baseline; that is no longer needed, so leave
+  it unset for a local run, private or not. With it set, an unpushed commit is
+  not pinned to its local merge base.
+- `DASHBOARD_MERGE_BASE` (`--merge-base`) names the ref an unpushed commit's
+  merge base is computed against, `origin/master` by default. Set it to your
+  upstream ref if `origin` is a fork with an outdated `master`, or to `none` to
+  leave unpushed commits to the dashboard. It does not apply together with
+  `DASHBOARD_BASE_COMMIT` or `DASHBOARD_JOB_NAME`.
+- `DASHBOARD_BASE_COMMIT` (`--base-commit`) pins the baseline to the build of
+  that commit. Nothing else is tried: if that commit has no build of the
+  design, the check is inconclusive.
+- `DASHBOARD_API_URL` (`--api-url`) points the check at another deployment and
+  takes precedence over `--beta`.
 
 If you only changed synthesis, you can gate a synthesis-only run, without
 running the rest of the flow. Only the `synth__` and `constraints__` metrics
@@ -62,8 +103,7 @@ are sent, so only their rules are evaluated:
 make metadata-synth
 ```
 
-To check every run under `reports/` at once, or to pin the baseline to a
-specific commit, call the script directly:
+To check every run under `reports/` at once, call the script directly:
 
 ``` shell
 cd OpenROAD-flow-scripts/flow
