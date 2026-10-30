@@ -23,14 +23,14 @@ if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
   log_cmd global_placement -incremental -density $density
 }
 
-repair_design_helper
+repair_design_helper place.main
 
-if { $::env(ENABLE_PLACE_REPAIR_TIMING) } {
+if { [command_runs repair_timing place.main $::env(ENABLE_PLACE_REPAIR_TIMING)] } {
   # Repair timing using placement parasitics.
   puts "Repair setup and hold violations..."
   log_cmd estimate_parasitics -placement
 
-  repair_timing_helper
+  repair_timing_helper place.main
 }
 
 # post report

@@ -104,48 +104,51 @@ configuration file.
 | <a name="ADDITIONAL_SITES"></a>ADDITIONAL_SITES| Passed as -additional_sites to initialize_floorplan.| |
 | <a name="ASAP7_USE_VT"></a>ASAP7_USE_VT| A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.| RVT|
 | <a name="AUTO_MEMORIES"></a>AUTO_MEMORIES| Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM macro — given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.| 0|
-| <a name="BALANCE_ROWS"></a>BALANCE_ROWS| Balance rows during placement.| 0|
+| <a name="BALANCE_ROWS"></a>BALANCE_ROWS (deprecated)| Balance rows during placement. Instead of BALANCE_ROWS=1, write `BALANCE_ROW_USAGE_ARGS = on`.| 0|
+| <a name="BALANCE_ROW_USAGE_ARGS"></a>BALANCE_ROW_USAGE_ARGS| Edits to the arguments the flow passes to `balance_row_usage`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="BLOCKS"></a>BLOCKS| Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.| |
-| <a name="BUFFER_PORTS_ARGS"></a>BUFFER_PORTS_ARGS| Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.| |
+| <a name="BUFFER_PORTS_ARGS"></a>BUFFER_PORTS_ARGS| Edits to the arguments the flow passes to `buffer_ports`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="CACHED_REPORTS"></a>CACHED_REPORTS| List of pre-existing report files to copy into the reports directory before synthesis. Used when reusing prior synthesis results with SYNTH_NETLIST_FILES.| |
-| <a name="CAP_MARGIN"></a>CAP_MARGIN| Specifies a capacitance margin when fixing max capacitance violations. This option allows you to overfix.| |
+| <a name="CAP_MARGIN"></a>CAP_MARGIN (deprecated)| Specifies a capacitance margin when fixing max capacitance violations. This option allows you to overfix. Instead, write `REPAIR_DESIGN_ARGS = -cap_margin <value>`.| |
 | <a name="CDL_FILE"></a>CDL_FILE| CDL master netlist file used as the -masters argument to write_cdl for generating Circuit Description Language output.| |
 | <a name="CDL_FILES"></a>CDL_FILES| Insert additional Circuit Description Language (`.cdl`) netlist files.| |
 | <a name="CELL_PAD_IN_SITES_DETAIL_PLACEMENT"></a>CELL_PAD_IN_SITES_DETAIL_PLACEMENT| Cell padding on both sides in site widths to ease routability in detail placement.| 0|
 | <a name="CELL_PAD_IN_SITES_GLOBAL_PLACEMENT"></a>CELL_PAD_IN_SITES_GLOBAL_PLACEMENT| Cell padding on both sides in site widths to ease routability during global placement.| 0|
 | <a name="CLKGATE_MAP_FILE"></a>CLKGATE_MAP_FILE| Optional mapping file supplied to Yosys to map clock gating cells| |
-| <a name="CLUSTER_FLOPS"></a>CLUSTER_FLOPS| Enable clustering of flip-flops into multi-bit flip-flops, if the platform PDK includes multi-bit flip-flops| 0|
-| <a name="CLUSTER_FLOPS_ARGS"></a>CLUSTER_FLOPS_ARGS| Additional arguments passed to the cluster_flops command. Only used when CLUSTER_FLOPS is set.| |
+| <a name="CLOCK_TREE_SYNTHESIS_ARGS"></a>CLOCK_TREE_SYNTHESIS_ARGS| Edits to the arguments the flow passes to `clock_tree_synthesis`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
+| <a name="CLUSTER_FLOPS"></a>CLUSTER_FLOPS (deprecated)| Enable clustering of flip-flops into multi-bit flip-flops, if the platform PDK includes multi-bit flip-flops Instead of CLUSTER_FLOPS=1, write `CLUSTER_FLOPS_ARGS = on`.| 0|
+| <a name="CLUSTER_FLOPS_ARGS"></a>CLUSTER_FLOPS_ARGS| Edits to the arguments the flow passes to `cluster_flops`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="CORE_AREA"></a>CORE_AREA| The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).| |
 | <a name="CORE_ASPECT_RATIO"></a>CORE_ASPECT_RATIO| The core aspect ratio (height / width). This variable is only used when `CORE_UTILIZATION` is set.| 1.0|
 | <a name="CORE_MARGIN"></a>CORE_MARGIN| The margin between the core area and die area, specified in microns. Allowed values are either one value for all margins or a set of four values, one for each margin. The order of the four values are: `{bottom top left right}`. This variable is only used when `CORE_UTILIZATION` is set.| 1.0|
 | <a name="CORE_UTILIZATION"></a>CORE_UTILIZATION| The core utilization percentage (0-100).| |
 | <a name="CORNER"></a>CORNER| PVT corner library selection. Only available for ASAP7 and GF180 PDKs.| |
 | <a name="CORNERS"></a>CORNERS| List of timing corner names for multi-corner analysis (e.g. "slow fast"). When set, liberty files are loaded per corner using uppercase <CORNER>_LIB_FILES environment variables (e.g. corner "slow" reads SLOW_LIB_FILES) and timing models are generated per corner.| |
-| <a name="CTS_ARGS"></a>CTS_ARGS| Override `clock_tree_synthesis` arguments.| |
-| <a name="CTS_BUF_DISTANCE"></a>CTS_BUF_DISTANCE| Distance (in microns) between buffers.| |
-| <a name="CTS_BUF_LIST"></a>CTS_BUF_LIST| List of cells used to construct the clock tree. Overrides buffer inference.| |
-| <a name="CTS_CLUSTER_DIAMETER"></a>CTS_CLUSTER_DIAMETER| Maximum diameter (in microns) of sink cluster.| |
-| <a name="CTS_CLUSTER_SIZE"></a>CTS_CLUSTER_SIZE| Maximum number of sinks per cluster.| |
-| <a name="CTS_LIB_NAME"></a>CTS_LIB_NAME| Name of the Liberty library to use in selecting the clock buffers.| |
+| <a name="CTS_ARGS"></a>CTS_ARGS (deprecated)| Override `clock_tree_synthesis` arguments. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS, with only what differs from the flow's arguments`.| |
+| <a name="CTS_BUF_DISTANCE"></a>CTS_BUF_DISTANCE (deprecated)| Distance (in microns) between buffers. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS = -distance_between_buffers <value>`.| |
+| <a name="CTS_BUF_LIST"></a>CTS_BUF_LIST (deprecated)| List of cells used to construct the clock tree. Overrides buffer inference. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS = -buf_list <value>`.| |
+| <a name="CTS_CLUSTER_DIAMETER"></a>CTS_CLUSTER_DIAMETER (deprecated)| Maximum diameter (in microns) of sink cluster. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS = -sink_clustering_max_diameter <value>`.| |
+| <a name="CTS_CLUSTER_SIZE"></a>CTS_CLUSTER_SIZE (deprecated)| Maximum number of sinks per cluster. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS = -sink_clustering_size <value>`.| |
+| <a name="CTS_LIB_NAME"></a>CTS_LIB_NAME (deprecated)| Name of the Liberty library to use in selecting the clock buffers. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS = -library <value>`.| |
 | <a name="CTS_SNAPSHOTS"></a>CTS_SNAPSHOTS| Create ODB/SDC files at different stages of CTS.| 0|
 | <a name="DESIGN_NAME"></a>DESIGN_NAME| The name of the top-level module of the design.| |
 | <a name="DESIGN_NICKNAME"></a>DESIGN_NICKNAME| DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a different design.| |
-| <a name="DETAILED_METRICS"></a>DETAILED_METRICS| If set, then calls report_metrics prior to repair operations in the CTS and global route stages| 0|
-| <a name="DETAILED_ROUTE_ARGS"></a>DETAILED_ROUTE_ARGS| Add additional arguments for debugging purposes during detail route.| |
-| <a name="DETAILED_ROUTE_END_ITERATION"></a>DETAILED_ROUTE_END_ITERATION| Maximum number of iterations.| 64|
-| <a name="DETAIL_PLACEMENT_ARGS"></a>DETAIL_PLACEMENT_ARGS| Specify arguments to every detailed_placement call: the one in placement and the re-legalizations after clock tree synthesis, after repair in CTS and after the repairs in global route. A legalizer chosen here (-use_diamond_legalizer, -max_displacement) is therefore the one every stage uses.| |
+| <a name="DETAILED_METRICS"></a>DETAILED_METRICS (deprecated)| If set, then calls report_metrics prior to repair operations in the CTS and global route stages Instead of DETAILED_METRICS=1, write `REPORT_METRICS_ARGS = cts:on grt:on`.| 0|
+| <a name="DETAILED_PLACEMENT_ARGS"></a>DETAILED_PLACEMENT_ARGS| Edits to the arguments the flow passes to `detailed_placement`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
+| <a name="DETAILED_ROUTE_ARGS"></a>DETAILED_ROUTE_ARGS| Edits to the arguments the flow passes to `detailed_route`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`. Until it is removed, a value that is a plain command line, with no `~`, `on`, `off` or scope, replaces the flow's arguments, as it always has.| |
+| <a name="DETAILED_ROUTE_END_ITERATION"></a>DETAILED_ROUTE_END_ITERATION (deprecated)| Maximum number of iterations. Instead, write `DETAILED_ROUTE_ARGS = -droute_end_iter <value>`.| 64|
+| <a name="DETAIL_PLACEMENT_ARGS"></a>DETAIL_PLACEMENT_ARGS (deprecated)| Specify arguments to every detailed_placement call: the one in placement and the re-legalizations after clock tree synthesis, after repair in CTS and after the repairs in global route. A legalizer chosen here (-use_diamond_legalizer, -max_displacement) is therefore the one every stage uses. Instead, write `DETAILED_PLACEMENT_ARGS = <value>`.| |
 | <a name="DFF_LIB_FILE"></a>DFF_LIB_FILE| Single Liberty file for flip-flop technology mapping (dfflibmap) during synthesis. Takes precedence over DFF_MAP_FILE when set.| |
 | <a name="DFF_MAP_FILE"></a>DFF_MAP_FILE| Optional mapping file supplied to Yosys to map D flip-flops| |
 | <a name="DIE_AREA"></a>DIE_AREA| The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).| |
-| <a name="DISABLE_VIA_GEN"></a>DISABLE_VIA_GEN| Passed as -disable_via_gen to detailed_route.| |
-| <a name="DONT_BUFFER_PORTS"></a>DONT_BUFFER_PORTS| Do not buffer input/output ports during floorplanning.| 0|
+| <a name="DISABLE_VIA_GEN"></a>DISABLE_VIA_GEN (deprecated)| Passed as -disable_via_gen to detailed_route. Instead of DISABLE_VIA_GEN=1, write `DETAILED_ROUTE_ARGS = -disable_via_gen`.| |
+| <a name="DONT_BUFFER_PORTS"></a>DONT_BUFFER_PORTS (deprecated)| Do not buffer input/output ports during floorplanning. Instead of DONT_BUFFER_PORTS=1, write `BUFFER_PORTS_ARGS = off`.| 0|
 | <a name="DONT_USE_CELLS"></a>DONT_USE_CELLS| Dont use cells eases pin access in detailed routing.| |
-| <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
+| <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT (deprecated)| Specifies how far an instance can be moved when optimizing. Instead, write `IMPROVE_PLACEMENT_ARGS = -max_displacement <value>`.| 5 1|
 | <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
-| <a name="ENABLE_DPO"></a>ENABLE_DPO| Enable detail placement with improve_placement feature.| 1|
-| <a name="ENABLE_PLACE_REPAIR_TIMING"></a>ENABLE_PLACE_REPAIR_TIMING| Run repair_timing during the placement resize stage using placement parasitics. Disabled by default; pre-CTS setup/hold repair is skipped unless this is set to 1.| 0|
-| <a name="ENABLE_RESISTANCE_AWARE"></a>ENABLE_RESISTANCE_AWARE| Passed as -resistance_aware to global_route.| |
+| <a name="ENABLE_DPO"></a>ENABLE_DPO (deprecated)| Enable detail placement with improve_placement feature. Instead of ENABLE_DPO=0, write `IMPROVE_PLACEMENT_ARGS = off`.| 1|
+| <a name="ENABLE_PLACE_REPAIR_TIMING"></a>ENABLE_PLACE_REPAIR_TIMING (deprecated)| Run repair_timing during the placement resize stage using placement parasitics. Disabled by default; pre-CTS setup/hold repair is skipped unless this is set to 1. Instead of ENABLE_PLACE_REPAIR_TIMING=1, write `REPAIR_TIMING_ARGS = place:on`.| 0|
+| <a name="ENABLE_RESISTANCE_AWARE"></a>ENABLE_RESISTANCE_AWARE (deprecated)| Passed as -resistance_aware to global_route. Instead of ENABLE_RESISTANCE_AWARE=1, write `GLOBAL_ROUTE_ARGS = -resistance_aware`.| |
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| |
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| |
@@ -156,18 +159,19 @@ configuration file.
 | <a name="GDS_ALLOW_EMPTY"></a>GDS_ALLOW_EMPTY| Single regular expression of module names of macros that have no .gds file| |
 | <a name="GDS_FILES"></a>GDS_FILES| Path to platform GDS files.| |
 | <a name="GENERATE_ARTIFACTS_ON_FAILURE"></a>GENERATE_ARTIFACTS_ON_FAILURE| For instance Bazel needs artifacts (.odb and .rpt files) on a failure to allow the user to save hours on re-running the failed step locally, but when working with a Makefile flow, it is more natural to fail the step and leave the user to manually inspect the logs and artifacts directly via the file system. Set to 1 to change the behavior to generate artifacts upon failure to e.g. do a global route. The exit code will still be non-zero on all other failures that aren't covered by the "useful to inspect the artifacts on failure" use-case. Example: just like detailed routing, a global route that fails with congestion, is not a build failure(as in exit code non-zero), it is a successful(as in zero exit code) global route that produce reports detailing the problem. Detailed route will not proceed, if there is global routing congestion This allows build systems, such as bazel, to create artifacts for global and detailed route, even if the operation had problems, without having know about the semantics between global and detailed route. Considering that global and detailed route can run for a long time and use a lot of memory, this allows inspecting results on a laptop for a build that ran on a server.| 0|
-| <a name="GLOBAL_PLACEMENT_ARGS"></a>GLOBAL_PLACEMENT_ARGS| Use additional tuning parameters during global placement other than default args defined in global_place.tcl.| |
-| <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Replaces default arguments for global route. The -congestion_iterations default is set by the flow (30 for FastRoute, 10 for CUGR); add -congestion_iterations here to override it.| -congestion_report_iter_step 5 -verbose|
+| <a name="GLOBAL_PLACEMENT_ARGS"></a>GLOBAL_PLACEMENT_ARGS| Edits to the arguments the flow passes to `global_placement`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
+| <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Edits to the arguments the flow passes to `global_route`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`. Edits the first global_route; the incremental ones after repair take -allow_congestion from it.| -congestion_report_iter_step 5 -verbose|
 | <a name="GLOBAL_ROUTE_USE_CUGR"></a>GLOBAL_ROUTE_USE_CUGR| Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.| 0|
 | <a name="GND_NETS_VOLTAGES"></a>GND_NETS_VOLTAGES| Used for IR Drop calculation.| |
 | <a name="GPL_KEEP_OVERFLOW"></a>GPL_KEEP_OVERFLOW| Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.| |
 | <a name="GPL_PLACE_IOS"></a>GPL_PLACE_IOS| Place IO pins together with the cells in global placement (-place_ios).| 0|
-| <a name="GPL_RANDOM_SEED"></a>GPL_RANDOM_SEED| Specifies a random seed for global placement.  Useful for perturbation studies.| |
-| <a name="GPL_ROUTABILITY_DRIVEN"></a>GPL_ROUTABILITY_DRIVEN| Specifies whether the placer should use routability driven placement.| 1|
+| <a name="GPL_RANDOM_SEED"></a>GPL_RANDOM_SEED (deprecated)| Specifies a random seed for global placement.  Useful for perturbation studies. Instead, write `GLOBAL_PLACEMENT_ARGS = -random_seed <value>`.| |
+| <a name="GPL_ROUTABILITY_DRIVEN"></a>GPL_ROUTABILITY_DRIVEN (deprecated)| Specifies whether the placer should use routability driven placement. Instead of GPL_ROUTABILITY_DRIVEN=0, write `GLOBAL_PLACEMENT_ARGS = ~-routability_driven`.| 1|
 | <a name="GPL_TIMING_DRIVEN"></a>GPL_TIMING_DRIVEN| Specifies whether the placer should use timing driven placement.| 1|
 | <a name="GRT_SEED"></a>GRT_SEED| Specifies a random seed for global routing.  Useful for perturbation studies.| |
 | <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.| 1|
-| <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix (negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period.| 0|
+| <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN (deprecated)| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix (negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period. Instead, write `REPAIR_TIMING_ARGS = -hold_margin <value>`.| 0|
+| <a name="IMPROVE_PLACEMENT_ARGS"></a>IMPROVE_PLACEMENT_ARGS| Edits to the arguments the flow passes to `improve_placement`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="INFER_CLKGATES"></a>INFER_CLKGATES| Enables Yosys clock gate inference. By default, it uses the Liberty cell definitions to determine clock gating cell. The selection can be overridden using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.| 0|
 | <a name="IO_CONSTRAINTS"></a>IO_CONSTRAINTS| File path to the IO constraints .tcl file. Also used for manual placement.| |
 | <a name="IO_PLACER_H"></a>IO_PLACER_H| A list of metal layers on which the I/O pins are placed horizontally (top and bottom of the die).| |
@@ -189,7 +193,7 @@ configuration file.
 | <a name="MATCH_CELL_FOOTPRINT"></a>MATCH_CELL_FOOTPRINT| Enforce sizing operations to only swap cells that have the same layout boundary.| 0|
 | <a name="MAX_PLACE_STEP_COEF"></a>MAX_PLACE_STEP_COEF| Sets the maximum phi coefficient (pcof_max / µ_k Upper Bound) for global placement optimization. This parameter controls the step size upper bound in the RePlAce Nesterov optimization algorithm. Higher values allow more aggressive optimization but may risk divergence. Valid range: 1.00-1.20| 1.05|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_DRT"></a>MAX_REPAIR_ANTENNAS_ITER_DRT| Defines the maximum number of iterations post-detailed routing repair antennas will run.| 5|
-| <a name="MAX_REPAIR_ANTENNAS_ITER_GRT"></a>MAX_REPAIR_ANTENNAS_ITER_GRT| Defines the maximum number of iterations post global routing repair antennas will run.| 5|
+| <a name="MAX_REPAIR_ANTENNAS_ITER_GRT"></a>MAX_REPAIR_ANTENNAS_ITER_GRT (deprecated)| Defines the maximum number of iterations post global routing repair antennas will run. Instead, write `REPAIR_ANTENNAS_ARGS = grt:-iterations <value>`.| 5|
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| |
 | <a name="MIN_CLK_ROUTING_LAYER"></a>MIN_CLK_ROUTING_LAYER| The lowest metal layer name to be used for clock-net routing in global routing. Used in flow/platforms/*/fastroute.tcl as the lower bound of `set_routing_layers -clock`. Typically higher than MIN_ROUTING_LAYER so clock nets prefer the upper, lower-RC layers. No `stages:` list because floorplan.tcl also `source`s the platform fastroute.tcl.| |
@@ -199,14 +203,15 @@ configuration file.
 | <a name="NUM_CORES"></a>NUM_CORES| Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers of cores in system as determined by system specific code in Makefile, `nproc` is tried first. OpenROAD does not limit itself to this number of cores across OpenROAD running instances, which can lead to overprovisioning in contexts such as bazel-orfs where there could be many routing, or place jobs running at the same time.| |
 | <a name="OPENROAD_HIERARCHICAL"></a>OPENROAD_HIERARCHICAL| Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.| 0|
 | <a name="OPT_POST_GRT_WNS"></a>OPT_POST_GRT_WNS| Optimize WNS after global routing by additional repair_timing that uses VT swap and wire rerouting only to minimize placement and routing disturbance| 1|
-| <a name="OR_K"></a>OR_K| Passed as -or_k to detailed routing.| |
-| <a name="OR_SEED"></a>OR_SEED| Passed as -or_seed to detailed routing.| |
+| <a name="OR_K"></a>OR_K (deprecated)| Passed as -or_k to detailed routing. Instead, write `DETAILED_ROUTE_ARGS = -or_k <value>`.| |
+| <a name="OR_SEED"></a>OR_SEED (deprecated)| Passed as -or_seed to detailed routing. Instead, write `DETAILED_ROUTE_ARGS = -or_seed <value>`.| |
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.| |
 | <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread. The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results. If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs. A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails. The default is platform specific.| |
 | <a name="PLACE_DENSITY_LB_ADDON"></a>PLACE_DENSITY_LB_ADDON| Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.| |
-| <a name="PLACE_PINS_ARGS"></a>PLACE_PINS_ARGS| Arguments to place_pins| |
+| <a name="PLACE_PINS_ARGS"></a>PLACE_PINS_ARGS| Edits to the arguments the flow passes to `place_pins`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="PLACE_SITE"></a>PLACE_SITE| Placement site for core cells defined in the technology LEF file.| |
 | <a name="PLATFORM"></a>PLATFORM| Specifies process design kit or technology node to be used.| |
+| <a name="PLATFORM_ARGS"></a>PLATFORM_ARGS| A platform's defaults for command arguments, in the grammar of docs/user/CommandArguments.md, each edit starting with the command it is for, as in `rtl_macro_placer:-halo_width 5`. They rank above the flow's own arguments and below a design's <COMMAND>_ARGS.| |
 | <a name="PLATFORM_TCL"></a>PLATFORM_TCL| Specifies a Tcl script with commands to run before loading design.| |
 | <a name="POST_CTS_TCL"></a>POST_CTS_TCL| Specifies a Tcl script with commands to run after CTS is completed.| |
 | <a name="POST_DENSITY_FILL_TCL"></a>POST_DENSITY_FILL_TCL| Specifies a Tcl script with commands to run after density fill.| |
@@ -247,30 +252,36 @@ configuration file.
 | <a name="RCX_RULES"></a>RCX_RULES| RC Extraction rules file path.| |
 | <a name="RECOVER_POWER"></a>RECOVER_POWER| Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].| 0|
 | <a name="REMOVE_CELLS_FOR_LEC"></a>REMOVE_CELLS_FOR_LEC| String patterns directly passed to write_verilog -remove_cells <> for lec checks.| |
-| <a name="REPAIR_PDN_VIA_LAYER"></a>REPAIR_PDN_VIA_LAYER| Remove power grid vias which generate DRC violations after detailed routing.| |
+| <a name="REPAIR_ANTENNAS_ARGS"></a>REPAIR_ANTENNAS_ARGS| Edits to the arguments the flow passes to `repair_antennas`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
+| <a name="REPAIR_DESIGN_ARGS"></a>REPAIR_DESIGN_ARGS| Edits to the arguments the flow passes to `repair_design`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
+| <a name="REPAIR_PDN_VIA_LAYER"></a>REPAIR_PDN_VIA_LAYER (deprecated)| Remove power grid vias which generate DRC violations after detailed routing. Instead, write `DETAILED_ROUTE_ARGS = -repair_pdn_vias <value>`.| |
+| <a name="REPAIR_TIE_FANOUT_ARGS"></a>REPAIR_TIE_FANOUT_ARGS| Edits to the arguments the flow passes to `repair_tie_fanout`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
+| <a name="REPAIR_TIMING_ARGS"></a>REPAIR_TIMING_ARGS| Edits to the arguments the flow passes to `repair_timing`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="REPORT_CLOCK_SKEW"></a>REPORT_CLOCK_SKEW| Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.| 1|
 | <a name="REPORT_ENDPOINT_SLACK"></a>REPORT_ENDPOINT_SLACK| If set to 1, write the setup and hold slack of every timing endpoint at the end of every flow step (e.g. 3_3_place_gp) to $REPORTS_DIR/<step>_endpoint_slack.json. These snapshots can be compared across steps with flow/util/endpointSlack.py. See docs/contrib/EndpointSlackTracking.md.| 0|
+| <a name="REPORT_METRICS_ARGS"></a>REPORT_METRICS_ARGS| Edits to the arguments the flow passes to `report_metrics`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically (entirely design specific, but going from hours to minutes has been observed) when the value is low (such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/whittle.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. whittle.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.| 0.5|
-| <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT| Weight for the area of the current floorplan.| 0.1|
-| <a name="RTLMP_ARGS"></a>RTLMP_ARGS| Overrides all other RTL macro placer arguments.| |
-| <a name="RTLMP_BOUNDARY_WT"></a>RTLMP_BOUNDARY_WT| Weight for the boundary or how far the hard macro clusters are from boundaries.| 50.0|
-| <a name="RTLMP_FENCE_LX"></a>RTLMP_FENCE_LX| Defines the lower left X coordinate for the global fence bounding box in microns.| 0.0|
-| <a name="RTLMP_FENCE_LY"></a>RTLMP_FENCE_LY| Defines the lower left Y coordinate for the global fence bounding box in microns.| 0.0|
-| <a name="RTLMP_FENCE_UX"></a>RTLMP_FENCE_UX| Defines the upper right X coordinate for the global fence bounding box in microns.| 0.0|
-| <a name="RTLMP_FENCE_UY"></a>RTLMP_FENCE_UY| Defines the upper right Y coordinate for the global fence bounding box in microns.| 0.0|
-| <a name="RTLMP_KEEP_CLUSTERING"></a>RTLMP_KEEP_CLUSTERING| Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as nested dbGroups.| 0|
-| <a name="RTLMP_MAX_INST"></a>RTLMP_MAX_INST| Maximum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
-| <a name="RTLMP_MAX_LEVEL"></a>RTLMP_MAX_LEVEL| Maximum depth of the physical hierarchy tree.| 2|
-| <a name="RTLMP_MAX_MACRO"></a>RTLMP_MAX_MACRO| Maximum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
-| <a name="RTLMP_MIN_AR"></a>RTLMP_MIN_AR| Specifies the minimum aspect ratio (height/width).| 0.33|
-| <a name="RTLMP_MIN_CHANNEL_SIZE"></a>RTLMP_MIN_CHANNEL_SIZE| Minimum channel width and height between macros (microns), given as one value for both, or two values "width height".| |
-| <a name="RTLMP_MIN_INST"></a>RTLMP_MIN_INST| Minimum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
-| <a name="RTLMP_MIN_MACRO"></a>RTLMP_MIN_MACRO| Minimum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
-| <a name="RTLMP_NOTCH_WT"></a>RTLMP_NOTCH_WT| Weight for the notch, or the existence of dead space that cannot be used for placement and routing.| 50.0|
-| <a name="RTLMP_OUTLINE_WT"></a>RTLMP_OUTLINE_WT| Weight for violating the fixed outline constraint, meaning that all clusters should be placed within the shape of their parent cluster.| 100.0|
-| <a name="RTLMP_PIN_AWARE_CHANNELS"></a>RTLMP_PIN_AWARE_CHANNELS| Set to 1 to trim macro channels based on the pin locations of macros, instead of using full channels. Requires RTLMP_MIN_CHANNEL_SIZE to also be set. Defaults to 1 whenever RTLMP_MIN_CHANNEL_SIZE is set and this variable is not explicitly set to 0.| 1|
-| <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR| Path to the directory where reports are saved.| |
-| <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0|
+| <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT (deprecated)| Weight for the area of the current floorplan. Instead, write `RTL_MACRO_PLACER_ARGS = -area_weight <value>`.| 0.1|
+| <a name="RTLMP_ARGS"></a>RTLMP_ARGS (deprecated)| Overrides all other RTL macro placer arguments. Instead, write `RTL_MACRO_PLACER_ARGS, with only what differs from the flow's arguments`.| |
+| <a name="RTLMP_BOUNDARY_WT"></a>RTLMP_BOUNDARY_WT (deprecated)| Weight for the boundary or how far the hard macro clusters are from boundaries. Instead, write `RTL_MACRO_PLACER_ARGS = -boundary_weight <value>`.| 50.0|
+| <a name="RTLMP_FENCE_LX"></a>RTLMP_FENCE_LX (deprecated)| Defines the lower left X coordinate for the global fence bounding box in microns. Instead, write `RTL_MACRO_PLACER_ARGS = -fence_lx <value>`.| 0.0|
+| <a name="RTLMP_FENCE_LY"></a>RTLMP_FENCE_LY (deprecated)| Defines the lower left Y coordinate for the global fence bounding box in microns. Instead, write `RTL_MACRO_PLACER_ARGS = -fence_ly <value>`.| 0.0|
+| <a name="RTLMP_FENCE_UX"></a>RTLMP_FENCE_UX (deprecated)| Defines the upper right X coordinate for the global fence bounding box in microns. Instead, write `RTL_MACRO_PLACER_ARGS = -fence_ux <value>`.| 0.0|
+| <a name="RTLMP_FENCE_UY"></a>RTLMP_FENCE_UY (deprecated)| Defines the upper right Y coordinate for the global fence bounding box in microns. Instead, write `RTL_MACRO_PLACER_ARGS = -fence_uy <value>`.| 0.0|
+| <a name="RTLMP_KEEP_CLUSTERING"></a>RTLMP_KEEP_CLUSTERING (deprecated)| Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as nested dbGroups. Instead of RTLMP_KEEP_CLUSTERING=1, write `RTL_MACRO_PLACER_ARGS = -keep_clustering_data`.| 0|
+| <a name="RTLMP_MAX_INST"></a>RTLMP_MAX_INST (deprecated)| Maximum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes. Instead, write `RTL_MACRO_PLACER_ARGS = -max_num_inst <value>`.| |
+| <a name="RTLMP_MAX_LEVEL"></a>RTLMP_MAX_LEVEL (deprecated)| Maximum depth of the physical hierarchy tree. Instead, write `RTL_MACRO_PLACER_ARGS = -max_num_level <value>`.| 2|
+| <a name="RTLMP_MAX_MACRO"></a>RTLMP_MAX_MACRO (deprecated)| Maximum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes. Instead, write `RTL_MACRO_PLACER_ARGS = -max_num_macro <value>`.| |
+| <a name="RTLMP_MIN_AR"></a>RTLMP_MIN_AR (deprecated)| Specifies the minimum aspect ratio (height/width). Instead, write `RTL_MACRO_PLACER_ARGS = -min_ar <value>`.| 0.33|
+| <a name="RTLMP_MIN_CHANNEL_SIZE"></a>RTLMP_MIN_CHANNEL_SIZE (deprecated)| Minimum channel width and height between macros (microns), given as one value for both, or two values "width height". Instead, write `RTL_MACRO_PLACER_ARGS = -min_channel_size <value>`.| |
+| <a name="RTLMP_MIN_INST"></a>RTLMP_MIN_INST (deprecated)| Minimum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes. Instead, write `RTL_MACRO_PLACER_ARGS = -min_num_inst <value>`.| |
+| <a name="RTLMP_MIN_MACRO"></a>RTLMP_MIN_MACRO (deprecated)| Minimum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes. Instead, write `RTL_MACRO_PLACER_ARGS = -min_num_macro <value>`.| |
+| <a name="RTLMP_NOTCH_WT"></a>RTLMP_NOTCH_WT (deprecated)| Weight for the notch, or the existence of dead space that cannot be used for placement and routing. Instead, write `RTL_MACRO_PLACER_ARGS = -notch_weight <value>`.| 50.0|
+| <a name="RTLMP_OUTLINE_WT"></a>RTLMP_OUTLINE_WT (deprecated)| Weight for violating the fixed outline constraint, meaning that all clusters should be placed within the shape of their parent cluster. Instead, write `RTL_MACRO_PLACER_ARGS = -outline_weight <value>`.| 100.0|
+| <a name="RTLMP_PIN_AWARE_CHANNELS"></a>RTLMP_PIN_AWARE_CHANNELS (deprecated)| Set to 1 to trim macro channels based on the pin locations of macros, instead of using full channels. Requires RTLMP_MIN_CHANNEL_SIZE to also be set. Defaults to 1 whenever RTLMP_MIN_CHANNEL_SIZE is set and this variable is not explicitly set to 0. Instead of RTLMP_PIN_AWARE_CHANNELS=0, write `RTL_MACRO_PLACER_ARGS = ~-pin_aware_channels`.| 1|
+| <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR (deprecated)| Path to the directory where reports are saved. Instead, write `RTL_MACRO_PLACER_ARGS = -report_directory <value>`.| |
+| <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT (deprecated)| Weight for half-perimiter wirelength. Instead, write `RTL_MACRO_PLACER_ARGS = -wirelength_weight <value>`.| 100.0|
+| <a name="RTL_MACRO_PLACER_ARGS"></a>RTL_MACRO_PLACER_ARGS| Edits to the arguments the flow passes to `rtl_macro_placer`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `on`/`off`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="RUN_LOG_NAME_STEM"></a>RUN_LOG_NAME_STEM| Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.| run|
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
 | <a name="SAIF_FILE"></a>SAIF_FILE| Specifies the Switching Activity Interchange Format (SAIF) file containing pin activities and duty cycles for use in power calculation.| |
@@ -278,24 +289,24 @@ configuration file.
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| |
 | <a name="SEC_CHECK"></a>SEC_CHECK| Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. If this fails, report an issue to OpenROAD.| 0|
-| <a name="SETUP_MOVE_SEQUENCE"></a>SETUP_MOVE_SEQUENCE| Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas.| |
-| <a name="SETUP_REPAIR_PHASES"></a>SETUP_REPAIR_PHASES| Passed as -phases to repair_timing. This should be a string of setup repair phase names separated by spaces. Set to PARALLEL_EVAL to repair setup timing with the experimental parallel evaluation policy. When unset, repair_timing runs its default phases.| |
-| <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). See HOLD_SLACK_MARGIN for more details.| 0|
-| <a name="SKIP_ANTENNA_REPAIR"></a>SKIP_ANTENNA_REPAIR| Skips antenna repair entirely.| 0|
-| <a name="SKIP_ANTENNA_REPAIR_POST_DRT"></a>SKIP_ANTENNA_REPAIR_POST_DRT| Skips antenna repair post-detailed routing.| 0|
-| <a name="SKIP_BUFFER_REMOVAL"></a>SKIP_BUFFER_REMOVAL| Passed as -skip_buffer_removal to repair_timing. Do not remove buffers as a transform to fix timing violations (default: allow buffer removal).| |
-| <a name="SKIP_CRIT_VT_SWAP"></a>SKIP_CRIT_VT_SWAP| Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap). This is an additional VT swap on critical cells that remain near the end of setup fixing. If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.| |
-| <a name="SKIP_CTS_REPAIR_TIMING"></a>SKIP_CTS_REPAIR_TIMING| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running.| 0|
+| <a name="SETUP_MOVE_SEQUENCE"></a>SETUP_MOVE_SEQUENCE (deprecated)| Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas. Instead, write `REPAIR_TIMING_ARGS = -sequence <value>`.| |
+| <a name="SETUP_REPAIR_PHASES"></a>SETUP_REPAIR_PHASES (deprecated)| Passed as -phases to repair_timing. This should be a string of setup repair phase names separated by spaces. Set to PARALLEL_EVAL to repair setup timing with the experimental parallel evaluation policy. When unset, repair_timing runs its default phases. Instead, write `REPAIR_TIMING_ARGS = -phases <value>`.| |
+| <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN (deprecated)| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). See HOLD_SLACK_MARGIN for more details. Instead, write `REPAIR_TIMING_ARGS = -setup_margin <value>`.| 0|
+| <a name="SKIP_ANTENNA_REPAIR"></a>SKIP_ANTENNA_REPAIR (deprecated)| Skips antenna repair entirely. Instead of SKIP_ANTENNA_REPAIR=1, write `REPAIR_ANTENNAS_ARGS = grt:off`.| 0|
+| <a name="SKIP_ANTENNA_REPAIR_POST_DRT"></a>SKIP_ANTENNA_REPAIR_POST_DRT (deprecated)| Skips antenna repair post-detailed routing. Instead of SKIP_ANTENNA_REPAIR_POST_DRT=1, write `REPAIR_ANTENNAS_ARGS = route:off`.| 0|
+| <a name="SKIP_BUFFER_REMOVAL"></a>SKIP_BUFFER_REMOVAL (deprecated)| Passed as -skip_buffer_removal to repair_timing. Do not remove buffers as a transform to fix timing violations (default: allow buffer removal). Instead of SKIP_BUFFER_REMOVAL=1, write `REPAIR_TIMING_ARGS = -skip_buffer_removal`.| |
+| <a name="SKIP_CRIT_VT_SWAP"></a>SKIP_CRIT_VT_SWAP (deprecated)| Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap). This is an additional VT swap on critical cells that remain near the end of setup fixing. If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap. Instead of SKIP_CRIT_VT_SWAP=1, write `REPAIR_TIMING_ARGS = -skip_crit_vt_swap`.| |
+| <a name="SKIP_CTS_REPAIR_TIMING"></a>SKIP_CTS_REPAIR_TIMING (deprecated)| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running. Instead of SKIP_CTS_REPAIR_TIMING=1, write `REPAIR_TIMING_ARGS = cts:off`.| 0|
 | <a name="SKIP_DETAILED_ROUTE"></a>SKIP_DETAILED_ROUTE| Skips detailed route.| 0|
-| <a name="SKIP_FLOORPLAN_REPAIR_TIMING"></a>SKIP_FLOORPLAN_REPAIR_TIMING| Skipping floorplan repair which sometimes does too much optimization too early.| 0|
-| <a name="SKIP_GATE_CLONING"></a>SKIP_GATE_CLONING| Do not use gate cloning transform to fix timing violations (default: use gate cloning).| |
+| <a name="SKIP_FLOORPLAN_REPAIR_TIMING"></a>SKIP_FLOORPLAN_REPAIR_TIMING (deprecated)| Skipping floorplan repair which sometimes does too much optimization too early. Instead of SKIP_FLOORPLAN_REPAIR_TIMING=1, write `REPAIR_TIMING_ARGS = floorplan:off`.| 0|
+| <a name="SKIP_GATE_CLONING"></a>SKIP_GATE_CLONING (deprecated)| Do not use gate cloning transform to fix timing violations (default: use gate cloning). Instead of SKIP_GATE_CLONING=1, write `REPAIR_TIMING_ARGS = -skip_gate_cloning`.| |
 | <a name="SKIP_INCREMENTAL_REPAIR"></a>SKIP_INCREMENTAL_REPAIR| Skip incremental repair in global route.| 0|
-| <a name="SKIP_LAST_GASP"></a>SKIP_LAST_GASP| Do not use last gasp optimization to fix timing violations (default: use gate last gasp).| |
-| <a name="SKIP_PIN_SWAP"></a>SKIP_PIN_SWAP| Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).| |
-| <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT| Skip repair_tie_fanout at floorplan step.| 0|
-| <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.| 0|
-| <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP| Do not perform VT swap to improve QoR (default: do VT swap).| |
-| <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.| |
+| <a name="SKIP_LAST_GASP"></a>SKIP_LAST_GASP (deprecated)| Do not use last gasp optimization to fix timing violations (default: use gate last gasp). Instead of SKIP_LAST_GASP=1, write `REPAIR_TIMING_ARGS = -skip_last_gasp`.| |
+| <a name="SKIP_PIN_SWAP"></a>SKIP_PIN_SWAP (deprecated)| Do not use pin swapping as a transform to fix timing violations (default: use pin swapping). Instead of SKIP_PIN_SWAP=1, write `REPAIR_TIMING_ARGS = -skip_pin_swap`.| |
+| <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT (deprecated)| Skip repair_tie_fanout at floorplan step. Instead of SKIP_REPAIR_TIE_FANOUT=1, write `REPAIR_TIE_FANOUT_ARGS = off`.| 0|
+| <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS (deprecated)| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds. Instead of SKIP_REPORT_METRICS=1, write `REPORT_METRICS_ARGS = off`.| 0|
+| <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP (deprecated)| Do not perform VT swap to improve QoR (default: do VT swap). Instead of SKIP_VT_SWAP=1, write `REPAIR_TIMING_ARGS = -skip_vt_swap`.| |
+| <a name="SLEW_MARGIN"></a>SLEW_MARGIN (deprecated)| Specifies a slew margin when fixing max slew violations. This option allows you to overfix. Instead, write `REPAIR_DESIGN_ARGS = -slew_margin <value>`.| |
 | <a name="SWAP_ARITH_OPERATORS"></a>SWAP_ARITH_OPERATORS| Improve timing QoR by swapping ALU and MULT arithmetic operators.| 0|
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| |
 | <a name="SYNTH_BLACKBOXES"></a>SYNTH_BLACKBOXES| List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design. Non-existant modules are ignored silently, useful when listing modules statically, even if modules come and go dynamically.| |
@@ -329,8 +340,8 @@ configuration file.
 | <a name="TECH_LEF"></a>TECH_LEF| A technology LEF file of the PDK that includes all relevant information regarding metal layers, vias, and spacing requirements.| |
 | <a name="TIEHI_CELL_AND_PORT"></a>TIEHI_CELL_AND_PORT| Tie high cells used in Yosys synthesis to replace a logical 1 in the Netlist.| |
 | <a name="TIELO_CELL_AND_PORT"></a>TIELO_CELL_AND_PORT| Tie low cells used in Yosys synthesis to replace a logical 0 in the Netlist.| |
-| <a name="TIE_SEPARATION"></a>TIE_SEPARATION| Distance separating tie high/low instances from the load.| 0|
-| <a name="TNS_END_PERCENT"></a>TNS_END_PERCENT| Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.| 100|
+| <a name="TIE_SEPARATION"></a>TIE_SEPARATION (deprecated)| Distance separating tie high/low instances from the load. Instead, write `REPAIR_TIE_FANOUT_ARGS = -separation <value>`.| 0|
+| <a name="TNS_END_PERCENT"></a>TNS_END_PERCENT (deprecated)| Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed. Instead, write `REPAIR_TIMING_ARGS = -repair_tns <value>`.| 100|
 | <a name="UNSET_ABC9_BOX_CELLS"></a>UNSET_ABC9_BOX_CELLS| List of cells to unset the abc9_box attribute on| |
 | <a name="USE_FILL"></a>USE_FILL| Whether to perform metal density filling.| 0|
 | <a name="VCD_FILE"></a>VCD_FILE| Specifies the Value Change Dump (VCD) file containing pin activities and duty cycles for use in power calculation.| |
@@ -365,6 +376,7 @@ configuration file.
 - [POS_CLKGATE_AND_PORTS](#POS_CLKGATE_AND_PORTS)
 - [PRE_SYNTH_TCL](#PRE_SYNTH_TCL)
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
+- [REPORT_METRICS_ARGS](#REPORT_METRICS_ARGS)
 - [SDC_FILE](#SDC_FILE)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
@@ -438,7 +450,10 @@ configuration file.
 - [PRE_MACRO_PLACE_TCL](#PRE_MACRO_PLACE_TCL)
 - [PRE_PDN_TCL](#PRE_PDN_TCL)
 - [PRE_TAPCELL_TCL](#PRE_TAPCELL_TCL)
+- [REPAIR_TIE_FANOUT_ARGS](#REPAIR_TIE_FANOUT_ARGS)
+- [REPAIR_TIMING_ARGS](#REPAIR_TIMING_ARGS)
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
+- [REPORT_METRICS_ARGS](#REPORT_METRICS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
 - [RTLMP_ARGS](#RTLMP_ARGS)
@@ -460,6 +475,7 @@ configuration file.
 - [RTLMP_PIN_AWARE_CHANNELS](#RTLMP_PIN_AWARE_CHANNELS)
 - [RTLMP_RPT_DIR](#RTLMP_RPT_DIR)
 - [RTLMP_WIRELENGTH_WT](#RTLMP_WIRELENGTH_WT)
+- [RTL_MACRO_PLACER_ARGS](#RTL_MACRO_PLACER_ARGS)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_REPAIR_PHASES](#SETUP_REPAIR_PHASES)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
@@ -481,11 +497,13 @@ configuration file.
 ## place variables
 
 - [BALANCE_ROWS](#BALANCE_ROWS)
+- [BALANCE_ROW_USAGE_ARGS](#BALANCE_ROW_USAGE_ARGS)
 - [BUFFER_PORTS_ARGS](#BUFFER_PORTS_ARGS)
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [CELL_PAD_IN_SITES_GLOBAL_PLACEMENT](#CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 - [CLUSTER_FLOPS](#CLUSTER_FLOPS)
 - [CLUSTER_FLOPS_ARGS](#CLUSTER_FLOPS_ARGS)
+- [DETAILED_PLACEMENT_ARGS](#DETAILED_PLACEMENT_ARGS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [DONT_BUFFER_PORTS](#DONT_BUFFER_PORTS)
 - [DPO_MAX_DISPLACEMENT](#DPO_MAX_DISPLACEMENT)
@@ -499,6 +517,7 @@ configuration file.
 - [GPL_RANDOM_SEED](#GPL_RANDOM_SEED)
 - [GPL_ROUTABILITY_DRIVEN](#GPL_ROUTABILITY_DRIVEN)
 - [GPL_TIMING_DRIVEN](#GPL_TIMING_DRIVEN)
+- [IMPROVE_PLACEMENT_ARGS](#IMPROVE_PLACEMENT_ARGS)
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
@@ -519,7 +538,10 @@ configuration file.
 - [PRE_GLOBAL_PLACE_TCL](#PRE_GLOBAL_PLACE_TCL)
 - [PRE_IO_PLACEMENT_TCL](#PRE_IO_PLACEMENT_TCL)
 - [PRE_RESIZE_TCL](#PRE_RESIZE_TCL)
+- [REPAIR_DESIGN_ARGS](#REPAIR_DESIGN_ARGS)
+- [REPAIR_TIMING_ARGS](#REPAIR_TIMING_ARGS)
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
+- [REPORT_METRICS_ARGS](#REPORT_METRICS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SETUP_REPAIR_PHASES](#SETUP_REPAIR_PHASES)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
@@ -528,6 +550,7 @@ configuration file.
 ## cts variables
 
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
+- [CLOCK_TREE_SYNTHESIS_ARGS](#CLOCK_TREE_SYNTHESIS_ARGS)
 - [CTS_ARGS](#CTS_ARGS)
 - [CTS_BUF_DISTANCE](#CTS_BUF_DISTANCE)
 - [CTS_BUF_LIST](#CTS_BUF_LIST)
@@ -536,6 +559,7 @@ configuration file.
 - [CTS_LIB_NAME](#CTS_LIB_NAME)
 - [CTS_SNAPSHOTS](#CTS_SNAPSHOTS)
 - [DETAILED_METRICS](#DETAILED_METRICS)
+- [DETAILED_PLACEMENT_ARGS](#DETAILED_PLACEMENT_ARGS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
@@ -543,8 +567,10 @@ configuration file.
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [PRE_CTS_TCL](#PRE_CTS_TCL)
+- [REPAIR_TIMING_ARGS](#REPAIR_TIMING_ARGS)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
+- [REPORT_METRICS_ARGS](#REPORT_METRICS_ARGS)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_REPAIR_PHASES](#SETUP_REPAIR_PHASES)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
@@ -562,6 +588,7 @@ configuration file.
 
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [DETAILED_METRICS](#DETAILED_METRICS)
+- [DETAILED_PLACEMENT_ARGS](#DETAILED_PLACEMENT_ARGS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
@@ -574,8 +601,12 @@ configuration file.
 - [OPT_POST_GRT_WNS](#OPT_POST_GRT_WNS)
 - [POST_GLOBAL_ROUTE_TCL](#POST_GLOBAL_ROUTE_TCL)
 - [PRE_GLOBAL_ROUTE_TCL](#PRE_GLOBAL_ROUTE_TCL)
+- [REPAIR_ANTENNAS_ARGS](#REPAIR_ANTENNAS_ARGS)
+- [REPAIR_DESIGN_ARGS](#REPAIR_DESIGN_ARGS)
+- [REPAIR_TIMING_ARGS](#REPAIR_TIMING_ARGS)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
+- [REPORT_METRICS_ARGS](#REPORT_METRICS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_REPAIR_PHASES](#SETUP_REPAIR_PHASES)
@@ -609,8 +640,10 @@ configuration file.
 - [POST_FILLCELL_TCL](#POST_FILLCELL_TCL)
 - [PRE_DETAIL_ROUTE_TCL](#PRE_DETAIL_ROUTE_TCL)
 - [PRE_FILLCELL_TCL](#PRE_FILLCELL_TCL)
+- [REPAIR_ANTENNAS_ARGS](#REPAIR_ANTENNAS_ARGS)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
+- [REPORT_METRICS_ARGS](#REPORT_METRICS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_ANTENNA_REPAIR_POST_DRT](#SKIP_ANTENNA_REPAIR_POST_DRT)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
@@ -635,6 +668,7 @@ configuration file.
 - [PWR_NETS_VOLTAGES](#PWR_NETS_VOLTAGES)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
+- [REPORT_METRICS_ARGS](#REPORT_METRICS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
@@ -647,6 +681,7 @@ configuration file.
 - [KEEP_VARS](#KEEP_VARS)
 - [NUM_CORES](#NUM_CORES)
 - [OPENROAD_HIERARCHICAL](#OPENROAD_HIERARCHICAL)
+- [PLATFORM_ARGS](#PLATFORM_ARGS)
 - [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
 - [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [WRITE_ODB_AND_SDC_EACH_STAGE](#WRITE_ODB_AND_SDC_EACH_STAGE)

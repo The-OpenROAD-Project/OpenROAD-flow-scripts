@@ -34,6 +34,8 @@ TNS_END_PERCENT:
     - cts
     - floorplan
     - grt
+  deprecated: 1
+  replacement: REPAIR_TIMING_ARGS = -repair_tns {value}
 ROUTING_LAYER_ADJUSTMENT:
   default: 0.5
   description: >
@@ -84,6 +86,9 @@ DETAILED_METRICS:
   stages:
     - cts
     - grt
+  deprecated: 1
+  replacement:
+    '1': REPORT_METRICS_ARGS = cts:on grt:on
 CORE_UTILIZATION:
   description: |
     The core utilization percentage (0-100).
@@ -139,6 +144,9 @@ SKIP_REPORT_METRICS:
     - route
     - final
   default: 0
+  deprecated: 1
+  replacement:
+    '1': REPORT_METRICS_ARGS = off
 PROCESS:
   description: |
     Technology node or process in use.
@@ -467,6 +475,8 @@ TIE_SEPARATION:
   stages:
     - floorplan
   default: 0
+  deprecated: 1
+  replacement: REPAIR_TIE_FANOUT_ARGS = -separation {value}
 UNSET_ABC9_BOX_CELLS:
   description: |
     List of cells to unset the abc9_box attribute on
@@ -541,9 +551,14 @@ DONT_BUFFER_PORTS:
   stages:
     - place
   default: 0
+  deprecated: 1
+  replacement:
+    '1': BUFFER_PORTS_ARGS = off
 BUFFER_PORTS_ARGS:
   description: >
-    Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.
+    Edits to the arguments the flow passes to `buffer_ports`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
 BALANCE_ROWS:
@@ -552,6 +567,9 @@ BALANCE_ROWS:
   stages:
     - place
   default: 0
+  deprecated: 1
+  replacement:
+    '1': BALANCE_ROW_USAGE_ARGS = on
 ADDITIONAL_SITES:
   description: >
     Passed as -additional_sites to initialize_floorplan.
@@ -661,6 +679,8 @@ DETAIL_PLACEMENT_ARGS:
     - place
     - cts
     - grt
+  deprecated: 1
+  replacement: DETAILED_PLACEMENT_ARGS = {value}
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability in detail
@@ -674,8 +694,10 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   type: int
   tunable: 1
 PLACE_PINS_ARGS:
-  description: |
-    Arguments to place_pins
+  description: >
+    Edits to the arguments the flow passes to `place_pins`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
 PLACE_DENSITY:
@@ -704,10 +726,13 @@ PLACE_DENSITY_LB_ADDON:
 REPAIR_PDN_VIA_LAYER:
   description: |
     Remove power grid vias which generate DRC violations after detailed routing.
+  deprecated: 1
+  replacement: DETAILED_ROUTE_ARGS = -repair_pdn_vias {value}
 GLOBAL_PLACEMENT_ARGS:
   description: >
-    Use additional tuning parameters during global placement other than default
-    args defined in global_place.tcl.
+    Edits to the arguments the flow passes to `global_placement`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
 ENABLE_DPO:
@@ -716,17 +741,24 @@ ENABLE_DPO:
   default: 1
   stages:
     - place
+  deprecated: 1
+  replacement:
+    '0': IMPROVE_PLACEMENT_ARGS = off
 DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
   stages:
     - place
+  deprecated: 1
+  replacement: IMPROVE_PLACEMENT_ARGS = -max_displacement {value}
 GPL_RANDOM_SEED:
   description: |
     Specifies a random seed for global placement.  Useful for perturbation studies.
   stages:
     - place
+  deprecated: 1
+  replacement: GLOBAL_PLACEMENT_ARGS = -random_seed {value}
 GPL_TIMING_DRIVEN:
   description: |
     Specifies whether the placer should use timing driven placement.
@@ -739,6 +771,9 @@ GPL_ROUTABILITY_DRIVEN:
   stages:
     - place
   default: 1
+  deprecated: 1
+  replacement:
+    '0': GLOBAL_PLACEMENT_ARGS = ~-routability_driven
 GPL_PLACE_IOS:
   description: |
     Place IO pins together with the cells in global placement (-place_ios).
@@ -780,16 +815,22 @@ CAP_MARGIN:
     Specifies a capacitance margin when fixing max capacitance violations. This
     option allows you to overfix.
   tunable: 1
+  deprecated: 1
+  replacement: REPAIR_DESIGN_ARGS = -cap_margin {value}
 SLEW_MARGIN:
   description: >
     Specifies a slew margin when fixing max slew violations. This option allows
     you to overfix.
   tunable: 1
+  deprecated: 1
+  replacement: REPAIR_DESIGN_ARGS = -slew_margin {value}
 CTS_ARGS:
   description: |
     Override `clock_tree_synthesis` arguments.
   stages:
     - cts
+  deprecated: 1
+  replacement: CLOCK_TREE_SYNTHESIS_ARGS, with only what differs from the flow's arguments
 CTS_SNAPSHOTS:
   description: |
     Create ODB/SDC files at different stages of CTS.
@@ -838,6 +879,8 @@ HOLD_SLACK_MARGIN:
     - floorplan
     - grt
   default: 0
+  deprecated: 1
+  replacement: REPAIR_TIMING_ARGS = -hold_margin {value}
 SETUP_SLACK_MARGIN:
   description: |
     Specifies a time margin for the slack when fixing setup violations.
@@ -850,6 +893,8 @@ SETUP_SLACK_MARGIN:
     - grt
   default: 0
   tunable: 1
+  deprecated: 1
+  replacement: REPAIR_TIMING_ARGS = -setup_margin {value}
 SETUP_MOVE_SEQUENCE:
   description: >
     Passed as -sequence to repair_timing. This should be a string of move
@@ -858,6 +903,8 @@ SETUP_MOVE_SEQUENCE:
     - cts
     - floorplan
     - grt
+  deprecated: 1
+  replacement: REPAIR_TIMING_ARGS = -sequence {value}
 SETUP_REPAIR_PHASES:
   description: >
     Passed as -phases to repair_timing. This should be a string of setup
@@ -869,6 +916,8 @@ SETUP_REPAIR_PHASES:
     - floorplan
     - grt
     - place
+  deprecated: 1
+  replacement: REPAIR_TIMING_ARGS = -phases {value}
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use
@@ -877,6 +926,9 @@ SKIP_GATE_CLONING:
     - cts
     - floorplan
     - grt
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = -skip_gate_cloning
 SKIP_LAST_GASP:
   description: >
     Do not use last gasp optimization to fix timing violations (default: use
@@ -885,6 +937,9 @@ SKIP_LAST_GASP:
     - cts
     - floorplan
     - grt
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = -skip_last_gasp
 SKIP_BUFFER_REMOVAL:
   description: >
     Passed as -skip_buffer_removal to repair_timing. Do not remove buffers
@@ -893,6 +948,9 @@ SKIP_BUFFER_REMOVAL:
     - cts
     - floorplan
     - grt
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = -skip_buffer_removal
 SKIP_PIN_SWAP:
   description: >
     Do not use pin swapping as a transform to fix timing violations (default:
@@ -901,6 +959,9 @@ SKIP_PIN_SWAP:
     - cts
     - floorplan
     - grt
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = -skip_pin_swap
 SKIP_VT_SWAP:
   description: >
     Do not perform VT swap to improve QoR (default: do VT swap).
@@ -908,6 +969,9 @@ SKIP_VT_SWAP:
     - cts
     - floorplan
     - grt
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = -skip_vt_swap
 SKIP_CRIT_VT_SWAP:
   description: >
     Do not perform VT swap on critical cells to improve QoR (default: do critical
@@ -919,6 +983,9 @@ SKIP_CRIT_VT_SWAP:
     - cts
     - floorplan
     - grt
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = -skip_crit_vt_swap
 SKIP_CTS_REPAIR_TIMING:
   description: >
     Skipping CTS repair, which can take a long time, can be useful in
@@ -926,6 +993,9 @@ SKIP_CTS_REPAIR_TIMING:
   stages:
     - cts
   default: 0
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = cts:off
 SKIP_FLOORPLAN_REPAIR_TIMING:
   description: >
     Skipping floorplan repair which sometimes does too much optimization
@@ -933,6 +1003,9 @@ SKIP_FLOORPLAN_REPAIR_TIMING:
   stages:
     - floorplan
   default: 0
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = floorplan:off
 ENABLE_PLACE_REPAIR_TIMING:
   description: >
     Run repair_timing during the placement resize stage using placement
@@ -941,12 +1014,18 @@ ENABLE_PLACE_REPAIR_TIMING:
   stages:
     - place
   default: 0
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIMING_ARGS = place:on
 SKIP_REPAIR_TIE_FANOUT:
   description: >
     Skip repair_tie_fanout at floorplan step.
   stages:
     - floorplan
   default: 0
+  deprecated: 1
+  replacement:
+    '1': REPAIR_TIE_FANOUT_ARGS = off
 MIN_ROUTING_LAYER:
   description: |
     The lowest metal layer name to be used in routing.
@@ -985,8 +1064,13 @@ VIA_IN_PIN_MAX_LAYER:
     - grt
     - route
 DETAILED_ROUTE_ARGS:
-  description: |
-    Add additional arguments for debugging purposes during detail route.
+  description: >
+    Edits to the arguments the flow passes to `detailed_route`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    Until it is removed, a value that is a plain command line, with
+    no `~`, `on`, `off` or scope, replaces the flow's arguments, as
+    it always has.
   stages:
     - route
 DISABLE_VIA_GEN:
@@ -994,22 +1078,31 @@ DISABLE_VIA_GEN:
     Passed as -disable_via_gen to detailed_route.
   stages:
     - route
+  deprecated: 1
+  replacement:
+    '1': DETAILED_ROUTE_ARGS = -disable_via_gen
 DETAILED_ROUTE_END_ITERATION:
   description: >
     Maximum number of iterations.
   default: 64
   stages:
     - route
+  deprecated: 1
+  replacement: DETAILED_ROUTE_ARGS = -droute_end_iter {value}
 OR_K:
   description: >
     Passed as -or_k to detailed routing.
   stages:
     - route
+  deprecated: 1
+  replacement: DETAILED_ROUTE_ARGS = -or_k {value}
 OR_SEED:
   description: >
     Passed as -or_seed to detailed routing.
   stages:
     - route
+  deprecated: 1
+  replacement: DETAILED_ROUTE_ARGS = -or_seed {value}
 RCX_RULES:
   description: |
     RC Extraction rules file path.
@@ -1201,11 +1294,15 @@ CTS_BUF_DISTANCE:
     - cts
   tunable: 1
   type: float
+  deprecated: 1
+  replacement: CLOCK_TREE_SYNTHESIS_ARGS = -distance_between_buffers {value}
 CTS_BUF_LIST:
   description: |
     List of cells used to construct the clock tree. Overrides buffer inference.
   stages:
     - cts
+  deprecated: 1
+  replacement: CLOCK_TREE_SYNTHESIS_ARGS = -buf_list {value}
 CLUSTER_FLOPS:
   description: >
     Enable clustering of flip-flops into multi-bit flip-flops, if the platform
@@ -1213,10 +1310,14 @@ CLUSTER_FLOPS:
   stages:
     - place
   default: 0
+  deprecated: 1
+  replacement:
+    '1': CLUSTER_FLOPS_ARGS = on
 CLUSTER_FLOPS_ARGS:
   description: >
-    Additional arguments passed to the cluster_flops command.
-    Only used when CLUSTER_FLOPS is set.
+    Edits to the arguments the flow passes to `cluster_flops`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
   default: ""
@@ -1227,6 +1328,8 @@ CTS_CLUSTER_DIAMETER:
     - cts
   tunable: 1
   type: float
+  deprecated: 1
+  replacement: CLOCK_TREE_SYNTHESIS_ARGS = -sink_clustering_max_diameter {value}
 CTS_CLUSTER_SIZE:
   description: >
     Maximum number of sinks per cluster.
@@ -1234,11 +1337,15 @@ CTS_CLUSTER_SIZE:
     - cts
   tunable: 1
   type: int
+  deprecated: 1
+  replacement: CLOCK_TREE_SYNTHESIS_ARGS = -sink_clustering_size {value}
 CTS_LIB_NAME:
   description: |
     Name of the Liberty library to use in selecting the clock buffers.
   stages:
     - cts
+  deprecated: 1
+  replacement: CLOCK_TREE_SYNTHESIS_ARGS = -library {value}
 POST_CTS_TCL:
   description: |
     Specifies a Tcl script with commands to run after CTS is completed.
@@ -1416,9 +1523,11 @@ PRE_GLOBAL_ROUTE_TCL:
     - grt
 GLOBAL_ROUTE_ARGS:
   description: >
-    Replaces default arguments for global route. The -congestion_iterations
-    default is set by the flow (30 for FastRoute, 10 for CUGR); add
-    -congestion_iterations here to override it.
+    Edits to the arguments the flow passes to `global_route`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    Edits the first global_route; the incremental ones after repair
+    take -allow_congestion from it.
   stages:
     - grt
   default: -congestion_report_iter_step 5 -verbose
@@ -1435,6 +1544,9 @@ ENABLE_RESISTANCE_AWARE:
     Passed as -resistance_aware to global_route.
   stages:
     - grt
+  deprecated: 1
+  replacement:
+    '1': GLOBAL_ROUTE_ARGS = -resistance_aware
 MATCH_CELL_FOOTPRINT:
   description: >
     Enforce sizing operations to only swap cells that have the same layout
@@ -1451,36 +1563,48 @@ RTLMP_MAX_LEVEL:
   default: 2
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -max_num_level {value}
 RTLMP_MAX_INST:
   description: >
     Maximum number of standard cells in a cluster. If unset, rtl_macro_placer
     will calculate a value based on the design attributes.
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -max_num_inst {value}
 RTLMP_MIN_INST:
   description: >
     Minimum number of standard cells in a cluster. If unset, rtl_macro_placer
     will calculate a value based on the design attributes.
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -min_num_inst {value}
 RTLMP_MAX_MACRO:
   description: >
     Maximum number of macros in a cluster. If unset, rtl_macro_placer will
     calculate a value based on the design attributes.
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -max_num_macro {value}
 RTLMP_MIN_MACRO:
   description: >
     Minimum number of macros in a cluster. If unset, rtl_macro_placer will
     calculate a value based on the design attributes.
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -min_num_macro {value}
 RTLMP_MIN_CHANNEL_SIZE:
   description: >
     Minimum channel width and height between macros (microns), given as one
     value for both, or two values "width height".
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -min_channel_size {value}
 RTLMP_PIN_AWARE_CHANNELS:
   description: >
     Set to 1 to trim macro channels based on the pin locations of macros,
@@ -1490,24 +1614,33 @@ RTLMP_PIN_AWARE_CHANNELS:
   default: 1
   stages:
     - floorplan
+  deprecated: 1
+  replacement:
+    '0': RTL_MACRO_PLACER_ARGS = ~-pin_aware_channels
 RTLMP_MIN_AR:
   description: >
     Specifies the minimum aspect ratio (height/width).
   default: 0.33
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -min_ar {value}
 RTLMP_AREA_WT:
   description: >
     Weight for the area of the current floorplan.
   default: 0.1
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -area_weight {value}
 RTLMP_WIRELENGTH_WT:
   description: >
     Weight for half-perimiter wirelength.
   default: 100.0
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -wirelength_weight {value}
 RTLMP_OUTLINE_WT:
   description: >
     Weight for violating the fixed outline constraint, meaning that all
@@ -1515,6 +1648,8 @@ RTLMP_OUTLINE_WT:
   default: 100.00
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -outline_weight {value}
 RTLMP_BOUNDARY_WT:
   description: >
     Weight for the boundary or how far the hard macro clusters are from
@@ -1522,6 +1657,8 @@ RTLMP_BOUNDARY_WT:
   default: 50.0
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -boundary_weight {value}
 RTLMP_NOTCH_WT:
   description: >
     Weight for the notch, or the existence of dead space that cannot be used
@@ -1529,11 +1666,15 @@ RTLMP_NOTCH_WT:
   default: 50.0
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -notch_weight {value}
 RTLMP_RPT_DIR:
   description: >
     Path to the directory where reports are saved.
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -report_directory {value}
 RTLMP_FENCE_LX:
   description: >
     Defines the lower left X coordinate for the global fence bounding box in
@@ -1541,6 +1682,8 @@ RTLMP_FENCE_LX:
   default: 0.0
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -fence_lx {value}
 RTLMP_FENCE_LY:
   description: >
     Defines the lower left Y coordinate for the global fence bounding box in
@@ -1548,6 +1691,8 @@ RTLMP_FENCE_LY:
   default: 0.0
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -fence_ly {value}
 RTLMP_FENCE_UX:
   description: >
     Defines the upper right X coordinate for the global fence bounding box in
@@ -1555,6 +1700,8 @@ RTLMP_FENCE_UX:
   default: 0.0
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -fence_ux {value}
 RTLMP_FENCE_UY:
   description: >
     Defines the upper right Y coordinate for the global fence bounding box in
@@ -1562,11 +1709,15 @@ RTLMP_FENCE_UY:
   default: 0.0
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS = -fence_uy {value}
 RTLMP_ARGS:
   description: >
     Overrides all other RTL macro placer arguments.
   stages:
     - floorplan
+  deprecated: 1
+  replacement: RTL_MACRO_PLACER_ARGS, with only what differs from the flow's arguments
 RTLMP_KEEP_CLUSTERING:
   description: >
     Set to 1 to store the RTL macro placer's clustering hierarchy in the ODB as
@@ -1574,6 +1725,9 @@ RTLMP_KEEP_CLUSTERING:
   default: 0
   stages:
     - floorplan
+  deprecated: 1
+  replacement:
+    '1': RTL_MACRO_PLACER_ARGS = -keep_clustering_data
 GDS_ALLOW_EMPTY:
   description: >
     Single regular expression of module names of macros that have no .gds file
@@ -1614,12 +1768,18 @@ SKIP_ANTENNA_REPAIR_POST_DRT:
     Skips antenna repair post-detailed routing.
   stages:
     - route
+  deprecated: 1
+  replacement:
+    '1': REPAIR_ANTENNAS_ARGS = route:off
 SKIP_ANTENNA_REPAIR:
   default: 0
   description: >
     Skips antenna repair entirely.
   stages:
     - grt
+  deprecated: 1
+  replacement:
+    '1': REPAIR_ANTENNAS_ARGS = grt:off
 SKIP_DETAILED_ROUTE:
   default: 0
   description: >
@@ -1641,6 +1801,8 @@ MAX_REPAIR_ANTENNAS_ITER_GRT:
     antennas will run.
   stages:
     - grt
+  deprecated: 1
+  replacement: REPAIR_ANTENNAS_ARGS = grt:-iterations {value}
 OPENROAD_HIERARCHICAL:
   description: >
     Feature toggle to enable to run OpenROAD in hierarchical mode,
@@ -1757,3 +1919,99 @@ VCD_FILE:
     Specifies the Value Change Dump (VCD) file containing pin activities and duty
     cycles for use in power calculation.
   type: string
+BALANCE_ROW_USAGE_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `balance_row_usage`, in the grammar
+    of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - place
+CLOCK_TREE_SYNTHESIS_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `clock_tree_synthesis`, in the grammar
+    of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - cts
+DETAILED_PLACEMENT_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `detailed_placement`, in the grammar
+    of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - place
+    - cts
+    - grt
+IMPROVE_PLACEMENT_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `improve_placement`, in the grammar
+    of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - place
+REPAIR_ANTENNAS_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `repair_antennas`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - grt
+    - route
+REPAIR_DESIGN_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `repair_design`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - place
+    - grt
+REPAIR_TIE_FANOUT_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `repair_tie_fanout`, in the grammar
+    of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - floorplan
+REPAIR_TIMING_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `repair_timing`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - floorplan
+    - place
+    - cts
+    - grt
+REPORT_METRICS_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `report_metrics`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
+RTL_MACRO_PLACER_ARGS:
+  description: >
+    Edits to the arguments the flow passes to `rtl_macro_placer`, in the grammar of
+    docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
+    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+  stages:
+    - floorplan
+PLATFORM_ARGS:
+  description: >
+    A platform's defaults for command arguments, in the grammar of
+    docs/user/CommandArguments.md, each edit starting with the command it
+    is for, as in `rtl_macro_placer:-halo_width 5`. They rank above the
+    flow's own arguments and below a design's <COMMAND>_ARGS.
+  stages:
+    - All stages

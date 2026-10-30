@@ -294,6 +294,39 @@ class Check(unittest.TestCase):
         self.assertIn("'nope' is not a command", str(cm.exception))
 
 
+class VariablesYaml(unittest.TestCase):
+    """variables.json, generated from variables.yaml, agrees with the code."""
+
+    @classmethod
+    def setUpClass(cls):
+        import json
+
+        with open(os.path.join(args.DIR, "variables.json")) as f:
+            cls.variables = json.load(f)
+
+    def test_every_command_has_its_variable_and_stages(self):
+        for command, stages in G["COMMANDS"].items():
+            meta = self.variables[G["args_variable"](command)]
+            self.assertEqual(sorted(meta["stages"]), sorted(stages), command)
+
+    def test_every_replacement_parses(self):
+        names = {G["args_variable"](c) for c in G["COMMANDS"]}
+        for name, meta in self.variables.items():
+            if not meta.get("deprecated") or "replacement" not in meta:
+                continue
+            replacement = meta["replacement"]
+            texts = (
+                replacement.values() if isinstance(replacement, dict) else [replacement]
+            )
+            for text in texts:
+                variable, _, value = text.partition(" = ")
+                variable = variable.split(",")[0]
+                self.assertIn(variable, names, name)
+                if value:
+                    # A bare {value} is a whole command line: the old variable's.
+                    parse(value.format(value="-x 1" if value == "{value}" else "1"))
+
+
 class StarlarkSubset(unittest.TestCase):
     """args_grammar.bzl stays in the subset of Python that is also Starlark.
 
