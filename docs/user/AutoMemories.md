@@ -94,6 +94,19 @@ carries win, everything else (geometry, pins) is kept from detection. A
 `.memories` entry naming a module the scanner never found is taken
 whole — it must then describe its pins itself.
 
+Write-mask lanes split the word evenly. A word that is not a whole
+number of lanes, such as pulp's `tc_sram` with byte enables over a
+25-bit word, needs `mask_lane_width` in its entry. Every lane is that
+wide except the last, which holds the remaining bits:
+
+```json
+{ "name": "tag_ram", "mask_lanes": 4, "mask_lane_width": 8 }
+```
+
+The lanes must cover the word with a last lane of 1 to
+`mask_lane_width` bits; anything else is refused, as is an uneven split
+without `mask_lane_width`.
+
 ## Generated views
 
 The views come from FakeRAM2.0's asap7 backend
