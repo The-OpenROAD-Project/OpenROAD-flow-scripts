@@ -115,6 +115,32 @@ class SchemaTest(unittest.TestCase):
         with self.assertRaises(schema.SchemaError):
             schema.validate_emittable(dataless)
 
+    def test_mask_lanes_cover_the_word(self):
+        # even split, ragged last lane (tc_sram's bytes over 25 bits), none
+        schema.lane_width_check("m", 64, 8, 0)
+        schema.lane_width_check("m", 25, 4, 8)
+        schema.lane_width_check("m", 25, 0, 0)
+        for bits, lanes, width in (
+            (25, 4, 0),  # not even, and no width given
+            (25, 4, 6),  # 24 bits of lanes for 25
+            (25, 4, 9),  # the last lane would be empty
+            (25, 0, 8),  # a width with no lanes
+        ):
+            with self.assertRaises(schema.SchemaError):
+                schema.lane_width_check("m", bits, lanes, width)
+
+    def test_mask_lane_width_survives_merge_and_dump(self):
+        base = sample_memory()
+        override = schema.Memory(name=base.name, mask_lanes=4, mask_lane_width=8)
+        [merged] = schema.merge([base], [override])
+        self.assertEqual(merged.mask_lane_width, 8)
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "memories.json"
+            schema.dump([merged], path, "asap7")
+            self.assertEqual(
+                json.loads(path.read_text())["memories"][0]["mask_lane_width"], 8
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

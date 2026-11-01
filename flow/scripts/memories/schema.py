@@ -49,6 +49,10 @@ class Memory:
     # Total width of the per-port write mask, 0 if unmasked. Subword-split
     # mask pins (`W0_mask_0..3`) contribute one lane each.
     mask_lanes: int = 0
+    # Bits per mask lane, 0 for the even split (bits / mask_lanes). A
+    # ragged last lane needs it: tc_sram's byte enables over a 25-bit
+    # word are 8, 8, 8 and 1 bit wide (mask_lanes 4, mask_lane_width 8).
+    mask_lane_width: int = 0
     # Read ports yosys inferred without a clock ($mem_v2 RD_CLK_ENABLE=0).
     # An SRAM macro reads on a clock edge, so one of these rules the memory
     # out of conversion; see idiomatic.py.
@@ -115,6 +119,7 @@ def memory_from_dict(d: dict) -> Memory:
         "write_ports",
         "rw_ports",
         "mask_lanes",
+        "mask_lane_width",
         "comb_read_ports",
     ):
         if key in d:
@@ -182,6 +187,7 @@ def merge(detected: list[Memory], overrides: list[Memory]) -> list[Memory]:
             "write_ports",
             "rw_ports",
             "mask_lanes",
+            "mask_lane_width",
             "comb_read_ports",
         ):
             value = getattr(o, key)
@@ -198,6 +204,31 @@ def merge(detected: list[Memory], overrides: list[Memory]) -> list[Memory]:
     return list(by_name.values())
 
 
+def lane_width_check(name: str, bits: int, lanes: int, width: int) -> None:
+    """Raise SchemaError unless `lanes` mask lanes cover `bits` bits.
+
+    Every lane is `width` bits wide but the last, which holds the rest:
+    lanes * width >= bits > (lanes - 1) * width. Without a width the lanes
+    split the word evenly.
+    """
+    if not lanes:
+        if width:
+            raise SchemaError(f"memory {name}: mask_lane_width without mask_lanes")
+        return
+    if not width:
+        if bits % lanes:
+            raise SchemaError(
+                f"memory {name}: {bits} bits are not {lanes} even mask lanes; "
+                f"give mask_lane_width for a ragged last lane"
+            )
+        return
+    if not lanes * width >= bits > (lanes - 1) * width:
+        raise SchemaError(
+            f"memory {name}: {lanes} mask lanes of {width} bits do not cover "
+            f"{bits} bits with a last lane of 1 to {width}"
+        )
+
+
 def validate_emittable(mem: Memory) -> None:
     """Raise SchemaError unless `mem` carries enough to emit .lib/.lef."""
     if not mem.pins:
@@ -207,6 +238,8 @@ def validate_emittable(mem: Memory) -> None:
             f"memory {mem.name}: rows ({mem.rows}) and bits ({mem.bits}) "
             f"must be >= 1"
         )
+    if mem.mask_lane_width:
+        lane_width_check(mem.name, mem.bits, mem.mask_lanes, mem.mask_lane_width)
     port_ids = {p.port_id for p in mem.pins}
     for port_id in port_ids:
         functions = {p.function for p in mem.pins if p.port_id == port_id}
