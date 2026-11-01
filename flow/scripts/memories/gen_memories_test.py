@@ -157,6 +157,11 @@ class GenMemoriesTest(unittest.TestCase):
         netlist = json.loads(json.dumps(SAMPLE_YOSYS_NETLIST))
         mem = netlist["modules"].pop("\\mem_128x32")
         mem["cells"]["\\$mem_0"]["parameters"].update(SIZE=512, WIDTH=17)
+        # as yosys writes it: a data bit and a write enable bit per bit
+        conn = mem["cells"]["\\$mem_0"]["connections"]
+        for port in ("RD_DATA", "WR_DATA"):
+            conn[port] = conn[port][:17]
+        conn["WR_EN"] = conn["WR_EN"][:1] * 17
         netlist["modules"] = {"\\mem_512x17": mem}
         d = Path(self.tmp.name)
         (d / "netlist.json").write_text(json.dumps(netlist))

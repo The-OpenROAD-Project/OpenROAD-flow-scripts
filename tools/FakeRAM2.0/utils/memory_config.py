@@ -39,6 +39,8 @@ class MemoryConfig:
                     % (width_in_bits, lanes, name)
                 )
             self._mask_lane_width = width_in_bits // lanes
+        elif width and not lanes:
+            raise Exception("mask_lane_width without mask_lanes (%s)" % name)
         elif width and not (lanes * width >= width_in_bits > (lanes - 1) * width):
             raise Exception(
                 "%d mask lanes of %d bits do not cover width %d (%s)"

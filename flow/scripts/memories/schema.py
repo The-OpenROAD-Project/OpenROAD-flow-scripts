@@ -238,7 +238,7 @@ def validate_emittable(mem: Memory) -> None:
             f"memory {mem.name}: rows ({mem.rows}) and bits ({mem.bits}) "
             f"must be >= 1"
         )
-    if mem.mask_lane_width:
+    if mem.mask_lanes or mem.mask_lane_width:
         lane_width_check(mem.name, mem.bits, mem.mask_lanes, mem.mask_lane_width)
     port_ids = {p.port_id for p in mem.pins}
     for port_id in port_ids:
