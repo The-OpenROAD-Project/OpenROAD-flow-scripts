@@ -52,7 +52,8 @@ export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/
 	$(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/hwpf_stride/hwpf_stride_wrapper.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/cache_subsystem/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/common/*.sv)) \
-	$(sort $(wildcard $(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/common/macros/blackbox/*.sv)) \
+	$(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/common/macros/behav/hpdcache_sram_1rw.sv \
+	$(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/common/macros/behav/hpdcache_sram_wbyteenable_1rw.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/utils/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/core/cva6_mmu/*.sv)) \
 	$(SRC_HOME)/core/cvfpu/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv \
@@ -66,8 +67,6 @@ export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/
 	$(sort $(wildcard $(SRC_HOME)/core/frontend/*.sv)) \
 	$(SRC_HOME)/vendor/pulp-platform/tech_cells_generic/src/rtl/tc_sram.sv \
 	$(PLATFORM_DIR)/verilog/fakeram7_64x256.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_128x64.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_64x28.sv \
 	$(PLATFORM_DIR)/verilog/fakeram7_64x25.sv
 
 export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include \
@@ -77,14 +76,17 @@ export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include
 export VERILOG_DEFINES += -D HPDCACHE_ASSERT_OFF
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_64x256.lef \
-			 $(PLATFORM_DIR)/lef/fakeram7_128x64.lef \
-			 $(PLATFORM_DIR)/lef/fakeram7_64x28.lef \
 			 $(PLATFORM_DIR)/lef/fakeram7_64x25.lef
 
 export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x256.lib \
-			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_128x64.lib \
-			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x28.lib \
 			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x25.lib
+
+# The D-cache RAMs are upstream's, the RTL unmodified, and AUTO_MEMORIES
+# makes each a macro, cva6.memories naming its pins and byte enables:
+# the data RAM (hpdcache_sram_wbyteenable_1rw) and the directory
+# (hpdcache_sram_1rw).
+export AUTO_MEMORIES          = 1
+export ADDITIONAL_MEMORIES    = $(DESIGN_HOME)/$(PLATFORM)/cva6/cva6.memories
 
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
