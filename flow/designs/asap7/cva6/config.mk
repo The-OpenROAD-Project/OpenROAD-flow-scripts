@@ -65,9 +65,7 @@ export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/
 	$(SRC_HOME)/core/cvfpu/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv \
 	$(SRC_HOME)/core/cvxif_example/include/cvxif_instr_pkg.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/frontend/*.sv)) \
-	$(SRC_HOME)/vendor/pulp-platform/tech_cells_generic/src/rtl/tc_sram.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_64x256.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_64x25.sv
+	$(SRC_HOME)/vendor/pulp-platform/tech_cells_generic/src/rtl/tc_sram.sv
 
 export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include \
 	$(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/cvfpu/src/common_cells/include \
@@ -75,16 +73,12 @@ export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include
 
 export VERILOG_DEFINES += -D HPDCACHE_ASSERT_OFF
 
-export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_64x256.lef \
-			 $(PLATFORM_DIR)/lef/fakeram7_64x25.lef
-
-export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x256.lib \
-			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x25.lib
-
-# The D-cache RAMs are upstream's, the RTL unmodified, and AUTO_MEMORIES
-# makes each a macro, cva6.memories naming its pins and byte enables:
-# the data RAM (hpdcache_sram_wbyteenable_1rw) and the directory
-# (hpdcache_sram_1rw).
+# The RAMs are upstream's, the RTL unmodified, and AUTO_MEMORIES makes
+# each a macro, cva6.memories naming its pins and byte enables: the
+# D-cache data (hpdcache_sram_wbyteenable_1rw) and directory
+# (hpdcache_sram_1rw), and the I-cache data and tag, which surgery.py
+# puts behind sram_cache's techno cut in place of pulp's tc_sram.
+export SYNTH_VERILOG_SURGERY  = $(DESIGN_HOME)/$(PLATFORM)/cva6/surgery.py
 export AUTO_MEMORIES          = 1
 export ADDITIONAL_MEMORIES    = $(DESIGN_HOME)/$(PLATFORM)/cva6/cva6.memories
 
