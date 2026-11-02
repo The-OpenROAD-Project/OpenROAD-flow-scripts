@@ -129,6 +129,25 @@ class SchemaTest(unittest.TestCase):
             with self.assertRaises(schema.SchemaError):
                 schema.lane_width_check("m", bits, lanes, width)
 
+    def test_mask_pin_matches_mask_lanes(self):
+        masked = sample_memory()
+        masked.mask_lanes = 4
+        masked.pins.append(schema.Pin("W0_mask", "input", 4, "W0", "mask"))
+        schema.validate_emittable(masked)  # no raise
+        # the override changed mask_lanes, the detected pin is per bit
+        narrow = sample_memory()
+        narrow.mask_lanes = 4
+        narrow.pins.append(schema.Pin("W0_mask", "input", 32, "W0", "mask"))
+        # mask_lanes on a memory with no mask pin
+        pinless = sample_memory()
+        pinless.mask_lanes = 4
+        # a mask pin with no mask_lanes
+        laneless = sample_memory()
+        laneless.pins.append(schema.Pin("W0_mask", "input", 4, "W0", "mask"))
+        for mem in (narrow, pinless, laneless):
+            with self.assertRaisesRegex(schema.SchemaError, mem.name):
+                schema.validate_emittable(mem)
+
     def test_mask_lane_width_survives_merge_and_dump(self):
         base = sample_memory()
         override = schema.Memory(name=base.name, mask_lanes=4, mask_lane_width=8)

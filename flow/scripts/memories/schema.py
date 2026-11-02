@@ -229,6 +229,28 @@ def lane_width_check(name: str, bits: int, lanes: int, width: int) -> None:
         )
 
 
+def mask_check(mem: Memory) -> None:
+    """Raise SchemaError unless every mask pin is `mask_lanes` wide.
+
+    FakeRAM counts the lanes from the mask pin's width, never from
+    mask_lanes, and an override merged onto a detected memory keeps the
+    detected pins: an override that changes mask_lanes must bring a
+    mask pin to match.
+    """
+    masks = [p for p in mem.pins if p.function == "mask"]
+    if mem.mask_lanes and not masks:
+        raise SchemaError(
+            f"memory {mem.name}: mask_lanes is {mem.mask_lanes} but no pin "
+            f"has function mask"
+        )
+    for p in masks:
+        if p.width != mem.mask_lanes:
+            raise SchemaError(
+                f"memory {mem.name}: mask pin {p.name} is {p.width} bits wide "
+                f"but mask_lanes is {mem.mask_lanes}"
+            )
+
+
 def validate_emittable(mem: Memory) -> None:
     """Raise SchemaError unless `mem` carries enough to emit .lib/.lef."""
     if not mem.pins:
@@ -238,8 +260,8 @@ def validate_emittable(mem: Memory) -> None:
             f"memory {mem.name}: rows ({mem.rows}) and bits ({mem.bits}) "
             f"must be >= 1"
         )
-    if mem.mask_lanes or mem.mask_lane_width:
-        lane_width_check(mem.name, mem.bits, mem.mask_lanes, mem.mask_lane_width)
+    lane_width_check(mem.name, mem.bits, mem.mask_lanes, mem.mask_lane_width)
+    mask_check(mem)
     port_ids = {p.port_id for p in mem.pins}
     for port_id in port_ids:
         functions = {p.function for p in mem.pins if p.port_id == port_id}
