@@ -41,3 +41,4 @@ endif
 # Temporary disabling: the asynchronous clock-domain crossings are outside
 # the sequential check.
 export SEC_CHECK = 0
+export SETUP_REPAIR_PHASES = PARALLEL_EVAL
