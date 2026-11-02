@@ -6,6 +6,30 @@ proc report_puts { out } {
   close $fileId
 }
 
+#-----------------------------------------------------------------------------
+# Gets the power file scope arg and escapes, if necessary
+#-----------------------------------------------------------------------------
+proc get_power_file_scope_args { } {
+  set args [list]
+
+  if { [env_var_exists_and_non_empty POWER_FILE_SCOPE] } {
+    set scope_val $::env(POWER_FILE_SCOPE)
+
+    # 1. Strip surrounding quotes from shell/Make
+    set scope_val [string trim $scope_val "\"'"]
+
+    # 2. Normalize: remove ALL backslashes preceding [, ], or .
+    regsub -all {\\+(\[|\]|\.)} $scope_val {\1} scope_val
+
+    # 3. Apply exactly one backslash escape to [, ], and .
+    regsub -all {(\[|\]|\.)} $scope_val {\\\1} scope_val
+
+    lappend args -scope $scope_val
+  }
+
+  return $args
+}
+
 proc report_metrics { stage when { include_erc true } { include_clock_skew true } } {
   if { $::env(SKIP_REPORT_METRICS) } {
     return
@@ -234,6 +258,15 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   report_puts "\n=========================================================================="
   report_puts "$when report_power"
   report_puts "--------------------------------------------------------------------------"
+
+  set scope_args [get_power_file_scope_args]
+  if { [env_var_exists_and_non_empty SAIF_FILE] } {
+    read_saif {*}$scope_args $::env(SAIF_FILE)
+    report_activity_annotation
+  } elseif { [env_var_exists_and_non_empty VCD_FILE] } {
+    read_vcd {*}$scope_args $::env(VCD_FILE)
+    report_activity_annotation
+  }
   if { [env_var_exists_and_non_empty CORNERS] } {
     foreach corner $::env(CORNERS) {
       report_puts "Corner: $corner"

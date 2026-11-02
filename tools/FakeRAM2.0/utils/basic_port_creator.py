@@ -96,6 +96,16 @@ class BasicPortCreator:
             pin_pitch,
         )
         y_step += group_pitch
+        if rw_port_group.get_write_mask_bus_name():
+            y_step = self.write_signal_bus(
+                rw_port_group.get_write_mask_bus_name(),
+                0,
+                rw_port_group.get_write_mask_lanes(),
+                Port.Direction.INPUT,
+                y_step,
+                pin_pitch,
+            )
+            y_step += group_pitch
         y_step = self.write_signal_bus(
             rw_port_group.get_address_bus_name(),
             0,

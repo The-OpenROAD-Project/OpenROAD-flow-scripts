@@ -113,6 +113,7 @@
     "default": 0,
     "description": "Cell padding on both sides in site widths to ease routability in detail placement.\n",
     "stages": [
+      "floorplan",
       "place",
       "cts",
       "grt"
@@ -830,6 +831,10 @@
       "synth"
     ]
   },
+  "POWER_FILE_SCOPE": {
+    "description": "The SAIF or VCD scope of the current design. Typically the test bench name and design under the test instance name. Scope levels are separated with '/'.\n",
+    "type": "string"
+  },
   "PRE_CTS_TCL": {
     "description": "Specifies a Tcl script with commands to run before CTS.\n",
     "stages": [
@@ -941,14 +946,6 @@
   "RECOVER_POWER": {
     "default": 0,
     "description": "Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].\n"
-  },
-  "REMOVE_ABC_BUFFERS": {
-    "default": 0,
-    "deprecated": 1,
-    "description": "Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1. Some designs still need it to reach their QoR targets.\n",
-    "stages": [
-      "floorplan"
-    ]
   },
   "REMOVE_CELLS_FOR_LEC": {
     "description": "String patterns directly passed to write_verilog -remove_cells <> for lec checks.\n",
@@ -1131,6 +1128,10 @@
   "RUN_SCRIPT": {
     "description": "Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.\n"
   },
+  "SAIF_FILE": {
+    "description": "Specifies the Switching Activity Interchange Format (SAIF) file containing pin activities and duty cycles for use in power calculation.\n",
+    "type": "string"
+  },
   "SC_LEF": {
     "description": "Path to technology standard cell LEF file.\n"
   },
@@ -1158,6 +1159,15 @@
       "cts",
       "floorplan",
       "grt"
+    ]
+  },
+  "SETUP_REPAIR_PHASES": {
+    "description": "Passed as -phases to repair_timing. This should be a string of setup repair phase names separated by spaces. Set to PARALLEL_EVAL to repair setup timing with the experimental parallel evaluation policy. When unset, repair_timing runs its default phases.\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt",
+      "place"
     ]
   },
   "SETUP_SLACK_MARGIN": {
@@ -1213,6 +1223,13 @@
     "stages": [
       "route",
       "final"
+    ]
+  },
+  "SKIP_FLOORPLAN_REPAIR_TIMING": {
+    "default": 0,
+    "description": "Skipping floorplan repair which sometimes does too much optimization too early.\n",
+    "stages": [
+      "floorplan"
     ]
   },
   "SKIP_GATE_CLONING": {
@@ -1354,14 +1371,14 @@
     ]
   },
   "SYNTH_KEEP_MODULES": {
-    "description": "Mark modules to keep from getting removed in flattening.\n",
+    "description": "Mark modules to keep from getting removed in flattening.\nA name that matches no module of the design stops synthesis.\n",
     "stages": [
       "synth"
     ]
   },
   "SYNTH_MEMORY_MAX_BITS": {
     "default": 4096,
-    "description": "Maximum number of bits for memory synthesis. Ideally, real RAM or realistic fakeram should be used for RAMs much larger than 1024 bits. To temporarily ignore the RAM concerns and investigate other aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`, or adjusting `SYNTH_MEMORY_MAX_BITS`.\n",
+    "description": "Maximum number of bits for memory synthesis. Ideally, real RAM or realistic fakeram should be used for RAMs much larger than 1024 bits. To temporarily ignore the RAM concerns and investigate other aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`, or adjusting `SYNTH_MEMORY_MAX_BITS`. ROMs, inferred memories with no write port, are not counted: a ROM holds constants that synthesis maps to logic like any other, and it goes through the normal flow. The limit is there so that a read/write memory, which belongs in a macro (`AUTO_MEMORIES`, fakeram) or a mock, does not go undetected into flip-flops; raising it to admit a large ROM would let read/write memories of that size through too.\n",
     "stages": [
       "synth"
     ]
@@ -1429,6 +1446,18 @@
   "SYNTH_USE_SYN": {
     "default": 0,
     "description": "If set to 1, run synthesis using the \"syn\" tool built into OpenROAD (the synth_syn.tcl flow) instead of the default Yosys-based flow. Defaults to 0 (Yosys flow).\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_VERILOG_SURGERY": {
+    "description": "RTL surgery as a step of the flow: a script that copies VERILOG_FILES and edits the copies before synthesis reads them, so vendored RTL stays byte-identical to upstream and the OpenROAD- and PDK-specific changes live in one script next to the design's config.mk. Typical surgery gives a memory or register file a module of its own that AUTO_MEMORIES can convert, maps a clock gate onto the platform's, rewrites a pragma for the frontend, or removes a simulation construct. A new upstream version is then a plain copy: the surgery reapplies, or stops where upstream moved. Best on generated or regular RTL (firtool, sv2v, netlists); a text edit cannot see the meaning of include files, macros, packages or `bind`. As the RTL is read (canonicalization, memory extraction, and the SYNTH_USE_SYN frontend), it runs with SYNTH_VERILOG_SURGERY_ARGS, then `--out-dir $(OBJECTS_DIR)/surgery --` and the VERILOG_FILES (by PYTHON_EXE when it ends in .py), and writes one copy per source under the same file name; synthesis reads the copies. Input file names must be unique. Diff a copy against its original to see exactly what the surgery changed. The script should fail when it does not recognise its input; a failing script, or a copy it did not write, stops synthesis.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_VERILOG_SURGERY_ARGS": {
+    "description": "Arguments to SYNTH_VERILOG_SURGERY, before the ones the flow adds.\n",
     "stages": [
       "synth"
     ]
@@ -1505,6 +1534,10 @@
   "USE_FILL": {
     "default": 0,
     "description": "Whether to perform metal density filling.\n"
+  },
+  "VCD_FILE": {
+    "description": "Specifies the Value Change Dump (VCD) file containing pin activities and duty cycles for use in power calculation.\n",
+    "type": "string"
   },
   "VERILOG_DEFINES": {
     "description": "Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`\n",

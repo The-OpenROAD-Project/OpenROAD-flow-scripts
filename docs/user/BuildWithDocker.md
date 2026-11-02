@@ -25,7 +25,7 @@ then is recommended that you restrict the number of CPUs used by the scripts
 :::
 
 ``` shell
-docker run --rm ubuntu:22.04 nproc
+docker run --rm ubuntu:26.04 nproc
 ```
 
 ### Build Using Docker from pre-built binaries
@@ -57,7 +57,7 @@ do follow the instructions below.
 
 #### Clone and Build
 
-The following instructions build the docker image with Ubuntu 22.04 as the base OS:
+The following instructions build the docker image with Ubuntu 26.04 as the base OS:
 
 
 ``` shell
@@ -145,7 +145,7 @@ Do refer to the documentation [here](./DockerShell.md).
 
 The following instructions build the docker image with a parameterized OS
 in two stages. These are for CI and developers that wish to use an OS other
-than Ubuntu 22.04; regular users should use the steps from previous sections.
+than Ubuntu 26.04; regular users should use the steps from previous sections.
 The dev stage installs all dependencies and packages required to run OpenROAD
 and OpenROAD Flow Scripts. The build stage generates all binaries needed to run
 the flow (i.e., `openroad` and `yosys`).
@@ -156,3 +156,5 @@ cd OpenROAD-flow-scripts
 ./etc/DockerHelper.sh create -target=dev -os=$OS_NAME
 ./etc/DockerHelper.sh create -target=builder -os=$OS_NAME
 ```
+
+Valid values for `$OS_NAME` are `ubuntu26.04` and `ubuntu24.04`.

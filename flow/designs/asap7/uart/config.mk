@@ -10,9 +10,11 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/co
 export SYNTH_BLACKBOXES = dummy
 
 export PLACE_DENSITY          = 0.70
+export GPL_PLACE_IOS          = 1
 export DIE_AREA               = 0 0 17 17
 export CORE_AREA              = 1.08 1.08 16 16
 export TNS_END_PERCENT        = 100
+export SETUP_REPAIR_PHASES = PARALLEL_EVAL
 export SKIP_GATE_CLONING      = 1
 export VERILOG_TOP_PARAMS     = DATA_WIDTH 8
 export SYNTH_HDL_FRONTEND     = slang
