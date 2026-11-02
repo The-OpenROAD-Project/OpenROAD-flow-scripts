@@ -78,6 +78,7 @@ class TestMemoryMaxBits(unittest.TestCase):
     def test_ram_over_limit_stops(self):
         returncode, output = self.run_check(2048)
         self.assertNotEqual(returncode, 0, output)
+        self.assertIn("over SYNTH_MEMORY_MAX_BITS=2048", output)
         error = output.split("over SYNTH_MEMORY_MAX_BITS=2048")[1]
         self.assertRegex(error, r"ram/\S+ 32 x 128 = 4096")
         self.assertNotIn("rom/", error)
