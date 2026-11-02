@@ -14,6 +14,7 @@ export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.75
 
 export TNS_END_PERCENT        = 100
+export SETUP_REPAIR_PHASES = PARALLEL_EVAL
 export GPL_PLACE_IOS          = 1
 
 export SYNTH_USE_SYN = 1
