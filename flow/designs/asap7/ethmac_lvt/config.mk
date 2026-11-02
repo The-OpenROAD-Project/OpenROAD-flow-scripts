@@ -17,3 +17,4 @@ export ASAP7_USE_VT           = LVT
 
 export RECOVER_POWER          = 1
 
+export SETUP_REPAIR_PHASES = PARALLEL_EVAL

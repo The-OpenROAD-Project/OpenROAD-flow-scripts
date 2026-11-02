@@ -18,3 +18,4 @@ export GPL_PLACE_IOS          = 1
 export SKIP_LAST_GASP ?= 1
 
 export SYNTH_USE_SYN = 1
+export SETUP_REPAIR_PHASES = PARALLEL_EVAL

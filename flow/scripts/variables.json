@@ -831,6 +831,10 @@
       "synth"
     ]
   },
+  "POWER_FILE_SCOPE": {
+    "description": "The SAIF or VCD scope of the current design. Typically the test bench name and design under the test instance name. Scope levels are separated with '/'.\n",
+    "type": "string"
+  },
   "PRE_CTS_TCL": {
     "description": "Specifies a Tcl script with commands to run before CTS.\n",
     "stages": [
@@ -1124,6 +1128,10 @@
   "RUN_SCRIPT": {
     "description": "Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.\n"
   },
+  "SAIF_FILE": {
+    "description": "Specifies the Switching Activity Interchange Format (SAIF) file containing pin activities and duty cycles for use in power calculation.\n",
+    "type": "string"
+  },
   "SC_LEF": {
     "description": "Path to technology standard cell LEF file.\n"
   },
@@ -1151,6 +1159,15 @@
       "cts",
       "floorplan",
       "grt"
+    ]
+  },
+  "SETUP_REPAIR_PHASES": {
+    "description": "Passed as -phases to repair_timing. This should be a string of setup repair phase names separated by spaces. Set to PARALLEL_EVAL to repair setup timing with the experimental parallel evaluation policy. When unset, repair_timing runs its default phases.\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt",
+      "place"
     ]
   },
   "SETUP_SLACK_MARGIN": {
@@ -1354,7 +1371,7 @@
     ]
   },
   "SYNTH_KEEP_MODULES": {
-    "description": "Mark modules to keep from getting removed in flattening.\n",
+    "description": "Mark modules to keep from getting removed in flattening.\nA name that matches no module of the design stops synthesis.\n",
     "stages": [
       "synth"
     ]
@@ -1517,6 +1534,10 @@
   "USE_FILL": {
     "default": 0,
     "description": "Whether to perform metal density filling.\n"
+  },
+  "VCD_FILE": {
+    "description": "Specifies the Value Change Dump (VCD) file containing pin activities and duty cycles for use in power calculation.\n",
+    "type": "string"
   },
   "VERILOG_DEFINES": {
     "description": "Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`\n",
