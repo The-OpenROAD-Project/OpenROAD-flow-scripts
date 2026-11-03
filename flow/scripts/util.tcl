@@ -32,6 +32,7 @@ proc repair_timing_helper { args } {
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
   append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
   append_env_var additional_args SETUP_MOVE_SEQUENCE -sequence 1
+  append_env_var additional_args SETUP_REPAIR_PHASES -phases 1
   append_env_var additional_args TNS_END_PERCENT -repair_tns 1
   append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
   append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
@@ -215,7 +216,8 @@ proc erase_non_stage_variables { stage_name } {
   # Tcl yaml package can't be imported in the sta/openroad environment:
   #
   # https://github.com/The-OpenROAD-Project/OpenROAD/issues/5875
-  set variables [exec $::env(SCRIPTS_DIR)/non_stage_variables.py $stage_name]
+  set variables [exec -- $::env(PYTHON_EXE) \
+    $::env(SCRIPTS_DIR)/non_stage_variables.py $stage_name]
   foreach var $variables {
     if { [info exists ::env($var)] } {
       unset ::env($var)
