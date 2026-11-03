@@ -162,6 +162,12 @@ report_units_metric
 report_layer_rc
 report_metrics 2 "floorplan final" false false
 
+# The platform's global connections, made before any step marks an
+# instance dont_touch: global_connect skips one (ODB-0383). The rules are
+# kept in the database for a later step that creates instances; the grids
+# PDN_TCL defines are not, and the PDN step defines them again.
+log_cmd source $::env(PDN_TCL)
+
 source_step_tcl POST FLOORPLAN
 source_env_var_if_exists IO_CONSTRAINTS
 
