@@ -300,6 +300,25 @@ proc hier_options { } {
   }
 }
 
+# Total area of the block's instances in um^2; with -unplaced, only of the
+# instances that are not placed yet.
+proc instance_area_um2 { args } {
+  sta::parse_key_args "instance_area_um2" args keys {} flags {-unplaced}
+  set unplaced_only [info exists flags(-unplaced)]
+  set area 0.0
+  foreach inst [[ord::get_db_block] getInsts] {
+    if { $unplaced_only && [$inst isPlaced] } {
+      continue
+    }
+    set master [$inst getMaster]
+    set area [expr {
+      $area + [ord::dbu_to_microns [$master getWidth]]
+      * [ord::dbu_to_microns [$master getHeight]]
+    }]
+  }
+  return $area
+}
+
 proc is_physical_only_master { master } {
   set physical_only_type_patterns [list \
     "COVER" \
