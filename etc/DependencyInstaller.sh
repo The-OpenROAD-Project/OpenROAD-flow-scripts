@@ -181,7 +181,7 @@ _installPipCommon() {
 }
 
 _installPipSystem() {
-    apt-get -y install python3-pandas python3-numpy python3-click python3-yaml python3-yamlfix
+    apt-get -y install python3-pandas python3-numpy python3-click python3-yamlfix
 }
 
 # Enterprise Linux 7 cleanup
