@@ -609,6 +609,16 @@ PDN_TCL:
     the actual metal straps.
   stages:
     - floorplan
+GLOBAL_CONNECT_TCL:
+  description: >
+    File path to the add_global_connection rules that connect the supply pins
+    of the instances to the supply nets. Sourced at floorplan right after the
+    netlist is loaded, before any step can mark an instance dont_touch; the
+    rules are kept in the database. The platform's file by default; a design
+    whose PDN_TCL names other supply nets sets its own. PDN_TCL defines the
+    grids.
+  stages:
+    - floorplan
 MAKE_TRACKS:
   description: |
     Tcl file that defines add routing tracks to a floorplan.

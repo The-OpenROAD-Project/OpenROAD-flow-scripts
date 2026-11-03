@@ -2,6 +2,15 @@ utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
 load_design 1_synth.odb 1_synth.sdc
+
+# The global connections, before any step can mark an instance
+# dont_touch: global_connect skips one (ODB-0383). The rules stay in the
+# database for a later step that creates instances.
+if { [env_var_exists_and_non_empty GLOBAL_CONNECT_TCL] } {
+  log_cmd source $::env(GLOBAL_CONNECT_TCL)
+  log_cmd global_connect
+}
+
 source_step_tcl PRE FLOORPLAN
 
 proc report_unused_masters { } {
@@ -161,12 +170,6 @@ report_units
 report_units_metric
 report_layer_rc
 report_metrics 2 "floorplan final" false false
-
-# The platform's global connections, made before any step marks an
-# instance dont_touch: global_connect skips one (ODB-0383). The rules are
-# kept in the database for a later step that creates instances; the grids
-# PDN_TCL defines are not, and the PDN step defines them again.
-log_cmd source $::env(PDN_TCL)
 
 source_step_tcl POST FLOORPLAN
 source_env_var_if_exists IO_CONSTRAINTS

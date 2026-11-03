@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Floorplan makes the platform's global connections.
+"""Floorplan makes the global connections right after the netlist is loaded.
 
 global_connect skips a dont_touch instance, so floorplan.tcl makes the
-platform's global connections (PDN_TCL) before any step marks an
-instance dont_touch. Every instance's supply pins are then on a net, and
-the rules stay in the database: a later step that marks an instance
-dont_touch leaves its supplies connected, and one that creates instances
+global connections (GLOBAL_CONNECT_TCL) right after it loads the
+netlist, before any step, the PRE_FLOORPLAN_TCL hook included, can mark
+an instance dont_touch. Every instance's supply pins are then on a net,
+and the rules stay in the database: a later step that creates instances
 connects them with global_connect before marking them.
 
-floorplan.tcl runs as is on a two-inverter nangate45 design; load.tcl is
+floorplan.tcl runs as is on a two-inverter nangate45 design, with a
+PRE_FLOORPLAN_TCL hook that marks one of them dont_touch; load.tcl is
 replaced by one that reads the netlist and stubs the reports.
 
 Skipped when no openroad is available: OPENROAD_EXE or openroad on PATH.
@@ -54,7 +55,7 @@ proc write_endpoint_slack {{ args }} {{ }}
 
 ENV = {
     "KEEP_VARS": "1",
-    "PDN_TCL": os.path.join(PLATFORM, "grid_strategy-M1-M4-M7.tcl"),
+    "GLOBAL_CONNECT_TCL": os.path.join(PLATFORM, "global_connect.tcl"),
     "DIE_AREA": "0 0 100 100",
     "CORE_AREA": "10 10 90 90",
     "PLACE_SITE": "FreePDK45_38x28_10R_NP_162NW_34O",
@@ -68,8 +69,14 @@ ENV = {
     "OPENROAD_HIERARCHICAL": "0",
 }
 
-# A later step: reads floorplan's result, marks an instance dont_touch,
-# creates one and connects it before marking it dont_touch.
+# The PRE_FLOORPLAN_TCL hook: the first step after the netlist is loaded
+# that could mark an instance dont_touch.
+PRE_FLOORPLAN = """\
+[[ord::get_db_block] findInst kept] setDoNotTouch 1
+"""
+
+# A later step: reads floorplan's result, creates an instance and
+# connects it before marking it dont_touch.
 LATER = f"""\
 read_lef {{{TECH_LEF}}}
 read_lef {{{SC_LEF}}}
@@ -85,7 +92,6 @@ proc supply {{ name pin }} {{
 foreach name {{kept free}} {{
   puts "floorplan $name [supply $name VDD] [supply $name VSS]"
 }}
-[$block findInst kept] setDoNotTouch 1
 set created [odb::dbInst_create $block [[ord::get_db] findMaster INV_X1] created]
 global_connect
 $created setDoNotTouch 1
@@ -130,12 +136,15 @@ class GlobalConnectionsTest(unittest.TestCase):
             f.write(DESIGN)
         with open(os.path.join(cwd, "later.tcl"), "w") as f:
             f.write(LATER)
+        with open(os.path.join(cwd, "pre_floorplan.tcl"), "w") as f:
+            f.write(PRE_FLOORPLAN)
         env = dict(
             os.environ,
             SCRIPTS_DIR=stub,
             PLATFORM_DIR=PLATFORM,
             RESULTS_DIR=cwd,
             REPORTS_DIR=cwd,
+            PRE_FLOORPLAN_TCL=os.path.join(cwd, "pre_floorplan.tcl"),
             **ENV,
         )
         run(os.path.join(SCRIPTS, "floorplan.tcl"), cwd, env)
@@ -147,9 +156,9 @@ class GlobalConnectionsTest(unittest.TestCase):
 
     def test_supply_pins_are_connected_at_floorplan(self):
         self.assertEqual(self.supply[("floorplan", "free")], ["VDD", "VSS"])
-        self.assertEqual(self.supply[("floorplan", "kept")], ["VDD", "VSS"])
 
-    def test_an_instance_marked_dont_touch_later_keeps_its_supplies(self):
+    def test_an_instance_the_pre_floorplan_hook_marks_is_connected(self):
+        self.assertEqual(self.supply[("floorplan", "kept")], ["VDD", "VSS"])
         self.assertEqual(self.supply[("later", "kept")], ["VDD", "VSS"])
 
     def test_rules_stay_in_the_database_for_a_later_step(self):
