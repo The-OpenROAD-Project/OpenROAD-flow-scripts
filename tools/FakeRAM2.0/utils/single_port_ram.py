@@ -36,19 +36,24 @@ class SinglePortRAM(RAM):
         """
         RAM.__init__(self, mem_config, process_data, timing_data)
         rw_port_group = RWPortGroup()
-        rw_port_group.set_write_enable_name("we_in")
-        rw_port_group.set_address_bus_name("addr_in")
-        rw_port_group.set_data_input_bus_name("wd_in")
-        rw_port_group.set_data_output_bus_name("rd_out")
-        rw_port_group.set_clock_name("clk")
+        names = mem_config.get_pin_names()
+        rw_port_group.set_write_enable_name(names.get("we", "we_in"))
+        rw_port_group.set_address_bus_name(names.get("addr", "addr_in"))
+        rw_port_group.set_data_input_bus_name(names.get("din", "wd_in"))
+        rw_port_group.set_data_output_bus_name(names.get("dout", "rd_out"))
+        rw_port_group.set_clock_name(names.get("clk", "clk"))
+        if self.mask_lanes:
+            rw_port_group.set_write_mask_bus(
+                names.get("mask", "w_mask_in"), self.mask_lanes
+            )
         self.add_rw_port_group(rw_port_group)
-        self.add_misc_port("ce_in")
+        self.add_misc_port(names.get("ce", "ce_in"))
         self.create_ports()
 
     def get_num_pins(self):
         """Returns the total number of logical pins"""
         # rd_out (#bits) + wd_in (#bits) + addr_in (#addr_width) + we_in/ce_in/clk
-        return (2 * self.get_width()) + self.get_addr_width() + 3
+        return (2 * self.get_width()) + self.get_addr_width() + 3 + self.mask_lanes
 
     def write_verilog_file(self, out_file_name, is_blackbox=False):
         """

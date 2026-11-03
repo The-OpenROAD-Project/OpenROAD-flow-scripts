@@ -4,7 +4,7 @@
 
 The `setup.sh` script installs all of the dependencies, including OpenROAD dependencies, if they are not already installed.
 
-Supported configurations are: Ubuntu 22.04, RHEL 8 and RockyLinux 9.
+Supported configurations are: Ubuntu 26.04, Ubuntu 24.04, RHEL 8 and RockyLinux 9.
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts

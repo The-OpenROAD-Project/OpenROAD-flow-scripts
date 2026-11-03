@@ -2,6 +2,8 @@
 
 See `README.md` for the general ORFS guide.
 
+A change to `flow/scripts/*.tcl` is written and reviewed against every rule in `docs/contrib/TclContract.md`.
+
 The OpenROAD (OR) engine source resides in `tools/OpenROAD/` (git submodule). For C++/Tcl development, refer to `tools/OpenROAD/AGENTS.md`.
 
 A change to `flow/Makefile`, `flow/scripts/*.mk`, `flow/scripts/*.tcl`, `flow/scripts/variables.yaml`, `flow/platforms/*/config.mk` or `flow/designs/**/config.mk` is checked against every rule in `docs/contrib/MakefileContract.md`.

@@ -24,6 +24,14 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         ce_pin = next(iter(mem.get_misc_ports()))
         return (addr_bus, din_bus, dout_bus, we_pin, clk_pin, ce_pin)
 
+    def _get_mask(self):
+        """Returns (mask bus name, lanes); (None, 0) when unmasked"""
+        rw_port_group = self.get_memory().get_rw_port_groups()[0]
+        return (
+            rw_port_group.get_write_mask_bus_name(),
+            rw_port_group.get_write_mask_lanes(),
+        )
+
     def export_module(self, out_fh):
         """Exports the verilog module to the output stream"""
 
@@ -59,7 +67,15 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         out_fh.write("         end\n")
         out_fh.write(f"         else if ({we_pin})\n")
         out_fh.write("         begin\n")
-        out_fh.write(f"            mem[{addr_bus}] <= {din_bus};\n")
+        mask_bus, lanes = self._get_mask()
+        if mask_bus:
+            out_fh.write("            for (j = 0; j < MASK_LANES; j = j + 1)\n")
+            out_fh.write(f"               if ({mask_bus}[j])\n")
+            out_fh.write(
+                f"                  mem[{addr_bus}][j*LANE_WIDTH +: LANE_WIDTH] <= {din_bus}[j*LANE_WIDTH +: LANE_WIDTH];\n"
+            )
+        else:
+            out_fh.write(f"            mem[{addr_bus}] <= {din_bus};\n")
         out_fh.write("         end\n")
         out_fh.write("         // read\n")
         out_fh.write(f"         {dout_bus} <= mem[{addr_bus}];\n")
@@ -85,12 +101,20 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         out_fh.write(f"   {we_pin},\n")
         out_fh.write(f"   {din_bus},\n")
         out_fh.write(f"   {clk_pin},\n")
-        out_fh.write(f"   {ce_pin}\n")
+        mask_bus, lanes = self._get_mask()
+        if mask_bus:
+            out_fh.write(f"   {ce_pin},\n")
+            out_fh.write(f"   {mask_bus}\n")
+        else:
+            out_fh.write(f"   {ce_pin}\n")
         out_fh.write(");\n")
         out_fh.write(f"   parameter BITS = {mem.get_width()};\n")
         out_fh.write(f"   parameter WORD_DEPTH = {mem.get_depth()};\n")
         out_fh.write(f"   parameter ADDR_WIDTH = {mem.get_addr_width()};\n")
         out_fh.write(f"   parameter corrupt_mem_on_X_p = 1;\n")
+        if mask_bus:
+            out_fh.write(f"   parameter MASK_LANES = {lanes};\n")
+            out_fh.write(f"   parameter LANE_WIDTH = {mem.get_width() // lanes};\n")
         out_fh.write("\n")
         out_fh.write(f"   output reg [BITS-1:0]    {dout_bus};\n")
         out_fh.write(f"   input  [ADDR_WIDTH-1:0]  {addr_bus};\n")
@@ -98,6 +122,8 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         out_fh.write(f"   input  [BITS-1:0]        {din_bus};\n")
         out_fh.write(f"   input                    {clk_pin};\n")
         out_fh.write(f"   input                    {ce_pin};\n")
+        if mask_bus:
+            out_fh.write(f"   input  [MASK_LANES-1:0]  {mask_bus};\n")
         out_fh.write("\n")
 
     def write_timing_check(self, out_fh):
@@ -130,6 +156,11 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         )
         out_fh.write(
             f"      $setuphold (posedge {clk_pin}, {din_bus},     0, 0, notifier);\n"
+            + (
+                f"      $setuphold (posedge {clk_pin}, {self._get_mask()[0]},     0, 0, notifier);\n"
+                if self._get_mask()[0]
+                else ""
+            )
         )
         out_fh.write("   endspecify\n")
         out_fh.write("\n")
@@ -147,5 +178,10 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         out_fh.write(f"   input {we_pin},\n")
         out_fh.write(f"   input [{data_bus_msb}:0] {din_bus},\n")
         out_fh.write(f"   input {clk_pin},\n")
-        out_fh.write(f"   input {ce_pin}\n")
+        mask_bus, lanes = self._get_mask()
+        if mask_bus:
+            out_fh.write(f"   input {ce_pin},\n")
+            out_fh.write(f"   input [{lanes - 1}:0] {mask_bus}\n")
+        else:
+            out_fh.write(f"   input {ce_pin}\n")
         self.export_bb_footer(out_fh)

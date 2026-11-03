@@ -4,7 +4,16 @@
 class MemoryConfig:
     """Container for functional memory configuration"""
 
-    def __init__(self, name, width_in_bits, depth, num_banks, additional_height):
+    def __init__(
+        self,
+        name,
+        width_in_bits,
+        depth,
+        num_banks,
+        additional_height,
+        pin_names=None,
+        mask_lanes=0,
+    ):
         """Initializer"""
 
         self._name = name
@@ -12,6 +21,17 @@ class MemoryConfig:
         self._depth = depth
         self._num_banks = num_banks
         self._additional_height = additional_height
+        # Optional: the port names the macro must carry, keyed by role
+        # (clk, ce, we, addr, din, dout, mask), and the number of write
+        # mask lanes. Absent, the memory keeps its historical pin names
+        # and writes whole words.
+        self._pin_names = dict(pin_names) if pin_names else {}
+        self._mask_lanes = int(mask_lanes or 0)
+        if self._mask_lanes and width_in_bits % self._mask_lanes:
+            raise Exception(
+                "Width %d is not a whole number of %d mask lanes (%s)"
+                % (width_in_bits, self._mask_lanes, name)
+            )
 
     def set_name(self, name):
         """Sets the name"""
@@ -37,6 +57,14 @@ class MemoryConfig:
         """Returns the additional_height"""
         return self._additional_height
 
+    def get_pin_names(self):
+        """Returns the role -> port name dictionary (may be empty)"""
+        return self._pin_names
+
+    def get_mask_lanes(self):
+        """Returns the number of write mask lanes, 0 when unmasked"""
+        return self._mask_lanes
+
     @staticmethod
     def from_json(json_data):
         return MemoryConfig(
@@ -45,4 +73,6 @@ class MemoryConfig:
             int(json_data["depth"]),
             int(json_data["banks"]),
             json_data.get("additional_height", 0),
+            json_data.get("pin_names"),
+            json_data.get("mask_lanes", 0),
         )

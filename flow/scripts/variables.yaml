@@ -227,6 +227,35 @@ ADDITIONAL_MEMORIES:
     docs/user/AutoMemories.md.
   stages:
     - synth
+SYNTH_VERILOG_SURGERY:
+  description: >
+    RTL surgery as a step of the flow: a script that copies VERILOG_FILES
+    and edits the copies before synthesis reads them, so vendored RTL
+    stays byte-identical to upstream and the OpenROAD- and PDK-specific
+    changes live in one script next to the design's config.mk. Typical
+    surgery gives a memory or register file a module of its own that
+    AUTO_MEMORIES can convert, maps a clock gate onto the platform's,
+    rewrites a pragma for the frontend, or removes a simulation
+    construct. A new upstream version is then a plain copy: the surgery
+    reapplies, or stops where upstream moved. Best on generated or
+    regular RTL (firtool, sv2v, netlists); a text edit cannot see the
+    meaning of include files, macros, packages or `bind`. As the RTL is
+    read (canonicalization, memory extraction, and the SYNTH_USE_SYN
+    frontend), it runs with SYNTH_VERILOG_SURGERY_ARGS, then
+    `--out-dir $(OBJECTS_DIR)/surgery --` and the VERILOG_FILES (by
+    PYTHON_EXE when it ends in .py), and writes one copy per source under
+    the same file name; synthesis reads the copies. Input file names must
+    be unique. Diff a copy against its original to see exactly what the
+    surgery changed. The script should fail when it does not recognise
+    its input; a failing script, or a copy it did not write, stops
+    synthesis.
+  stages:
+    - synth
+SYNTH_VERILOG_SURGERY_ARGS:
+  description: >
+    Arguments to SYNTH_VERILOG_SURGERY, before the ones the flow adds.
+  stages:
+    - synth
 SYNTH_MEMORY_MAX_BITS:
   description: >
     Maximum number of bits for memory synthesis.
@@ -235,6 +264,13 @@ SYNTH_MEMORY_MAX_BITS:
     To temporarily ignore the RAM concerns and investigate other
     aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`,
     or adjusting `SYNTH_MEMORY_MAX_BITS`.
+    ROMs, inferred memories with no write port, are not counted: a ROM
+    holds constants that synthesis maps to logic like any other, and it
+    goes through the normal flow. The limit is there so that a
+    read/write memory, which belongs in a macro (`AUTO_MEMORIES`,
+    fakeram) or a mock, does not go undetected into flip-flops; raising
+    it to admit a large ROM would let read/write memories of that size
+    through too.
   default: 4096
   stages:
     - synth
@@ -517,16 +553,6 @@ BUFFER_PORTS_ARGS:
     Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.
   stages:
     - place
-REMOVE_ABC_BUFFERS:
-  description: >
-    Remove abc buffers from the netlist. If timing repair in floorplanning is
-    taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early
-    instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.
-    Some designs still need it to reach their QoR targets.
-  stages:
-    - floorplan
-  deprecated: 1
-  default: 0
 BALANCE_ROWS:
   description: |
     Balance rows during placement.
@@ -647,6 +673,7 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     Cell padding on both sides in site widths to ease routability in detail
     placement.
   stages:
+    - floorplan
     - place
     - cts
     - grt
@@ -838,6 +865,17 @@ SETUP_MOVE_SEQUENCE:
     - cts
     - floorplan
     - grt
+SETUP_REPAIR_PHASES:
+  description: >
+    Passed as -phases to repair_timing. This should be a string of setup
+    repair phase names separated by spaces. Set to PARALLEL_EVAL to repair
+    setup timing with the experimental parallel evaluation policy. When
+    unset, repair_timing runs its default phases.
+  stages:
+    - cts
+    - floorplan
+    - grt
+    - place
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use
@@ -894,6 +932,13 @@ SKIP_CTS_REPAIR_TIMING:
     architectural exploration or when getting CI up and running.
   stages:
     - cts
+  default: 0
+SKIP_FLOORPLAN_REPAIR_TIMING:
+  description: >
+    Skipping floorplan repair which sometimes does too much optimization
+    too early.
+  stages:
+    - floorplan
   default: 0
 ENABLE_PLACE_REPAIR_TIMING:
   description: >
@@ -1076,6 +1121,7 @@ DFF_LIB_FILE:
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
+    A name that matches no module of the design stops synthesis.
   stages:
     - synth
 SYNTH_ARGS:
@@ -1704,3 +1750,18 @@ GRT_SEED:
     - grt
   tunable: 1
   type: int
+SAIF_FILE:
+  description: >
+    Specifies the Switching Activity Interchange Format (SAIF) file containing pin
+    activities and duty cycles for use in power calculation.
+  type: string
+POWER_FILE_SCOPE:
+  description: >
+    The SAIF or VCD scope of the current design. Typically the test bench name and
+    design under the test instance name. Scope levels are separated with '/'.
+  type: string
+VCD_FILE:
+  description: >
+    Specifies the Value Change Dump (VCD) file containing pin activities and duty
+    cycles for use in power calculation.
+  type: string
