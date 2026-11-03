@@ -3,7 +3,21 @@ erase_non_stage_variables floorplan
 load_design 2_3_floorplan_tapcell.odb 2_1_floorplan.sdc
 source_step_tcl PRE PDN
 
+# A supply pin on no net changes no logic when it is connected: lift
+# dont_touch for the platform's global connections, restore it after.
+set lifted [dont_touch_unsupplied]
+foreach inst $lifted {
+  $inst setDoNotTouch 0
+}
 source $::env(PDN_TCL)
+foreach inst $lifted {
+  $inst setDoNotTouch 1
+}
+if { [llength $lifted] > 0 } {
+  utl::info FLW 18 "[llength $lifted] dont_touch instances had a supply pin\
+    on no net; connected by the global connections"
+}
+
 pdngen
 
 source_step_tcl POST PDN

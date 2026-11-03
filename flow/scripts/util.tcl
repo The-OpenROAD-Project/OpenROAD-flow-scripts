@@ -506,3 +506,25 @@ proc synth_verilog_files { } {
   }
   return $copies
 }
+
+# global_connect skips dont_touch instances (ODB-0383, a warning each),
+# so an instance made dont_touch before the PDN step keeps its supply
+# pins on no net: unpowered in the netlist, LVS and power analysis. The
+# dont_touch instances with a supply pin on no net, for the PDN step to
+# lift dont_touch from while it makes the global connections.
+proc dont_touch_unsupplied { } {
+  set insts {}
+  foreach inst [[ord::get_db_block] getInsts] {
+    if { ![$inst isDoNotTouch] } {
+      continue
+    }
+    foreach iterm [$inst getITerms] {
+      set type [[$iterm getMTerm] getSigType]
+      if { ($type eq "POWER" || $type eq "GROUND") && [$iterm getNet] eq "NULL" } {
+        lappend insts $inst
+        break
+      }
+    }
+  }
+  return $insts
+}
