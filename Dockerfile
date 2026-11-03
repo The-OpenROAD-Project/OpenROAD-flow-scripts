@@ -6,10 +6,11 @@ WORKDIR /OpenROAD-flow-scripts
 # synthesis tools binaries and plugins
 COPY --from=openroad/yosys /install ./tools/install/yosys
 
-# openroad binary
+# openroad binary, and yaml2json, which the flow reads variables.yaml with
 COPY --from=openroad/ubuntu22.04-builder-gcc \
     /OpenROAD/install/bin/openroad \
-    ./tools/install/OpenROAD/bin/openroad
+    /OpenROAD/install/bin/yaml2json \
+    ./tools/install/OpenROAD/bin/
 
 # flow files
 COPY ./env.sh .

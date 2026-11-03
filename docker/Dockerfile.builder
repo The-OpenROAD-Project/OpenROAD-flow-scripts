@@ -80,10 +80,12 @@ set -e
                     --local \
                     --openroad_only \
                     --threads ${numThreads}
-if [ ! -x tools/install/OpenROAD/bin/openroad ]; then
-    echo "Error: tools/install/OpenROAD/bin/openroad is missing or not executable." >&2
-    exit 1
-fi
+for tool in openroad yaml2json; do
+    if [ ! -x tools/install/OpenROAD/bin/$tool ]; then
+        echo "Error: tools/install/OpenROAD/bin/$tool is missing or not executable." >&2
+        exit 1
+    fi
+done
 EOF
 
 # tools/OpenROAD/src/sta is excluded because it is covered by a separate
