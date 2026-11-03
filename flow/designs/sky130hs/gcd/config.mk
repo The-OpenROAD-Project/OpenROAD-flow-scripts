@@ -13,3 +13,4 @@ export PLACE_DENSITY_LB_ADDON = 0.1
 export TNS_END_PERCENT        = 100
 #export SYNTH_HDL_FRONTEND ?= slang
 #export OPENROAD_HIERARCHICAL ?= 1
+export GLOBAL_ROUTE_USE_CUGR = 1

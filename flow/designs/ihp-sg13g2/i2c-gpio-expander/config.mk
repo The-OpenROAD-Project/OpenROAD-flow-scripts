@@ -55,3 +55,4 @@ export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/pdn.tcl
 
 export BLOCKS = I2cDeviceCtrl
 
+export GLOBAL_ROUTE_USE_CUGR = 1
