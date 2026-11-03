@@ -1764,3 +1764,10 @@ VCD_FILE:
     Specifies the Value Change Dump (VCD) file containing pin activities and duty
     cycles for use in power calculation.
   type: string
+YAML2JSON:
+  description: >
+    The yaml2json executable the flow reads variables.yaml with. It is
+    installed next to openroad, and defaults to yaml2json in the directory of
+    OPENROAD_EXE.
+  stages:
+    - All stages

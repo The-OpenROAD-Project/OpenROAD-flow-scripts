@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
+# Reads variables.yaml as JSON on stdin: $(YAML2JSON) variables.yaml | defaults.py
 import json
-import os
+import sys
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-
-json_path = os.path.join(dir_path, "variables.json")
-with open(json_path, "r") as file:
-    data = json.load(file)
+text = sys.stdin.read()
+if not text:
+    sys.exit("defaults.py: no input; pipe $YAML2JSON variables.yaml into it")
+data = json.loads(text)
 
 for key, value in data.items():
     if value.get("default", None) is None:

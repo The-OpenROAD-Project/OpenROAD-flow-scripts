@@ -18,10 +18,9 @@ jobs:
         fetch-depth: 1
         sparse-checkout: |
           flow/scripts/generate-variables-docs.py
-          flow/scripts/yaml_to_json.py
           flow/scripts/variables.yaml
-          flow/scripts/variables.json
           docs/user/FlowVariables.md
+          tools/OpenROAD
           yamlfix.toml
           .github/requirements/requirements_lock.txt
     - uses: actions/setup-python@v7
@@ -31,16 +30,19 @@ jobs:
       run: |
         python3 -m venv venv
         venv/bin/pip install --quiet -r .github/requirements/requirements_lock.txt
+    - name: Build yaml2json
+      run: |
+        git submodule update --init --depth 1 tools/OpenROAD
+        git -C tools/OpenROAD submodule update --init --depth 1 third-party/sv-elab
+        cd tools/OpenROAD
+        bazelisk build //src/yaml2json
+        echo "YAML2JSON=$(bazelisk cquery --output=files //src/yaml2json 2>/dev/null | sed "s|^|$PWD/|")" >> "$GITHUB_ENV"
     - name: Run generate-variables-docs.py
       run: |
-        venv/bin/python3 flow/scripts/generate-variables-docs.py
+        "$YAML2JSON" flow/scripts/variables.yaml | venv/bin/python3 flow/scripts/generate-variables-docs.py
     - name: Check if FlowVariables.md is up to date
       run: |
         git diff --exit-code docs/user/FlowVariables.md
-    - name: Check variables.json is up to date
-      run: |
-        venv/bin/python3 flow/scripts/yaml_to_json.py
-        git diff --exit-code flow/scripts/variables.json
     - name: Run yamlfix check
       run: |
         source venv/bin/activate
