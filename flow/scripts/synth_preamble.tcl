@@ -49,6 +49,7 @@ proc read_checkpoint { file } {
 # canonicalization, one `<module> <area>` per line; see
 # docs/user/AutoMemories.md.
 source $::env(SCRIPTS_DIR)/memories/check_blackboxed.tcl
+source $::env(SCRIPTS_DIR)/memories/drop_parameters.tcl
 
 proc auto_memories_areas { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
@@ -145,6 +146,7 @@ proc read_design_sources { } {
 
     yosys read_slang {*}$slang_args
     auto_memories_check_blackboxed [auto_memories_blackboxes]
+    auto_memories_drop_parameters [auto_memories_blackboxes]
 
     # Workaround for yosys-slang#119
     setattr -unset init
