@@ -37,7 +37,7 @@ extracted parasitics:
 | before placement, and `3_1_place_gp_skip_io` while the pins are unplaced | `none` |
 | placed, before global route | `placement` |
 | global route and later | `global_routing` |
-| `6_final` | `spef`: the extracted `6_final.spef`, as in `6_finish.rpt` (`global_routing` on platforms without `RCX_RULES`) |
+| `6_final` | `spef`: the extracted `6_final.spef`, as in `6_finish.rpt` (`global_routing` on platforms without `RCX_RULES`, or with `SKIP_DETAILED_ROUTE=1`) |
 
 The parasitics model is recorded in each snapshot and shown by
 `endpointSlack.py`. Slack changes between steps with different models (e.g.
