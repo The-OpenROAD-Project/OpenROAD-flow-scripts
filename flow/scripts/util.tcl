@@ -355,19 +355,36 @@ proc final_extracts_parasitics { } {
   }]
 }
 
+# Load the parasitics that step is timed with and return where they came
+# from: the extracted 6_final.spef when final writes one, else, once the
+# design is placed, what OpenROAD estimates (global routes if there are
+# any, else placement), else none.
+proc orfs_load_parasitics { step } {
+  if { $step == "6_final" && [final_extracts_parasitics] } {
+    log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
+  } elseif { [grt::design_is_placed] } {
+    log_cmd estimate_parasitics
+  } else {
+    return none
+  }
+  return [est::parasitics_source]
+}
+
 # Write the setup and hold slack of every endpoint at the end of a flow
 # step so they can be compared across steps with
-# flow/util/endpointSlack.py. A placed design is timed with the parasitics
-# OpenROAD has for it, a design before placement without any.
-proc write_endpoint_slack { step } {
+# flow/util/endpointSlack.py. load_parasitics 0 is for a caller that has
+# just loaded the parasitics itself, e.g. 6_final after extraction.
+proc write_endpoint_slack { step { load_parasitics 1 } } {
   if { !$::env(REPORT_ENDPOINT_SLACK) || [string match "*-failed" $step] } {
     return
   }
   set filename [endpoint_slack_file $step]
   puts "Writing endpoint slack to $filename"
 
-  if { [grt::design_is_placed] } {
-    log_cmd estimate_parasitics
+  if { $load_parasitics } {
+    set parasitics [orfs_load_parasitics $step]
+  } else {
+    set parasitics [est::parasitics_source]
   }
   # Update timing before sta::endpoints: the endpoint set is cached the
   # first time it is requested and misses gated clock enable checks if the
@@ -378,7 +395,7 @@ proc write_endpoint_slack { step } {
   puts $fileId "{"
   puts $fileId "\"design\": \"$::env(DESIGN_NAME)\","
   puts $fileId "\"step\": \"$step\","
-  puts $fileId "\"parasitics\": \"[est::parasitics_source]\","
+  puts $fileId "\"parasitics\": \"$parasitics\","
   # Seconds per reported time unit
   puts $fileId "\"time_unit\": [sta::time_ui_sta 1],"
   # endpoint: [setup slack, hold slack], null if unconstrained

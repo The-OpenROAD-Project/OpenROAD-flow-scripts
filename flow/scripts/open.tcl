@@ -59,15 +59,7 @@ proc read_timing { input_file } {
     set_propagated_clock [all_clocks]
   }
 
-  if {
-    [file rootname [file tail $input_file]] == "6_final"
-    && [final_extracts_parasitics]
-  } {
-    log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
-  }
-  if { [grt::design_is_placed] } {
-    log_cmd estimate_parasitics
-  }
+  orfs_load_parasitics [file rootname [file tail $input_file]]
 
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster
   set _tmp [log_cmd sta::find_timing]
