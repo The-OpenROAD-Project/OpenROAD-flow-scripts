@@ -108,7 +108,10 @@ def run(script, cwd, env):
         text=True,
     )
     if result.returncode != 0:
-        raise AssertionError(result.stdout + result.stderr)
+        raise AssertionError(
+            f"openroad {script} exited with {result.returncode}\n"
+            f"{result.stdout}{result.stderr}"
+        )
     return result.stdout
 
 
@@ -117,6 +120,7 @@ class GlobalConnectionsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(cls.tmp.cleanup)
         cwd = cls.tmp.name
         stub = os.path.join(cwd, "scripts")
         os.mkdir(stub)
@@ -140,10 +144,6 @@ class GlobalConnectionsTest(unittest.TestCase):
             words = line.split()
             if len(words) == 4 and words[0] in ("floorplan", "later"):
                 cls.supply[(words[0], words[1])] = words[2:]
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.tmp.cleanup()
 
     def test_supply_pins_are_connected_at_floorplan(self):
         self.assertEqual(self.supply[("floorplan", "free")], ["VDD", "VSS"])
