@@ -1,0 +1,19 @@
+# coralnpu's floating-point register file, FRegfile_rf, the module
+# surgery.py moves FRegfile's words into: 32 x 32 (sign, exponent,
+# mantissa from the top), four combinational reads (FRegfile's three
+# read ports and its bus port), two writes of which the later
+# (FRegfile's write port 0) wins a word both write, every word reset to
+# zero while reset is high, a clock gate per word.
+module FRegfile_rf
+words 32
+bits 32
+clock clock
+async_reset reset high
+read raddr0 rdata0
+read raddr1 rdata1
+read raddr2 rdata2
+read raddr3 rdata3
+write waddr0 wdata0 we0
+write waddr1 wdata1 we1
+write_priority last
+write_style clock_gate

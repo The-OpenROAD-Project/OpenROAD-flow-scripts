@@ -1,0 +1,66 @@
+{
+ "version": 1,
+ "memories": [
+  {
+   "name": "Sram",
+   "rows": 512,
+   "bits": 128,
+   "addr_w": 9,
+   "rw_ports": 1,
+   "mask_lanes": 16,
+   "idiomatic": true,
+   "reason": "the TCMs' SRAM, NUM_ENTRIES=512: one read-write port, byte mask",
+   "pins": [
+    {
+     "name": "clock",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "clk"
+    },
+    {
+     "name": "enable",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "en"
+    },
+    {
+     "name": "write",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "wmode"
+    },
+    {
+     "name": "addr",
+     "direction": "input",
+     "width": 9,
+     "port_id": "RW0",
+     "function": "addr"
+    },
+    {
+     "name": "wdata",
+     "direction": "input",
+     "width": 128,
+     "port_id": "RW0",
+     "function": "data_in"
+    },
+    {
+     "name": "wmask",
+     "direction": "input",
+     "width": 16,
+     "port_id": "RW0",
+     "function": "mask"
+    },
+    {
+     "name": "rdata",
+     "direction": "output",
+     "width": 128,
+     "port_id": "RW0",
+     "function": "data_out"
+    }
+   ]
+  }
+ ]
+}
