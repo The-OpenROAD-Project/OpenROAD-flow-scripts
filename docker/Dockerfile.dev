@@ -23,6 +23,11 @@ RUN sh /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
 
 ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
 
+# The lock in requirements-common_lock.txt is installed into this virtual
+# environment: the system Python is externally managed (PEP 668).
+ENV VIRTUAL_ENV=/opt/orfs-python
+ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
+
 # The last rm drops the unused net-imap default gem bundled with Ubuntu 22.04's
 # Ruby 3.0 (flagged by CVE scanners, never used by the flow). It is chained here
 # so the files don't persist in an earlier layer. No-op if not present.
