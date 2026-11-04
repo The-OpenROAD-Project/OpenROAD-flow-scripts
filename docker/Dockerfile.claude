@@ -3,7 +3,7 @@
 #
 # Usage: see claude.sh at the repo root.
 
-ARG fromImage=openroad/flow-ubuntu22.04-dev:latest
+ARG fromImage=openroad/flow-ubuntu26.04-dev:latest
 
 FROM ${fromImage}
 

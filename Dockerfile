@@ -1,19 +1,19 @@
 # Target with dependencies and the binaries to run the complete flow
-FROM openroad/flow-dev
+FROM openroad/flow-ubuntu26.04-dev:latest
 
 WORKDIR /OpenROAD-flow-scripts
 
-# synthesis tools binaries and plugins
-COPY --from=openroad/yosys /install ./tools/install/yosys
+# Flow tools built for the same Ubuntu release as the runtime image.
+COPY --from=openroad/flow-ubuntu26.04-tools:latest \
+    /OpenROAD-flow-scripts/tools/install ./tools/install
 
-# openroad binary
-COPY --from=openroad/ubuntu22.04-builder-gcc \
-    /OpenROAD/install/bin/openroad \
-    ./tools/install/OpenROAD/bin/openroad
+# OpenROAD binary and its installed libraries.
+COPY --from=openroad/ubuntu26.04:latest \
+    /OpenROAD/install ./tools/install/OpenROAD
 
 # flow files
 COPY ./env.sh .
 COPY ./flow ./flow
 
-# avoid issues with permissions
-RUN chmod o+rw -R /OpenROAD-flow-scripts
+# Allow users of the image to write flow results.
+RUN chmod -R a+rwX /OpenROAD-flow-scripts/flow
