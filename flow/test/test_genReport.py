@@ -74,15 +74,30 @@ class TestReportCollection(unittest.TestCase):
             text=True,
         )
 
-    def summary(self):
+    def run_report(self, *flags):
         result = subprocess.run(
-            [sys.executable, os.path.join(self.tmp, "util/genReport.py"), "-sv"],
+            [sys.executable, os.path.join(self.tmp, "util/genReport.py"), *flags],
             capture_output=True,
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        with open(os.path.join(self.tmp, "reports/report-summary.log")) as f:
+        return result.stdout
+
+    def read(self, path):
+        with open(os.path.join(self.tmp, path), encoding="utf-8") as f:
             return f.read()
+
+    def summary(self, flags="-sv"):
+        self.run_report(flags)
+        return self.read("reports/report-summary.log")
+
+    def qor_fail(self, pdv, metrics, baseline="https://dashboard.example/builds/7"):
+        """A finished run with the CI QoR check verdict FAIL."""
+        lines = [f"[ERROR] Dashboard QoR check: FAIL ({pdv})"]
+        lines.append(f"QoR regression detected for {pdv}:")
+        lines += [f"  {m} 2 (base 1, limit 1.5)" for m in metrics]
+        lines.append(f"  Baseline: {baseline}")
+        self.finished(pdv, "\n".join(lines) + "\n")
 
     def finished(self, pdv, check=""):
         """A run that reached the last stage, with its metadata and DRC reports."""
@@ -219,6 +234,130 @@ class TestReportCollection(unittest.TestCase):
             summary,
         )
 
+    def verbosity_fixture(self):
+        self.write_file(
+            "logs/asap7/stop/base/3_3_place_gp.log",
+            "[WARNING GPL-0302] Use a larger density\n"
+            "[ERROR GPL-0307] RePlAce divergence\n"
+            "[ERROR GPL-0307] RePlAce divergence\n",
+        )
+        self.finished("asap7/pass/base")
+        self.write_file(
+            "logs/asap7/pass/base/2_1_floorplan.log", "[WARNING IFP-0028] Core area\n"
+        )
+        self.finished(
+            "asap7/warn/base",
+            "Dashboard QoR check: INCONCLUSIVE (asap7/warn/base)\nReason: no baseline\n",
+        )
+
+    def test_level_0_shows_error_ids_only(self):
+        self.verbosity_fixture()
+        summary = self.summary("-s")
+        self.assertIn("    3_3_place_gp.log: GPL-0307\n", summary)
+        self.assertNotIn("RePlAce divergence", summary)
+        self.assertNotIn("asap7/pass/base", summary)
+
+    def test_level_1_shows_each_full_error_once_with_a_count(self):
+        self.verbosity_fixture()
+        summary = self.summary("-sv")
+        self.assertIn(
+            "    3_3_place_gp.log: [ERROR GPL-0307] RePlAce divergence (x2)\n", summary
+        )
+        self.assertNotIn("GPL-0302", summary)
+
+    def test_level_2_adds_passing_designs_and_warning_ids(self):
+        self.verbosity_fixture()
+        summary = self.summary("-svv")
+        self.assertIn("PASS  asap7/pass/base", summary)
+        passing = summary.split("PASSING (2)")[1]
+        self.assertIn(
+            "asap7/pass/base: passed\n    2_1_floorplan.log: IFP-0028", passing
+        )
+        # The note of a WARN design shows under "Needs attention" only.
+        self.assertIn("asap7/warn/base: passed\n", passing)
+        self.assertNotIn("no baseline", passing)
+        self.assertIn("    3_3_place_gp.log: GPL-0302", summary)
+
+    def test_level_3_shows_full_warnings(self):
+        self.verbosity_fixture()
+        summary = self.summary("-svvv")
+        self.assertIn("2_1_floorplan.log: [WARNING IFP-0028] Core area", summary)
+
+    def test_report_mode_writes_each_design_report(self):
+        self.verbosity_fixture()
+        # A run that stopped early may have no reports directory yet.
+        self.assertFalse(os.path.isdir(os.path.join(self.tmp, "reports/asap7/stop")))
+        output = self.run_report("-v")
+        self.assertIn("asap7/stop/base: stopped in 3_3_place_gp.log", output)
+        self.assertIn(
+            "[ERROR GPL-0307] RePlAce divergence (x2)",
+            self.read("reports/asap7/stop/base/report.log"),
+        )
+        self.assertIn(
+            "asap7/warn/base: QoR check INCONCLUSIVE: no baseline",
+            self.read("reports/asap7/warn/base/report.log"),
+        )
+        self.assertIn("asap7/stop/base", self.read("reports/report.log"))
+
+    def test_local_qor_check_format(self):
+        self.finished(
+            "nangate45/gcd/base",
+            "[ERROR] nangate45/gcd/base: FAIL \u2014 19 passed, 2 failed, 0 missing "
+            "(478 metrics sent)\n"
+            "[INFO] baseline build 7 (abc, latest)\n"
+            "Metric       Baseline  Current  Limit  Delta%\n"
+            "QoR regression detected for nangate45/gcd:\n"
+            "  cts__timing__setup__tns -12.2456 (base -6.95522, limit -8.346264)\n"
+            "  finish__timing__setup__ws -0.27 (base -0.16, limit -0.17)\n"
+            "[WARN] Rules not evaluated for 3 metric(s) absent from the baseline "
+            "build. Use --verbose to list them.\n"
+            "[ERROR] Failing runs: nangate45/gcd/base\n"
+            "QoR check: FAIL\n",
+        )
+        summary = self.summary()
+        self.assertIn("nangate45/gcd/base: 2 metrics over the limit", summary)
+        self.assertRegex(summary, r"cts__timing__setup__tns +-12\.2456 +-6\.95522")
+        self.assertIn("Note: QoR: Rules not evaluated for 3 metric(s)", summary)
+        self.assertNotIn("Failing runs", summary)
+
+    def test_each_design_shows_its_baseline_when_they_differ(self):
+        self.qor_fail("asap7/a/base", ["m1"], "https://dashboard.example/builds/1")
+        self.qor_fail("asap7/b/base", ["m1"], "https://dashboard.example/builds/2")
+        summary = self.summary()
+        self.assertNotIn("QoR baseline:", summary)
+        self.assertIn("    Baseline: https://dashboard.example/builds/1", summary)
+        self.assertIn("    Baseline: https://dashboard.example/builds/2", summary)
+        self.assertIn("Most regressed: m1 (2)", summary)
+
+    def test_metric_count_orders_only_qor_rows(self):
+        for name in ("a", "b"):
+            self.write_file(f"logs/asap7/{name}/base/1_1_yosys.log", "ok\n")
+        self.write_file(
+            "reports/asap7/b/base/metadata-check.log",
+            "QoR regression detected for asap7/b/base:\n  m1 2 (base 1, limit 1.5)\n",
+        )
+        table = self.summary().split("-" * 60)[0]
+        self.assertLess(
+            table.index("STOP  asap7/a/base"), table.index("STOP  asap7/b/base")
+        )
+
+    def test_metadata_generation_error_text_reaches_the_summary(self):
+        self.finished("asap7/a/base")
+        self.write_file(
+            "reports/asap7/a/base/metadata-generate.log", "[ERROR] bad metric\n"
+        )
+        summary = self.summary()
+        self.assertIn(
+            "asap7/a/base: metadata-generate.log: [ERROR] bad metric\n", summary
+        )
+
+    def test_log_that_is_not_utf8_is_read(self):
+        path = os.path.join(self.tmp, "logs/asap7/a/base/1_1_yosys.log")
+        os.makedirs(os.path.dirname(path))
+        with open(path, "wb") as f:
+            f.write(b"\xff\xfe \xc2\xb5\n[ERROR SYN-0001] bad input\n")
+        self.assertIn("1_1_yosys.log: SYN-0001", self.summary())
+
 
 class TestParseQorCheck(unittest.TestCase):
     def test_ci_format(self):
@@ -250,6 +389,17 @@ class TestParseQorCheck(unittest.TestCase):
                 "QoR: no baseline to compare against (strategy=none). Nothing was checked."
             ],
         )
+
+    def test_reason_is_kept_only_for_a_check_without_a_verdict(self):
+        for status in ("PASS", "FAIL"):
+            _, _, notes = genReport.parse_qor_check(
+                [f"Dashboard QoR check: {status} (a/b/c)\n", "Reason: text\n"]
+            )
+            self.assertEqual(notes, [], status)
+        _, _, notes = genReport.parse_qor_check(
+            ["Dashboard QoR check: INCONCLUSIVE (a/b/c)\n", "Reason: no data\n"]
+        )
+        self.assertEqual(notes, ["QoR check INCONCLUSIVE: no data"])
 
     def test_unknown_metric_line_is_kept_verbatim(self):
         metrics, _, _ = genReport.parse_qor_check(

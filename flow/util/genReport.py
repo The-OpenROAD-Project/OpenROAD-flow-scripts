@@ -116,6 +116,7 @@ def parse_qor_check(lines):
     baseline = None
     notes = []
     in_regressions = False
+    no_verdict = False
     for line in lines or []:
         text = line.strip()
         if line.startswith("QoR regression detected for "):
@@ -130,14 +131,12 @@ def parse_qor_check(lines):
             continue
         in_regressions = False
         status = REGEX_QOR_STATUS.match(text)
-        if status and status.group(1) not in ("PASS", "FAIL"):
-            notes.append(f"QoR check {status.group(1)}")
-        elif text.startswith("Reason: "):
-            reason = text.split(" ", 1)[1]
-            if notes and notes[-1].startswith("QoR check "):
-                notes[-1] += f": {reason}"
-            else:
-                notes.append(f"QoR check: {reason}")
+        if status:
+            no_verdict = status.group(1) not in ("PASS", "FAIL")
+            if no_verdict:
+                notes.append(f"QoR check {status.group(1)}")
+        elif text.startswith("Reason: ") and no_verdict:
+            notes[-1] += f": {text.split(' ', 1)[1]}"
         elif text.startswith("[WARN] "):
             message = REGEX_RUN_PREFIX.sub("", text[len("[WARN] ") :])
             notes.append(f"QoR: {message}")
@@ -232,8 +231,7 @@ def collect(log_dir, files, report_dir):
     if missing:
         notes.append("missing " + ", ".join(missing))
     if d["status"] == STATUS_GREEN:
-        if d["metrics_logs_errors"]:
-            notes.append(f"{len(d['metrics_logs_errors'])} error(s) in {METRICS_LOG}")
+        notes += [f"{source}: {text}" for source, text in d["metrics_logs_errors"]]
         if d["drcs"]:
             notes.append(f"router DRC under the limit: {format_drcs(d['drcs'])}")
     d["notes"] = notes
@@ -259,10 +257,11 @@ def sort_key(item):
     name, data = item
     code = row_code(data)
     rank = CATEGORY_RANK.get(code, len(CATEGORY_RANK) + (code == PASS))
-    return (rank, -len(data["qor_metrics"]), name)
+    metrics = len(data["qor_metrics"]) if code == "QOR" else 0
+    return (rank, -metrics, name)
 
 
-def first_error(errors):
+def last_error(errors):
     """Short form of the last error: the one most likely to stop the flow."""
     source, text = errors[-1]
     more = f" (+{len(errors) - 1} more)" if len(errors) > 1 else ""
@@ -274,12 +273,12 @@ def row_reason(data):
     code = row_code(data)
     if code == "STOP":
         if data["log_errors"]:
-            return first_error(data["log_errors"])
+            return last_error(data["log_errors"])
         if not data["last_log"]:
             return "no log file found"
         return f"{data['last_log']}: {data['cause'] or 'no error message'}"
     if code == "ERR":
-        return first_error(data["log_errors"])
+        return last_error(data["log_errors"])
     if code == "DRC":
         return f"Calibre: {len(data['calibre_errors'])} error(s)"
     if code == "QOR":
@@ -349,8 +348,12 @@ def qor_table(metrics):
     return lines
 
 
-def gen_report(name, data, shared_baseline=None):
-    """Detail block for one design. Empty for a passing design without notes."""
+def gen_report(name, data, shared_baseline=None, with_notes=True):
+    """
+    Detail block for one design. Empty for a passing design without notes.
+    with_notes=False leaves out the notes of a passing design, for a summary
+    that already shows them under "Needs attention".
+    """
     verbose = args.verbose
     if data["status"] == STATUS_GREEN and not data["notes"] and verbose < 2:
         return ""
@@ -383,7 +386,8 @@ def gen_report(name, data, shared_baseline=None):
         body += message_lines(warnings, REGEX_WARNING, verbose >= 3)
 
     if data["status"] == STATUS_GREEN:
-        lines = [f"{name}: {note}" for note in data["notes"]] or [f"{name}: passed"]
+        notes = data["notes"] if with_notes else []
+        lines = [f"{name}: {note}" for note in notes] or [f"{name}: passed"]
     else:
         lines = [f"{name}: {headline(data)}"]
     lines += [f"    {line}" for line in body]
@@ -426,6 +430,7 @@ def summary_header(designs):
             )
         )
     regressed = Counter(name for d in failing for name in qor_names(d))
+    # A metric in one design only repeats its table row, so list shared ones.
     common = [(name, n) for name, n in regressed.most_common(3) if n > 1]
     if common:
         lines.append(
@@ -490,7 +495,7 @@ def write_summary():
         summary += attention_section(noted)
     if args.verbose >= 2:
         passing = [(n, d) for n, d in rows if d["status"] == STATUS_GREEN]
-        details = [gen_report(n, d) for n, d in passing]
+        details = [gen_report(n, d, with_notes=False) for n, d in passing]
         if passing:
             summary += "\n" + section(f"PASSING ({len(passing)})")
             summary += "\n".join(details) + "\n"
