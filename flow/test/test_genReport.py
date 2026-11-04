@@ -84,25 +84,28 @@ class TestReportCollection(unittest.TestCase):
         with open(os.path.join(self.tmp, "reports/report-summary.log")) as f:
             return f.read()
 
+    def finished(self, pdv, check=""):
+        """A run that reached the last stage, with its metadata and DRC reports."""
+        self.write_file(f"logs/{pdv}/6_report.log", "Finished\n")
+        self.write_file(f"reports/{pdv}/metadata-generate.log", "")
+        self.write_file(f"reports/{pdv}/metadata-check.log", check)
+        self.write_file(f"reports/{pdv}/5_route_drc.rpt", "")
+
     def test_summary_includes_make_failure_before_the_first_stage(self):
         result = self.run_helper()
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertRegex(result.stdout, r"No rule to make target .missing\.v.")
-        for platform in ("nangate45", "ihp-sg13g2"):
-            self.write_file(f"logs/{platform}/gcd/base/6_report.log", "Finished\n")
-            self.write_file(f"reports/{platform}/gcd/base/metadata-check.log", "")
-        self.write_file(
-            "reports/nangate45/gcd/base/metadata-check.log",
-            "[ERROR] nangate45/gcd/base: FAIL\n",
-        )
+        self.finished("ihp-sg13g2/gcd/base")
+        self.finished("nangate45/gcd/base", "[ERROR] nangate45/gcd/base: FAIL\n")
 
         summary = self.summary()
 
-        self.assertIn("Number of designs: 3", summary)
-        self.assertIn("nangate45 gcd (base)", summary)
-        self.assertIn("sky130hd gcd (base)\n  Flow did not reach last stage.", summary)
+        self.assertIn("SUMMARY: 3 designs, 2 failing, 1 passing", summary)
+        self.assertIn("QOR   nangate45/gcd/base", summary)
+        self.assertIn("STOP  sky130hd/gcd/base", summary)
+        self.assertIn("sky130hd/gcd/base: stopped in 0_make.log", summary)
         self.assertRegex(summary, r"No rule to make target .missing\.v.")
-        self.assertNotIn("ihp-sg13g2 gcd (base)", summary)
+        self.assertNotIn("ihp-sg13g2/gcd/base", summary)
 
     def test_early_failure_uses_the_configured_variant_and_design_nickname(self):
         self.write_file(
@@ -111,10 +114,7 @@ class TestReportCollection(unittest.TestCase):
         )
         result = self.run_helper()
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-        self.assertIn(
-            "sky130hd gcd_alias (alternate)\n  Flow did not reach last stage.",
-            self.summary(),
-        )
+        self.assertIn("STOP  sky130hd/gcd_alias/alternate", self.summary())
 
     def test_successful_rerun_does_not_keep_the_early_failure(self):
         result = self.run_helper()
@@ -122,143 +122,140 @@ class TestReportCollection(unittest.TestCase):
         self.write_file("missing.v", "")
         result = self.run_helper()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        summary = self.summary()
-        self.assertIn("Number of designs: 1", summary)
-        self.assertNotIn("Failing designs", summary)
+        self.assertIn("SUMMARY: 1 design, 0 failing, 1 passing", self.summary())
 
     def test_finish_log_is_recognized_with_a_later_auxiliary_log(self):
-        self.write_file("logs/sky130hd/gcd/base/6_report.log", "Finished\n")
+        self.finished("sky130hd/gcd/base")
         self.write_file("logs/sky130hd/gcd/base/6_write_rc.log", "RC values\n")
-        summary = self.summary()
-        self.assertIn("Number of designs: 1", summary)
-        self.assertNotIn("Failing designs", summary)
+        self.assertIn("SUMMARY: 1 design, 0 failing, 1 passing", self.summary())
 
     def test_empty_log_directory_is_reported_as_incomplete(self):
         os.makedirs(os.path.join(self.tmp, "logs/sky130hd/gcd/base"))
         summary = self.summary()
-        self.assertIn("Number of designs: 1", summary)
-        self.assertIn("sky130hd gcd (base)\n  Flow did not reach last stage.", summary)
-        self.assertIn("No log file found.", summary)
+        self.assertIn("STOP  sky130hd/gcd/base  no log file found", summary)
+        self.assertIn(
+            "sky130hd/gcd/base: flow did not reach last stage, no log file found",
+            summary,
+        )
 
     def test_dashboard_verdict_reaches_the_summary(self):
-        self.write_file("logs/nangate45/gcd/base/6_report.log", "Finished\n")
-        self.write_file(
-            "reports/nangate45/gcd/base/metadata-check.log",
+        self.finished(
+            "nangate45/gcd/base",
             "[ERROR] Dashboard QoR check: FAIL (nangate45/gcd/base)\n"
             "QoR regression detected for nangate45/gcd/base:\n"
             "  finish__timing__setup__tns -12.0 (base -6.0, limit -8.0)\n"
             "  Baseline: https://dashboard.example/builds/7\n",
         )
         summary = self.summary()
-        self.assertIn("Failing designs", summary)
-        self.assertIn("nangate45 gcd (base)", summary)
-        self.assertIn("finish__timing__setup__tns -12.0", summary)
-        self.assertIn("limit -8.0", summary)
-        self.assertIn("https://dashboard.example/builds/7", summary)
+        self.assertIn("QoR regression 1", summary)
+        self.assertIn("QoR baseline: https://dashboard.example/builds/7", summary)
+        self.assertIn("QOR   nangate45/gcd/base  finish__timing__setup__tns", summary)
+        self.assertIn("nangate45/gcd/base: 1 metric over the limit", summary)
+        self.assertRegex(summary, r"finish__timing__setup__tns +-12\.0 +-6\.0 +-8\.0")
 
-
-class TestGenReport(unittest.TestCase):
-    def test_incomplete_flow_reports_that_it_did_not_reach_last_stage(self):
-        name = "nangate45 gcd (base)"
-        data = {
-            "status": genReport.STATUS_RED,
-            "finished": False,
-            "last_log": "5_route.log",
-            "log_errors": [],
-            "metrics_logs_errors": [],
-            "metrics_errors": [],
-            "metrics_regressions": [],
-            "calibre_errors": [],
-            "drcs": {},
-        }
-
-        report = genReport.gen_report(name, data)
-
-        self.assertEqual(
-            report,
-            "\n".join(
-                [
-                    name,
-                    "  Flow did not reach last stage.",
-                    "  Last log file 5_route.log",
-                ]
-            ),
+    def test_failures_are_ordered_by_criticality(self):
+        self.finished(
+            "asap7/a_one_metric/base",
+            "[ERROR] Dashboard QoR check: FAIL (asap7/a_one_metric/base)\n"
+            "QoR regression detected for asap7/a_one_metric/base:\n"
+            "  m1 2 (base 1, limit 1.5)\n",
+        )
+        self.finished(
+            "asap7/b_two_metrics/base",
+            "[ERROR] Dashboard QoR check: FAIL (asap7/b_two_metrics/base)\n"
+            "QoR regression detected for asap7/b_two_metrics/base:\n"
+            "  m1 2 (base 1, limit 1.5)\n"
+            "  m2 2 (base 1, limit 1.5)\n",
+        )
+        self.finished("asap7/c_calibre/base")
+        self.write_file(
+            "logs/asap7/c_calibre/base/calibre/save-to-drc-db.log",
+            "[ERROR DRC-0001] violations\n",
+        )
+        self.finished("asap7/d_error/base")
+        self.write_file("logs/asap7/d_error/base/5_1_grt.log", "[ERROR GRT-0116] x\n")
+        self.write_file(
+            "logs/asap7/e_killed/base/5_2_route.log",
+            "Command terminated by signal 9\n",
+        )
+        self.finished(
+            "asap7/f_inconclusive/base",
+            "Dashboard QoR check: INCONCLUSIVE (asap7/f_inconclusive/base)\n"
+            "Reason: no baseline\n",
         )
 
-    def test_parse_qor_regressions_omits_the_optional_heading(self):
-        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8") as log:
-            log.write("Ignored UTF-8 text: µ\n")
-            log.write(
-                "QoR regression detected for nangate45/gcd:\n"
-                "  cts__timing__setup__tns -12.2456 "
-                "(base -6.95522, limit -8.346264)\n"
-            )
-            log.flush()
+        summary = self.summary()
 
-            self.assertEqual(
-                genReport.parse_qor_regressions(log.name),
-                [
-                    "cts__timing__setup__tns -12.2456 "
-                    "(base -6.95522, limit -8.346264)"
-                ],
-            )
-
-    def test_qor_metrics_are_nested_under_the_failing_run(self):
-        name = "nangate45 gcd (base)"
-        data = {
-            "status": genReport.STATUS_RED,
-            "finished": True,
-            "last_log": "",
-            "log_errors": [],
-            "metrics_logs_errors": [],
-            "metrics_errors": [
-                "[ERROR] nangate45/gcd/base: FAIL — 19 passed, 6 failed, "
-                "0 missing (478 metrics sent)",
-                "[ERROR] Failing runs: nangate45/gcd/base",
-            ],
-            "metrics_regressions": [
-                "cts__timing__setup__tns -12.2456 " "(base -6.95522, limit -8.346264)",
-                "cts__timing__setup__ws -0.261172 " "(base -0.156758, limit -0.169258)",
-                "finish__timing__setup__tns -12.4146 "
-                "(base -7.19445, limit -8.63334)",
-                "finish__timing__setup__ws -0.271991 "
-                "(base -0.163541, limit -0.176041)",
-                "globalroute__timing__setup__tns -12.7365 "
-                "(base -7.5407, limit -9.04884)",
-                "globalroute__timing__setup__ws -0.275208 "
-                "(base -0.171167, limit -0.183667)",
-            ],
-            "calibre_errors": [],
-            "drcs": {},
-        }
-
-        report = genReport.gen_report(name, data)
-
+        codes = [
+            line.split()[:2]
+            for line in summary.split("-" * 60)[0].splitlines()
+            if line.split()[:1] in (["STOP"], ["ERR"], ["DRC"], ["QOR"], ["WARN"])
+        ]
         self.assertEqual(
-            report,
-            "\n".join(
-                [
-                    name,
-                    "  Flow reached last stage.",
-                    "  Found 2 metrics failures.",
-                    "      [ERROR] nangate45/gcd/base: FAIL — 19 passed, 6 failed, "
-                    "0 missing (478 metrics sent)",
-                    "          cts__timing__setup__tns -12.2456 "
-                    "(base -6.95522, limit -8.346264)",
-                    "          cts__timing__setup__ws -0.261172 "
-                    "(base -0.156758, limit -0.169258)",
-                    "          finish__timing__setup__tns -12.4146 "
-                    "(base -7.19445, limit -8.63334)",
-                    "          finish__timing__setup__ws -0.271991 "
-                    "(base -0.163541, limit -0.176041)",
-                    "          globalroute__timing__setup__tns -12.7365 "
-                    "(base -7.5407, limit -9.04884)",
-                    "          globalroute__timing__setup__ws -0.275208 "
-                    "(base -0.171167, limit -0.183667)",
-                    "      [ERROR] Failing runs: nangate45/gcd/base",
-                ]
-            ),
+            codes,
+            [
+                ["STOP", "asap7/e_killed/base"],
+                ["ERR", "asap7/d_error/base"],
+                ["DRC", "asap7/c_calibre/base"],
+                ["QOR", "asap7/b_two_metrics/base"],
+                ["QOR", "asap7/a_one_metric/base"],
+                ["WARN", "asap7/f_inconclusive/base"],
+            ],
         )
+        self.assertIn("5_2_route.log: killed by signal 9 (out of memory?)", summary)
+        self.assertIn("5_1_grt.log: [ERROR GRT-0116] x", summary)
+        self.assertIn(
+            "asap7/f_inconclusive/base: QoR check INCONCLUSIVE: no baseline", summary
+        )
+
+    def test_missing_metadata_is_grouped_under_needs_attention(self):
+        for name in ("a", "b"):
+            self.write_file(f"logs/asap7/{name}/base/6_report.log", "Finished\n")
+            self.write_file(f"reports/asap7/{name}/base/5_route_drc.rpt", "")
+        summary = self.summary()
+        self.assertIn(
+            "missing metadata-generate.log, metadata-check.log (2 designs):\n"
+            "    asap7/a/base, asap7/b/base\n",
+            summary,
+        )
+
+
+class TestParseQorCheck(unittest.TestCase):
+    def test_ci_format(self):
+        metrics, baseline, notes = genReport.parse_qor_check(
+            [
+                "[ERROR] Dashboard QoR check: FAIL (nangate45/gcd/base)\n",
+                "QoR regression detected for nangate45/gcd/base:\n",
+                "  cts__timing__setup__tns -12.2456 (base -6.95522, limit -8.346264)\n",
+                "  Baseline: https://dashboard.example/builds/7\n",
+            ]
+        )
+        self.assertEqual(
+            metrics, [("cts__timing__setup__tns", "-12.2456", "-6.95522", "-8.346264")]
+        )
+        self.assertEqual(baseline, "https://dashboard.example/builds/7")
+        self.assertEqual(notes, [])
+
+    def test_local_check_warnings_become_notes(self):
+        _, _, notes = genReport.parse_qor_check(
+            [
+                "[WARN] nangate45/gcd/base: no baseline to compare against "
+                "(strategy=none). Nothing was checked.\n",
+                "QoR check: INCONCLUSIVE\n",
+            ]
+        )
+        self.assertEqual(
+            notes,
+            [
+                "QoR: no baseline to compare against (strategy=none). Nothing was checked."
+            ],
+        )
+
+    def test_unknown_metric_line_is_kept_verbatim(self):
+        metrics, _, _ = genReport.parse_qor_check(
+            ["QoR regression detected for x/y/z:\n", "  odd line\n"]
+        )
+        self.assertEqual(metrics, [("odd line",)])
 
 
 if __name__ == "__main__":
