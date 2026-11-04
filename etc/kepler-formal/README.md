@@ -28,8 +28,3 @@ URL, the checksum and the build file of each version:
 | `gcc-toolset-13` on EL8, because GCC 8 is too old | A pinned clang is downloaded on x86-64 Linux; elsewhere the host compiler is used |
 | `tools/kepler-formal` and the submodules inside it | The version in `MODULE.bazel`; sources are checked against their checksums and cached in `~/.cache/bazel` |
 | An RPATH that points at the install's `lib/` | The binary finds its libraries next to itself, in `bin/kepler-formal.runfiles/` |
-
-## What goes away as upstream merges
-
-1. When kepler-formal registers its compiler for modules that depend on
-   it: delete the toolchain lines in `MODULE.bazel`.
