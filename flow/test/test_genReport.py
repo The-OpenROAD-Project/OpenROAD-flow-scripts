@@ -274,7 +274,7 @@ class TestReportCollection(unittest.TestCase):
             "asap7/pass/base: passed\n    2_1_floorplan.log: IFP-0028", passing
         )
         # The note of a WARN design shows under "Needs attention" only.
-        self.assertIn("asap7/warn/base: passed\n", passing)
+        self.assertIn("asap7/warn/base: passed, see NEEDS ATTENTION\n", passing)
         self.assertNotIn("no baseline", passing)
         self.assertIn("    3_3_place_gp.log: GPL-0302", summary)
 
@@ -351,6 +351,27 @@ class TestReportCollection(unittest.TestCase):
             "asap7/a/base: metadata-generate.log: [ERROR] bad metric\n", summary
         )
 
+    def test_failing_runs_line_alone_still_fails_the_design(self):
+        self.finished(
+            "nangate45/gcd/base",
+            "[INFO] nangate45/gcd/base: FAIL\n"
+            "[ERROR] Failing runs: nangate45/gcd/base\n",
+        )
+        summary = self.summary()
+        self.assertIn("QOR   nangate45/gcd/base  [ERROR] Failing runs:", summary)
+
+    def test_metadata_generation_error_of_a_passing_design_prints_once(self):
+        self.finished("asap7/a/base")
+        self.write_file(
+            "reports/asap7/a/base/metadata-generate.log", "[ERROR] bad metric\n"
+        )
+        self.run_report("-v")
+        report = self.read("reports/asap7/a/base/report.log")
+        self.assertEqual(report.count("bad metric"), 1, report)
+        self.assertEqual(
+            self.summary("-svv").split("PASSING")[1].count("bad metric"), 0
+        )
+
     def test_log_that_is_not_utf8_is_read(self):
         path = os.path.join(self.tmp, "logs/asap7/a/base/1_1_yosys.log")
         os.makedirs(os.path.dirname(path))
@@ -391,15 +412,25 @@ class TestParseQorCheck(unittest.TestCase):
         )
 
     def test_reason_is_kept_only_for_a_check_without_a_verdict(self):
-        for status in ("PASS", "FAIL"):
+        # The CI check writes these lines; only FAIL has the [ERROR] prefix.
+        for verdict in (
+            "Dashboard QoR check: PASS",
+            "[ERROR] Dashboard QoR check: FAIL",
+        ):
             _, _, notes = genReport.parse_qor_check(
-                [f"Dashboard QoR check: {status} (a/b/c)\n", "Reason: text\n"]
+                [f"{verdict} (a/b/c)\n", "Reason: text\n"]
             )
-            self.assertEqual(notes, [], status)
+            self.assertEqual(notes, [], verdict)
         _, _, notes = genReport.parse_qor_check(
-            ["Dashboard QoR check: INCONCLUSIVE (a/b/c)\n", "Reason: no data\n"]
+            [
+                "Dashboard QoR check: INCONCLUSIVE (a/b/c)\n",
+                "[WARN] a/b/c: other\n",
+                "Reason: no data\n",
+                "[ERROR] Dashboard QoR check: FAIL (a/b/d)\n",
+                "Reason: ignored\n",
+            ]
         )
-        self.assertEqual(notes, ["QoR check INCONCLUSIVE: no data"])
+        self.assertEqual(notes, ["QoR check INCONCLUSIVE: no data", "QoR: other"])
 
     def test_unknown_metric_line_is_kept_verbatim(self):
         metrics, _, _ = genReport.parse_qor_check(
