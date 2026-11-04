@@ -42,12 +42,19 @@ You can start the container in an interactive mode using
 the command below.
 
 ```shell
-docker run -it ubuntu:22.04
+docker run -it ubuntu:26.04
 ```
 
 Now you are ready to install the prebuilt binaries.
 Please refer to the instructions for installing prebuilt binaries
 [here](./BuildWithPrebuilt.md).
+
+The root `Dockerfile` assembles a runtime image from the published Ubuntu 26.04 development image, flow tools, and OpenROAD installation.
+Build it without compiling the tools:
+
+```shell
+docker build -t openroad/orfs-local .
+```
 
 ### Build Using Docker from sources
 
@@ -85,7 +92,7 @@ Then, inside docker:
 ``` shell
 source ./env.sh
 yosys -help
-yosys -m slang -p "slang_version"
+yosys -p "slang_version"
 openroad -help
 cd flow
 make

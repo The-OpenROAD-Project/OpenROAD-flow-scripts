@@ -116,7 +116,7 @@ The setup consists of three files:
 
 ### `docker/Dockerfile.claude`
 
-Extends the `openroad/flow-ubuntu22.04-dev` base image (which has all
+Extends the `openroad/flow-ubuntu26.04-dev` base image (which has all
 OpenROAD build dependencies) with:
 
 - Java 21 and Bazelisk (for Bazel 8.x builds)

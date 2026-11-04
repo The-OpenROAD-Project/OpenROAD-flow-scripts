@@ -5,7 +5,7 @@
 # NOTE: don't use this file directly unless you know what you are doing,
 # instead use etc/DockerHelper.sh
 
-ARG fromImage=openroad/flow-ubuntu22.04-dev:latest
+ARG fromImage=openroad/flow-ubuntu26.04-dev:latest
 # Image holding the prebuilt tools/install of every tool except OpenROAD
 # (a build of the orfs-tools target). By default they are built here.
 ARG toolsImage=orfs-tools
