@@ -31,9 +31,5 @@ URL, the checksum and the build file of each version:
 
 ## What goes away as upstream merges
 
-1. When a registry version of kepler-formal has the install target
-   (keplertech/kepler-formal#292, after
-   bazelbuild/bazel-central-registry#11201): delete the `git_override` in
-   `MODULE.bazel` and move the version to it.
-2. When kepler-formal registers its compiler for modules that depend on
+1. When kepler-formal registers its compiler for modules that depend on
    it: delete the toolchain lines in `MODULE.bazel`.
