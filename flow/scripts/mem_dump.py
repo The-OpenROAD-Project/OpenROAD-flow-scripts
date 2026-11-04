@@ -69,15 +69,21 @@ def format_ram_table_from_json(data, max_bits=None):
             instance_bits = size * width
             bits = instance_bits * len(instances)
 
-            entries.append((size, width, bits, module_name, ", ".join(instances)))
+            # A ROM has no write port: its contents are constants that
+            # synthesis maps to logic, so it is not storage a RAM would
+            # replace and SYNTH_MEMORY_MAX_BITS does not apply to it.
+            rom = int(parameters["WR_PORTS"], 2) == 0
 
-            if max_bits is not None and instance_bits > max_bits:
+            entries.append((size, width, bits, module_name, ", ".join(instances), rom))
+
+            if max_bits is not None and instance_bits > max_bits and not rom:
                 max_ok = False
 
     entries.sort(key=lambda x: x[2], reverse=True)
 
-    for entry in entries:
-        table += formatting.format(*entry)
+    for size, width, bits, module, instances, rom in entries:
+        kind = "ROM " if rom else ""
+        table += formatting.format(size, width, bits, kind + module, instances)
 
     # ---- Summary statistics ----
     total_bits = sum(e[2] for e in entries)
@@ -85,7 +91,7 @@ def format_ram_table_from_json(data, max_bits=None):
     largest_instance_bits = 0
     largest_instance_module = None
 
-    for size, width, _, module, _ in entries:
+    for size, width, _, module, _, _ in entries:
         instance_bits = size * width
         if instance_bits > largest_instance_bits:
             largest_instance_bits = instance_bits
