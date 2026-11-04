@@ -27,7 +27,7 @@ REGEX_SIGNAL = re.compile(r"\bsignal (\d+)|\bKilled\b")
 # Metric line under "QoR regression detected for ...":
 #   <metric> <current> (base <base>, limit <limit>)
 REGEX_QOR_METRIC = re.compile(r"^(\S+) (\S+) \(base (\S+), limit (\S+)\)$")
-REGEX_QOR_STATUS = re.compile(r"^Dashboard QoR check: (\w+)")
+REGEX_QOR_STATUS = re.compile(r"^(?:\[ERROR\] )?Dashboard QoR check: (\w+)")
 # checkQorMetrics.py starts its lines with the run identity.
 REGEX_RUN_PREFIX = re.compile(r"^[^\s/]+/[^\s/]+/[^\s/:]+: ")
 SKIPPED_FLOW_VARIANT_KEYWORDS = ["test", "tune"]
@@ -116,7 +116,7 @@ def parse_qor_check(lines):
     baseline = None
     notes = []
     in_regressions = False
-    no_verdict = False
+    status_note = None  # index of the note for a check without a verdict
     for line in lines or []:
         text = line.strip()
         if line.startswith("QoR regression detected for "):
@@ -132,11 +132,12 @@ def parse_qor_check(lines):
         in_regressions = False
         status = REGEX_QOR_STATUS.match(text)
         if status:
-            no_verdict = status.group(1) not in ("PASS", "FAIL")
-            if no_verdict:
+            status_note = None
+            if status.group(1) not in ("PASS", "FAIL"):
+                status_note = len(notes)
                 notes.append(f"QoR check {status.group(1)}")
-        elif text.startswith("Reason: ") and no_verdict:
-            notes[-1] += f": {text.split(' ', 1)[1]}"
+        elif text.startswith("Reason: ") and status_note is not None:
+            notes[status_note] += f": {text.split(' ', 1)[1]}"
         elif text.startswith("[WARN] "):
             message = REGEX_RUN_PREFIX.sub("", text[len("[WARN] ") :])
             notes.append(f"QoR: {message}")
@@ -182,11 +183,7 @@ def collect(log_dir, files, report_dir):
     lines = read_lines(os.path.join(report_dir, METRICS_CHECK_LOG))
     if lines is None and d["finished"]:
         missing.append(METRICS_CHECK_LOG)
-    errors, _ = parse_messages(lines, METRICS_CHECK_LOG)
-    # checkQorMetrics.py repeats the failing runs in a trailing line.
-    d["metrics_errors"] = [
-        e for e in errors if not e[1].startswith("[ERROR] Failing runs:")
-    ]
+    d["metrics_errors"], _ = parse_messages(lines, METRICS_CHECK_LOG)
     d["qor_metrics"], d["qor_baseline"], qor_notes = parse_qor_check(lines)
 
     d["calibre_errors"], d["calibre_warnings"] = parse_messages(
@@ -238,6 +235,16 @@ def collect(log_dir, files, report_dir):
     return d
 
 
+def qor_error_lines(data):
+    """
+    QoR check [ERROR] lines to show. checkQorMetrics.py repeats the failing
+    runs in a trailing line, so hide it unless it is the only one.
+    """
+    texts = [text for _, text in data["metrics_errors"]]
+    shown = [t for t in texts if not t.startswith("[ERROR] Failing runs:")]
+    return shown or texts
+
+
 def format_drcs(drcs):
     return ", ".join(f"{name} ({count})" for name, count in drcs.items())
 
@@ -284,7 +291,7 @@ def row_reason(data):
     if code == "QOR":
         names = qor_names(data)
         if not names:
-            return message_id(data["metrics_errors"][0][1], REGEX_ERROR)
+            return message_id(qor_error_lines(data)[0], REGEX_ERROR)
         if len(names) == 1:
             return names[0]
         return f"{len(names)} metrics: " + ", ".join(names)
@@ -364,13 +371,14 @@ def gen_report(name, data, shared_baseline=None, with_notes=True):
         body += [f"  {line}" for line in data["tail"]]
     full = verbose >= 1
     body += message_lines(data["log_errors"], REGEX_ERROR, full)
-    body += message_lines(data["metrics_logs_errors"], REGEX_ERROR, full)
+    if data["status"] == STATUS_RED:
+        body += message_lines(data["metrics_logs_errors"], REGEX_ERROR, full)
     body += message_lines(data["calibre_errors"], REGEX_ERROR, full)
     if data["metrics_errors"]:
         if data["qor_metrics"]:
             body += qor_table(data["qor_metrics"])
         else:
-            body += [text for _, text in data["metrics_errors"]]
+            body += qor_error_lines(data)
         if data["qor_baseline"] and data["qor_baseline"] != shared_baseline:
             body.append(f"Baseline: {data['qor_baseline']}")
     if data["drcs"] and data["status"] == STATUS_RED:
@@ -386,8 +394,11 @@ def gen_report(name, data, shared_baseline=None, with_notes=True):
         body += message_lines(warnings, REGEX_WARNING, verbose >= 3)
 
     if data["status"] == STATUS_GREEN:
-        notes = data["notes"] if with_notes else []
-        lines = [f"{name}: {note}" for note in notes] or [f"{name}: passed"]
+        if with_notes:
+            lines = [f"{name}: {note}" for note in data["notes"]]
+        else:
+            lines = [f"{name}: passed, see NEEDS ATTENTION"] if data["notes"] else []
+        lines = lines or [f"{name}: passed"]
     else:
         lines = [f"{name}: {headline(data)}"]
     lines += [f"    {line}" for line in body]
