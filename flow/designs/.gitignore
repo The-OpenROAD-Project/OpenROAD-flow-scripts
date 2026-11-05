@@ -1,2 +1,3 @@
 # Ignore the rapidus2hp symlink (leading slash anchors to this directory, no trailing slash to match symlink)
 /rapidus2hp
+/rapidusc18
