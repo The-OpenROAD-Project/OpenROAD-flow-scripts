@@ -306,7 +306,8 @@ do-binary-libs:
 	mv $(LOG_DIR)/write_binary_libs.tmp.log $(LOG_DIR)/write_binary_libs.log
 
 # do-binary-libs renames its log into place only when it succeeds, so a
-# failed conversion runs again.
+# failed conversion runs again. clean_all and clean_binary_libs delete the
+# log with the cache it records, so the next make fills the cache again.
 $(LOG_DIR)/write_binary_libs.log: $(LIB_FILES) \
   $(foreach corner,$(shell echo $(CORNERS) | tr '[:lower:]' '[:upper:]'),$($(corner)_LIB_FILES))
 	$(UNSET_AND_MAKE) do-binary-libs
@@ -317,6 +318,7 @@ $(RESULTS_DIR)/1_synth.odb: | $(LOG_DIR)/write_binary_libs.log
 .PHONY: clean_binary_libs
 clean_binary_libs:
 	rm -rf $(WORK_HOME)/objects/binary_libs
+	rm -f $(LOG_DIR)/write_binary_libs.log
 
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
@@ -878,6 +880,7 @@ clean:
 .PHONY: clean_all
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_metadata clean_abstract
 	rm -rf $(OBJECTS_DIR)
+	rm -f $(LOG_DIR)/write_binary_libs*.log
 
 .PHONY: nuke
 nuke: clean_test clean_issues
