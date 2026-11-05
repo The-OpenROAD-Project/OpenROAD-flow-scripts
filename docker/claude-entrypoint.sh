@@ -16,7 +16,6 @@ if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
 
     # Create user (reuse existing if UID is taken)
     if ! getent passwd "${HOST_UID}" > /dev/null 2>&1; then
-        mkdir -p "${USER_HOME}"
         useradd \
             --uid "${HOST_UID}" \
             --gid "${HOST_GID}" \
@@ -27,13 +26,13 @@ if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
             "${USER_NAME}"
     else
         USER_NAME=$(getent passwd "${HOST_UID}" | cut -d: -f1)
-        USER_HOME=$(getent passwd "${HOST_UID}" | cut -d: -f6)
     fi
 
     # Passwordless sudo
     echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/claude-user
     chmod 0440 /etc/sudoers.d/claude-user
 
+    mkdir -p "${USER_HOME}"
     export HOME="${USER_HOME}"
     chown "${HOST_UID}:${HOST_GID}" "${USER_HOME}"
     touch "${USER_HOME}/.hushlogin"
