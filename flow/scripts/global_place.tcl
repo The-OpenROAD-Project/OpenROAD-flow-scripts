@@ -57,6 +57,7 @@ if { $place_ios } {
   lappend global_placement_args -place_ios
 }
 
+global_placement_debug -pause 100 -update 100
 proc do_placement { global_placement_args } {
   set all_args [concat [list -density [place_density_with_lb_addon] \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
