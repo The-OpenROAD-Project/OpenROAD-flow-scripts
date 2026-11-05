@@ -135,7 +135,7 @@ correct ownership on the host. The entrypoint:
 2. Sources `env.sh` to set up tool paths
 3. Drops privileges via `setpriv` before running the command
 
-The mapped user always uses `/home/claude-user` as `HOME`.
+The mapped user's account record and `HOME` both use `/home/claude-user`.
 This keeps the settings and cache mounts visible when the base image already has an account with the host UID.
 
 Run the entrypoint regression check in disposable containers:
@@ -152,6 +152,7 @@ CONTAINER_ENGINE=podman bash docker/test-claude-entrypoint.sh
 
 The check covers an existing UID and a new UID.
 It verifies that the launched command can read and write fixture settings through `HOME`.
+It also checks that the account's recorded home matches `HOME`.
 
 ### `claude.sh`
 
