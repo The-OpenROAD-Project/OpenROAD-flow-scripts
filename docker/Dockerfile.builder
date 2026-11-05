@@ -110,6 +110,7 @@ COPY --link flow/util flow/util
 COPY --link flow/scripts flow/scripts
 COPY --link flow/designs flow/designs
 COPY --link tools/AutoTuner tools/AutoTuner
+COPY --link tools/FakeRAM2.0 tools/FakeRAM2.0
 
 COPY --link --from=orfs-openroad-builder /OpenROAD-flow-scripts/tools/install tools/install
 COPY --link \

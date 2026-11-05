@@ -264,6 +264,13 @@ SYNTH_MEMORY_MAX_BITS:
     To temporarily ignore the RAM concerns and investigate other
     aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`,
     or adjusting `SYNTH_MEMORY_MAX_BITS`.
+    ROMs, inferred memories with no write port, are not counted: a ROM
+    holds constants that synthesis maps to logic like any other, and it
+    goes through the normal flow. The limit is there so that a
+    read/write memory, which belongs in a macro (`AUTO_MEMORIES`,
+    fakeram) or a mock, does not go undetected into flip-flops; raising
+    it to admit a large ROM would let read/write memories of that size
+    through too.
   default: 4096
   stages:
     - synth
@@ -858,6 +865,17 @@ SETUP_MOVE_SEQUENCE:
     - cts
     - floorplan
     - grt
+SETUP_REPAIR_PHASES:
+  description: >
+    Passed as -phases to repair_timing. This should be a string of setup
+    repair phase names separated by spaces. Set to PARALLEL_EVAL to repair
+    setup timing with the experimental parallel evaluation policy. When
+    unset, repair_timing runs its default phases.
+  stages:
+    - cts
+    - floorplan
+    - grt
+    - place
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use
@@ -1103,6 +1121,7 @@ DFF_LIB_FILE:
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
+    A name that matches no module of the design stops synthesis.
   stages:
     - synth
 SYNTH_ARGS:
@@ -1730,3 +1749,18 @@ GRT_SEED:
     - grt
   tunable: 1
   type: int
+SAIF_FILE:
+  description: >
+    Specifies the Switching Activity Interchange Format (SAIF) file containing pin
+    activities and duty cycles for use in power calculation.
+  type: string
+POWER_FILE_SCOPE:
+  description: >
+    The SAIF or VCD scope of the current design. Typically the test bench name and
+    design under the test instance name. Scope levels are separated with '/'.
+  type: string
+VCD_FILE:
+  description: >
+    Specifies the Value Change Dump (VCD) file containing pin activities and duty
+    cycles for use in power calculation.
+  type: string
