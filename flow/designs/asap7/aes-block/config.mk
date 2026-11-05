@@ -6,11 +6,19 @@ export DESIGN_NICKNAME        = aes-block
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/aes/*.v))
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
+export SYNTH_HDL_FRONTEND     = slang
+# ignore unsynthesizable timing controls (the sources' #1 delays)
+export SYNTH_SLANG_ARGS += --ignore-timing
+
 export ABC_AREA               = 1
 
-export CORE_UTILIZATION       = 47
-export CORE_ASPECT_RATIO      = 1
-export CORE_MARGIN            = 2
+# aes-block is the smoke test of BLOCKS: hierarchical synthesis, two
+# hardened blocks, and their macros placed in the parent. It is not a
+# test of macro placement or of utilization. The die is fixed, with
+# headroom, so that changes in synthesis or OpenROAD do not move this
+# design onto the edge of what macro placement can pack.
+export DIE_AREA               = 0 0 113.801 113.801
+export CORE_AREA              = 2.052 2.160 111.780 111.780
 
 export BLOCKS ?= aes_rcon aes_sbox
 export SYNTH_HIERARCHICAL = 1
