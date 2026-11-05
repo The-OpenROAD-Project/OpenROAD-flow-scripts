@@ -7,6 +7,11 @@ if [[ "${1:-}" == --assert ]]; then
         exit 1
     fi
     test "$(id -u)" = "$2"
+    account_home=$(getent passwd "$2" | cut -d: -f6)
+    if [[ "${account_home}" != "${HOME}" ]]; then
+        echo "Account home=${account_home}, HOME=${HOME}" >&2
+        exit 1
+    fi
     test "$(cat "${HOME}/.claude/settings.json")" = fixture
     echo updated > "${HOME}/.claude/settings.json"
     echo "UID $2 reads and writes settings through HOME"

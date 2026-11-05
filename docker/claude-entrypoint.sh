@@ -26,6 +26,7 @@ if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
             "${USER_NAME}"
     else
         USER_NAME=$(getent passwd "${HOST_UID}" | cut -d: -f1)
+        usermod --home "${USER_HOME}" "${USER_NAME}"
     fi
 
     # Passwordless sudo
