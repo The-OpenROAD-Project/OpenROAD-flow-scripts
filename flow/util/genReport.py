@@ -299,13 +299,15 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
     # check if design ran to completion without errors or warnings
     d["log_errors"] = list()
     d["log_warnings"] = list()
-    d["last_log"] = ""
+    d["last_log"] = max(
+        (name for name in files if name.endswith(".log")),
+        key=lambda name: os.path.getmtime(os.path.join(log_dir, name)),
+        default="",
+    )
     for name_ in sorted(files):
         temp_e, temp_w = parse_messages(os.path.join(log_dir, name_))
         d["log_errors"] += temp_e
         d["log_warnings"] += temp_w
-        if name_.endswith(".log"):
-            d["last_log"] = name_
     d["finished"] = any(name in files for name in LAST_EXPECTED_LOG)
 
     # check if metrics generation had issues
