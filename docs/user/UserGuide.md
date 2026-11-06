@@ -6,8 +6,8 @@ The OpenROAD Project uses three tools to perform automated RTL-to-GDS layout gen
     Synthesis
 2.  [OpenROAD](https://github.com/The-OpenROAD-Project/OpenROAD):
     Floorplanning through Detailed Routing
-3.  [KLayout](https://www.klayout.de/): GDS merge, DRC and LVS (public
-    PDKs)
+3.  [KLayout](https://www.klayout.de/): GDS merge (its Python module),
+    DRC and LVS (public PDKs, the application)
 
 To automate RTL-to-GDS we provide
 [OpenROAD Flow](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts),
