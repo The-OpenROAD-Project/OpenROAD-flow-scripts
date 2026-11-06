@@ -74,7 +74,7 @@ export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
 
 # KLayout DRC ruledeck
-export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/asap7.lydrc
+export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/asap7_drc.py
 
 # OpenRCX extRules
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules

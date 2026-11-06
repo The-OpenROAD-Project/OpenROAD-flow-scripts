@@ -805,12 +805,17 @@ $(GDS_FINAL_FILE): $(GDS_MERGED_FILE)
 .PHONY: drc
 drc: $(REPORTS_DIR)/6_drc.lyrdb
 
-$(REPORTS_DIR)/6_drc.lyrdb: $(GDS_FINAL_FILE) $(KLAYOUT_DRC_FILE) | check-klayout
+$(REPORTS_DIR)/6_drc.lyrdb: $(GDS_FINAL_FILE) $(KLAYOUT_DRC_FILE) $(if $(filter %.py,$(KLAYOUT_DRC_FILE)),$(UTILS_DIR)/klayout_drc.py,| check-klayout)
 ifneq ($(KLAYOUT_DRC_FILE),)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_drc.log) --tee -- \
+	        $(if $(filter %.py,$(KLAYOUT_DRC_FILE)), \
+	        $(PYTHON_EXE) $(UTILS_DIR)/klayout_drc.py \
+	        --deck=$(KLAYOUT_DRC_FILE) \
+	        --in-gds=$< \
+	        --report-file=$(abspath $@), \
 	        $(SCRIPTS_DIR)/klayout.sh -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
-	        -r $(KLAYOUT_DRC_FILE)
+	        -r $(KLAYOUT_DRC_FILE))
 	# Hacky way of getting DRV count (don't error on no matches)
 	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt || [[ $$? == 1 ]]
 else
