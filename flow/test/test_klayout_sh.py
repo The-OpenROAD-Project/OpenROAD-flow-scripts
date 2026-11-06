@@ -49,7 +49,7 @@ class TestKlayoutSh(unittest.TestCase):
             "-rd",
             "report_file=6_drc.lyrdb",
             "-r",
-            "/flow/platforms/ihp-sg13g2/drc/sg13g2_maximal.lydrc",
+            "deck.lydrc",
         )
         self.assertEqual(result.returncode, 1)
         self.assertIn("Error: KLayout not found", result.stdout)
