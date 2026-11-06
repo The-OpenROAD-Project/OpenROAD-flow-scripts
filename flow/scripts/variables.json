@@ -1327,6 +1327,12 @@
       "synth"
     ]
   },
+  "SYNTH_BLACKBOXES_FILE": {
+    "description": "Path to a file with more modules to treat as black boxes, one name per line, added to SYNTH_BLACKBOXES. For a parallel synthesis whose list is too long for one environment variable: Linux caps one at 128 KiB.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "SYNTH_CANONICALIZE_TCL": {
     "description": "Specifies a Tcl script with commands to run as part of the synth canonicalize step.\n",
     "stages": [
