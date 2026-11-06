@@ -807,6 +807,7 @@ drc: $(REPORTS_DIR)/6_drc.lyrdb
 
 $(REPORTS_DIR)/6_drc.lyrdb: $(GDS_FINAL_FILE) $(KLAYOUT_DRC_FILE) $(if $(filter %.py,$(KLAYOUT_DRC_FILE)),$(UTILS_DIR)/klayout_drc.py,| check-klayout)
 ifneq ($(KLAYOUT_DRC_FILE),)
+	$(if $(filter %.py,$(KLAYOUT_DRC_FILE)),,@echo "WARNING: $(KLAYOUT_DRC_FILE) is a Ruby KLayout deck; Ruby decks are deprecated and need a KLayout application you install yourself, see docs/user/KLayoutPythonDecks.md")
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_drc.log) --tee -- \
 	        $(if $(filter %.py,$(KLAYOUT_DRC_FILE)), \
 	        $(PYTHON_EXE) $(UTILS_DIR)/klayout_drc.py \
@@ -833,6 +834,7 @@ lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
 $(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl $(if $(filter %.py,$(KLAYOUT_LVS_FILE)),$(UTILS_DIR)/klayout_lvs.py $(UTILS_DIR)/klayout_drc.py,| check-klayout)
 ifneq ($(KLAYOUT_LVS_FILE),)
+	$(if $(filter %.py,$(KLAYOUT_LVS_FILE)),,@echo "WARNING: $(KLAYOUT_LVS_FILE) is a Ruby KLayout deck; Ruby decks are deprecated and need a KLayout application you install yourself, see docs/user/KLayoutPythonDecks.md")
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_lvs.log) --tee -- \
 	        $(if $(filter %.py,$(KLAYOUT_LVS_FILE)), \
 	        $(PYTHON_EXE) $(UTILS_DIR)/klayout_lvs.py \
