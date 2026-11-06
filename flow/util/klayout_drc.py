@@ -85,6 +85,9 @@ acute_limit = _Option("size_mode", 3)
 no_limit = _Option("size_mode", 4)
 padding_zero = _Option("padding", "zero")
 padding_ignore = _Option("padding", "ignore")
+as_boxes = _Option("output_mode", "boxes")
+as_dots = _Option("output_mode", "dots")
+as_edges = _Option("output_mode", "edges")
 
 
 def tile_size(deck, x, y=None):
@@ -297,6 +300,18 @@ class Deck:
             r = cls(it, db.ICplxTrans(1.0))
         return Layer(self, r)
 
+    def extent(self, cell_filter):
+        """The bounding box of each cell the filter (a glob) matches, in
+        that cell, as the DRC language's extent(cell_filter)."""
+        tmp = self.layout.insert_layer(db.LayerInfo())
+        for cell in self.layout.cells(cell_filter):
+            cell.shapes(tmp).insert(cell.bbox())
+        it = db.RecursiveShapeIterator(self.layout, self.top, [tmp])
+        it.shape_flags = db.Shapes.SAll
+        if self.dss is not None:
+            return Layer(self, db.Region(it, self.dss, db.ICplxTrans(1.0)))
+        return Layer(self, db.Region(it, db.ICplxTrans(1.0)))
+
     def polygon_layer(self):
         return Layer(self, db.Region())
 
@@ -319,8 +334,10 @@ class Deck:
     def connect(self, a, b):
         self._l2n_register(a.data)
         self._l2n_register(b.data)
-        self.l2n.connect(a.data)
-        self.l2n.connect(b.data)
+        if _is_region(a.data):
+            self.l2n.connect(a.data)
+        if _is_region(b.data):
+            self.l2n.connect(b.data)
         self.l2n.connect(a.data, b.data)
 
     def clear_connections(self):
@@ -614,6 +631,12 @@ class Layer:
     def without_bbox_width(self, *args):
         return self._bbox("bbox_width", True, args)
 
+    def with_bbox_max(self, *args):
+        return self._bbox("bbox_max", False, args)
+
+    def without_bbox_max(self, *args):
+        return self._bbox("bbox_max", True, args)
+
     def with_bbox_min(self, *args):
         return self._bbox("bbox_min", False, args)
 
@@ -719,6 +742,19 @@ class Layer:
         return self._new(
             self.data.corners(float(amin), float(amax), 1, True, True, False, False)
         )
+
+    def middle(self, *args):
+        """The bounding box centers, as 1 x 1 dbu boxes (as_boxes, the
+        default) or as dots (as_dots, as_edges)."""
+        dots = False
+        for a in args:
+            if isinstance(a, _Option) and a.kind == "output_mode":
+                dots = a.value in ("dots", "edges")
+            else:
+                raise ValueError("invalid middle argument %r" % (a,))
+        if dots:
+            return self._new(self.data.extent_refs_edges(0.5, 0.5, 0.5, 0.5))
+        return self._new(self.data.extent_refs(0.5, 0.5, 0.5, 0.5, 1, 1))
 
     def sized(self, *args):
         """sized(d), sized(dx, dy), each with a sizing mode option."""

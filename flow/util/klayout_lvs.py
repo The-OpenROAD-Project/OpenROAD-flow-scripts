@@ -21,12 +21,18 @@ class LvsDeck(klayout_drc.Deck):
     def __init__(self, in_gds, report_file, cdl_file, top_cell, threads=1):
         super().__init__(in_gds, report_file, "LVS", mode="deep", threads=threads)
         self.top_cell = top_cell
+        self.cdl_file = cdl_file
         self.scaling = 1.0
         self.post_extract = []
         self.comparer_config = []
-        self.info("Reading netlist: %s .." % cdl_file)
+        self.read_schematic(db.NetlistSpiceReader())
+
+    def read_schematic(self, reader):
+        """Reads the CDL with a reader, as the LVS language's
+        schematic(file, reader)."""
+        self.info("Reading netlist: %s .." % self.cdl_file)
         self.schematic = db.Netlist()
-        self.schematic.read(cdl_file, db.NetlistSpiceReader())
+        self.schematic.read(self.cdl_file, reader)
 
     def _l2n_register(self, data):
         if self.l2n is None:
@@ -130,6 +136,22 @@ class LvsDeck(klayout_drc.Deck):
 
         self.comparer_config.append(f)
 
+    def max_res(self, value):
+        v = float(value)
+
+        def f(comparer):
+            comparer.max_resistance = v
+
+        self.comparer_config.append(f)
+
+    def min_caps(self, value):
+        v = float(value)
+
+        def f(comparer):
+            comparer.min_capacitance = v
+
+        self.comparer_config.append(f)
+
     def _comparer(self):
         comparer = db.NetlistComparer()
         for f in self.comparer_config:
@@ -164,8 +186,51 @@ class LvsDeck(klayout_drc.Deck):
             self.l2n.write(self.report_file, True)
 
 
-def mos4(name):
-    return db.DeviceExtractorMOS4Transistor(name, False, None)
+# Device classes and factories handed to the extractors; the klayout
+# objects hold them by pointer, so Python keeps them alive.
+_keep = []
+
+
+class _DeviceClassFactory(db.DeviceClassFactory if db else object):
+    """A device class factory for a class, as the DRC language's
+    CustomDeviceClassFactory."""
+
+    def __init__(self, cls):
+        super().__init__()
+        self.cls = cls
+
+    def create_class(self):
+        dc = self.cls()
+        _keep.append(dc)
+        return dc
+
+
+def _factory(cls):
+    if cls is None:
+        return None
+    f = _DeviceClassFactory(cls)
+    _keep.append(f)
+    return f
+
+
+def mos4(name, cls=None):
+    return db.DeviceExtractorMOS4Transistor(name, False, _factory(cls))
+
+
+def bjt3(name, cls=None):
+    return db.DeviceExtractorBJT3Transistor(name, _factory(cls))
+
+
+def bjt4(name, cls=None):
+    return db.DeviceExtractorBJT4Transistor(name, _factory(cls))
+
+
+def diode(name, cls=None):
+    return db.DeviceExtractorDiode(name, _factory(cls))
+
+
+def resistor(name, sheet_rho, cls=None):
+    return db.DeviceExtractorResistor(name, sheet_rho, _factory(cls))
 
 
 def parse_args(argv):
