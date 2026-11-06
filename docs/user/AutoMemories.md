@@ -94,6 +94,44 @@ carries win, everything else (geometry, pins) is kept from detection. A
 `.memories` entry naming a module the scanner never found is taken
 whole — it must then describe its pins itself.
 
+Write-mask lanes split the word evenly. A word that is not a whole
+number of lanes, such as pulp's `tc_sram` with byte enables over a
+25-bit word, needs `mask_lane_width` in its entry. Every lane is that
+wide except the last, which holds the remaining bits:
+
+```json
+{
+  "name": "tag_ram",
+  "rows": 64,
+  "bits": 25,
+  "addr_w": 6,
+  "rw_ports": 1,
+  "mask_lanes": 4,
+  "mask_lane_width": 8,
+  "idiomatic": true,
+  "reason": "one read-write port, byte enables, the last 1 bit",
+  "pins": [
+    {"name": "clk", "direction": "input", "width": 1, "port_id": "RW0", "function": "clk"},
+    {"name": "cs", "direction": "input", "width": 1, "port_id": "RW0", "function": "en"},
+    {"name": "we", "direction": "input", "width": 1, "port_id": "RW0", "function": "wmode"},
+    {"name": "addr", "direction": "input", "width": 6, "port_id": "RW0", "function": "addr"},
+    {"name": "wdata", "direction": "input", "width": 25, "port_id": "RW0", "function": "data_in"},
+    {"name": "be", "direction": "input", "width": 4, "port_id": "RW0", "function": "mask"},
+    {"name": "rdata", "direction": "output", "width": 25, "port_id": "RW0", "function": "data_out"}
+  ]
+}
+```
+
+The lanes must cover the word with a last lane of 1 to
+`mask_lane_width` bits; anything else is refused, as is an uneven split
+without `mask_lane_width`.
+
+The macro takes its lane count from the mask pin's width, so every
+mask pin must be `mask_lanes` wide, and a memory with `mask_lanes` must
+have one; anything else is refused, naming the memory. An override
+merged onto a detected memory keeps the detected pins: one that changes
+`mask_lanes` must bring its pins, with a mask pin to match.
+
 ## Generated views
 
 The views come from FakeRAM2.0's asap7 backend
