@@ -419,8 +419,8 @@ proc orfs_write_db { output_file { endpoint_slack 1 } } {
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
-  log_cmd write_db $output_file
   orfs_write_sdc [sdc_file_of $output_file]
+  log_cmd write_db $output_file
 }
 
 proc orfs_write_sdc { output_file } {
@@ -444,8 +444,8 @@ proc orfs_copy_db { input_file output_file } {
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
-  log_cmd exec cp $input_file $output_file
   log_cmd exec cp [sdc_file_of $input_file] [sdc_file_of $output_file]
+  log_cmd exec cp $input_file $output_file
 }
 
 proc source_step_tcl { hook_type step_name } {

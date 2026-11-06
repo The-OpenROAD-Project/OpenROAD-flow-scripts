@@ -388,10 +388,11 @@ $(eval $(call OPEN_GUI_SHORTCUT,5_1_grt-failed,5_1_grt-failed.odb))
 # $(1) stem, e.g. 2_1_floorplan
 # $(2) dependencies
 # $(3) tcl script step
-# $(4) extension of result, default .odb
+# $(4) extension of result, default .odb; an .odb result comes with
+#     its .sdc, declared as one grouped target
 # $(5) folder of target, default $(RESULTS_DIR)
 define do-step
-$(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
+$(if $(filter-out .odb,$(4)),$(if $(5),$(5),$(RESULTS_DIR))/$(1)$(4):,$(RESULTS_DIR)/$(1).odb $(RESULTS_DIR)/$(1).sdc &:) $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
 
 ifeq ($(if $(4),$(4),.odb),.odb)
@@ -414,13 +415,13 @@ endef
 # $(1) stem of target, e.g. 2_floorplan
 # $(2) stem of the files to be copied, e.g. 2_4_floorplan_pdn
 define do-copy
-$(RESULTS_DIR)/$(1).odb: $(RESULTS_DIR)/$(2).odb
+$(RESULTS_DIR)/$(1).odb $(RESULTS_DIR)/$(1).sdc &: $(RESULTS_DIR)/$(2).odb
 	$$(UNSET_AND_MAKE) do-$(1)
 
 .PHONY: do-$(1)
 do-$(1):
-	cp $(RESULTS_DIR)/$(2).odb $(RESULTS_DIR)/$(1).odb
 	cp $(RESULTS_DIR)/$(2).sdc $(RESULTS_DIR)/$(1).sdc
+	cp $(RESULTS_DIR)/$(2).odb $(RESULTS_DIR)/$(1).odb
 endef
 
 # ==============================================================================
@@ -667,6 +668,7 @@ $(LOG_DIR)/6_report.log: | check-kepler-formal
 endif
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
+$(RESULTS_DIR)/6_final.odb $(RESULTS_DIR)/6_final.sdc: $(LOG_DIR)/6_report.log
 
 # The final results are called 6_final.*, so it is convenient when scripting
 # to have the names of the artifacts match the name of the target
