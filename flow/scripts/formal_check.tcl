@@ -41,18 +41,34 @@ proc write_lec_verilog { filename } {
   }
 }
 
+# Liberty files for kepler-formal: the ones read_liberty.tcl reads, LIB_FILES
+# plus the AUTO_MEMORIES views generated under RESULTS_DIR/memories. Without
+# the latter the generated macros are unknown cells and netlist loading stops.
+# The _pre_layout variants are skipped, as in read_liberty.tcl.
+proc formal_lib_files { } {
+  set lib_list $::env(LIB_FILES)
+  if { [env_var_equals AUTO_MEMORIES 1] } {
+    foreach lib_file [glob -nocomplain $::env(RESULTS_DIR)/memories/*.lib] {
+      if { ![string match *_pre_layout.lib $lib_file] } {
+        lappend lib_list $lib_file
+      }
+    }
+  }
+  return $lib_list
+}
+
 proc write_lec_script { step file1 file2 } {
   # Exclude select Liberty files from being passed to kepler-formal
   if { [env_var_exists_and_non_empty REMOVE_LIBS_FOR_LEC] } {
     foreach lib_to_remove $::env(REMOVE_LIBS_FOR_LEC) {
       set remove_libs_set($lib_to_remove) 1
     }
-    set lib_list [lmap item $::env(LIB_FILES) {
+    set lib_list [lmap item [formal_lib_files] {
       if { [info exists remove_libs_set($item)] } { continue }
       set item
     }]
   } else {
-    set lib_list $::env(LIB_FILES)
+    set lib_list [formal_lib_files]
   }
   set outfile [open "$::env(OBJECTS_DIR)/${step}_lec_test.yml" w]
   puts $outfile "format: verilog"
@@ -156,7 +172,7 @@ proc write_sec_script { step file1 file2 } {
   puts $outfile "  - $::env(RESULTS_DIR)/${file1}"
   puts $outfile "  - $::env(RESULTS_DIR)/${file2}"
   puts $outfile "liberty_files:"
-  foreach libFile $::env(LIB_FILES) {
+  foreach libFile [formal_lib_files] {
     puts $outfile " - $libFile"
   }
   # Each macro instance becomes a proof boundary: its input pins are compared
