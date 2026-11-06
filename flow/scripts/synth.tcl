@@ -65,7 +65,8 @@ if { [env_var_exists_and_non_empty SYNTH_CHECKPOINT] } {
 set synth_blackboxes [env_var_or_empty SYNTH_BLACKBOXES]
 if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES_FILE] } {
   set fid [open $::env(SYNTH_BLACKBOXES_FILE) r]
-  foreach m [split [read $fid] "\n"] {
+  while { [gets $fid line] >= 0 } {
+    set m [string trim $line]
     if { $m ne "" } {
       lappend synth_blackboxes $m
     }
