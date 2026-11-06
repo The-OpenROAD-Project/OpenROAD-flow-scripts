@@ -1,10 +1,13 @@
 # Using Pre-built Binaries
 
-## Install Klayout and Yosys
-Please ensure the Klayout version (denoted with `klayoutVersion` variable) is consistent with the one used in [DependencyInstaller script](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/etc/DependencyInstaller.sh).
+## Install KLayout and Yosys
+The GDS file, DRC and LVS use KLayout's Python module, installed with the
+other Python packages from `etc/requirements-common_lock.txt`, or alone
+with `pip install klayout`. The KLayout application is needed only for a
+deprecated Ruby DRC/LVS deck (see [KLayoutPythonDecks.md](KLayoutPythonDecks.md)),
+the gallery and the viewers:
+[KLayout](https://www.klayout.de/build.html).
 
-Instructions for installing:
-- [Klayout>=0.28.8](https://www.klayout.de/build.html)
 - [Yosys>=0.58](https://github.com/YosysHQ/oss-cad-suite-build/blob/master/README.md#installation)
 
 ## Install OpenROAD
@@ -43,9 +46,6 @@ Export path variables accordingly.
 # these variables are used in flow/Makefile. Do make sure the yosys path is sourced.
 export OPENROAD_EXE=$(command -v openroad)
 export YOSYS_EXE=$(command -v yosys)
-
-# only if KLayout is built from source
-export LD_LIBRARY_PATH="<klayout_location>/bin:$PATH"
 
 yosys -help
 yosys -m slang -p "slang_version"
