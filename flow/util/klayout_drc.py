@@ -75,6 +75,38 @@ def projection_limits(lo, hi=None):
 
 transparent = _Option("shielded", False)
 shielded = _Option("shielded", True)
+ortho = _Option("edge_kind", "OrthoEdges")
+diagonal = _Option("edge_kind", "DiagonalEdges")
+diagonal_only = _Option("edge_kind", "DiagonalOnlyEdges")
+diamond_limit = _Option("size_mode", 0)
+octagon_limit = _Option("size_mode", 1)
+square_limit = _Option("size_mode", 2)
+acute_limit = _Option("size_mode", 3)
+no_limit = _Option("size_mode", 4)
+padding_zero = _Option("padding", "zero")
+padding_ignore = _Option("padding", "ignore")
+
+
+def tile_size(deck, x, y=None):
+    """The DRC language's tile_size, in microns."""
+    return _Option("tile_size", (deck.v(x) * deck.dbu, deck.v(y or x) * deck.dbu))
+
+
+def tile_step(deck, x, y=None):
+    return _Option("tile_step", (deck.v(x) * deck.dbu, deck.v(y or x) * deck.dbu))
+
+
+def tile_origin(x, y):
+    """In microns, as DRCTileOrigin."""
+    return _Option("tile_origin", (x, y))
+
+
+def tile_count(x, y):
+    return _Option("tile_count", (x, y))
+
+
+def tile_boundary(layer):
+    return _Option("tile_boundary", layer)
 
 
 class _Universal:
@@ -225,7 +257,10 @@ class Deck:
     def polygons(self, layer, datatype=0):
         return Source(self, []).polygons(layer, datatype)
 
-    def _input(self, layer, datatype, flags, sel):
+    def labels(self, layer, datatype=0):
+        return Source(self, []).labels(layer, datatype)
+
+    def _input(self, layer, datatype, flags, sel, cls=None):
         if isinstance(layer, str):
             # A layer map expression, "67/0-4,6-43,45-*"
             lm = db.LayerMap()
@@ -238,8 +273,9 @@ class Deck:
         else:
             li = self.layout.find_layer(layer, datatype)
             layers = [] if li is None else [li]
+        cls = cls or db.Region
         if not layers and self.dss is None:
-            return Layer(self, db.Region())
+            return Layer(self, cls())
         it = db.RecursiveShapeIterator(self.layout, self.top, layers)
         it.shape_flags = flags
         for c in sel:
@@ -256,9 +292,9 @@ class Deck:
             else:
                 it.select_cells(c)
         if self.dss is not None:
-            r = db.Region(it, self.dss, db.ICplxTrans(1.0))
+            r = cls(it, self.dss, db.ICplxTrans(1.0))
         else:
-            r = db.Region(it, db.ICplxTrans(1.0))
+            r = cls(it, db.ICplxTrans(1.0))
         return Layer(self, r)
 
     def polygon_layer(self):
@@ -389,6 +425,10 @@ class Source:
             | db.Shapes.SEdgePairs
         )
         return self.deck._input(layer, datatype, flags, self.sel)
+
+    def labels(self, layer, datatype=0):
+        """The texts of a layer."""
+        return self.deck._input(layer, datatype, db.Shapes.STexts, self.sel, db.Texts)
 
 
 def _is_region(d):
@@ -603,9 +643,12 @@ class Layer:
 
     def _angle(self, inv, args):
         f = "with_angle"
-        if args and args[-1] is both:
+        if both in args:
             f = "with_angle_both"
-            args = args[:-1]
+            args = tuple(a for a in args if a is not both)
+        if len(args) == 1 and isinstance(args[0], _Option):
+            kind = getattr(db.Edges, args[0].value)
+            return self._new(getattr(self.data, f)(kind, inv))
         return self._new(getattr(self.data, f)(*_range(None, args, float), inv))
 
     def with_holes(self, *args):
@@ -677,9 +720,147 @@ class Layer:
             self.data.corners(float(amin), float(amax), 1, True, True, False, False)
         )
 
-    def sized(self, dx, dy=None, mode=2):
-        dy = dx if dy is None else dy
-        return self._new(self.data.sized(self.deck.v(dx), self.deck.v(dy), mode))
+    def sized(self, *args):
+        """sized(d), sized(dx, dy), each with a sizing mode option."""
+        mode = 2
+        values = []
+        for a in args:
+            if isinstance(a, _Option) and a.kind == "size_mode":
+                mode = a.value
+            else:
+                values.append(self.deck.v(a))
+        return self._new(self.data.sized(values[0], values[-1], mode))
+
+    # Merged semantics and copies
+
+    def raw(self):
+        self.data.merged_semantics = False
+        return self
+
+    def clean(self):
+        self.data.merged_semantics = True
+        return self
+
+    def merge(self, *args):
+        """Merges in place."""
+        self.data.merge(*[self.deck.v(a) for a in args])
+        return self
+
+    def dup(self):
+        return self._new(self.data.dup())
+
+    def is_merged(self):
+        return self.data.is_merged()
+
+    def hier_count(self):
+        return self.data.hier_count()
+
+    def bbox(self):
+        """The bounding box in microns."""
+        return db.DBox.from_ibox(self.data.bbox()) * self.deck.dbu
+
+    def select_inside(self, other):
+        """Selects in place."""
+        self.data.select_inside(other.data)
+        return self
+
+    def texts(self, pattern="*"):
+        if isinstance(self.data, db.Texts):
+            return self._new(self.data.with_match(pattern, False))
+        return self._new(self.data.texts(pattern, True))
+
+    def with_distance(self, *args):
+        return self._new(
+            self.data.with_distance(*_range(self.deck, args, self.deck.v), False)
+        )
+
+    def without_distance(self, *args):
+        return self._new(
+            self.data.with_distance(*_range(self.deck, args, self.deck.v), True)
+        )
+
+    def with_density(self, *args):
+        return self._with_density(False, args)
+
+    def without_density(self, *args):
+        return self._with_density(True, args)
+
+    def _with_density(self, inverse, args):
+        """Tiles whose density is in a range, as the DRC language's
+        _with_density: a TilingProcessor with its expression script."""
+        limits = [None, None]
+        size = step = origin = count = boundary = None
+        padding = "zero"
+        for a in args:
+            if isinstance(a, tuple):
+                limits = list(a)
+            elif a.kind == "tile_size":
+                size = a.value
+            elif a.kind == "tile_step":
+                step = a.value
+            elif a.kind == "tile_origin":
+                origin = a.value
+            elif a.kind == "tile_count":
+                count = a.value
+            elif a.kind == "tile_boundary":
+                boundary = a.value
+            elif a.kind == "padding":
+                padding = a.value
+            else:
+                raise ValueError("unexpected density option %r" % (a,))
+        if size is None:
+            raise ValueError("at least the tile_size option needs to be present")
+        step = step or size
+        tp = db.TilingProcessor()
+        tp.dbu = self.deck.dbu
+        tp.scale_to_dbu = False
+        tp.tile_size(*step)
+        if size != step:
+            xb = 0.5 * (size[0] - step[0])
+            yb = 0.5 * (size[1] - step[1])
+            tp.tile_border(xb, yb)
+            tp.var("xoverlap", xb / tp.dbu)
+            tp.var("yoverlap", yb / tp.dbu)
+        else:
+            tp.var("xoverlap", 0)
+            tp.var("yoverlap", 0)
+        if origin:
+            tp.tile_origin(*origin)
+        if count:
+            tp.tiles(*count)
+        res = db.Region()
+        tp.output("res", res)
+        tp.input("input", self.data)
+        tp.threads = self.deck.threads
+        if boundary is not None:
+            bnd = boundary.data
+        else:
+            bnd = db.Region(self.data.bbox())
+        tp.input("boundary", bnd)
+        tp.var("vmin", limits[0] if limits[0] is not None else 0.0)
+        tp.var("vmax", limits[1] if limits[1] is not None else 1.0)
+        tp.var("inverse", inverse)
+        if padding == "zero":
+            tp.queue("""
+          _tile && (
+            var bx = _tile.bbox.enlarged(xoverlap, yoverlap);
+            var d = to_f(input.area(bx)) / to_f(bx.area);
+            ((d > vmin - 1e-10 && d < vmax + 1e-10) != inverse) && _output(res, bx, false)
+          )
+""")
+        else:
+            tp.queue("""
+          _tile && (
+            var bx = _tile.bbox.enlarged(xoverlap, yoverlap);
+            var ba = boundary.area(bx);
+            ba > 0 && (
+              var d = to_f(input.area(bx)) / to_f(ba);
+              ((d > vmin - 1e-10 && d < vmax + 1e-10) != inverse) && _output(res, bx, false)
+            )
+          )
+""")
+        tp.execute("Tiled density")
+        return self._new(res)
 
     # Queries
 
