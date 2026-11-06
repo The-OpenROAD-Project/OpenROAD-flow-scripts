@@ -58,10 +58,23 @@ if { [env_var_exists_and_non_empty SYNTH_CHECKPOINT] } {
 #     the checkpoint.  In synth_preamble.tcl a single design is being
 #     synthesised, so an unknown name is almost certainly a user typo and
 #     should fail loudly — `blackbox $m` without `catch` is intentional.
-if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
-  foreach m $::env(SYNTH_BLACKBOXES) {
-    catch { blackbox $m }
+#
+# An orchestrator with thousands of kept modules gives the list in a file
+# instead, SYNTH_BLACKBOXES_FILE, one name per line: Linux caps one
+# environment string at 128 KiB, and 2,250 names are 206 KB.
+set synth_blackboxes [env_var_or_empty SYNTH_BLACKBOXES]
+if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES_FILE] } {
+  set fid [open $::env(SYNTH_BLACKBOXES_FILE) r]
+  while { [gets $fid line] >= 0 } {
+    set m [string trim $line]
+    if { $m ne "" } {
+      lappend synth_blackboxes $m
+    }
   }
+  close $fid
+}
+foreach m $synth_blackboxes {
+  catch { blackbox $m }
 }
 
 hierarchy -check -top $::env(DESIGN_NAME)

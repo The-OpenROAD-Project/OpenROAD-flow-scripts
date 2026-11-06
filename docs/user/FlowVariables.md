@@ -302,6 +302,7 @@ configuration file.
 | <a name="SWAP_ARITH_OPERATORS"></a>SWAP_ARITH_OPERATORS| Improve timing QoR by swapping ALU and MULT arithmetic operators.| 0|
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| |
 | <a name="SYNTH_BLACKBOXES"></a>SYNTH_BLACKBOXES| List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design. Non-existant modules are ignored silently, useful when listing modules statically, even if modules come and go dynamically.| |
+| <a name="SYNTH_BLACKBOXES_FILE"></a>SYNTH_BLACKBOXES_FILE| Path to a file with more modules to treat as black boxes, one name per line, added to SYNTH_BLACKBOXES. For a parallel synthesis whose list is too long for one environment variable: Linux caps one at 128 KiB.| |
 | <a name="SYNTH_CANONICALIZE_TCL"></a>SYNTH_CANONICALIZE_TCL| Specifies a Tcl script with commands to run as part of the synth canonicalize step.| |
 | <a name="SYNTH_CHECKPOINT"></a>SYNTH_CHECKPOINT| Path to a Yosys RTLIL checkpoint to read in place of the default canonicalization checkpoint at the start of synth.tcl. Intended for parallel synthesis flows that reuse a checkpoint taken after coarse synthesis and `keep_hierarchy` have already been decided, so each partition skips that common prefix. Leave unset for the normal flow.| |
 | <a name="SYNTH_GUT"></a>SYNTH_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| 0|
@@ -375,6 +376,7 @@ configuration file.
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SYNTH_ARGS](#SYNTH_ARGS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
+- [SYNTH_BLACKBOXES_FILE](#SYNTH_BLACKBOXES_FILE)
 - [SYNTH_CANONICALIZE_TCL](#SYNTH_CANONICALIZE_TCL)
 - [SYNTH_CHECKPOINT](#SYNTH_CHECKPOINT)
 - [SYNTH_GUT](#SYNTH_GUT)
