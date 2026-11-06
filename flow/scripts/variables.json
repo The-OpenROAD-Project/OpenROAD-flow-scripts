@@ -74,6 +74,18 @@
     "default": 0,
     "description": "Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and \u2014 when idiomatic as an SRAM macro \u2014 given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.\n"
   },
+  "AUTO_MEMORIES_MACRO_PLACE": {
+    "description": "Experimental. Space-separated list of module names of AUTO_MEMORIES_REGFILES register files to place as macros, blackboxed in synthesis and placed by the macro placer (and, in `mode netlist`, dissolved after macro placement). A register file not listed is inlined: its generated netlist of standard cells replaces the module's body in synthesis, and its cells are placed, sized and buffered with the rest of the design -- the better shape for a small design, where a macro's outline and channels cost more core than the array saves. A name no spec builds stops the build. Requires AUTO_MEMORIES=1.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "AUTO_MEMORIES_REGFILES": {
+    "description": "Experimental. Space-separated list of register-file spec files, one per RTL module to build as a register file of placed standard cells rather than synthesise to flops. Each spec names its module, words, bits, read and write ports by the RTL's own port names, and the cells. memories/regfile_ram.py checks the spec against the module's ports and has OpenROAD's generate_ram build it as `<module>_ram`, under `$(RESULTS_DIR)/memories/`, with a wrapper in the module's place. A module named in AUTO_MEMORIES_MACRO_PLACE is blackboxed like an AUTO_MEMORIES macro and placed as one; any other is inlined as its generated netlist. A placed spec in `mode netlist` then dissolves into its cells after macro placement: its core FIRM where the macro was placed, in the macro's orientation, its periphery left to placement. Every register file appears in memories.json with kind `regfile`. Requires AUTO_MEMORIES=1.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "BALANCE_ROWS": {
     "default": 0,
     "description": "Balance rows during placement.\n",
@@ -393,6 +405,12 @@
   "GENERATE_ARTIFACTS_ON_FAILURE": {
     "default": 0,
     "description": "For instance Bazel needs artifacts (.odb and .rpt files) on a failure to allow the user to save hours on re-running the failed step locally, but when working with a Makefile flow, it is more natural to fail the step and leave the user to manually inspect the logs and artifacts directly via the file system. Set to 1 to change the behavior to generate artifacts upon failure to e.g. do a global route. The exit code will still be non-zero on all other failures that aren't covered by the \"useful to inspect the artifacts on failure\" use-case. Example: just like detailed routing, a global route that fails with congestion, is not a build failure(as in exit code non-zero), it is a successful(as in zero exit code) global route that produce reports detailing the problem. Detailed route will not proceed, if there is global routing congestion This allows build systems, such as bazel, to create artifacts for global and detailed route, even if the operation had problems, without having know about the semantics between global and detailed route. Considering that global and detailed route can run for a long time and use a lot of memory, this allows inspecting results on a laptop for a build that ran on a server.\n"
+  },
+  "GLOBAL_CONNECT_TCL": {
+    "description": "File path to the add_global_connection rules that connect the supply pins of the instances to the supply nets. Sourced at floorplan right after the netlist is loaded, before any step can mark an instance dont_touch; the rules are kept in the database. The platform's file by default; a design whose PDN_TCL names other supply nets sets its own. PDN_TCL defines the grids.\n",
+    "stages": [
+      "floorplan"
+    ]
   },
   "GLOBAL_PLACEMENT_ARGS": {
     "description": "Use additional tuning parameters during global placement other than default args defined in global_place.tcl.\n",
