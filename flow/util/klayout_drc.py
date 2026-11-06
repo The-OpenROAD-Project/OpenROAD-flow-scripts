@@ -315,7 +315,7 @@ class Deck:
         )
 
     def info(self, msg):
-        print("%7.1fs %s" % (time.time() - self.t0, msg))
+        print("%7.1fs %s" % (time.time() - self.t0, msg), flush=True)
 
     def output(self, data, name, description=None):
         cat = self.categories.get(name)
@@ -702,6 +702,8 @@ def parse_args(argv):
 
 
 def load_deck(path):
+    # No __pycache__ next to the deck, in the platform directory
+    sys.dont_write_bytecode = True
     spec = importlib.util.spec_from_file_location("klayout_drc_deck", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
