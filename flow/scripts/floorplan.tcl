@@ -129,20 +129,19 @@ log_cmd set_dont_use $::env(DONT_USE_CELLS)
 # unchanged. The move was reverted; only eliminate_dead_logic stayed in
 # synth_odb.tcl because it is a pure netlist transform that doesn't
 # depend on placement or routing-layer context.
-if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
-  # This needs to come before any call to remove_buffers.  You could have one
-  # tie driving multiple buffers that drive multiple outputs.
-  # Repair tie lo fanout
-  set tielo_cell_name [lindex $::env(TIELO_CELL_AND_PORT) 0]
-  set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
-  set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $::env(TIELO_CELL_AND_PORT) 1]
-  log_cmd repair_tie_fanout -separation $::env(TIE_SEPARATION) $tielo_pin
-
-  # Repair tie hi fanout
-  set tiehi_cell_name [lindex $::env(TIEHI_CELL_AND_PORT) 0]
-  set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
-  set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
-  log_cmd repair_tie_fanout -separation $::env(TIE_SEPARATION) $tiehi_pin
+# This needs to come before any call to remove_buffers.  You could have one
+# tie driving multiple buffers that drive multiple outputs.
+set run [expr { !$::env(SKIP_REPAIR_TIE_FANOUT) }]
+foreach {call cell_and_port} [list tielo $::env(TIELO_CELL_AND_PORT) \
+  tiehi $::env(TIEHI_CELL_AND_PORT)] {
+  if { [command_runs repair_tie_fanout floorplan.$call $run] } {
+    set cell_name [lindex $cell_and_port 0]
+    set lib_name [get_name [get_property [lindex [get_lib_cell $cell_name] 0] library]]
+    set deprecated [list -separation $::env(TIE_SEPARATION)]
+    log_cmd repair_tie_fanout \
+      {*}[command_args repair_tie_fanout floorplan.$call $deprecated $deprecated] \
+      $lib_name/$cell_name/[lindex $cell_and_port 1]
+  }
 }
 
 if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
@@ -151,9 +150,11 @@ if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
   log_cmd replace_arith_modules
 }
 
-if { !$::env(SKIP_FLOORPLAN_REPAIR_TIMING) } {
+set run [expr { !$::env(SKIP_FLOORPLAN_REPAIR_TIMING) }]
+if { [command_runs repair_timing floorplan.main $run] } {
   # Skip clone & split
-  repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
+  repair_timing_helper floorplan.main -setup -skip_last_gasp \
+    -sequence "unbuffer,sizeup,swap,vt_swap"
 }
 
 puts "Default units for flow"
