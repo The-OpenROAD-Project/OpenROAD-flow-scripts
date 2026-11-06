@@ -84,10 +84,7 @@ export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/FreePDK45.lyt
 
 # KLayout DRC ruledeck
-export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/FreePDK45.lydrc
-
-# KLayout LVS ruledeck
-export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/FreePDK45.lylvs
+export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/FreePDK45_drc.py
 
 # Allow empty GDS cell
 export GDS_ALLOW_EMPTY ?= fakeram.*
