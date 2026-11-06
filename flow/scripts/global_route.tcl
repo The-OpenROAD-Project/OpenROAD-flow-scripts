@@ -61,7 +61,7 @@ set_placement_padding -global \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
 set_propagated_clock [all_clocks]
-log_cmd estimate_parasitics -global_routing
+log_cmd estimate_parasitics
 
 if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
   set_dont_use $::env(DONT_USE_CELLS)
@@ -89,7 +89,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
 
   # Repair timing using global route parasitics
   puts "Repair setup and hold violations..."
-  log_cmd estimate_parasitics -global_routing
+  log_cmd estimate_parasitics
 
   repair_timing_helper
 
@@ -105,7 +105,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
 
-  log_cmd estimate_parasitics -global_routing
+  log_cmd estimate_parasitics
 
   if { $::env(OPT_POST_GRT_WNS) } {
     set repair_timing_args \
@@ -146,7 +146,7 @@ if {
 }
 
 puts "Estimate parasitics..."
-log_cmd estimate_parasitics -global_routing
+log_cmd estimate_parasitics
 
 report_metrics 5 "global route"
 

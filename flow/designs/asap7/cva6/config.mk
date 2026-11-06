@@ -52,7 +52,8 @@ export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/
 	$(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/hwpf_stride/hwpf_stride_wrapper.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/cache_subsystem/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/common/*.sv)) \
-	$(sort $(wildcard $(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/common/macros/blackbox/*.sv)) \
+	$(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/common/macros/behav/hpdcache_sram_1rw.sv \
+	$(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/common/macros/behav/hpdcache_sram_wbyteenable_1rw.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/cache_subsystem/hpdcache/rtl/src/utils/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/core/cva6_mmu/*.sv)) \
 	$(SRC_HOME)/core/cvfpu/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv \
@@ -64,11 +65,7 @@ export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/
 	$(SRC_HOME)/core/cvfpu/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv \
 	$(SRC_HOME)/core/cvxif_example/include/cvxif_instr_pkg.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/frontend/*.sv)) \
-	$(SRC_HOME)/vendor/pulp-platform/tech_cells_generic/src/rtl/tc_sram.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_64x256.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_128x64.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_64x28.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_64x25.sv
+	$(SRC_HOME)/vendor/pulp-platform/tech_cells_generic/src/rtl/tc_sram.sv
 
 export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include \
 	$(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/cvfpu/src/common_cells/include \
@@ -76,15 +73,19 @@ export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include
 
 export VERILOG_DEFINES += -D HPDCACHE_ASSERT_OFF
 
-export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_64x256.lef \
-			 $(PLATFORM_DIR)/lef/fakeram7_128x64.lef \
-			 $(PLATFORM_DIR)/lef/fakeram7_64x28.lef \
-			 $(PLATFORM_DIR)/lef/fakeram7_64x25.lef
+# The RAMs are upstream's, the RTL unmodified, and AUTO_MEMORIES makes
+# each a macro, cva6.memories naming its pins and byte enables: the
+# D-cache data (hpdcache_sram_wbyteenable_1rw) and directory
+# (hpdcache_sram_1rw), and the I-cache data and tag, which surgery.py
+# puts behind sram_cache's techno cut in place of pulp's tc_sram.
+export SYNTH_VERILOG_SURGERY  = $(DESIGN_HOME)/$(PLATFORM)/cva6/surgery.py
+export AUTO_MEMORIES          = 1
+export ADDITIONAL_MEMORIES    = $(DESIGN_HOME)/$(PLATFORM)/cva6/cva6.memories
 
-export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x256.lib \
-			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_128x64.lib \
-			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x28.lib \
-			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x25.lib
+# Kepler LEC off for now: kepler-formal stops on the macros AUTO_MEMORIES
+# makes ("cva6_icache_data_sram cannot be found"). A new kepler-formal is
+# in the works; the Kepler team rewires LEC for cva6 with it.
+export LEC_CHECK              = 0
 
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
