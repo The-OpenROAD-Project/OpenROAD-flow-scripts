@@ -34,6 +34,7 @@ ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              POST_FLOORPLAN_TCL \
                              TAPCELL_TCL \
                              PDN_CFG \
+                             GLOBAL_CONNECT_TCL \
                              PDN_TCL \
                              POST_PDN_TCL \
                              POST_CTS_TCL \
