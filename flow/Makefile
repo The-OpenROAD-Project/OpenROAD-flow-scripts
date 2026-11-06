@@ -831,14 +831,21 @@ $(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
 .PHONY: lvs
 lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
-$(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl | check-klayout
+$(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl $(if $(filter %.py,$(KLAYOUT_LVS_FILE)),$(UTILS_DIR)/klayout_lvs.py $(UTILS_DIR)/klayout_drc.py,| check-klayout)
 ifneq ($(KLAYOUT_LVS_FILE),)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_lvs.log) --tee -- \
+	        $(if $(filter %.py,$(KLAYOUT_LVS_FILE)), \
+	        $(PYTHON_EXE) $(UTILS_DIR)/klayout_lvs.py \
+	        --deck=$(KLAYOUT_LVS_FILE) \
+	        --in-gds=$< \
+	        --cdl-file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
+	        --top-cell=$(DESIGN_NAME) \
+	        --report-file=$(abspath $@), \
 	        $(SCRIPTS_DIR)/klayout.sh -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd top_cell="$(DESIGN_NAME)" \
 	        -rd report_file=$(abspath $@) \
-	        -r $(KLAYOUT_LVS_FILE)
+	        -r $(KLAYOUT_LVS_FILE))
 else
 	echo "LVS not supported on this platform" > $@
 endif

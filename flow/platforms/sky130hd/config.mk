@@ -151,5 +151,5 @@ export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/$(PLATFORM)_drc.py
 
 #LVS Check
 export CDL_FILE = $(PLATFORM_DIR)/cdl/$(PLATFORM).cdl
-export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/$(PLATFORM).lylvs
+export KLAYOUT_LVS_FILE ?= $(PLATFORM_DIR)/lvs/$(PLATFORM)_lvs.py
 export REMOVE_CELLS_FOR_LEC = sky130_fd_sc_hd__tapvpwrvgnd*

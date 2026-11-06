@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""klayout.sh runs a KLayout executable: LVS, a DRC deck still in Ruby,
-the gallery and the viewers. Without KLayout it stops with an error. With KLayout, the call
+"""klayout.sh runs a KLayout executable: a deck still in Ruby, the
+gallery and the viewers. Without KLayout it stops with an error. With KLayout, the call
 goes to it unchanged.
 """
 
@@ -40,16 +40,16 @@ class TestKlayoutSh(unittest.TestCase):
             "/flow/util/def2stream.py",
         ]
 
-    def test_lvs_still_needs_klayout(self):
+    def test_ruby_deck_still_needs_klayout(self):
         result = self.run_klayout(
             "",
-            "-b",
+            "-zz",
             "-rd",
             "in_gds=6_final.gds",
             "-rd",
-            "report_file=6_lvs.lvsdb",
+            "report_file=6_drc.lyrdb",
             "-r",
-            "/flow/platforms/sky130hd/lvs/sky130hd.lylvs",
+            "/flow/platforms/ihp-sg13g2/drc/sg13g2_minimal.lydrc",
         )
         self.assertEqual(result.returncode, 1)
         self.assertIn("Error: KLayout not found", result.stdout)
