@@ -155,6 +155,7 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
             "additional_height": additional_height_for_pins(process, bits, rows, lanes),
             "pin_names": pin_names,
             "mask_lanes": lanes,
+            "mask_lane_width": int(m.get("mask_lane_width", 0)),
         }
         mem_config = MemoryConfig.from_json(sram_dict)
         ram = MemoryFactory.create(mem_config, "RAM", "SP", process, timing_data)

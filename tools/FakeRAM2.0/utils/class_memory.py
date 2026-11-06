@@ -37,6 +37,7 @@ class Memory(NamedObject):
         self.total_size = self.width_in_bytes * self.depth
         self.additional_height = mem_config.get_additional_height()
         self.mask_lanes = mem_config.get_mask_lanes()
+        self.mask_lane_width = mem_config.get_mask_lane_width()
         self.timing_data = timing_data
         self.physical = PhysicalData()
         if self.process.calc_dimensions():
@@ -95,6 +96,10 @@ class Memory(NamedObject):
     def get_width(self):
         """Returns the width in bits"""
         return self.width_in_bits
+
+    def get_mask_lane_width(self):
+        """Returns the bits per write mask lane; the last holds the rest"""
+        return self.mask_lane_width
 
     def get_num_banks(self):
         """Returns the number of banks"""
