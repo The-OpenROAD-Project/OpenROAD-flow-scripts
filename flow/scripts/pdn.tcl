@@ -4,6 +4,9 @@ load_design 2_3_floorplan_tapcell.odb
 source_step_tcl PRE PDN
 
 source $::env(PDN_TCL)
+# The rules floorplan stored, for the instances made since (tap and
+# endcap cells), and any PDN_TCL adds.
+global_connect
 pdngen
 
 source_step_tcl POST PDN

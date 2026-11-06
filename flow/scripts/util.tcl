@@ -325,32 +325,46 @@ proc endpoint_slack_file { step } {
   return $::env(REPORTS_DIR)/${step}_endpoint_slack.json
 }
 
+# The final stage extracts parasitics into 6_final.spef when the platform
+# has OpenRCX rules and the design is detail routed. 6_final.odb is timed
+# with that SPEF; whether a .spef file exists says nothing.
+proc final_extracts_parasitics { } {
+  return [expr {
+    [env_var_exists_and_non_empty RCX_RULES]
+    && !$::env(SKIP_DETAILED_ROUTE)
+  }]
+}
+
+# Load the parasitics that step is timed with and return where they came
+# from: the extracted 6_final.spef when final writes one, else, once the
+# design is placed, what OpenROAD estimates (global routes if there are
+# any, else placement), else none.
+proc orfs_load_parasitics { step } {
+  if { $step == "6_final" && [final_extracts_parasitics] } {
+    log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
+  } elseif { [grt::design_is_placed] } {
+    log_cmd estimate_parasitics
+  } else {
+    return none
+  }
+  return [est::parasitics_source]
+}
+
 # Write the setup and hold slack of every endpoint at the end of a flow
 # step so they can be compared across steps with
-# flow/util/endpointSlack.py. Parasitics are estimated the same way as
-# open.tcl so that every step is timed consistently, unless the caller
-# has already loaded parasitics (e.g. extracted ones) and passes their
-# name as parasitics.
-proc write_endpoint_slack { step { parasitics "" } } {
+# flow/util/endpointSlack.py. load_parasitics 0 is for a caller that has
+# just loaded the parasitics itself, e.g. 6_final after extraction.
+proc write_endpoint_slack { step { load_parasitics 1 } } {
   if { !$::env(REPORT_ENDPOINT_SLACK) || [string match "*-failed" $step] } {
     return
   }
   set filename [endpoint_slack_file $step]
   puts "Writing endpoint slack to $filename"
 
-  if { $parasitics == "" } {
-    set design_stage [lindex [split $step _] 0]
-    set parasitics none
-    if { $design_stage >= 5 } {
-      if { [grt::have_routes] } {
-        set parasitics global_routing
-      }
-    } elseif { $design_stage >= 3 } {
-      set parasitics placement
-    }
-    if { $parasitics != "none" } {
-      estimate_parasitics -$parasitics
-    }
+  if { $load_parasitics } {
+    set parasitics [orfs_load_parasitics $step]
+  } else {
+    set parasitics [est::parasitics_source]
   }
   # Update timing before sta::endpoints: the endpoint set is cached the
   # first time it is requested and misses gated clock enable checks if the
@@ -487,4 +501,47 @@ proc synth_verilog_files { } {
     }
   }
   return $copies
+}
+
+# Entry of lib_file in the binary liberty (.blib) cache shared by all designs:
+# objects/binary_libs/<platform>/<library>@<size>-<mtime>-<dirhash>.blib, so a
+# changed library gets a new entry and same-named libraries from different
+# directories don't collide. Libraries in the design's directory and those the
+# flow generates are cached per run.
+proc binary_lib_path { lib_file } {
+  set source [file normalize $lib_file]
+  set objects [file join $::env(WORK_HOME) objects]
+  set root [file join $objects binary_libs $::env(PLATFORM)]
+  set run_dirs [list $::env(DESIGN_DIR) $objects [file join $::env(WORK_HOME) results]]
+  foreach dir $run_dirs {
+    if { [string first "[file normalize $dir]/" $source] == 0 } {
+      set root [file join $::env(OBJECTS_DIR) binary_libs]
+      break
+    }
+  }
+  set name [file tail $source]
+  regsub {\.gz$} $name "" name
+  set name [file rootname $name]
+  set dir_hash [format %08x [zlib crc32 [file dirname $source] 0]]
+  return [file join $root "$name@[file size $source]-[file mtime $source]-$dir_hash.blib"]
+}
+
+# Whether this OpenROAD reads blib. An entry missing or written by another
+# version is expected, so its error is not reported.
+proc binary_lib_usable { blib } {
+  suppress_message STA 1900
+  suppress_message STA 1902
+  set usable [expr { ![catch { liberty_binary_info $blib }] }]
+  unsuppress_message STA 1900
+  unsuppress_message STA 1902
+  return $usable
+}
+
+# The cached .blib for lib_file, or lib_file when there is no usable .blib
+proc lib_file_to_read { lib_file } {
+  set blib [binary_lib_path $lib_file]
+  if { [binary_lib_usable $blib] } {
+    return $blib
+  }
+  return $lib_file
 }

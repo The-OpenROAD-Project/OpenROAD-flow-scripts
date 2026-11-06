@@ -270,5 +270,24 @@ class FirtoolConventionTest(unittest.TestCase):
         self.assertEqual([m.name for m in mems], ["am_regs.Memory"])
 
 
+class InitializedModulesTest(unittest.TestCase):
+    def test_only_a_memory_with_a_0_or_1_bit_is_initialized(self):
+        def module(init):
+            params = {"SIZE": 2, "WIDTH": 2, "RD_PORTS": 1, "WR_PORTS": 1}
+            if init is not None:
+                params["INIT"] = init
+            return {"cells": {"\\m": {"type": "$mem_v2", "parameters": params}}}
+
+        data = {
+            "modules": {
+                "\\none": module(None),
+                "\\all_x": module("xxxx"),
+                "\\zeros": module("0000"),
+                "\\some$top.u0": module("xx1x"),
+            }
+        }
+        self.assertEqual(detect.initialized_modules(data, "top"), {"zeros", "some"})
+
+
 if __name__ == "__main__":
     unittest.main()
