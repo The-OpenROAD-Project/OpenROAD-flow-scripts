@@ -429,16 +429,23 @@ __local_build()
         # EL9 ships TBB 2020, where concurrent_map needs
         # TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS; oneTBB ignores it.
         # EL installs libraries in lib64 by default; the RPATH points to lib.
+        # The RPATH is relative to bin/, so a moved install still loads its
+        # own libraries (#4717); macOS spells $ORIGIN as @loader_path.
         case "$(uname -m)" in
                 aarch64|arm64) KEPLER_MARCH="-march=armv8-a" ;;
                 *) KEPLER_MARCH="-march=x86-64-v3" ;;
         esac
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+                KEPLER_RPATH="@loader_path/../lib"
+        else
+                KEPLER_RPATH="\$ORIGIN/../lib"
+        fi
         ${NICE} cmake -B tools/kepler-formal/build tools/kepler-formal \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_CXX_FLAGS_RELEASE="-Ofast ${KEPLER_MARCH} -ffast-math -flto -DTBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS=1" \
                 -DCMAKE_EXE_LINKER_FLAGS="-flto" \
                 -DCMAKE_BUILD_RPATH="${DIR}/tools/kepler-formal/build/thirdparty/naja/src/dnl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/optimization" \
-                -DCMAKE_INSTALL_RPATH="${INSTALL_PATH}/kepler-formal/lib" \
+                -DCMAKE_INSTALL_RPATH="${KEPLER_RPATH}" \
                 -DCMAKE_INSTALL_LIBDIR=lib \
                 -DCMAKE_BUILD_WITH_INSTALL_RPATH=OFF \
                 -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
