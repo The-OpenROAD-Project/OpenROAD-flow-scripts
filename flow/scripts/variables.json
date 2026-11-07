@@ -1392,7 +1392,7 @@
     ]
   },
   "SYNTH_KEEP_MODULES": {
-    "description": "Mark modules to keep from getting removed in flattening.\nA name that matches no module of the design stops synthesis.\n",
+    "description": "Mark modules to keep from getting removed in flattening.\nWhen the whole design is synthesized, a name that matches no module\nof the design stops synthesis. In a partition of a parallel synthesis\n(SYNTH_CHECKPOINT set) a kept module of another partition is not in\nthe partition's checkpoint, and its name is skipped.\n",
     "stages": [
       "synth"
     ]

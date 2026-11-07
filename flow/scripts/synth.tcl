@@ -101,7 +101,13 @@ if { [env_var_exists_and_non_empty SYNTH_KEEP_MODULES] } {
     # `-module <name>` would error if the module doesn't exist, which
     # is why we use bare patterns instead.
     select "$module" "$module\\\$*"
-    if { [string trim [tee -q -s result.string select -list]] eq "" } {
+    # In a partition (SYNTH_CHECKPOINT set) a kept module of another
+    # partition is not in this partition's checkpoint: the selection is
+    # empty and setattr below marks nothing.
+    if {
+      ![env_var_exists_and_non_empty SYNTH_CHECKPOINT]
+      && [string trim [tee -q -s result.string select -list]] eq ""
+    } {
       error "SYNTH_KEEP_MODULES: no module $module in the design"
     }
     setattr -mod -set keep_hierarchy 1
