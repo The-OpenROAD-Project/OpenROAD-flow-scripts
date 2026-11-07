@@ -1,3 +1,2 @@
-# Ignore the rapidus2hp symlink (leading slash anchors to this directory, no trailing slash to match symlink)
-/rapidus2hp
-/rapidus2hpe
+# Ignore the Rapidus symlinks (leading slash anchors to this directory, no trailing slash to match symlink)
+/rapidus*
