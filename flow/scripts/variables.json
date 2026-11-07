@@ -94,7 +94,10 @@
     ]
   },
   "BLOCKS": {
-    "description": "Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.\n"
+    "description": "Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.\n",
+    "stages": [
+      "synth"
+    ]
   },
   "BUFFER_PORTS_ARGS": {
     "description": "Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.\n",

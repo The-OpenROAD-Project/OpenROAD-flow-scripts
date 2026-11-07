@@ -1134,6 +1134,8 @@ BLOCKS:
   description: >
     Blocks used as hard macros in a hierarchical flow. Do note that you have to
     specify block-specific inputs file in the directory mentioned by Makefile.
+  stages:
+    - synth
 CDL_FILES:
   description: |
     Insert additional Circuit Description Language (`.cdl`) netlist files.
