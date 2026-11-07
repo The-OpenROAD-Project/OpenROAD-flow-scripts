@@ -1,0 +1,5 @@
+# bazelisk run //:install -- <prefix>
+alias(
+    name = "install",
+    actual = "@kepler-formal//:install",
+)

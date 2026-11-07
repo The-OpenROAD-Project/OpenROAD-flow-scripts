@@ -1,0 +1,21 @@
+"""Pins the kepler-formal that build_openroad.sh installs.
+
+ORFS is not a Bazel project: this module exists only to install
+kepler-formal into tools/install/kepler-formal. See README.md.
+"""
+
+module(name = "orfs-kepler-formal")
+
+# To bump kepler-formal, change this version.
+bazel_dep(name = "kepler-formal", version = "0.5.0-20261026-a64adfaf")
+
+# kepler-formal builds with a downloaded clang. It registers that
+# toolchain for its own builds only, a dev_dependency by design, so a
+# module that depends on it registers it too, at the same version.
+# Elsewhere the host compiler is used.
+bazel_dep(name = "llvm", version = "0.8.26")
+
+llvm_toolchains = use_extension("@llvm//extensions:toolchain.bzl", "toolchain")
+use_repo(llvm_toolchains, "llvm_toolchains")
+
+register_toolchains("@llvm_toolchains//:all")
