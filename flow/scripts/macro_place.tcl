@@ -1,6 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 2_1_floorplan.odb 2_1_floorplan.sdc
+load_design 2_1_floorplan.odb
 source_step_tcl PRE MACRO_PLACE
 
 # A register file in `mode netlist` dissolves onto the parent's rows

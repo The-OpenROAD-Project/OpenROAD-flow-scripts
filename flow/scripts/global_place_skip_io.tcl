@@ -5,7 +5,7 @@ if { $::env(GPL_PLACE_IOS) } {
     $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb
   return
 }
-load_design 2_floorplan.odb 2_floorplan.sdc
+load_design 2_floorplan.odb
 source_step_tcl PRE GLOBAL_PLACE_SKIP_IO
 
 if { [env_var_exists_and_non_empty FLOORPLAN_DEF] } {
