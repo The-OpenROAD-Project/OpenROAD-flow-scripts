@@ -116,7 +116,7 @@ The setup consists of three files:
 
 ### `docker/Dockerfile.claude`
 
-Extends the `openroad/flow-ubuntu22.04-dev` base image (which has all
+Extends the `openroad/flow-ubuntu26.04-dev` base image (which has all
 OpenROAD build dependencies) with:
 
 - Java 21 and Bazelisk (for Bazel 8.x builds)
@@ -131,12 +131,28 @@ volume mount.
 Handles UID/GID mapping so files created inside the container have the
 correct ownership on the host. The entrypoint:
 
-1. Creates a user matching the host UID/GID
+1. Creates a user matching the host UID/GID, or reuses an existing account
 2. Sources `env.sh` to set up tool paths
 3. Drops privileges via `setpriv` before running the command
 
-This follows the same pattern as `tools/OpenROAD/etc/docker-entrypoint.sh`
-and the `--user` mode in `flow/util/docker_shell`.
+The mapped user's account record and `HOME` both use `/home/claude-user`.
+This keeps the settings and cache mounts visible when the base image already has an account with the host UID.
+
+Run the entrypoint regression check in disposable containers:
+
+```shell
+bash docker/test-claude-entrypoint.sh
+```
+
+With Podman:
+
+```shell
+CONTAINER_ENGINE=podman bash docker/test-claude-entrypoint.sh
+```
+
+The check covers an existing UID and a new UID.
+It verifies that the launched command can read and write fixture settings through `HOME`.
+It also checks that the account's recorded home matches `HOME`.
 
 ### `claude.sh`
 
