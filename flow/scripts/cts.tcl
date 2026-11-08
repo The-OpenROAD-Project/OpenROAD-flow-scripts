@@ -28,12 +28,12 @@ set_dont_use $::env(DONT_USE_CELLS)
 
 log_cmd clock_tree_synthesis {*}$cts_args
 
-utl::push_metrics_stage "cts__{}__pre_repair_timing"
-log_cmd estimate_parasitics
 if { $::env(DETAILED_METRICS) } {
+  utl::push_metrics_stage "cts__{}__pre_repair_timing"
+  log_cmd estimate_parasitics
   report_metrics 4 "cts pre-repair-timing"
+  utl::pop_metrics_stage
 }
-utl::pop_metrics_stage
 
 set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
