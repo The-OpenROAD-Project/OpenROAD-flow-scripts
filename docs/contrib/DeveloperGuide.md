@@ -67,3 +67,9 @@ bytes on macOS).
 ```bash
 python3 -m pytest flow/test/test_run_command.py -v
 ```
+
+## Unit tests that CI does not run
+
+CI runs the `flow/test/test_*.py` files. Some unit tests elsewhere in
+the tree are run on demand and are not hooked up to CI, so they may need
+some maintenance before they pass.
