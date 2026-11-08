@@ -822,12 +822,6 @@ CTS_ARGS:
     Override `clock_tree_synthesis` arguments.
   stages:
     - cts
-CTS_SNAPSHOTS:
-  description: |
-    Create ODB/SDC files at different stages of CTS.
-  stages:
-    - cts
-  default: 0
 HOLD_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing hold violations.
