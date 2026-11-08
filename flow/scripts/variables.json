@@ -250,6 +250,13 @@
       "cts"
     ]
   },
+  "CTS_SNAPSHOTS": {
+    "default": 0,
+    "description": "Create ODB/SDC files at different stages of CTS.\n",
+    "stages": [
+      "cts"
+    ]
+  },
   "DESIGN_NAME": {
     "description": "The name of the top-level module of the design.\n",
     "required": true
