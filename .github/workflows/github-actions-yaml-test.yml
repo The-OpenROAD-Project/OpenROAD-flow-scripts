@@ -18,9 +18,7 @@ jobs:
         fetch-depth: 1
         sparse-checkout: |
           flow/scripts/generate-variables-docs.py
-          flow/scripts/yaml_to_json.py
           flow/scripts/variables.yaml
-          flow/scripts/variables.json
           docs/user/FlowVariables.md
           yamlfix.toml
           .github/requirements/requirements_lock.txt
@@ -37,10 +35,6 @@ jobs:
     - name: Check if FlowVariables.md is up to date
       run: |
         git diff --exit-code docs/user/FlowVariables.md
-    - name: Check variables.json is up to date
-      run: |
-        venv/bin/python3 flow/scripts/yaml_to_json.py
-        git diff --exit-code flow/scripts/variables.json
     - name: Run yamlfix check
       run: |
         source venv/bin/activate

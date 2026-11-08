@@ -246,13 +246,6 @@ synth-report: synth
 do-synth-report:
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/1_2_yosys_metrics.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl
 
-.PHONY: memory
-memory:
-	if [ -f $(RESULTS_DIR)/mem_hierarchical.json ]; then \
-		$(PYTHON_EXE) $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem_hierarchical.json; \
-	fi
-	$(PYTHON_EXE) $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
-
 # ==============================================================================
 
 
@@ -279,10 +272,14 @@ do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	  --yosys-json $(RESULTS_DIR)/memories_inferred.json \
 	  --out-dir $(RESULTS_DIR)/memories \
 	  --json $(RESULTS_DIR)/memories.json \
-	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file))
+	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file)) \
+	  $(foreach file,$(AUTO_MEMORIES_REGFILES),--regfile-spec $(file)) \
+	  $(foreach m,$(AUTO_MEMORIES_MACRO_PLACE),--macro-place $(m)) \
+	  $(if $(AUTO_MEMORIES_REGFILES),--openroad $(OPENROAD_EXE)) \
+	  $(foreach file,$(TECH_LEF) $(SC_LEF),--lef $(file))
 
 $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \
-    $(wildcard $(SCRIPTS_DIR)/memories/*.py)
+    $(AUTO_MEMORIES_REGFILES) $(wildcard $(SCRIPTS_DIR)/memories/*.py)
 	$(UNSET_AND_MAKE) do-auto-memories
 
 yosys-dependencies: $(RESULTS_DIR)/memories.json
@@ -291,6 +288,34 @@ $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
 # reads the final DEF with.
 $(OBJECTS_DIR)/klayout.lyt: $(RESULTS_DIR)/memories.json
 endif
+
+# OpenROAD stages read binary liberty (.blib) files from a cache shared by
+# all designs in $(WORK_HOME)/objects/binary_libs, see
+# scripts/write_binary_libs.tcl. Yosys reads the text libraries.
+.PHONY: binary-libs
+binary-libs:
+	$(UNSET_AND_MAKE) do-binary-libs
+
+.PHONY: do-binary-libs
+do-binary-libs:
+	@mkdir -p $(LOG_DIR)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/write_binary_libs.tmp.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_binary_libs.tcl
+	mv $(LOG_DIR)/write_binary_libs.tmp.log $(LOG_DIR)/write_binary_libs.log
+
+# do-binary-libs renames its log into place only when it succeeds, so a
+# failed conversion runs again. clean_all and clean_binary_libs delete the
+# log with the cache it records, so the next make fills the cache again.
+$(LOG_DIR)/write_binary_libs.log: $(LIB_FILES) \
+  $(foreach corner,$(shell echo $(CORNERS) | tr '[:lower:]' '[:upper:]'),$($(corner)_LIB_FILES))
+	$(UNSET_AND_MAKE) do-binary-libs
+
+# Order-only, so converting never reruns the flow.
+$(RESULTS_DIR)/1_synth.odb: | $(LOG_DIR)/write_binary_libs.log
+
+.PHONY: clean_binary_libs
+clean_binary_libs:
+	rm -rf $(WORK_HOME)/objects/binary_libs
+	rm -f $(LOG_DIR)/write_binary_libs.log
 
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
@@ -694,6 +719,10 @@ $(RESULTS_DIR)/6_final.sdc: $(LOG_DIR)/6_report.log
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
+# Written only when final extracts parasitics (RCX_RULES set, detailed
+# route not skipped); generate_abstract reads it in that case.
+$(RESULTS_DIR)/6_final.spef: $(LOG_DIR)/6_report.log
+
 # The final results are called 6_final.*, so it is convenient when scripting
 # to have the names of the artifacts match the name of the target
 .PHONY: do-final
@@ -707,7 +736,7 @@ do-finish:
 	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_report elapsed
 
 .PHONY: generate_abstract
-generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/6_final.sdc
+generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/6_final.sdc $(RESULTS_DIR)/6_final.spef
 	$(UNSET_AND_MAKE) do-generate_abstract
 
 # Set ABSTRACT_SOURCE if you want to create an abstract from another stage than 6_final.
@@ -852,6 +881,7 @@ clean:
 .PHONY: clean_all
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_metadata clean_abstract
 	rm -rf $(OBJECTS_DIR)
+	rm -f $(LOG_DIR)/write_binary_libs*.log
 
 .PHONY: nuke
 nuke: clean_test clean_issues

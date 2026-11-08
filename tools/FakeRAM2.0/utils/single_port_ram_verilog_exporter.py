@@ -32,6 +32,14 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
             rw_port_group.get_write_mask_lanes(),
         )
 
+    def _lane_range(self, j):
+        """Bit range [msb:lsb] of mask lane j; the last lane holds the rest"""
+        mem = self.get_memory()
+        width = mem.get_mask_lane_width()
+        lsb = j * width
+        msb = min(lsb + width, mem.get_width()) - 1
+        return f"[{msb}:{lsb}]"
+
     def export_module(self, out_fh):
         """Exports the verilog module to the output stream"""
 
@@ -69,11 +77,19 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         out_fh.write("         begin\n")
         mask_bus, lanes = self._get_mask()
         if mask_bus:
-            out_fh.write("            for (j = 0; j < MASK_LANES; j = j + 1)\n")
-            out_fh.write(f"               if ({mask_bus}[j])\n")
-            out_fh.write(
-                f"                  mem[{addr_bus}][j*LANE_WIDTH +: LANE_WIDTH] <= {din_bus}[j*LANE_WIDTH +: LANE_WIDTH];\n"
-            )
+            if lanes * mem.get_mask_lane_width() == mem.get_width():
+                out_fh.write("            for (j = 0; j < MASK_LANES; j = j + 1)\n")
+                out_fh.write(f"               if ({mask_bus}[j])\n")
+                out_fh.write(
+                    f"                  mem[{addr_bus}][j*LANE_WIDTH +: LANE_WIDTH] <= {din_bus}[j*LANE_WIDTH +: LANE_WIDTH];\n"
+                )
+            else:
+                for j in range(lanes):
+                    lane = self._lane_range(j)
+                    out_fh.write(f"            if ({mask_bus}[{j}])\n")
+                    out_fh.write(
+                        f"               mem[{addr_bus}]{lane} <= {din_bus}{lane};\n"
+                    )
         else:
             out_fh.write(f"            mem[{addr_bus}] <= {din_bus};\n")
         out_fh.write("         end\n")
@@ -114,7 +130,7 @@ class SinglePortRAMVerilogExporter(VerilogExporter):
         out_fh.write(f"   parameter corrupt_mem_on_X_p = 1;\n")
         if mask_bus:
             out_fh.write(f"   parameter MASK_LANES = {lanes};\n")
-            out_fh.write(f"   parameter LANE_WIDTH = {mem.get_width() // lanes};\n")
+            out_fh.write(f"   parameter LANE_WIDTH = {mem.get_mask_lane_width()};\n")
         out_fh.write("\n")
         out_fh.write(f"   output reg [BITS-1:0]    {dout_bus};\n")
         out_fh.write(f"   input  [ADDR_WIDTH-1:0]  {addr_bus};\n")
