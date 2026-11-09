@@ -132,6 +132,62 @@ proc env_var_exists_and_non_empty { env_var } {
   return [expr { [info exists ::env($env_var)] && ![string equal $::env($env_var) ""] }]
 }
 
+# AUTO_MEMORIES: do-auto-memories writes into $RESULTS_DIR/memories the
+# lists below, and every later step reads the files they name, never
+# what a directory happens to hold.
+#
+# blackboxes.txt, `<module> <area>` a line: the macros, each with its
+# <module>.lib and <module>.lef, and the area synthesis costs it by.
+proc auto_memories_areas { } {
+  if { ![env_var_equals AUTO_MEMORIES 1] } {
+    return {}
+  }
+  set f "$::env(RESULTS_DIR)/memories/blackboxes.txt"
+  set fh [open $f r]
+  set content [string map {\r ""} [read $fh]]
+  close $fh
+  set areas [dict create]
+  foreach line [split $content "\n"] {
+    if { [string trim $line] == "" } {
+      continue
+    }
+    set fields [regexp -all -inline {\S+} $line]
+    if {
+      [llength $fields] != 2
+      || ![string is double -strict [lindex $fields 1]]
+    } {
+      error "$f: expected `<module> <area>`, got `$line`"
+    }
+    dict set areas {*}$fields
+  }
+  return $areas
+}
+
+# A list of module names, one a line:
+# - inline.txt: register files whose generated netlist (<module>.v)
+#   replaces the RTL module's body in synthesis.
+# - regfile_cores.txt: the RAMs the register file wrappers instantiate
+#   as macros; in blackboxes.txt, but no module of the sources.
+# - regfiles.txt: register files that dissolve into their cells after
+#   macro placement (<module>.v, <module>.place).
+proc auto_memories_names { list } {
+  if { ![env_var_equals AUTO_MEMORIES 1] } {
+    return {}
+  }
+  set f "$::env(RESULTS_DIR)/memories/$list"
+  set fh [open $f r]
+  set content [read $fh]
+  close $fh
+  return [regexp -all -inline {\S+} $content]
+}
+
+# The view of every macro in blackboxes.txt, by extension (.lib, .lef).
+proc auto_memories_views { ext } {
+  return [lmap m [dict keys [auto_memories_areas]] {
+    file join $::env(RESULTS_DIR) memories $m$ext
+  }]
+}
+
 proc append_env_var { list_name var_name prefix has_arg } {
   upvar $list_name list
   if {

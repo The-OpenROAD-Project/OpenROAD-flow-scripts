@@ -204,8 +204,8 @@ do-klayout:
 		--template $(KLAYOUT_TECH_FILE) \
 		--output $(OBJECTS_DIR)/klayout.lyt \
 		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS) \
-		  $(if $(filter 1,$(AUTO_MEMORIES)),$(wildcard $(RESULTS_DIR)/memories/*.lef)) \
-		--map-files $(wildcard $(FLOW_HOME)/platforms/$(PLATFORM)/*map)
+		--map-files $(wildcard $(FLOW_HOME)/platforms/$(PLATFORM)/*map) \
+		$(if $(filter 1,$(AUTO_MEMORIES)),--blackboxes $(RESULTS_DIR)/memories/blackboxes.txt)
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
 	$(UNSET_AND_MAKE) do-klayout_wrap
