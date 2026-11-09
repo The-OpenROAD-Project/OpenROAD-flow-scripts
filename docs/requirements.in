@@ -1,10 +1,11 @@
 sphinx-external-toc==1.1.0
-# sphinx 9.2 and docutils 0.23 need Python 3.13; the docs build uses 3.12.
+# Sphinx 9.2 needs Python 3.13 and the docs build uses 3.12.
+# Sphinx 9.1 requires docutils <0.23.
 sphinx~=9.1.0
 docutils>=0.22,<0.23
 sphinx-autobuild
 myst-parser~=5.1.0
-# sphinx-book-theme 1.4.0 supports pydata-sphinx-theme 0.20.x.
+# sphinx-book-theme 1.4.0 requires pydata-sphinx-theme 0.20.0 exactly.
 sphinx-book-theme==1.4.0
 pydata-sphinx-theme==0.20.0
 sphinx-copybutton

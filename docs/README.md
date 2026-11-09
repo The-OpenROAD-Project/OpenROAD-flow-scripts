@@ -15,6 +15,7 @@ repository and is published at
   The pinned Sphinx release needs Python 3.12 or newer.
 - `pip`
 - `virtualenv` (or the standard-library `venv`)
+- `uv`, only to regenerate the lock file
 
 ### Install prerequisites
 
