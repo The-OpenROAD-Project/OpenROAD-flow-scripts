@@ -13,6 +13,15 @@ bazelisk run //:install -- "$(pwd)/../../tools/install/kepler-formal"
 ORFS is not a Bazel project. This folder only pins kepler-formal; the
 install is kepler-formal's own `//:install` target.
 
+That target installs only kepler-formal's own license. `build_openroad.sh`
+then runs `install_licenses.sh` with the same prefix, which copies the
+license notices of every module linked into the binary or shipped in its
+runfiles to `share/kepler-formal/licenses/<module>/`:
+
+```shell
+./install_licenses.sh "$(pwd)/../../tools/install/kepler-formal"
+```
+
 ## How this maps to `DependencyInstaller.sh`
 
 `DependencyInstaller.sh` downloads a pinned CMake from Kitware when the

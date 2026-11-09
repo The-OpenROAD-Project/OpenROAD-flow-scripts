@@ -437,7 +437,8 @@ __local_build()
                 KEPLER_PREFIX="$(pwd)/${KEPLER_PREFIX}"
         fi
         (cd "${DIR}/etc/kepler-formal" && \
-                ${NICE} bazelisk run --jobs="${PROC}" //:install -- "${KEPLER_PREFIX}")
+                ${NICE} bazelisk run --jobs="${PROC}" //:install -- "${KEPLER_PREFIX}" && \
+                ./install_licenses.sh "${KEPLER_PREFIX}")
 
         if [ ${WITH_VERIFIC} -eq 1 ]; then
                 echo "[INFO FLW-0032] Cleaning up Verific components."
