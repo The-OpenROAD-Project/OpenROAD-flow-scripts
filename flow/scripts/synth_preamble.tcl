@@ -49,6 +49,7 @@ proc read_checkpoint { file } {
 # canonicalization, one `<module> <area>` per line; see
 # docs/user/AutoMemories.md.
 source $::env(SCRIPTS_DIR)/memories/check_blackboxed.tcl
+source $::env(SCRIPTS_DIR)/memories/max_bits.tcl
 source $::env(SCRIPTS_DIR)/memories/drop_parameters.tcl
 
 proc auto_memories_areas { } {
@@ -299,6 +300,13 @@ set lib_dont_use_args ""
 if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
   foreach cell $::env(DONT_USE_CELLS) {
     lappend lib_dont_use_args -dont_use $cell
+  }
+}
+# Never map logic onto a hardened block. A block's timing model gives a
+# constant output a function, and ABC would take the block for a gate.
+if { [env_var_exists_and_non_empty BLOCKS] } {
+  foreach block $::env(BLOCKS) {
+    lappend lib_dont_use_args -dont_use $block
   }
 }
 

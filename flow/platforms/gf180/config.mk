@@ -76,6 +76,7 @@ export IO_PLACER_H                           ?= Metal3
 export IO_PLACER_V                           ?= Metal4
 
 # Define default PDN config
+export GLOBAL_CONNECT_TCL ?= $(PLATFORM_DIR)/openROAD/pdn/global_connect.tcl
 export PDN_TCL                               ?= $(PLATFORM_DIR)/openROAD/pdn/pdn_grid_strategy_$(TRACK_OPTION)_6M.cfg
 
 # Endcap and Welltie cells

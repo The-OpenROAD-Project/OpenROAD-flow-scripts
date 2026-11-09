@@ -1061,7 +1061,7 @@ def drc(deck):
     v5.not_interacting(
         m6.enclosing(v5, 1 * deck.dbu, projection, two_opposite_sides_allowed)
         .edges()
-        .with_angle(90)
+        .with_angle(0)
     ).output(
         "V5.M6.AUX.2",
         "V5.M6.AUX.2 : V5 must exactly be the same width as M6 along the direction perpendicular to the M6 length",
@@ -1213,7 +1213,7 @@ def drc(deck):
     v7.not_interacting(
         m8.enclosing(v7, 1 * deck.dbu, projection, two_opposite_sides_allowed)
         .edges()
-        .with_angle(90)
+        .with_angle(0)
     ).output(
         "V7.M8.AUX.2",
         "V7.M8.AUX.2 : V7 must exactly be the same width as M8 along the direction perpendicular to the M8 length",

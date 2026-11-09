@@ -54,6 +54,7 @@ export IO_PLACER_H ?= metal5
 export IO_PLACER_V ?= metal6
 
 # Define default PDN config
+export GLOBAL_CONNECT_TCL ?= $(PLATFORM_DIR)/global_connect.tcl
 export PDN_TCL ?= $(PLATFORM_DIR)/grid_strategy-M1-M4-M7.tcl
 
 # Endcap and Welltie cells

@@ -86,6 +86,7 @@ export IO_PLACER_V ?= Metal2
 export IO_PLACER_H ?= Metal3
 
 # Define default PDN config
+export GLOBAL_CONNECT_TCL ?= $(PLATFORM_DIR)/global_connect.tcl
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # To allow the core rings to fit inside the core area
