@@ -17,5 +17,6 @@ export PLACE_DENSITY = 0.75
 
 export CORNERS = slow typ fast
 
+export GLOBAL_CONNECT_TCL = $(DESIGN_HOME)/$(PLATFORM)/i2c-gpio-expander/global_connect.tcl
 export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(TOP_DESIGN_NICKNAME)/${DESIGN_NAME}/pdn.tcl
 
