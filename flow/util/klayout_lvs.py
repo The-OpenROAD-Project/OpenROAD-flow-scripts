@@ -248,6 +248,7 @@ def parse_args(argv):
 
 def main(argv):
     args = parse_args(argv)
+    klayout_drc.require_db()
     module = klayout_drc.load_deck(args.deck)
     deck = LvsDeck(
         args.in_gds,

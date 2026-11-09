@@ -623,31 +623,30 @@ case "${os}" in
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCmake
         fi
-        if [[ $version != "rodete" ]]; then
-            if _versionCompare ${version} -lt 23.04 ; then
-                if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                    _installPipCommon
-                fi
-            else
-                # The system Python is externally managed (PEP 668): its
-                # packages come from apt, in -base with the other system
-                # packages. The lock, which also has packages apt does not
-                # carry, goes into a virtual environment when one is named.
-                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
-                    _installPipSystem
-                fi
-                if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                    if [[ -n "${VIRTUAL_ENV:-}" ]]; then
-                        _installPipCommon
-                    else
-                        echo "Python packages from apt only. For those in" \
-                            "etc/requirements-common_lock.txt that apt does" \
-                            "not carry, set VIRTUAL_ENV and run -common again."
-                    fi
-                fi
+        if [[ $version != "rodete" ]] && _versionCompare ${version} -lt 23.04 ; then
+            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+                _installPipCommon
             fi
         else
-            echo "Skip pip packages for rodete"
+            # The system Python is externally managed (PEP 668): its
+            # packages come from apt, in -base with the other system
+            # packages. The lock, which also has packages apt does not
+            # carry, among them the klayout module the flow writes GDS
+            # with, goes into the virtual environment VIRTUAL_ENV names;
+            # setup.sh names the checkout's .venv.
+            if [[ $version != "rodete" ]] && [[ "${option}" == "base" || "${option}" == "all" ]]; then
+                _installPipSystem
+            fi
+            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+                if [[ -z "${VIRTUAL_ENV:-}" ]]; then
+                    echo "ERROR: the system Python is externally managed;" \
+                        "set VIRTUAL_ENV to the virtual environment to" \
+                        "install etc/requirements-common_lock.txt into," \
+                        "or run setup.sh, which installs it into .venv." >&2
+                    exit 1
+                fi
+                _installPipCommon
+            fi
         fi
         ;;
     "Darwin" )

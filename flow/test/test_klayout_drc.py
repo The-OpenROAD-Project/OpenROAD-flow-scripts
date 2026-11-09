@@ -106,6 +106,16 @@ class TestKlayoutDrc(unittest.TestCase):
         # 0.08, 0.0144 and 0.09 um2 in the top cell, 0.05 um2 once in the child
         self.assertEqual(self.run_deck(body), {"A": 4})
 
+    def test_corners_default_all(self):
+        def body(deck):
+            via = deck.input(2, 0)
+            via.corners().output("ALL")
+            via.corners((-180, 180)).output("RANGE")
+            via.corners(-180).output("ONE")
+
+        # Two vias in the top cell, four corners each; none of them -180.
+        self.assertEqual(self.run_deck(body), {"ALL": 8, "RANGE": 8, "ONE": 0})
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -176,6 +176,8 @@ configuration file.
 | <a name="IO_PLACER_V"></a>IO_PLACER_V| A list of metal layers on which the I/O pins are placed vertically (sides of the die).| |
 | <a name="IR_DROP_LAYER"></a>IR_DROP_LAYER| Default metal layer to report IR drop.| |
 | <a name="KEEP_VARS"></a>KEEP_VARS| Feature toggle to keep intermediate variables during the flow. This is useful for the single-run flow, where all stages of the flow are run in a single OpenROAD instance.| 0|
+| <a name="KLAYOUT_DRC_FILE"></a>KLAYOUT_DRC_FILE| The KLayout DRC deck `make drc` runs. A `.py` deck runs with the klayout Python module; a Ruby deck (`.lydrc`) is deprecated and needs the KLayout application. Empty when the platform has no deck.| |
+| <a name="KLAYOUT_LVS_FILE"></a>KLAYOUT_LVS_FILE| The KLayout LVS deck `make lvs` runs. A `.py` deck runs with the klayout Python module; a Ruby deck (`.lylvs`) is deprecated and needs the KLayout application. Empty when the platform has no deck.| |
 | <a name="KLAYOUT_TECH_FILE"></a>KLAYOUT_TECH_FILE| A mapping from LEF/DEF to GDS using the KLayout tool.| |
 | <a name="LATCH_MAP_FILE"></a>LATCH_MAP_FILE| Optional mapping file supplied to Yosys to map latches| |
 | <a name="LAYER_PARASITICS_FILE"></a>LAYER_PARASITICS_FILE| Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.| |
@@ -632,6 +634,8 @@ configuration file.
 - [CDL_FILE](#CDL_FILE)
 - [GDS_ALLOW_EMPTY](#GDS_ALLOW_EMPTY)
 - [GND_NETS_VOLTAGES](#GND_NETS_VOLTAGES)
+- [KLAYOUT_DRC_FILE](#KLAYOUT_DRC_FILE)
+- [KLAYOUT_LVS_FILE](#KLAYOUT_LVS_FILE)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)

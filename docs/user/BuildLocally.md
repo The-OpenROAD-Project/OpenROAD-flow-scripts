@@ -12,6 +12,10 @@ cd OpenROAD-flow-scripts
 sudo ./setup.sh
 ```
 
+`setup.sh` installs the Python packages the flow uses, the `klayout`
+module that writes GDS among them, into a virtual environment in `.venv`,
+which `env.sh` puts first on `PATH`.
+
 ## Using Bazel to build OpenROAD and run the ORFS flow (unsupported)
 
 For ORFS/OpenROAD developers. Most of `./setup.sh` isn't needed when

@@ -197,16 +197,22 @@ def space(*opts):
     return _Universal("space", None, opts)
 
 
+def require_db():
+    """Exit with an install hint when the klayout module is missing, before
+    a deck that imports it is loaded."""
+    if db is None:
+        print(
+            "ERROR: the klayout Python module is not installed, pip install"
+            " klayout (etc/requirements-common_lock.txt)"
+        )
+        sys.exit(1)
+
+
 class Deck:
     """The engine: the layout, the mode, and the report database."""
 
     def __init__(self, in_gds, report_file, description, mode="deep", threads=1):
-        if db is None:
-            print(
-                "ERROR: the klayout Python module is not installed, pip install"
-                " klayout (etc/requirements-common_lock.txt)"
-            )
-            sys.exit(1)
+        require_db()
         self.t0 = time.time()
         self.layout = db.Layout()
         print("Reading %s .." % in_gds)
@@ -735,9 +741,13 @@ class Layer:
     def end_segments(self, length, fraction=0.0):
         return self._new(self.data.end_segments(self.deck.v(length), fraction))
 
-    def corners(self, amin=-180.0, amax=None):
+    def corners(self, amin=None, amax=None):
+        """corners: all corners, -180..180; corners(a): those of angle a;
+        corners((amin, amax)) or corners(amin, amax): those in the range."""
         if isinstance(amin, tuple):
             amin, amax = amin
+        if amin is None:
+            amin, amax = -180.0, 180.0
         amax = amin if amax is None else amax
         return self._new(
             self.data.corners(float(amin), float(amax), 1, True, True, False, False)
@@ -929,6 +939,7 @@ def load_deck(path):
 
 def main(argv):
     args = parse_args(argv)
+    require_db()
     module = load_deck(args.deck)
     deck = Deck(
         args.in_gds,
