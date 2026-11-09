@@ -1,5 +1,8 @@
 # Build working directories
 tools/OpenROAD/build/
+# A checkout from before kepler-formal moved to etc/kepler-formal keeps
+# the old submodule tree; keep it out of the image and its licenses.
+tools/kepler-formal/
 # Local Bazel outputs; the image builds its own.
 etc/kepler-formal/bazel-*
 etc/kepler-formal/MODULE.bazel.lock
