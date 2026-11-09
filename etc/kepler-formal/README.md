@@ -25,6 +25,6 @@ URL, the checksum and the build file of each version:
 | --- | --- |
 | oneTBB and capnproto from the OS, or built from a pinned tarball | `bazel_dep` versions in kepler-formal's `MODULE.bazel` |
 | A pinned CMake when the OS's is too old | bazelisk runs the Bazel named in `.bazelversion` |
-| `gcc-toolset-13` on EL8, because GCC 8 is too old | A pinned clang is downloaded on x86-64 Linux; elsewhere the host compiler is used |
+| `gcc-toolset-13` on EL8, because GCC 8 is too old | A pinned clang is downloaded on x86-64 Linux; elsewhere the host compiler is used, `gcc-toolset-13` on EL8, which Yosys still needs |
 | `tools/kepler-formal` and the submodules inside it | The version in `MODULE.bazel`; sources are checked against their checksums and cached in `~/.cache/bazel` |
 | An RPATH that points at the install's `lib/` | The binary finds its libraries next to itself, in `bin/kepler-formal.runfiles/` |

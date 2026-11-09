@@ -244,6 +244,8 @@ _install_EL8_EL9_Packages() {
             readline-devel \
             tcl-tclreadline \
             tcl-tclreadline-devel
+        # The default GCC 8 is too old for Yosys, which needs C++20.
+        dnf -y install gcc-toolset-13
     fi
 
     if [[ "${elVersion}" == "9" ]]; then
