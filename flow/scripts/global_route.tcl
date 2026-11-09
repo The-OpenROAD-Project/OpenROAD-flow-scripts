@@ -1,7 +1,7 @@
 utl::set_metrics_stage "globalroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables grt
-load_design 4_cts.odb
+load_stage_input 4_cts.odb
 
 source_step_tcl PRE GLOBAL_ROUTE
 

@@ -1,6 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables final
-load_design 5_route.odb
+load_stage_input 5_route.odb
 source_step_tcl PRE DENSITY_FILL
 
 if { $::env(USE_FILL) } {

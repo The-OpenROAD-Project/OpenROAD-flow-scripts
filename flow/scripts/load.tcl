@@ -2,7 +2,31 @@ source $::env(SCRIPTS_DIR)/util.tcl
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
+# A step's input is the result of an earlier step of its stage.
 proc load_design { design_file } {
+  load_design_from $::env(RESULTS_DIR) $design_file
+}
+
+# A stage's input is the previous stage's result, read from the
+# variant FLOW_INPUT_VARIANT names.
+proc load_stage_input { design_file } {
+  if { $::env(INPUT_RESULTS_DIR) ne $::env(RESULTS_DIR) } {
+    if { $::env(AUTO_MEMORIES) } {
+      error "AUTO_MEMORIES=1 reads the memories synthesised in this variant,\
+        $::env(FLOW_VARIANT), and FLOW_INPUT_VARIANT=$::env(FLOW_INPUT_VARIANT)\
+        reads the design from another"
+    }
+    if { [file exists $::env(RESULTS_DIR)/$design_file] } {
+      error "$design_file is in both FLOW_VARIANT=$::env(FLOW_VARIANT) and\
+        FLOW_INPUT_VARIANT=$::env(FLOW_INPUT_VARIANT). Run the stage that\
+        reads another variant alone, then the stages after it with\
+        FLOW_INPUT_VARIANT unset, and remove a copy left from an earlier run."
+    }
+  }
+  load_design_from $::env(INPUT_RESULTS_DIR) $design_file
+}
+
+proc load_design_from { dir design_file } {
   # Do not reload if design is already loaded
   set db [ord::get_db]
   if { [$db getChip] != "NULL" && [[$db getChip] getBlock] != "NULL" } {
@@ -27,15 +51,15 @@ proc load_design { design_file } {
     foreach lef [auto_memories_views .lef] {
       read_lef $lef
     }
-    read_verilog $::env(RESULTS_DIR)/$design_file
+    read_verilog $dir/$design_file
     log_cmd link_design {*}[hier_options] $::env(DESIGN_NAME)
   } elseif { $ext == ".odb" } {
-    log_cmd read_db {*}[hier_options] $::env(RESULTS_DIR)/$design_file
+    log_cmd read_db {*}[hier_options] $dir/$design_file
   } else {
     error "Unrecognized input file $design_file"
   }
 
-  log_cmd read_sdc $::env(RESULTS_DIR)/[sdc_file_of $design_file]
+  log_cmd read_sdc $dir/[sdc_file_of $design_file]
 
   if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     log_cmd source $::env(PLATFORM_DIR)/derate.tcl

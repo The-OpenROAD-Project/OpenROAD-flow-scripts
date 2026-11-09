@@ -2,7 +2,7 @@ utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 source $::env(SCRIPTS_DIR)/formal_check.tcl
 erase_non_stage_variables cts
-load_design 3_place.odb
+load_stage_input 3_place.odb
 source_step_tcl PRE CTS
 
 # Clone clock tree inverters next to register loads
