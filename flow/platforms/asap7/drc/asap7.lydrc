@@ -428,7 +428,7 @@ v5.width(24.nm).output("V5.W.1", "V5.W.1 : Min. width of V5 : 24nm")
 v5.space(33.nm, euclidian).output("V5.S.1-2-3", "V5.S.1-2-3 : Min. spacing between V5 : 33nm")
 v5.interacting(m5.enclosing(v5, 11.nm, projection, two_connected_sides_allowed).edges - m5.enclosing(v5, 11.nm, projection, one_side_allowed).edges).output("V5.M5.EN.1", "V5.M5.EN.1 : Min. enclosure of V5 by M5 on at least two opposite sides  : 11nm")
 ((v5 - m5) + (v5 - m6)).output("V5.AUX.1" "V5.AUX.1 : V5 must be inside M5 and M6")
-v5.not_interacting(m6.enclosing(v5, 1.dbu, projection, two_opposite_sides_allowed).edges.with_angle(90)).output("V5.M6.AUX.2", "V5.M6.AUX.2 : V5 must exactly be the same width as M6 along the direction perpendicular to the M6 length")
+v5.not_interacting(m6.enclosing(v5, 1.dbu, projection, two_opposite_sides_allowed).edges.with_angle(0)).output("V5.M6.AUX.2", "V5.M6.AUX.2 : V5 must exactly be the same width as M6 along the direction perpendicular to the M6 length")
 
 
 ###   M6
@@ -482,7 +482,7 @@ v7.width(32.nm).output("V7.W.1", "V7.W.1 : Min. width of V7 : 32nm")
 v7.space(45.nm, euclidian).output("V7.S.1-2-3", "V7.S.1-2-3 : Min. spacing between V7 : 45nm")
 v7.interacting(m7.enclosing(v7, 11.nm, projection, two_connected_sides_allowed).edges - m7.enclosing(v7, 11.nm, projection, one_side_allowed).edges).output("V7.M7.EN.1", "V7.M7.EN.1 : Min. enclosure of V7 by M7 on at least two opposite sides  : 11nm")
 ((v7 - m7) + (v7 - m8)).output("V7.AUX.1" "V7.AUX.1 : V7 must be inside M7 and M8")
-v7.not_interacting(m8.enclosing(v7, 1.dbu, projection, two_opposite_sides_allowed).edges.with_angle(90)).output("V7.M8.AUX.2", "V7.M8.AUX.2 : V7 must exactly be the same width as M8 along the direction perpendicular to the M8 length")
+v7.not_interacting(m8.enclosing(v7, 1.dbu, projection, two_opposite_sides_allowed).edges.with_angle(0)).output("V7.M8.AUX.2", "V7.M8.AUX.2 : V7 must exactly be the same width as M8 along the direction perpendicular to the M8 length")
 
 
 ###   M8

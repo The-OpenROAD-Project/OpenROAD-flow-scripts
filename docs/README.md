@@ -11,10 +11,11 @@ repository and is published at
 
 ### Requires
 
-- Python 3.10 — the version Read the Docs builds with (see `.readthedocs.yaml`).
-  The pinned Sphinx release does not run on Python 3.13 or newer.
+- Python 3.12 or newer — Read the Docs builds with 3.12 (see `.readthedocs.yaml`).
+  The pinned Sphinx release needs Python 3.12 or newer.
 - `pip`
 - `virtualenv` (or the standard-library `venv`)
+- `uv`, only to regenerate the lock file
 
 ### Install prerequisites
 
@@ -29,10 +30,10 @@ pip install -r docs/requirements_lock.txt
 `docs/requirements_lock.txt` is the hash-pinned lock file that Read the Docs
 installs, so a local build matches the published one. The direct dependencies
 are listed in `docs/requirements.in`; after editing that file, regenerate the
-lock with:
+lock with `uv` for Python 3.12:
 
 ``` shell
-pip-compile --generate-hashes --output-file=docs/requirements_lock.txt docs/requirements.in
+uv pip compile --generate-hashes --python-version 3.12 --output-file=docs/requirements_lock.txt docs/requirements.in
 ```
 
 ### Build
