@@ -1,0 +1,242 @@
+{
+ "version": 1,
+ "memories": [
+  {
+   "name": "cva6_icache_data_sram",
+   "rows": 64,
+   "bits": 256,
+   "addr_w": 6,
+   "rw_ports": 1,
+   "mask_lanes": 32,
+   "idiomatic": true,
+   "reason": "the I-cache data RAM behind the techno cut (surgery.py): one read-write port, byte enables",
+   "pins": [
+    {
+     "name": "clk",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "clk"
+    },
+    {
+     "name": "cs",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "en"
+    },
+    {
+     "name": "we",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "wmode"
+    },
+    {
+     "name": "addr",
+     "direction": "input",
+     "width": 6,
+     "port_id": "RW0",
+     "function": "addr"
+    },
+    {
+     "name": "wdata",
+     "direction": "input",
+     "width": 256,
+     "port_id": "RW0",
+     "function": "data_in"
+    },
+    {
+     "name": "be",
+     "direction": "input",
+     "width": 32,
+     "port_id": "RW0",
+     "function": "mask"
+    },
+    {
+     "name": "rdata",
+     "direction": "output",
+     "width": 256,
+     "port_id": "RW0",
+     "function": "data_out"
+    }
+   ]
+  },
+  {
+   "name": "cva6_icache_tag_sram",
+   "rows": 64,
+   "bits": 25,
+   "addr_w": 6,
+   "rw_ports": 1,
+   "mask_lanes": 4,
+   "mask_lane_width": 8,
+   "idiomatic": true,
+   "reason": "the I-cache tag RAM behind the techno cut (surgery.py): one read-write port, byte enables, the last 1 bit",
+   "pins": [
+    {
+     "name": "clk",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "clk"
+    },
+    {
+     "name": "cs",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "en"
+    },
+    {
+     "name": "we",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "wmode"
+    },
+    {
+     "name": "addr",
+     "direction": "input",
+     "width": 6,
+     "port_id": "RW0",
+     "function": "addr"
+    },
+    {
+     "name": "wdata",
+     "direction": "input",
+     "width": 25,
+     "port_id": "RW0",
+     "function": "data_in"
+    },
+    {
+     "name": "be",
+     "direction": "input",
+     "width": 4,
+     "port_id": "RW0",
+     "function": "mask"
+    },
+    {
+     "name": "rdata",
+     "direction": "output",
+     "width": 25,
+     "port_id": "RW0",
+     "function": "data_out"
+    }
+   ]
+  },
+  {
+   "name": "hpdcache_sram_1rw",
+   "rows": 64,
+   "bits": 28,
+   "addr_w": 6,
+   "rw_ports": 1,
+   "idiomatic": true,
+   "reason": "the D-cache directory RAM: one read-write port",
+   "pins": [
+    {
+     "name": "clk",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "clk"
+    },
+    {
+     "name": "cs",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "en"
+    },
+    {
+     "name": "we",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "wmode"
+    },
+    {
+     "name": "addr",
+     "direction": "input",
+     "width": 6,
+     "port_id": "RW0",
+     "function": "addr"
+    },
+    {
+     "name": "wdata",
+     "direction": "input",
+     "width": 28,
+     "port_id": "RW0",
+     "function": "data_in"
+    },
+    {
+     "name": "rdata",
+     "direction": "output",
+     "width": 28,
+     "port_id": "RW0",
+     "function": "data_out"
+    }
+   ]
+  },
+  {
+   "name": "hpdcache_sram_wbyteenable_1rw",
+   "rows": 128,
+   "bits": 64,
+   "addr_w": 7,
+   "rw_ports": 1,
+   "mask_lanes": 8,
+   "idiomatic": true,
+   "reason": "the D-cache data RAM, both ways of a set in a word: one read-write port, byte mask",
+   "pins": [
+    {
+     "name": "clk",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "clk"
+    },
+    {
+     "name": "cs",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "en"
+    },
+    {
+     "name": "we",
+     "direction": "input",
+     "width": 1,
+     "port_id": "RW0",
+     "function": "wmode"
+    },
+    {
+     "name": "addr",
+     "direction": "input",
+     "width": 7,
+     "port_id": "RW0",
+     "function": "addr"
+    },
+    {
+     "name": "wdata",
+     "direction": "input",
+     "width": 64,
+     "port_id": "RW0",
+     "function": "data_in"
+    },
+    {
+     "name": "wbyteenable",
+     "direction": "input",
+     "width": 8,
+     "port_id": "RW0",
+     "function": "mask"
+    },
+    {
+     "name": "rdata",
+     "direction": "output",
+     "width": 64,
+     "port_id": "RW0",
+     "function": "data_out"
+    }
+   ]
+  }
+ ]
+}
