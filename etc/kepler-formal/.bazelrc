@@ -7,7 +7,8 @@ build --cxxopt=-std=c++20
 build --host_cxxopt=-std=c++20
 build -c opt
 
-# As kepler-formal's own .bazelrc: the downloaded clang toolchain must
-# win resolution on Linux.
+# As kepler-formal's own .bazelrc: link statically on Linux. The clang
+# toolchain is chosen by register_toolchains in MODULE.bazel, on x86-64
+# Linux only.
 common --enable_platform_specific_config
 build:linux --dynamic_mode=off
