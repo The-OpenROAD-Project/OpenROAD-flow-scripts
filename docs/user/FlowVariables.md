@@ -299,6 +299,7 @@ configuration file.
 | <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP| Do not perform VT swap to improve QoR (default: do VT swap).| |
 | <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.| |
 | <a name="SWAP_ARITH_OPERATORS"></a>SWAP_ARITH_OPERATORS| Improve timing QoR by swapping ALU and MULT arithmetic operators.| 0|
+| <a name="SYNTH_ABC_PARTITION"></a>SYNTH_ABC_PARTITION| Map the top module with one abc call per register group instead of one for the whole module. abc maps each call against that call's own critical path and sees neither the SDC (clocks, false paths) nor the arrival times at cells mapped before it, such as extract_fa's adders. When that critical path is the wrong one, the real cones are area-recovered into slow structures; separate calls limit this to one group. Flops are grouped by name; the value is the minimum cone size, in cells, for a group to get its own call. 0 disables. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS is set.| 0|
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| |
 | <a name="SYNTH_BLACKBOXES"></a>SYNTH_BLACKBOXES| List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design. Non-existant modules are ignored silently, useful when listing modules statically, even if modules come and go dynamically.| |
 | <a name="SYNTH_BLACKBOXES_FILE"></a>SYNTH_BLACKBOXES_FILE| Path to a file with more modules to treat as black boxes, one name per line, added to SYNTH_BLACKBOXES. For a parallel synthesis whose list is too long for one environment variable: Linux caps one at 128 KiB.| |
@@ -374,6 +375,7 @@ configuration file.
 - [SDC_FILE](#SDC_FILE)
 - [SEC_CHECK](#SEC_CHECK)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+- [SYNTH_ABC_PARTITION](#SYNTH_ABC_PARTITION)
 - [SYNTH_ARGS](#SYNTH_ARGS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
 - [SYNTH_BLACKBOXES_FILE](#SYNTH_BLACKBOXES_FILE)
