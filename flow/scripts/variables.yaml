@@ -1276,6 +1276,12 @@ CTS_LIB_NAME:
     Name of the Liberty library to use in selecting the clock buffers.
   stages:
     - cts
+CTS_USEFUL_SKEW:
+  description: |
+    Enable useful skew during the CTS balancing phase.
+  stages:
+    - cts
+  default: 0
 POST_CTS_TCL:
   description: |
     Specifies a Tcl script with commands to run after CTS is completed.

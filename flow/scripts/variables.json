@@ -257,6 +257,13 @@
       "cts"
     ]
   },
+  "CTS_USEFUL_SKEW": {
+    "default": 0,
+    "description": "Enable useful skew during the CTS balancing phase.\n",
+    "stages": [
+      "cts"
+    ]
+  },
   "DESIGN_NAME": {
     "description": "The name of the top-level module of the design.\n",
     "required": true
