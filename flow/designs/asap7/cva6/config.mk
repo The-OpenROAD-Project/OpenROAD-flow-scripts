@@ -82,11 +82,6 @@ export SYNTH_VERILOG_SURGERY  = $(DESIGN_HOME)/$(PLATFORM)/cva6/surgery.py
 export AUTO_MEMORIES          = 1
 export ADDITIONAL_MEMORIES    = $(DESIGN_HOME)/$(PLATFORM)/cva6/cva6.memories
 
-# Kepler LEC off for now: kepler-formal stops on the macros AUTO_MEMORIES
-# makes ("cva6_icache_data_sram cannot be found"). A new kepler-formal is
-# in the works; the Kepler team rewires LEC for cva6 with it.
-export LEC_CHECK              = 0
-
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
 export CORE_UTILIZATION       = 70

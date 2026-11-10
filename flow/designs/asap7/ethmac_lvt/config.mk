@@ -17,4 +17,7 @@ export ASAP7_USE_VT           = LVT
 
 export RECOVER_POWER          = 1
 
+# Temporary disabling: the design has several clock domains and the
+# sequential check does not yet cover logic crossing between them.
+export SEC_CHECK = 0
 export SETUP_REPAIR_PHASES = PARALLEL_EVAL
