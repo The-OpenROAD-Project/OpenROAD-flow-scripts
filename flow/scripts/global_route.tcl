@@ -1,7 +1,7 @@
 utl::set_metrics_stage "globalroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables grt
-load_design 4_cts.odb 4_cts.sdc
+load_design 4_cts.odb
 
 source_step_tcl PRE GLOBAL_ROUTE
 
@@ -30,6 +30,7 @@ proc set_grt_seed { } {
 proc run_global_route_and_catch_failures { args } {
   if { [catch { log_cmd global_route {*}$args } errMsg] } {
     log_cmd write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
+    log_cmd write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt-failed.sdc
     error $errMsg
   }
 }
@@ -157,4 +158,3 @@ source [file join $::env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
 write_guides $::env(RESULTS_DIR)/route.guide
 source_step_tcl POST GLOBAL_ROUTE
 orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
-orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
