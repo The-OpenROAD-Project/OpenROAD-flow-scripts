@@ -136,7 +136,9 @@ html_theme_options = {
 
 
 def get_file_from_url(url, fname):
-    r = requests.get(url)
+    # Fail the build on an HTTP error instead of writing an error page to fname.
+    r = requests.get(url, timeout=60)
+    r.raise_for_status()
     with open(fname, "wb") as f:
         f.write(r.content)
 
@@ -196,7 +198,11 @@ def setup(app):
 
     match = re.search(f"{start_pattern}(.*?){end_pattern}", markdown_content, re.DOTALL)
 
-    assert match is not None, "No match found, check the OR Doc pattern on index.md"
+    if match is None:
+        raise RuntimeError(
+            f"SupportedOS.md: no text between '{start_pattern}' and "
+            f"'{end_pattern}'; check the headings in OpenROAD docs/index.md"
+        )
     extracted_content = match.group(1)
     extracted_content = "\n#### Supported Operating Systems" + extracted_content
     print(extracted_content)
@@ -205,7 +211,8 @@ def setup(app):
     with open("index2.md", "r") as f:
         existing_content = f.read()
     match = re.search(r"### Setup", existing_content)
-    assert match is not None, "Check search keyword."
+    if match is None:
+        raise RuntimeError("index2.md: heading '### Setup' not found")
     with open("index2.md", "w") as f:
         insert_position = match.end() + 1
         before_insert = existing_content[:insert_position]
