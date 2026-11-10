@@ -31,6 +31,11 @@ export OTHER_W    = $(wordlist 2, $(words $(GT2N_USE_W)),  $(GT2N_USE_W))
 export PRIMARY_VT = $(word 1, $(GT2N_USE_VT))
 export OTHER_VT   = $(wordlist 2, $(words $(GT2N_USE_VT)), $(GT2N_USE_VT))
 
+# Cells of every loaded Vt but the lowest one (elvt < ulvt < lvt < svt < hvt),
+# for LOWEST_VT_ONLY
+.LOWEST_VT = $(firstword $(foreach vt,elvt ulvt lvt svt hvt,$(filter $(vt),$(GT2N_USE_VT))))
+export NON_LOWEST_VT_CELLS ?= $(addprefix *_,$(filter-out $(.LOWEST_VT),$(GT2N_USE_VT)))
+
 # Cartesian product of (W, Vt) used by every cell-name template below.
 ALL_WVT     = $(foreach w,$(GT2N_USE_W), $(foreach vt,$(GT2N_USE_VT),$(w)_$(vt)))
 PRIMARY_WVT = $(PRIMARY_W)_$(PRIMARY_VT)

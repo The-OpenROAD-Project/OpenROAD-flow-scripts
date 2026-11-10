@@ -63,9 +63,7 @@ set_placement_padding -global \
 set_propagated_clock [all_clocks]
 log_cmd estimate_parasitics
 
-if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
-  set_dont_use $::env(DONT_USE_CELLS)
-}
+set_dont_use [dont_use_cells]
 
 if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
   if { $::env(DETAILED_METRICS) } {
@@ -131,6 +129,15 @@ if { !$::env(OPT_POST_GRT_WNS) } {
   run_global_route_and_catch_failures -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+}
+
+if { $::env(REPAIR_POWER) } {
+  log_cmd global_route -start_incremental {*}$allow_congestion
+  repair_power_helper
+  # Route the nets of the swapped cells
+  run_global_route_and_catch_failures -end_incremental {*}$res_aware \
+    {*}$allow_congestion \
+    -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_power.rpt
 }
 
 if {

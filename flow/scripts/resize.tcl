@@ -9,7 +9,7 @@ log_cmd estimate_parasitics
 set instance_count_before [sta::network_leaf_instance_count]
 set pin_count_before [sta::network_leaf_pin_count]
 
-set_dont_use $::env(DONT_USE_CELLS)
+set_dont_use [dont_use_cells]
 
 if { [env_var_exists_and_non_empty EARLY_SIZING_CAP_RATIO] } {
   log_cmd set_opt_config -set_early_sizing_cap_ratio $env(EARLY_SIZING_CAP_RATIO)

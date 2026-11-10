@@ -297,10 +297,8 @@ foreach lib $::env(LIB_FILES) {
 # Exclude dont_use cells. This includes macros that are specified via
 # LIB_FILES and ADDITIONAL_LIBS that are included in LIB_FILES.
 set lib_dont_use_args ""
-if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
-  foreach cell $::env(DONT_USE_CELLS) {
-    lappend lib_dont_use_args -dont_use $cell
-  }
+foreach cell [dont_use_cells] {
+  lappend lib_dont_use_args -dont_use $cell
 }
 # Never map logic onto a hardened block. A block's timing model gives a
 # constant output a function, and ABC would take the block for a gate.
