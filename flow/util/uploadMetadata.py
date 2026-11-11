@@ -3,7 +3,6 @@
 import json
 import argparse
 import os
-import re
 import sys
 from datetime import datetime, timezone
 
@@ -161,154 +160,17 @@ args = parser.parse_args()
 MAX_PUBSUB_BYTES = 8 * 1024 * 1024
 
 
-def build_design_record(dataFile, platform, design, variant, outcome=None):
-    """Return a dict for one design to be included in the pipeline-level payload.
-
-    ``dataFile`` is the design's metadata.json, or ``None`` for a run that ended
-    before writing one; such a record carries only its ``outcome``.
-    """
-    record = {"platform": platform, "design": design, "variant": variant}
-    if dataFile:
-        with open(dataFile) as f:
-            data = json.load(f)
-        record["metrics"] = {k.replace(":", "__"): v for k, v in data.items()}
-    if outcome:
-        record["outcome"] = outcome
-    return record
-
-
-# How a flow run ended, as the CI job records it next to the design's reports:
-# {"exit_code": int, "timed_out": bool, "elapsed_minutes": float,
-#  "limit_minutes": int}. Every key is optional.
-STATUS_FILENAME = "flow-status.json"
-MAX_OUTCOME_MESSAGE = 1024
-# Stage log names start with the step number: 1_2_yosys.log, 5_1_grt.log.
-STAGE_LOG = re.compile(r"^(\d+)_(?:(\d+)_)?.*\.log$")
-# The first matching line of a failing stage's log is the error reported. The
-# OpenROAD form carries the tool's message ID; Yosys prints "ERROR: ".
-ERROR_LINE = re.compile(
-    r"\[(?:ERROR|CRITICAL|FATAL) [A-Z][A-Z0-9]*-\d+\].*|^ERROR: .*|^Error: .*"
-)
-# What a tool that died on a signal leaves in its log, as opposed to an error it
-# reported itself.
-CRASH_LINE = re.compile(r"Signal \d+ received|Segmentation fault|core dumped")
-
-
-def _stage_name(log_name):
-    """The flow stage a stage log belongs to, e.g. 5_1_grt.log -> "grt"."""
-    match = STAGE_LOG.match(log_name)
-    if not match:
-        return None
-    step, sub = match.group(1), match.group(2)
-    if step == "5":
-        return "grt" if sub == "1" else "route"
+def build_design_record(dataFile, platform, design, variant):
+    """Return a dict for one design to be included in the pipeline-level payload."""
+    with open(dataFile) as f:
+        data = json.load(f)
+    metrics = {k.replace(":", "__"): v for k, v in data.items()}
     return {
-        "1": "synth",
-        "2": "floorplan",
-        "3": "place",
-        "4": "cts",
-        "6": "finish",
-    }.get(step)
-
-
-def _stage_logs(log_dir):
-    """The design's stage logs, last step first."""
-    try:
-        names = os.listdir(log_dir)
-    except OSError:
-        return []
-
-    def key(name):
-        match = STAGE_LOG.match(name)
-        return (int(match.group(1)), int(match.group(2) or 0), name)
-
-    return sorted((n for n in names if STAGE_LOG.match(n)), key=key, reverse=True)
-
-
-def _scan_log(path):
-    """The first error line of a log and whether it shows a crash."""
-    error_line = None
-    crashed = False
-    try:
-        with open(path, errors="replace") as f:
-            for line in f:
-                if error_line is None:
-                    match = ERROR_LINE.search(line)
-                    if match:
-                        error_line = match.group(0).strip()
-                if not crashed and CRASH_LINE.search(line):
-                    crashed = True
-                if error_line is not None and crashed:
-                    break
-    except OSError:
-        pass
-    return error_line, crashed
-
-
-def read_flow_outcome(report_dir, log_dir):
-    """The design's outcome from its flow-status.json and stage logs, or ``None``.
-
-    ``status`` is ``timeout`` when the time limit stopped the run, ``passed`` on
-    exit code 0, ``crash`` when the last stage log shows the tool died on a
-    signal, and ``error`` otherwise. A failed run also names the stage it ended
-    in and the first error line found in its logs, last stage first.
-    """
-    path = os.path.join(report_dir, STATUS_FILENAME)
-    if not os.path.exists(path):
-        return None
-    try:
-        with open(path) as f:
-            status = json.load(f)
-    except (OSError, ValueError) as e:
-        print(f"[WARN] Could not read {path}: {e}. Reporting no outcome.")
-        return None
-    if not isinstance(status, dict):
-        print(f"[WARN] {path} does not hold a JSON object. Reporting no outcome.")
-        return None
-
-    exit_code = status.get("exit_code")
-    timed_out = status.get("timed_out") is True
-    if not timed_out and not isinstance(exit_code, int):
-        print(f"[WARN] {path} has no exit_code. Reporting no outcome.")
-        return None
-
-    outcome = {}
-    for key in ("elapsed_minutes", "limit_minutes"):
-        value = status.get(key)
-        if (
-            isinstance(value, (int, float))
-            and not isinstance(value, bool)
-            and value >= 0
-        ):
-            outcome[key] = value
-
-    if not timed_out and exit_code == 0:
-        outcome["status"] = "passed"
-        return outcome
-
-    logs = _stage_logs(log_dir)
-    if logs:
-        stage = _stage_name(logs[0])
-        if stage:
-            outcome["stage"] = stage
-
-    message = None
-    crashed = False
-    for i, name in enumerate(logs):
-        error_line, log_crashed = _scan_log(os.path.join(log_dir, name))
-        if i == 0:
-            crashed = log_crashed
-        if error_line:
-            message = error_line
-            break
-    if message:
-        outcome["message"] = message[:MAX_OUTCOME_MESSAGE]
-
-    if timed_out:
-        outcome["status"] = "timeout"
-    else:
-        outcome["status"] = "crash" if crashed else "error"
-    return outcome
+        "platform": platform,
+        "design": design,
+        "variant": variant,
+        "metrics": metrics,
+    }
 
 
 def _submodule_defect(entry):
@@ -564,10 +426,6 @@ def publish_v1_per_design(
 
     The requester keys go on after the metrics, so a metric that happened to
     share their name could not replace who asked for the build.
-
-    A design's outcome rides at the root as ``outcome``. A design that has only
-    an outcome carries no metrics to name it, so its message names the design
-    with the same run__flow__ keys metadata.json would hold, dated by the build.
     """
     futures = []
     failed = 0
@@ -583,19 +441,7 @@ def publish_v1_per_design(
         }
         if provenance:
             payload.update(provenance)
-        if "metrics" in d:
-            payload.update(d["metrics"])
-        else:
-            payload.update(
-                {
-                    "run__flow__platform": d["platform"],
-                    "run__flow__design": d["design"],
-                    "run__flow__variant": d["variant"],
-                    "run__flow__generate_date": resolve_build_time(args),
-                }
-            )
-        if "outcome" in d:
-            payload["outcome"] = d["outcome"]
+        payload.update(d["metrics"])
         if requester:
             payload.update(requester)
 
@@ -667,28 +513,16 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
     platform = dirList[1]
     design = dirList[2]
     variant = dirList[3]
+    dataFile = os.path.join(reportDir, RUN_FILENAME)
+    if not os.path.exists(dataFile):
+        print(f"[WARN] No data file for {platform} {design} {variant}.")
+        continue
     if platform == "sky130hd_fakestack" or platform == "src":
         print(f"[WARN] Skiping upload {platform} {design} {variant}.")
         continue
-    dataFile = os.path.join(reportDir, RUN_FILENAME)
-    if not os.path.exists(dataFile):
-        dataFile = None
-    outcome = read_flow_outcome(
-        reportDir, os.path.join("logs", platform, design, variant)
-    )
-    if dataFile is None and outcome is None:
-        print(f"[WARN] No data file for {platform} {design} {variant}.")
-        continue
-    if dataFile is None:
-        print(
-            f"[INFO] No data file for {platform} {design} {variant}; "
-            f"reporting its {outcome['status']} outcome only."
-        )
     # --- PUBSUB ---
     if publisher:
-        design_records.append(
-            build_design_record(dataFile, platform, design, variant, outcome)
-        )
+        design_records.append(build_design_record(dataFile, platform, design, variant))
     # --- END PUBSUB ---
 
 # --- PUBSUB ---
