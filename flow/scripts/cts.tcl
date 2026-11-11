@@ -2,7 +2,7 @@ utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 source $::env(SCRIPTS_DIR)/formal_check.tcl
 erase_non_stage_variables cts
-load_design 3_place.odb 3_place.sdc
+load_design 3_place.odb
 source_step_tcl PRE CTS
 
 # Clone clock tree inverters next to register loads
@@ -76,4 +76,3 @@ report_metrics 4 "cts final"
 source_step_tcl POST CTS
 
 orfs_write_db $::env(RESULTS_DIR)/4_1_cts.odb
-orfs_write_sdc $::env(RESULTS_DIR)/4_cts.sdc
