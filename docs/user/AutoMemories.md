@@ -29,12 +29,14 @@ into `$(RESULTS_DIR)/memories_inferred.json`, and
 
 Synthesis (canonicalization) blackboxes the converted modules so the
 liberty view wins over their behavioral bodies; floorplan through final
-read the generated `.lib`/`.lef` alongside `ADDITIONAL_LIBS`/
-`ADDITIONAL_LEFS`. Everything downstream keys off the files above —
-nothing else passes between the generator and the flow. That file-based
-handoff is what lets build systems (e.g. bazel-orfs) declare the
-generated artifacts as ordinary stage outputs and transitive
-dependencies of the remaining stages.
+read the `<m>.lib`/`<m>.lef` of each module `blackboxes.txt` lists,
+alongside `ADDITIONAL_LIBS`/`ADDITIONAL_LEFS`. Everything downstream keys
+off the files above, by the names the lists give: a file in `memories/`
+that no list names is not read, and a list that is missing stops the
+step that reads it. Nothing else passes between the generator and the
+flow. That file-based handoff is what lets build systems (e.g.
+bazel-orfs) declare the generated artifacts as ordinary stage outputs
+and transitive dependencies of the remaining stages.
 
 Memories that are *not* converted stay in the netlist and synthesize to
 flip-flops, like any other RTL.
