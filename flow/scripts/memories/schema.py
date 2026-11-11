@@ -49,6 +49,10 @@ class Memory:
     # Total width of the per-port write mask, 0 if unmasked. Subword-split
     # mask pins (`W0_mask_0..3`) contribute one lane each.
     mask_lanes: int = 0
+    # Bits per mask lane, 0 for the even split (bits / mask_lanes). A
+    # ragged last lane needs it: tc_sram's byte enables over a 25-bit
+    # word are 8, 8, 8 and 1 bit wide (mask_lanes 4, mask_lane_width 8).
+    mask_lane_width: int = 0
     # Read ports yosys inferred without a clock ($mem_v2 RD_CLK_ENABLE=0).
     # An SRAM macro reads on a clock edge, so one of these rules the memory
     # out of conversion; see idiomatic.py.
@@ -61,10 +65,19 @@ class Memory:
     pins: list[Pin] = field(default_factory=list)
     # The module whose RTL body simulates this memory: {"file", "module"}.
     behavioral_model: dict | None = None
-    # True when the memory is converted to a macro (.lib/.lef emitted and
-    # the module blackboxed); False leaves it to synthesize as flops.
+    # True when FakeRAM converts the memory to an SRAM macro (.lib/.lef
+    # emitted and the module blackboxed); see `kind` for what the flow
+    # does with the memory in the end.
     idiomatic: bool = False
     reason: str = ""
+    # What the memory becomes: "fakeram" (an SRAM macro), "regfile" (a
+    # register file generate_ram builds from `spec`) or "flops".
+    kind: str = "flops"
+    # "detected" (yosys inferred it), "listed" (AUTO_MEMORIES_REGFILES
+    # names it) or "override" (an ADDITIONAL_MEMORIES file).
+    source: str = "detected"
+    # The register-file spec, for kind "regfile".
+    spec: str = ""
 
     def total_ports(self) -> int:
         return self.read_ports + self.write_ports + self.rw_ports
@@ -115,6 +128,7 @@ def memory_from_dict(d: dict) -> Memory:
         "write_ports",
         "rw_ports",
         "mask_lanes",
+        "mask_lane_width",
         "comb_read_ports",
     ):
         if key in d:
@@ -129,6 +143,9 @@ def memory_from_dict(d: dict) -> Memory:
         mem.idiomatic = bool(d["idiomatic"])
     if "reason" in d:
         mem.reason = str(d["reason"])
+    for key in ("kind", "source", "spec"):
+        if key in d:
+            setattr(mem, key, str(d[key]))
     return mem
 
 
@@ -182,6 +199,7 @@ def merge(detected: list[Memory], overrides: list[Memory]) -> list[Memory]:
             "write_ports",
             "rw_ports",
             "mask_lanes",
+            "mask_lane_width",
             "comb_read_ports",
         ):
             value = getattr(o, key)
@@ -198,6 +216,53 @@ def merge(detected: list[Memory], overrides: list[Memory]) -> list[Memory]:
     return list(by_name.values())
 
 
+def lane_width_check(name: str, bits: int, lanes: int, width: int) -> None:
+    """Raise SchemaError unless `lanes` mask lanes cover `bits` bits.
+
+    Every lane is `width` bits wide but the last, which holds the rest:
+    lanes * width >= bits > (lanes - 1) * width. Without a width the lanes
+    split the word evenly.
+    """
+    if not lanes:
+        if width:
+            raise SchemaError(f"memory {name}: mask_lane_width without mask_lanes")
+        return
+    if not width:
+        if bits % lanes:
+            raise SchemaError(
+                f"memory {name}: {bits} bits are not {lanes} even mask lanes; "
+                f"give mask_lane_width for a ragged last lane"
+            )
+        return
+    if not lanes * width >= bits > (lanes - 1) * width:
+        raise SchemaError(
+            f"memory {name}: {lanes} mask lanes of {width} bits do not cover "
+            f"{bits} bits with a last lane of 1 to {width}"
+        )
+
+
+def mask_check(mem: Memory) -> None:
+    """Raise SchemaError unless every mask pin is `mask_lanes` wide.
+
+    FakeRAM counts the lanes from the mask pin's width, never from
+    mask_lanes, and an override merged onto a detected memory keeps the
+    detected pins: an override that changes mask_lanes must bring a
+    mask pin to match.
+    """
+    masks = [p for p in mem.pins if p.function == "mask"]
+    if mem.mask_lanes and not masks:
+        raise SchemaError(
+            f"memory {mem.name}: mask_lanes is {mem.mask_lanes} but no pin "
+            f"has function mask"
+        )
+    for p in masks:
+        if p.width != mem.mask_lanes:
+            raise SchemaError(
+                f"memory {mem.name}: mask pin {p.name} is {p.width} bits wide "
+                f"but mask_lanes is {mem.mask_lanes}"
+            )
+
+
 def validate_emittable(mem: Memory) -> None:
     """Raise SchemaError unless `mem` carries enough to emit .lib/.lef."""
     if not mem.pins:
@@ -207,6 +272,8 @@ def validate_emittable(mem: Memory) -> None:
             f"memory {mem.name}: rows ({mem.rows}) and bits ({mem.bits}) "
             f"must be >= 1"
         )
+    lane_width_check(mem.name, mem.bits, mem.mask_lanes, mem.mask_lane_width)
+    mask_check(mem)
     port_ids = {p.port_id for p in mem.pins}
     for port_id in port_ids:
         functions = {p.function for p in mem.pins if p.port_id == port_id}

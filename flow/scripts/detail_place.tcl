@@ -1,7 +1,7 @@
 utl::set_metrics_stage "detailedplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables place
-load_design 3_4_place_resized.odb 2_floorplan.sdc
+load_design 3_4_place_resized.odb
 source_step_tcl PRE DETAIL_PLACE
 
 proc do_dpl { } {
@@ -25,7 +25,7 @@ proc do_dpl { } {
 
   utl::info FLW 12 "Placement violations [check_placement -placeable -verbose]."
 
-  log_cmd estimate_parasitics -placement
+  log_cmd estimate_parasitics
 }
 
 set result [catch { do_dpl } errMsg]
@@ -39,4 +39,3 @@ report_metrics 3 "detailed place" true false
 source_step_tcl POST DETAIL_PLACE
 
 orfs_write_db $::env(RESULTS_DIR)/3_5_place_dp.odb
-orfs_write_sdc $::env(RESULTS_DIR)/3_place.sdc

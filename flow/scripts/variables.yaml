@@ -1,27 +1,4 @@
 ---
-GENERATE_ARTIFACTS_ON_FAILURE:
-  description: >
-    For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
-    allow the user to save hours on re-running the failed step locally, but when
-    working with a Makefile flow, it is more natural to fail the step and leave
-    the user to manually inspect the logs and artifacts directly via the file
-    system.
-    Set to 1 to change the behavior to generate artifacts upon failure to e.g.
-    do a global route. The exit code will still be non-zero on all other
-    failures that aren't covered by the "useful to inspect the artifacts on
-    failure" use-case.
-    Example: just like detailed routing, a global route that fails with
-    congestion, is not a build failure(as in exit code non-zero), it is a
-    successful(as in zero exit code) global route that produce reports
-    detailing the problem.
-    Detailed route will not proceed, if there is global routing congestion
-    This allows build systems, such as bazel, to create artifacts for global and
-    detailed route, even if the operation had problems, without having know
-    about the semantics between global and detailed route.
-    Considering that global and detailed route can run for a long time and use a
-    lot of memory, this allows inspecting results on a laptop for a build that
-    ran on a server.
-  default: 0
 TNS_END_PERCENT:
   description: >
     Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all
@@ -264,6 +241,37 @@ SYNTH_VERILOG_SURGERY_ARGS:
     Arguments to SYNTH_VERILOG_SURGERY, before the ones the flow adds.
   stages:
     - synth
+AUTO_MEMORIES_REGFILES:
+  description: >
+    Experimental. Space-separated list of register-file spec files, one
+    per RTL module to build as a register file of placed standard cells
+    rather than synthesise to flops. Each spec names its module, words,
+    bits, read and write ports by the RTL's own port names, and the cells.
+    memories/regfile_ram.py checks the spec against the module's ports
+    and has OpenROAD's generate_ram build it as `<module>_ram`, under
+    `$(RESULTS_DIR)/memories/`, with a wrapper in the module's place. A
+    module named in AUTO_MEMORIES_MACRO_PLACE is blackboxed like an
+    AUTO_MEMORIES macro and placed as one; any other is inlined as its
+    generated netlist. A placed spec in `mode netlist` then dissolves into
+    its cells after macro placement: its core FIRM where the macro was
+    placed, in the macro's orientation, its periphery left to placement. Every register
+    file appears in memories.json with kind `regfile`. Requires
+    AUTO_MEMORIES=1.
+  stages:
+    - synth
+AUTO_MEMORIES_MACRO_PLACE:
+  description: >
+    Experimental. Space-separated list of module names of
+    AUTO_MEMORIES_REGFILES register files to place as macros, blackboxed
+    in synthesis and placed by the macro placer (and, in `mode netlist`,
+    dissolved after macro placement). A register file not listed is
+    inlined: its generated netlist of standard cells replaces the module's
+    body in synthesis, and its cells are placed, sized and buffered with
+    the rest of the design -- the better shape for a small design, where a
+    macro's outline and channels cost more core than the array saves. A
+    name no spec builds stops the build. Requires AUTO_MEMORIES=1.
+  stages:
+    - synth
 SYNTH_MEMORY_MAX_BITS:
   description: >
     Maximum number of bits for memory synthesis.
@@ -347,6 +355,13 @@ SYNTH_BLACKBOXES:
     to run synthesis in parallel for the large modules of the design.
     Non-existant modules are ignored silently, useful when listing modules
     statically, even if modules come and go dynamically.
+  stages:
+    - synth
+SYNTH_BLACKBOXES_FILE:
+  description: >
+    Path to a file with more modules to treat as black boxes, one name per
+    line, added to SYNTH_BLACKBOXES. For a parallel synthesis whose list is
+    too long for one environment variable: Linux caps one at 128 KiB.
   stages:
     - synth
 SYNTH_CHECKPOINT:
@@ -625,6 +640,16 @@ PDN_TCL:
     File path which has a set of power grid policies used by pdn to be applied
     to the design, such as layers to use, stripe width and spacing to generate
     the actual metal straps.
+  stages:
+    - floorplan
+GLOBAL_CONNECT_TCL:
+  description: >
+    File path to the add_global_connection rules that connect the supply pins
+    of the instances to the supply nets. Sourced at floorplan right after the
+    netlist is loaded, before any step can mark an instance dont_touch; the
+    rules are kept in the database. The platform's file by default; a design
+    whose PDN_TCL names other supply nets sets its own. PDN_TCL defines the
+    grids.
   stages:
     - floorplan
 MAKE_TRACKS:
@@ -1202,6 +1227,8 @@ BLOCKS:
   description: >
     Blocks used as hard macros in a hierarchical flow. Do note that you have to
     specify block-specific inputs file in the directory mentioned by Makefile.
+  stages:
+    - synth
 CDL_FILES:
   description: |
     Insert additional Circuit Description Language (`.cdl`) netlist files.
@@ -1214,7 +1241,10 @@ DFF_LIB_FILE:
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
-    A name that matches no module of the design stops synthesis.
+    When the whole design is synthesized, a name that matches no module
+    of the design stops synthesis. In a partition of a parallel synthesis
+    (SYNTH_CHECKPOINT set) a kept module of another partition is not in
+    the partition's checkpoint, and its name is skipped.
   stages:
     - synth
 SYNTH_ARGS:
@@ -1794,6 +1824,7 @@ SKIP_DETAILED_ROUTE:
   stages:
     - route
     - final
+    - generate_abstract
 MAX_REPAIR_ANTENNAS_ITER_DRT:
   default: 5
   description: >

@@ -33,14 +33,8 @@ if { [env_var_exists_and_non_empty DEF_FILE] } {
 }
 
 proc read_timing { input_file } {
-  set result [find_sdc_file $input_file]
-  set design_stage [lindex $result 0]
-  set sdc_file [lindex $result 1]
-
-  if { $sdc_file == "" } {
-    set sdc_file $::env(SDC_FILE)
-  }
-  log_cmd read_sdc $sdc_file
+  set design_stage [lindex [extract_stage $input_file] 0]
+  log_cmd read_sdc [sdc_file_of $input_file]
   if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     source $::env(PLATFORM_DIR)/derate.tcl
   }
@@ -59,17 +53,7 @@ proc read_timing { input_file } {
     set_propagated_clock [all_clocks]
   }
 
-  if { $design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef] } {
-    log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
-  } elseif { $design_stage >= 5 } {
-    if { [log_cmd grt::have_routes] } {
-      log_cmd estimate_parasitics -global_routing
-    } else {
-      puts "No global routing results available, skipping estimate_parasitics"
-    }
-  } elseif { $design_stage >= 3 } {
-    log_cmd estimate_parasitics -placement
-  }
+  orfs_load_parasitics [file rootname [file tail $input_file]]
 
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster
   set _tmp [log_cmd sta::find_timing]

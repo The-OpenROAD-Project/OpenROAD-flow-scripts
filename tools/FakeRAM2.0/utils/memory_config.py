@@ -13,6 +13,7 @@ class MemoryConfig:
         additional_height,
         pin_names=None,
         mask_lanes=0,
+        mask_lane_width=0,
     ):
         """Initializer"""
 
@@ -27,10 +28,23 @@ class MemoryConfig:
         # and writes whole words.
         self._pin_names = dict(pin_names) if pin_names else {}
         self._mask_lanes = int(mask_lanes or 0)
-        if self._mask_lanes and width_in_bits % self._mask_lanes:
+        # Bits per lane; the last lane holds the rest (tc_sram's byte
+        # enables over a word that is not whole bytes). 0: an even split.
+        self._mask_lane_width = int(mask_lane_width or 0)
+        lanes, width = self._mask_lanes, self._mask_lane_width
+        if lanes and not width:
+            if width_in_bits % lanes:
+                raise Exception(
+                    "Width %d is not a whole number of %d mask lanes (%s)"
+                    % (width_in_bits, lanes, name)
+                )
+            self._mask_lane_width = width_in_bits // lanes
+        elif width and not lanes:
+            raise Exception("mask_lane_width without mask_lanes (%s)" % name)
+        elif width and not (lanes * width >= width_in_bits > (lanes - 1) * width):
             raise Exception(
-                "Width %d is not a whole number of %d mask lanes (%s)"
-                % (width_in_bits, self._mask_lanes, name)
+                "%d mask lanes of %d bits do not cover width %d (%s)"
+                % (lanes, width, width_in_bits, name)
             )
 
     def set_name(self, name):
@@ -65,6 +79,10 @@ class MemoryConfig:
         """Returns the number of write mask lanes, 0 when unmasked"""
         return self._mask_lanes
 
+    def get_mask_lane_width(self):
+        """Returns the bits per mask lane; the last lane holds the rest"""
+        return self._mask_lane_width
+
     @staticmethod
     def from_json(json_data):
         return MemoryConfig(
@@ -75,4 +93,5 @@ class MemoryConfig:
             json_data.get("additional_height", 0),
             json_data.get("pin_names"),
             json_data.get("mask_lanes", 0),
+            json_data.get("mask_lane_width", 0),
         )

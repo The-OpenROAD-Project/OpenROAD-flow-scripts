@@ -120,31 +120,11 @@ proc extract_stage { input_file } {
   }
 }
 
-proc find_sdc_file { input_file } {
-  # canonicalize input file, sometimes it is called with an input
-  # file relative to $::env(RESULTS_DIR), other times with
-  # an absolute path
-  if { ![file exists $input_file] } {
-    set input_file [file join $::env(RESULTS_DIR) $input_file]
-  }
-  set input_file [file normalize $input_file]
-
-  set stage [extract_stage $input_file]
-  set design_stage [lindex $stage 0]
-  set sdc_file ""
-
-  set exact_sdc [string map {.odb .sdc} $input_file]
-  set sdc_files \
-    [glob -nocomplain -directory $::env(RESULTS_DIR) -types f "\[1-9+\]_\[1-9_A-Za-z\]*\.sdc"]
-  set sdc_files [lsort -decreasing -dictionary $sdc_files]
-  set sdc_files [lmap file $sdc_files { file normalize $file }]
-  foreach name $sdc_files {
-    if { [lindex [lsort -decreasing -dictionary [list $name $exact_sdc]] 0] == $exact_sdc } {
-      set sdc_file $name
-      break
-    }
-  }
-  return [list $design_stage $sdc_file]
+# The stem ends at the first dot of the file name, so 4_cts.odb,
+# 4_cts.odb.def and 4_cts.odb.v all have 4_cts.sdc
+proc sdc_file_of { design_file } {
+  regsub {\.[^/]*$} $design_file .sdc sdc_file
+  return $sdc_file
 }
 
 proc env_var_equals { env_var value } {
@@ -371,32 +351,46 @@ proc endpoint_slack_file { step } {
   return $::env(REPORTS_DIR)/${step}_endpoint_slack.json
 }
 
+# The final stage extracts parasitics into 6_final.spef when the platform
+# has OpenRCX rules and the design is detail routed. 6_final.odb is timed
+# with that SPEF; whether a .spef file exists says nothing.
+proc final_extracts_parasitics { } {
+  return [expr {
+    [env_var_exists_and_non_empty RCX_RULES]
+    && !$::env(SKIP_DETAILED_ROUTE)
+  }]
+}
+
+# Load the parasitics that step is timed with and return where they came
+# from: the extracted 6_final.spef when final writes one, else, once the
+# design is placed, what OpenROAD estimates (global routes if there are
+# any, else placement), else none.
+proc orfs_load_parasitics { step } {
+  if { $step == "6_final" && [final_extracts_parasitics] } {
+    log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
+  } elseif { [grt::design_is_placed] } {
+    log_cmd estimate_parasitics
+  } else {
+    return none
+  }
+  return [est::parasitics_source]
+}
+
 # Write the setup and hold slack of every endpoint at the end of a flow
 # step so they can be compared across steps with
-# flow/util/endpointSlack.py. Parasitics are estimated the same way as
-# open.tcl so that every step is timed consistently, unless the caller
-# has already loaded parasitics (e.g. extracted ones) and passes their
-# name as parasitics.
-proc write_endpoint_slack { step { parasitics "" } } {
+# flow/util/endpointSlack.py. load_parasitics 0 is for a caller that has
+# just loaded the parasitics itself, e.g. 6_final after extraction.
+proc write_endpoint_slack { step { load_parasitics 1 } } {
   if { !$::env(REPORT_ENDPOINT_SLACK) || [string match "*-failed" $step] } {
     return
   }
   set filename [endpoint_slack_file $step]
   puts "Writing endpoint slack to $filename"
 
-  if { $parasitics == "" } {
-    set design_stage [lindex [split $step _] 0]
-    set parasitics none
-    if { $design_stage >= 5 } {
-      if { [grt::have_routes] } {
-        set parasitics global_routing
-      }
-    } elseif { $design_stage >= 3 } {
-      set parasitics placement
-    }
-    if { $parasitics != "none" } {
-      estimate_parasitics -$parasitics
-    }
+  if { $load_parasitics } {
+    set parasitics [orfs_load_parasitics $step]
+  } else {
+    set parasitics [est::parasitics_source]
   }
   # Update timing before sta::endpoints: the endpoint set is cached the
   # first time it is requested and misses gated clock enable checks if the
@@ -465,6 +459,7 @@ proc orfs_write_db { output_file { endpoint_slack 1 } } {
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
+  orfs_write_sdc [sdc_file_of $output_file]
   log_cmd write_db $output_file
 }
 
@@ -476,8 +471,8 @@ proc orfs_write_sdc { output_file } {
 }
 
 # For a stage that leaves the design unchanged, copying the input .odb
-# forward is much faster than serializing the in-memory database again
-# with write_db. Gated like orfs_write_db: in a single-process flow
+# and .sdc forward is much faster than serializing the in-memory database
+# again with write_db. Gated like orfs_write_db: in a single-process flow
 # (WRITE_ODB_AND_SDC_EACH_STAGE=0) the input file may not exist and no
 # stage file should be produced.
 #
@@ -489,6 +484,7 @@ proc orfs_copy_db { input_file output_file } {
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
+  log_cmd exec cp [sdc_file_of $input_file] [sdc_file_of $output_file]
   log_cmd exec cp $input_file $output_file
 }
 
@@ -531,4 +527,47 @@ proc synth_verilog_files { } {
     }
   }
   return $copies
+}
+
+# Entry of lib_file in the binary liberty (.blib) cache shared by all designs:
+# objects/binary_libs/<platform>/<library>@<size>-<mtime>-<dirhash>.blib, so a
+# changed library gets a new entry and same-named libraries from different
+# directories don't collide. Libraries in the design's directory and those the
+# flow generates are cached per run.
+proc binary_lib_path { lib_file } {
+  set source [file normalize $lib_file]
+  set objects [file join $::env(WORK_HOME) objects]
+  set root [file join $objects binary_libs $::env(PLATFORM)]
+  set run_dirs [list $::env(DESIGN_DIR) $objects [file join $::env(WORK_HOME) results]]
+  foreach dir $run_dirs {
+    if { [string first "[file normalize $dir]/" $source] == 0 } {
+      set root [file join $::env(OBJECTS_DIR) binary_libs]
+      break
+    }
+  }
+  set name [file tail $source]
+  regsub {\.gz$} $name "" name
+  set name [file rootname $name]
+  set dir_hash [format %08x [zlib crc32 [file dirname $source] 0]]
+  return [file join $root "$name@[file size $source]-[file mtime $source]-$dir_hash.blib"]
+}
+
+# Whether this OpenROAD reads blib. An entry missing or written by another
+# version is expected, so its error is not reported.
+proc binary_lib_usable { blib } {
+  suppress_message STA 1900
+  suppress_message STA 1902
+  set usable [expr { ![catch { liberty_binary_info $blib }] }]
+  unsuppress_message STA 1900
+  unsuppress_message STA 1902
+  return $usable
+}
+
+# The cached .blib for lib_file, or lib_file when there is no usable .blib
+proc lib_file_to_read { lib_file } {
+  set blib [binary_lib_path $lib_file]
+  if { [binary_lib_usable $blib] } {
+    return $blib
+  }
+  return $lib_file
 }

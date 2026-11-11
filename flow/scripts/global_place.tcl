@@ -1,7 +1,7 @@
 utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables place
-load_design 3_2_place_iop.odb 2_floorplan.sdc
+load_design 3_2_place_iop.odb
 source_step_tcl PRE GLOBAL_PLACE
 
 set_dont_use $::env(DONT_USE_CELLS)
@@ -75,11 +75,11 @@ if { $result != 0 } {
   error $errMsg
 }
 
-log_cmd estimate_parasitics -placement
+log_cmd estimate_parasitics
 
 if { [command_runs cluster_flops place.main $::env(CLUSTER_FLOPS)] } {
   log_cmd cluster_flops {*}[command_args cluster_flops place.main {}]
-  log_cmd estimate_parasitics -placement
+  log_cmd estimate_parasitics
 }
 
 report_metrics 3 "global place" false false

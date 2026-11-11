@@ -1,9 +1,12 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 2_3_floorplan_tapcell.odb 2_1_floorplan.sdc
+load_design 2_3_floorplan_tapcell.odb
 source_step_tcl PRE PDN
 
 source $::env(PDN_TCL)
+# The rules floorplan stored, for the instances made since (tap and
+# endcap cells), and any PDN_TCL adds.
+global_connect
 pdngen
 
 source_step_tcl POST PDN

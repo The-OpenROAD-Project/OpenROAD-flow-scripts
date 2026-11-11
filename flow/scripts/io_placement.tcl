@@ -2,7 +2,7 @@ source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables place
 
 if { !$::env(GPL_PLACE_IOS) && ![pins_fixed_in_floorplan] } {
-  load_design 3_1_place_gp_skip_io.odb 2_floorplan.sdc
+  load_design 3_1_place_gp_skip_io.odb
   source_step_tcl PRE IO_PLACEMENT
   set flow [list -hor_layers $::env(IO_PLACER_H) -ver_layers $::env(IO_PLACER_V)]
   log_cmd place_pins {*}[command_args place_pins place.main $flow]

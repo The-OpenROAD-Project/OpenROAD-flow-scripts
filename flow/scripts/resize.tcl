@@ -1,10 +1,10 @@
 utl::set_metrics_stage "placeopt__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables place
-load_design 3_3_place_gp.odb 2_floorplan.sdc
+load_design 3_3_place_gp.odb
 source_step_tcl PRE RESIZE
 
-log_cmd estimate_parasitics -placement
+log_cmd estimate_parasitics
 
 set instance_count_before [sta::network_leaf_instance_count]
 set pin_count_before [sta::network_leaf_pin_count]
@@ -28,7 +28,7 @@ repair_design_helper place.main
 if { [command_runs repair_timing place.main $::env(ENABLE_PLACE_REPAIR_TIMING)] } {
   # Repair timing using placement parasitics.
   puts "Repair setup and hold violations..."
-  log_cmd estimate_parasitics -placement
+  log_cmd estimate_parasitics
 
   repair_timing_helper place.main
 }
