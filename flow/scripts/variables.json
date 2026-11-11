@@ -380,17 +380,6 @@
       "place"
     ]
   },
-  "FLOW_INPUT_VARIANT": {
-    "description": "Flow variant a stage reads the previous stage's result from, the .odb and the .sdc beside it. Defaults to FLOW_VARIANT. A variant forked off another sets it to that variant for the first stage it runs, then leaves it at the default: the shared stages run once, and the fork writes only its own results. A stage's later steps read the stage's own results. A stage stops when its input is in both variants. Not with AUTO_MEMORIES=1, whose memories are read from the variant that synthesised them.\n",
-    "stages": [
-      "floorplan",
-      "place",
-      "cts",
-      "grt",
-      "route",
-      "final"
-    ]
-  },
   "FLOW_VARIANT": {
     "default": "base",
     "description": "Flow variant to use, used in the flow variant directory name.\n"
