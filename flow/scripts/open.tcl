@@ -33,14 +33,8 @@ if { [env_var_exists_and_non_empty DEF_FILE] } {
 }
 
 proc read_timing { input_file } {
-  set result [find_sdc_file $input_file]
-  set design_stage [lindex $result 0]
-  set sdc_file [lindex $result 1]
-
-  if { $sdc_file == "" } {
-    set sdc_file $::env(SDC_FILE)
-  }
-  log_cmd read_sdc $sdc_file
+  set design_stage [lindex [extract_stage $input_file] 0]
+  log_cmd read_sdc [sdc_file_of $input_file]
   if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     source $::env(PLATFORM_DIR)/derate.tcl
   }

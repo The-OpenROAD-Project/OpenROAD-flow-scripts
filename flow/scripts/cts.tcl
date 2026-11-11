@@ -42,7 +42,6 @@ set_placement_padding -global \
 set result [catch { detailed_placement_helper -quiet } msg]
 if { $result != 0 } {
   orfs_write_db $::env(RESULTS_DIR)/4_1_error.odb
-  orfs_write_sdc $::env(RESULTS_DIR)/4_1_error.sdc
   error "Detailed placement failed in CTS: $msg"
 }
 
@@ -64,7 +63,6 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
   set result [catch { detailed_placement_helper -quiet } msg]
   if { $result != 0 } {
     orfs_write_db $::env(RESULTS_DIR)/4_1_error.odb
-    orfs_write_sdc $::env(RESULTS_DIR)/4_1_error.sdc
     error "Detailed placement failed in CTS: $msg"
   }
 
