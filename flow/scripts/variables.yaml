@@ -456,6 +456,21 @@ INFER_CLKGATES:
   default: 0
   stages:
     - synth
+INFER_CLKGATES_EXCLUDE:
+  description: >
+    Space-separated Yosys module name patterns whose flip-flops
+    INFER_CLKGATES leaves ungated, e.g. a module whose enable logic is
+    timing-critical. Only modules that still exist at clock gate inference
+    can be excluded, see SYNTH_HIERARCHICAL and SYNTH_KEEP_MODULES.
+  stages:
+    - synth
+INFER_CLKGATES_MIN_NET_SIZE:
+  description: >
+    Minimum number of flip-flops sharing a clock and enable for
+    INFER_CLKGATES to replace their enable with a clock gating cell. Smaller
+    groups keep their enable flip-flops. Unset gates every group.
+  stages:
+    - synth
 NEG_CLKGATE_AND_PORTS:
   description: >
     Specifies the active low enable clock gating cell and port names when used
