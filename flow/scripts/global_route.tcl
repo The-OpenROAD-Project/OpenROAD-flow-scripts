@@ -81,12 +81,14 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
 
   # Running DPL to fix overlapped instances
   # Run to get modified net by DPL
+  utl::push_metrics_stage "globalroute__repair_design__{}"
   log_cmd global_route -start_incremental {*}$allow_congestion
   detailed_placement_helper -quiet
   # Route only the modified net by DPL
   run_global_route_and_catch_failures -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
+  utl::pop_metrics_stage
 
   # Repair timing using global route parasitics
   puts "Repair setup and hold violations..."
@@ -98,6 +100,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
     report_metrics 5 "global route post repair timing"
   }
 
+  utl::push_metrics_stage "globalroute__repair_timing__{}"
   log_cmd global_route -start_incremental {*}$allow_congestion
   detailed_placement_helper -quiet
   log_cmd check_placement -placeable -verbose
@@ -105,6 +108,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
   run_global_route_and_catch_failures -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+  utl::pop_metrics_stage
 
   log_cmd estimate_parasitics
 
@@ -126,12 +130,14 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
 }
 
 if { !$::env(OPT_POST_GRT_WNS) } {
+  utl::push_metrics_stage "globalroute__recover_power__{}"
   log_cmd global_route -start_incremental {*}$allow_congestion
   recover_power_helper
   # Route the modified nets by rsz journal restore
   run_global_route_and_catch_failures -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  utl::pop_metrics_stage
 }
 
 if {
