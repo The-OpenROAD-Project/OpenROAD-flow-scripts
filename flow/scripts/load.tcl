@@ -2,7 +2,7 @@ source $::env(SCRIPTS_DIR)/util.tcl
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
-proc load_design { design_file sdc_file } {
+proc load_design { design_file } {
   # Do not reload if design is already loaded
   set db [ord::get_db]
   if { [$db getChip] != "NULL" && [[$db getChip] getBlock] != "NULL" } {
@@ -23,12 +23,9 @@ proc load_design { design_file sdc_file } {
         read_lef $lef
       }
     }
-    # AUTO_MEMORIES: abstract LEFs generated pre-synthesis; globbed
-    # because the file names are only known at run time.
-    if { [env_var_equals AUTO_MEMORIES 1] } {
-      foreach lef [glob -nocomplain $::env(RESULTS_DIR)/memories/*.lef] {
-        read_lef $lef
-      }
+    # AUTO_MEMORIES: abstract LEFs generated pre-synthesis
+    foreach lef [auto_memories_views .lef] {
+      read_lef $lef
     }
     read_verilog $::env(RESULTS_DIR)/$design_file
     log_cmd link_design {*}[hier_options] $::env(DESIGN_NAME)
@@ -38,8 +35,7 @@ proc load_design { design_file sdc_file } {
     error "Unrecognized input file $design_file"
   }
 
-  # Read SDC file
-  log_cmd read_sdc $::env(RESULTS_DIR)/$sdc_file
+  log_cmd read_sdc $::env(RESULTS_DIR)/[sdc_file_of $design_file]
 
   if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     log_cmd source $::env(PLATFORM_DIR)/derate.tcl

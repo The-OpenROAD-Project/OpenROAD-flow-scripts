@@ -2,18 +2,12 @@ utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 source $::env(SCRIPTS_DIR)/formal_check.tcl
 erase_non_stage_variables cts
-load_design 3_place.odb 3_place.sdc
+load_design 3_place.odb
 source_step_tcl PRE CTS
 
 # Clone clock tree inverters next to register loads
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
-
-proc save_progress { stage } {
-  puts "Run 'make gui_$stage.odb' to load progress snapshot"
-  orfs_write_db $::env(RESULTS_DIR)/$stage.odb
-  orfs_write_sdc $::env(RESULTS_DIR)/$stage.sdc
-}
 
 # Run CTS
 set cts_args [list \
@@ -26,7 +20,6 @@ append_env_var cts_args CTS_CLUSTER_DIAMETER -sink_clustering_max_diameter 1
 append_env_var cts_args CTS_BUF_LIST -buf_list 1
 append_env_var cts_args CTS_LIB_NAME -library 1
 
-
 if { [env_var_exists_and_non_empty CTS_ARGS] } {
   set cts_args $::env(CTS_ARGS)
 }
@@ -35,12 +28,12 @@ set_dont_use $::env(DONT_USE_CELLS)
 
 log_cmd clock_tree_synthesis {*}$cts_args
 
-utl::push_metrics_stage "cts__{}__pre_repair_timing"
-log_cmd estimate_parasitics
 if { $::env(DETAILED_METRICS) } {
+  utl::push_metrics_stage "cts__{}__pre_repair_timing"
+  log_cmd estimate_parasitics
   report_metrics 4 "cts pre-repair-timing"
+  utl::pop_metrics_stage
 }
-utl::pop_metrics_stage
 
 set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
@@ -48,15 +41,11 @@ set_placement_padding -global \
 
 set result [catch { detailed_placement_helper -quiet } msg]
 if { $result != 0 } {
-  save_progress 4_1_error
+  orfs_write_db $::env(RESULTS_DIR)/4_1_error.odb
   error "Detailed placement failed in CTS: $msg"
 }
 
 log_cmd estimate_parasitics
-
-if { $::env(CTS_SNAPSHOTS) } {
-  save_progress 4_1_pre_repair_setup_hold
-}
 
 if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
   set lec_enabled [lec_check_enabled]
@@ -73,7 +62,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
 
   set result [catch { detailed_placement_helper -quiet } msg]
   if { $result != 0 } {
-    save_progress 4_1_error
+    orfs_write_db $::env(RESULTS_DIR)/4_1_error.odb
     error "Detailed placement failed in CTS: $msg"
   }
 
@@ -87,4 +76,3 @@ report_metrics 4 "cts final"
 source_step_tcl POST CTS
 
 orfs_write_db $::env(RESULTS_DIR)/4_1_cts.odb
-orfs_write_sdc $::env(RESULTS_DIR)/4_cts.sdc

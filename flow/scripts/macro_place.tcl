@@ -1,17 +1,14 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 2_1_floorplan.odb 2_1_floorplan.sdc
+load_design 2_1_floorplan.odb
 source_step_tcl PRE MACRO_PLACE
 
 # A register file in `mode netlist` dissolves onto the parent's rows
 # after macro placement, and the rows are then cut MACRO_ROWS_HALO_X/Y
 # around every other macro: a halo that wide keeps them off its core,
 # which fills its outline to the edge.
-set regfile_list "$::env(RESULTS_DIR)/memories/regfiles.txt"
-if { [env_var_equals AUTO_MEMORIES 1] && [file exists $regfile_list] } {
-  set f [open $regfile_list r]
-  set regfile_masters [split [string trim [read $f]] "\n"]
-  close $f
+set regfile_masters [auto_memories_names regfiles.txt]
+if { [llength $regfile_masters] > 0 } {
   set dbu [[ord::get_db_tech] getDbUnitsPerMicron]
   set halo {}
   foreach v {MACRO_ROWS_HALO_X MACRO_ROWS_HALO_Y} {

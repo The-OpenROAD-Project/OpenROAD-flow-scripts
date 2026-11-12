@@ -72,14 +72,7 @@ proc regfile_internal_net { net placed } {
   return 1
 }
 
-set regfile_list "$::env(RESULTS_DIR)/memories/regfiles.txt"
-set regfile_modules {}
-if { [env_var_equals AUTO_MEMORIES 1] && [file exists $regfile_list] } {
-  set f [open $regfile_list r]
-  set regfile_modules [split [string trim [read $f]] "\n"]
-  close $f
-  set regfile_modules [lsearch -all -inline -not -exact $regfile_modules ""]
-}
+set regfile_modules [auto_memories_names regfiles.txt]
 if { [llength $regfile_modules] > 0 } {
   set block [ord::get_db_block]
   set db [ord::get_db]
