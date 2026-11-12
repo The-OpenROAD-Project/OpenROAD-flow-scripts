@@ -39,6 +39,10 @@ passes --branch and --commit (or DASHBOARD_BRANCH and DASHBOARD_COMMIT), since
 its checkout has no branch. A local run of a private platform does not need it:
 DASHBOARD_API_KEY alone lets the default pipelines resolve it.
 
+Each run's report has a table of every metric a rule evaluated, with its
+baseline, current value, limit, change and PASS/FAIL status (--quiet leaves
+the table out), and names each ruled metric absent from the baseline build.
+
 Exit status: 1 when the dashboard reports a failed rule for any checked run,
 or when a metadata.json is missing, malformed, or holds no numeric metric.
 0 otherwise. A run the dashboard could not judge -- no baseline, nothing
@@ -95,7 +99,7 @@ DEFAULT_MERGE_BASE_REF = "origin/master"
 
 # NAME_W must match the first field width in ROW_FMT.
 NAME_W = 46
-ROW_FMT = "| {:46} | {:>12} | {:>12} | {:>12} | {:>7} |"
+ROW_FMT = "| {:46} | {:>12} | {:>12} | {:>12} | {:>7} | {:6} |"
 BANNER = "-" * 79
 
 
@@ -446,7 +450,7 @@ def dropped_lines(result):
     ]
 
 
-def render_run(result, verbose):
+def render_run(result, quiet):
     """Builds the report lines for one run."""
     identity = f"{result['platform']}/{result['design']}/{result['variant']}"
     lines = [BANNER]
@@ -527,13 +531,14 @@ def render_run(result, verbose):
         )
 
     metrics = response.get("metrics", [])
-    shown = metrics if verbose else [m for m in metrics if m.get("status") == "fail"]
-    shown = [m for m in shown if m.get("status") != "missing_from_baseline"]
+    shown = [m for m in metrics if m.get("status") != "missing_from_baseline"]
 
-    if shown:
-        lines.append(ROW_FMT.format("Metric", "Baseline", "Current", "Limit", "Delta%"))
+    if shown and not quiet:
         lines.append(
-            ROW_FMT.format("-" * NAME_W, "-" * 12, "-" * 12, "-" * 12, "-" * 7)
+            ROW_FMT.format("Metric", "Baseline", "Current", "Limit", "Delta%", "Status")
+        )
+        lines.append(
+            ROW_FMT.format("-" * NAME_W, "-" * 12, "-" * 12, "-" * 12, "-" * 7, "-" * 6)
         )
         for metric in sorted(shown, key=lambda m: m.get("metricName", "")):
             delta = metric.get("deltaPct")
@@ -544,6 +549,7 @@ def render_run(result, verbose):
                     fmt_value(metric.get("targetValue")),
                     fmt_value(metric.get("thresholdValue")),
                     fmt_delta(delta),
+                    str(metric.get("status", "?")).upper(),
                 )
             )
 
@@ -560,22 +566,17 @@ def render_run(result, verbose):
                 f"limit {fmt_exact_value(metric.get('thresholdValue'))})"
             )
 
-    # A design can have hundreds of absent metrics, so name them only on request.
     absent = sorted(
         metric.get("metricName", "?")
         for metric in metrics
         if metric.get("status") == "missing_from_baseline"
     )
-    if absent and verbose:
+    if absent:
         lines.append(
-            "[WARN] Rules not evaluated, metric absent from the baseline build: "
-            + ", ".join(absent)
+            f"[WARN] {len(absent)} ruled metric(s) absent from the baseline "
+            "build, not evaluated:"
         )
-    elif absent:
-        lines.append(
-            f"[WARN] Rules not evaluated for {len(absent)} metric(s) absent from "
-            "the baseline build. Use --verbose to list them."
-        )
+        lines.extend(f"  {name}" for name in absent)
 
     # A rule that fell back reports a different threshold than the one it was
     # configured with, so surface it. thresholdPct is deliberately not shown in
@@ -779,10 +780,11 @@ def parse_args(argv):
         help="Concurrent requests. Default: 8.",
     )
     parser.add_argument(
-        "--verbose",
+        "--quiet",
+        "-q",
         action="store_true",
-        help="Report every rule-checked metric, not only the failing ones, "
-        "and name the metrics absent from the baseline build.",
+        help="Leave out the per-metric comparison table. Failed rules, warnings "
+        "and the verdict are still reported.",
     )
     args = parser.parse_args(argv)
     if args.metadata and not (args.platform and args.design):
@@ -948,7 +950,7 @@ def run_check(argv=None):
 
     body = []
     for result in results:
-        body.extend(render_run(result, args.verbose))
+        body.extend(render_run(result, args.quiet))
     body.extend(summarize(results))
 
     for line in body:

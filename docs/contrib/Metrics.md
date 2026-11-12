@@ -109,7 +109,7 @@ To check every run under `reports/` at once, call the script directly:
 cd OpenROAD-flow-scripts/flow
 ./util/checkQorMetrics.py                     # sweep, log in reports/inline-check.log
 ./util/checkQorMetrics.py --base-commit <sha> # pin the baseline build
-./util/checkQorMetrics.py --verbose           # show passing rules and absent metrics
+./util/checkQorMetrics.py --quiet             # leave out the per-metric table
 ```
 
 If the check reports a failed rule, review it to make sure the change in
