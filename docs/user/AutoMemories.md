@@ -185,6 +185,10 @@ cell flop DFFHQNx1_ASAP7_75t_R
 ...
 ```
 
+A listed module is a register file even where the idiomatic gate would
+convert it: FakeRAM builds no view for it, and `memories.json` records
+it once, as a register file.
+
 `memories/regfile_ram.py` translates the spec to `generate_ram_netlist`
 options (ports, banks, folds, the zero word, reset, read latency, write
 style and priority, cells) and checks it against the module's ports,

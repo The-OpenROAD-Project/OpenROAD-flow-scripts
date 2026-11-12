@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -60,6 +61,16 @@ SAMPLE_YOSYS_NETLIST = {
         },
     }
 }
+
+# a register-file spec for the idiomatic mem_128x32
+REGFILE_SPEC = """\
+module mem_128x32
+words 128
+bits 32
+clock clk
+read ra rd
+write wa wd we
+"""
 
 FORCE_TAGS = """\
 {
@@ -123,7 +134,7 @@ class GenMemoriesTest(unittest.TestCase):
             ],
         )
         # one `<module> <area>` line; the area is the one the .lib states,
-        # which synthesis costs the blackbox by
+        # as it states it, which synthesis costs the blackbox by
         [line] = (mems_dir / "blackboxes.txt").read_text().splitlines()
         name, area = line.split()
         self.assertEqual(name, "mem_128x32")
@@ -132,8 +143,76 @@ class GenMemoriesTest(unittest.TestCase):
             (mems_dir / "mem_128x32.lib").read_text(),
             re.M,
         ).group(1)
-        self.assertEqual(float(area), float(lib_area))
+        self.assertEqual(area, lib_area)
         self.assertGreater(float(area), 0)
+
+    def run_with_regfile(self, macro_place):
+        """mem_128x32, idiomatic, also listed as a register file; a stub
+        stands in for generate_ram and writes the RAM's .lib."""
+        d = Path(self.tmp.name)
+        netlist_json = d / "memories_inferred.json"
+        netlist_json.write_text(json.dumps(SAMPLE_YOSYS_NETLIST))
+        spec = d / "mem_128x32.regfile"
+        spec.write_text(REGFILE_SPEC)
+
+        def generate(spec, module, shape, openroad, lefs, out_dir):
+            block = f"{module}_ram"
+            if shape != "inline":
+                (out_dir / f"{block}.lib").write_text(
+                    f"library ({block}) {{\n  cell ({block}) {{\n"
+                    "    area : 42.5;\n  }\n}\n"
+                )
+            return {
+                "block": block,
+                "macro": shape != "inline",
+                "dissolve": shape == "netlist",
+            }
+
+        with mock.patch.object(gen_memories.regfile_ram, "generate", generate):
+            code = gen_memories.run(
+                netlist_json,
+                [],
+                "asap7",
+                d / "memories",
+                d / "memories.json",
+                regfile_specs=[spec],
+                openroad="openroad",
+                lefs=[d / "tech.lef"],
+                macro_place=macro_place,
+            )
+        self.assertEqual(code, 0)
+        return d
+
+    def test_listed_regfile_is_not_a_fakeram(self):
+        # a module both idiomatic and listed is a register file, once: no
+        # FakeRAM views, one memories.json record, and blackboxes.txt
+        # names the RAM that stands in for it, never the module
+        for macro_place, blackboxes in (
+            ([], ""),
+            (["mem_128x32"], "mem_128x32_ram 42.5\n"),
+        ):
+            with self.subTest(macro_place=macro_place):
+                d = self.run_with_regfile(macro_place)
+                mems_dir = d / "memories"
+                for view in ("mem_128x32.lib", "mem_128x32_pre_layout.lib"):
+                    self.assertFalse((mems_dir / view).exists(), view)
+                self.assertFalse((mems_dir / "mem_128x32.lef").exists())
+                self.assertEqual((mems_dir / "blackboxes.txt").read_text(), blackboxes)
+                doc = json.loads((d / "memories.json").read_text())
+                records = [m for m in doc["memories"] if m["name"] == "mem_128x32"]
+                self.assertEqual(len(records), 1)
+                self.assertEqual(records[0]["kind"], "regfile")
+                self.assertFalse(records[0]["idiomatic"])
+
+    def test_blackboxes_names_each_macro_once(self):
+        # two macros of one name would share one set of views
+        d = Path(self.tmp.name)
+        (d / "ram.lib").write_text("cell (ram) {\n  area : 1.0;\n}\n")
+        gen_memories.write_blackboxes(d, ["ram"])
+        self.assertEqual((d / "blackboxes.txt").read_text(), "ram 1.0\n")
+        with self.assertRaises(SystemExit) as stop:
+            gen_memories.write_blackboxes(d, ["ram", "ram"])
+        self.assertIn("two macros are named ram", str(stop.exception))
 
     def test_additional_memories_forces_conversion(self):
         force = Path(self.tmp.name) / "force.memories"
