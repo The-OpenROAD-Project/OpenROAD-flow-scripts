@@ -135,7 +135,6 @@ configuration file.
 | <a name="CTS_CLUSTER_DIAMETER"></a>CTS_CLUSTER_DIAMETER (deprecated)| Maximum diameter (in microns) of sink cluster. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS = -sink_clustering_max_diameter <value>`.| |
 | <a name="CTS_CLUSTER_SIZE"></a>CTS_CLUSTER_SIZE (deprecated)| Maximum number of sinks per cluster. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS = -sink_clustering_size <value>`.| |
 | <a name="CTS_LIB_NAME"></a>CTS_LIB_NAME (deprecated)| Name of the Liberty library to use in selecting the clock buffers. Instead, write `CLOCK_TREE_SYNTHESIS_ARGS = -library <value>`.| |
-| <a name="CTS_SNAPSHOTS"></a>CTS_SNAPSHOTS| Create ODB/SDC files at different stages of CTS.| 0|
 | <a name="DESIGN_NAME"></a>DESIGN_NAME| The name of the top-level module of the design.| |
 | <a name="DESIGN_NICKNAME"></a>DESIGN_NICKNAME| DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a different design.| |
 | <a name="DETAILED_METRICS"></a>DETAILED_METRICS (deprecated)| If set, then calls report_metrics prior to repair operations in the CTS and global route stages Instead of DETAILED_METRICS=1, write `REPORT_METRICS_ARGS = cts:on grt:on`.| 0|
@@ -568,7 +567,6 @@ configuration file.
 - [CTS_CLUSTER_DIAMETER](#CTS_CLUSTER_DIAMETER)
 - [CTS_CLUSTER_SIZE](#CTS_CLUSTER_SIZE)
 - [CTS_LIB_NAME](#CTS_LIB_NAME)
-- [CTS_SNAPSHOTS](#CTS_SNAPSHOTS)
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [DETAILED_PLACEMENT_ARGS](#DETAILED_PLACEMENT_ARGS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)

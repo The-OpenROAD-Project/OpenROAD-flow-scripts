@@ -863,12 +863,6 @@ CTS_ARGS:
     - cts
   deprecated: 1
   replacement: CLOCK_TREE_SYNTHESIS_ARGS, with only what differs from the flow's arguments
-CTS_SNAPSHOTS:
-  description: |
-    Create ODB/SDC files at different stages of CTS.
-  stages:
-    - cts
-  default: 0
 HOLD_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing hold violations.
