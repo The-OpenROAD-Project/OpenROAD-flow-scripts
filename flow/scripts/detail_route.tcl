@@ -1,6 +1,6 @@
 utl::set_metrics_stage "detailedroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 5_1_grt.odb
+load_stage_input 5_1_grt.odb
 source_step_tcl PRE DETAIL_ROUTE
 
 if { !$::env(SKIP_DETAILED_ROUTE) } {

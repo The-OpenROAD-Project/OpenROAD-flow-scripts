@@ -151,6 +151,7 @@ configuration file.
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| |
 | <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
+| <a name="FLOW_INPUT_VARIANT"></a>FLOW_INPUT_VARIANT| Flow variant a stage reads the previous stage's result from, the .odb and the .sdc beside it. Defaults to FLOW_VARIANT. A variant forked off another sets it to that variant for the first stage it runs, then leaves it at the default: the shared stages run once, and the fork writes only its own results. A stage's later steps read the stage's own results. A stage stops when its input is in both variants. Not with AUTO_MEMORIES=1, whose memories are read from the variant that synthesised them.| |
 | <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base|
 | <a name="FOOTPRINT"></a>FOOTPRINT| Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
 | <a name="FOOTPRINT_TCL"></a>FOOTPRINT_TCL| Specifies a Tcl script with custom footprint-related commands for floorplan setup.| |
@@ -420,6 +421,7 @@ configuration file.
 - [CORE_UTILIZATION](#CORE_UTILIZATION)
 - [DIE_AREA](#DIE_AREA)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [FOOTPRINT](#FOOTPRINT)
 - [FOOTPRINT_TCL](#FOOTPRINT_TCL)
 - [GLOBAL_CONNECT_TCL](#GLOBAL_CONNECT_TCL)
@@ -500,6 +502,7 @@ configuration file.
 - [ENABLE_DPO](#ENABLE_DPO)
 - [ENABLE_PLACE_REPAIR_TIMING](#ENABLE_PLACE_REPAIR_TIMING)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GPL_KEEP_OVERFLOW](#GPL_KEEP_OVERFLOW)
 - [GPL_PLACE_IOS](#GPL_PLACE_IOS)
@@ -543,6 +546,7 @@ configuration file.
 - [CTS_LIB_NAME](#CTS_LIB_NAME)
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
@@ -570,6 +574,7 @@ configuration file.
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
 - [GLOBAL_ROUTE_USE_CUGR](#GLOBAL_ROUTE_USE_CUGR)
 - [GRT_SEED](#GRT_SEED)
@@ -605,6 +610,7 @@ configuration file.
 - [DETAILED_ROUTE_END_ITERATION](#DETAILED_ROUTE_END_ITERATION)
 - [DISABLE_VIA_GEN](#DISABLE_VIA_GEN)
 - [FILL_CELLS](#FILL_CELLS)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_REPAIR_ANTENNAS_ITER_DRT](#MAX_REPAIR_ANTENNAS_ITER_DRT)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
@@ -628,6 +634,7 @@ configuration file.
 
 - [ADDITIONAL_GDS](#ADDITIONAL_GDS)
 - [CDL_FILE](#CDL_FILE)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [GDS_ALLOW_EMPTY](#GDS_ALLOW_EMPTY)
 - [GND_NETS_VOLTAGES](#GND_NETS_VOLTAGES)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)

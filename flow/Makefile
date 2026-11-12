@@ -452,7 +452,7 @@ endef
 # ==============================================================================
 
 # Custom target to go from synthesis to placement in a single OpenROAD run
-$(eval $(call do-step,1_3_floorplan_to_place, $(RESULTS_DIR)/1_synth.odb,floorplan_to_place))
+$(eval $(call do-step,1_3_floorplan_to_place, $(INPUT_RESULTS_DIR)/1_synth.odb,floorplan_to_place))
 
 $(eval $(call OPEN_GUI_SHORTCUT,yosys,1_2_yosys.v))
 
@@ -488,7 +488,7 @@ ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
 $(RESULTS_DIR)/1_synth_lec.v: | check-kepler-formal
 endif
 
-$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.odb $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(LIB_FILES) $(IO_CONSTRAINTS),floorplan))
+$(eval $(call do-step,2_1_floorplan,$(INPUT_RESULTS_DIR)/1_synth.odb $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(LIB_FILES) $(IO_CONSTRAINTS),floorplan))
 
 # STEP 2: Macro Placement
 #-------------------------------------------------------------------------------
@@ -526,7 +526,7 @@ place: $(RESULTS_DIR)/3_place.odb
 # ==============================================================================
 # STEP 1: Global placement without placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(LIB_FILES),global_place_skip_io))
+$(eval $(call do-step,3_1_place_gp_skip_io,$(INPUT_RESULTS_DIR)/2_floorplan.odb $(LIB_FILES),global_place_skip_io))
 
 $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb,io_placement))
 
@@ -580,7 +580,7 @@ ifeq ($(LEC_CHECK),1)
 DO_STEP_DEPS_4_1_cts += check-kepler-formal
 endif
 
-$(eval $(call do-step,4_1_cts,$(RESULTS_DIR)/3_place.odb,cts))
+$(eval $(call do-step,4_1_cts,$(INPUT_RESULTS_DIR)/3_place.odb,cts))
 
 ifeq ($(LEC_CHECK),1)
 $(RESULTS_DIR)/4_1_cts.odb: | check-kepler-formal
@@ -618,11 +618,11 @@ grt: $(RESULTS_DIR)/5_1_grt.odb
 
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE_TCL),global_route))
+$(eval $(call do-step,5_1_grt,$(INPUT_RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE_TCL),global_route))
 
 # STEP 2: Run detailed route
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
+$(eval $(call do-step,5_2_route,$(INPUT_RESULTS_DIR)/5_1_grt.odb,detail_route))
 
 $(eval $(call do-step,5_3_fillcell,$(RESULTS_DIR)/5_2_route.odb,fillcell))
 
@@ -680,7 +680,7 @@ elapsed:
 elapsed-all:
 	@$(PYTHON_EXE) $(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
 
-$(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(FILL_CONFIG),density_fill))
+$(eval $(call do-step,6_1_fill,$(INPUT_RESULTS_DIR)/5_route.odb $(FILL_CONFIG),density_fill))
 
 ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
 DO_STEP_DEPS_6_report += check-kepler-formal
