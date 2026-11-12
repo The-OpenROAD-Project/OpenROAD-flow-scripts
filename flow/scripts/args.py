@@ -24,9 +24,10 @@ load()s too.
         the first N words of FLOW.
 """
 
-import json
 import os
 import sys
+
+import yaml
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -183,11 +184,15 @@ def _counted(argv):
     return argv[1 : 1 + n], argv[1 + n :]
 
 
+def load_variables():
+    """variables.yaml, the metadata of every variable."""
+    with open(os.path.join(DIR, "variables.yaml")) as f:
+        return yaml.safe_load(f)
+
+
 def main(argv, env):
-    with open(os.path.join(DIR, "variables.json")) as f:
-        variables = json.load(f)
     if argv[:1] == ["check"] and len(argv) == 2:
-        for w in check(env, argv[1], variables):
+        for w in check(env, argv[1], load_variables()):
             print("[WARNING] " + w, file=sys.stderr)
         return 0
     if argv[:1] == ["resolve"] and len(argv) >= 6:
@@ -197,7 +202,7 @@ def main(argv, env):
         deprecated, rest = _counted(rest)
         legacy = rest[0] if rest else None
         defaults = {
-            k: str(v["default"]) for k, v in variables.items() if "default" in v
+            k: str(v["default"]) for k, v in load_variables().items() if "default" in v
         }
         run, args, notes = resolve(
             env, command, stage, call, run == "1", flow, deprecated, legacy, defaults

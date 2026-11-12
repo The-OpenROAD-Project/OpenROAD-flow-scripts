@@ -295,14 +295,11 @@ class Check(unittest.TestCase):
 
 
 class VariablesYaml(unittest.TestCase):
-    """variables.json, generated from variables.yaml, agrees with the code."""
+    """variables.yaml agrees with the code."""
 
     @classmethod
     def setUpClass(cls):
-        import json
-
-        with open(os.path.join(args.DIR, "variables.json")) as f:
-            cls.variables = json.load(f)
+        cls.variables = args.load_variables()
 
     def test_every_command_has_its_variable_and_stages(self):
         for command, stages in G["COMMANDS"].items():
