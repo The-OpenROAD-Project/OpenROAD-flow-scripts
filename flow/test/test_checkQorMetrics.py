@@ -607,12 +607,93 @@ class ReportTest(CheckQorMetricsTest):
         self.assertEqual(code, 1)
         self.assertIn(
             checkQorMetrics.ROW_FMT.format(
-                "finish__timing__setup__ws", "2", "1.5000", "1.9000", "-25.00"
+                "finish__timing__setup__ws", "2", "1.5000", "1.9000", "-25.00", "FAIL"
             ),
             output,
         )
         self.assertIn("finish__timing__setup__ws 1.5 (base 2, limit 1.9)", output)
         self.assertIn("QoR check: FAIL", output)
+
+    def table_reply(self):
+        passed = {
+            "metricName": "synth__design__instance__area",
+            "status": "pass",
+            "baseValue": 100,
+            "targetValue": 101,
+            "thresholdValue": 110,
+            "deltaPct": 1,
+        }
+        failed = {
+            "metricName": "finish__timing__setup__ws",
+            "status": "fail",
+            "baseValue": 2,
+            "targetValue": 1.5,
+            "thresholdValue": 1.9,
+            "deltaPct": -25,
+        }
+        absent = [
+            {"metricName": name, "status": "missing_from_baseline"}
+            for name in ("route__wirelength", "cts__clock__skew")
+        ]
+        return Dashboard(
+            response(status="fail", failed=1, metrics=[passed, failed, *absent])
+        )
+
+    def table_rows(self, output):
+        return [line for line in output.splitlines() if line.startswith("| ")]
+
+    def test_table_shows_every_evaluated_metric_with_its_status(self):
+        _, output, _ = self.run_check(dashboard=self.table_reply())
+        rows = self.table_rows(output)
+        self.assertEqual(len(rows), 4)
+        self.assertTrue(rows[0].rstrip("| ").endswith("Status"))
+        self.assertIn("finish__timing__setup__ws", rows[2])
+        self.assertTrue(rows[2].rstrip().endswith("| FAIL   |"))
+        self.assertIn("synth__design__instance__area", rows[3])
+        self.assertTrue(rows[3].rstrip().endswith("| PASS   |"))
+        self.assertEqual(len({len(row) for row in rows}), 1)
+
+    def test_passing_table_has_no_error_line(self):
+        passed = {
+            "metricName": "synth__design__instance__area",
+            "status": "pass",
+            "baseValue": 100,
+            "targetValue": 101,
+            "thresholdValue": 110,
+            "deltaPct": 1,
+        }
+        code, output, _ = self.run_check(
+            dashboard=Dashboard(response(metrics=[passed]))
+        )
+        self.assertEqual(code, 0)
+        self.assertEqual(len(self.table_rows(output)), 3)
+        self.assertFalse(
+            [line for line in output.splitlines() if line.startswith("[ERROR]")]
+        )
+
+    def test_absent_metrics_are_named_not_tabled(self):
+        _, output, _ = self.run_check(dashboard=self.table_reply())
+        self.assertIn(
+            "[WARN] 2 ruled metric(s) absent from the baseline build, not evaluated:\n"
+            "  cts__clock__skew\n"
+            "  route__wirelength\n",
+            output,
+        )
+        for row in self.table_rows(output):
+            self.assertNotIn("route__wirelength", row)
+
+    def test_quiet_leaves_out_only_the_table(self):
+        for flag in ("--quiet", "-q"):
+            code, output, _ = self.run_check(flag, dashboard=self.table_reply())
+            self.assertEqual(code, 1)
+            self.assertEqual(self.table_rows(output), [])
+            self.assertIn("QoR regression detected", output)
+            self.assertIn("  cts__clock__skew", output)
+            self.assertIn("QoR check: FAIL", output)
+
+    def test_verbose_is_rejected(self):
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+            self.run_check("--verbose")
 
     def test_latest_master_warns_with_a_commit(self):
         _, output, _ = self.run_check(
