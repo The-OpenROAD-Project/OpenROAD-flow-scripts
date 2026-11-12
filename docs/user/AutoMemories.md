@@ -22,21 +22,27 @@ into `$(RESULTS_DIR)/memories_inferred.json`, and
 | File | Content |
 | --- | --- |
 | `$(RESULTS_DIR)/memories.json` | Inventory of every detected memory: geometry, full pin list with pin functions, behavioral model, and whether it was converted (`idiomatic`) with a reason. |
-| `$(RESULTS_DIR)/memories/<m>.lib` | Generated Liberty view per converted memory. |
-| `$(RESULTS_DIR)/memories/<m>_pre_layout.lib` | Ideal-clock (zero clock-tree insertion) variant for pre-CTS consumers that select lib files themselves. The Makefile flow uses `<m>.lib` throughout. |
-| `$(RESULTS_DIR)/memories/<m>.lef` | Abstract LEF per converted memory. |
-| `$(RESULTS_DIR)/memories/blackboxes.txt` | `<module> <area>` per converted module — what synthesis blackboxes, and the area in um² its `.lib` states, which `SYNTH_MINIMUM_KEEP_SIZE` costs it by. |
+| `$(AUTO_MEMORIES_DIR)/<m>.lib` | Generated Liberty view per converted memory. |
+| `$(AUTO_MEMORIES_DIR)/<m>_pre_layout.lib` | Ideal-clock (zero clock-tree insertion) variant for pre-CTS consumers that select lib files themselves. The Makefile flow uses `<m>.lib` throughout. |
+| `$(AUTO_MEMORIES_DIR)/<m>.lef` | Abstract LEF per converted memory. |
+| `$(AUTO_MEMORIES_DIR)/blackboxes.txt` | `<module> <area>` per converted module — what synthesis blackboxes, and the area in um² its `.lib` states, which `SYNTH_MINIMUM_KEEP_SIZE` costs it by. |
 
 Synthesis (canonicalization) blackboxes the converted modules so the
 liberty view wins over their behavioral bodies; floorplan through final
 read the `<m>.lib`/`<m>.lef` of each module `blackboxes.txt` lists,
 alongside `ADDITIONAL_LIBS`/`ADDITIONAL_LEFS`. Everything downstream keys
-off the files above, by the names the lists give: a file in `memories/`
-that no list names is not read, and a list that is missing stops the
+off the files above, by the names the lists give: a file in
+`AUTO_MEMORIES_DIR` that no list names is not read, and a list that is missing stops the
 step that reads it. Nothing else passes between the generator and the
 flow. That file-based handoff is what lets build systems (e.g.
 bazel-orfs) declare the generated artifacts as ordinary stage outputs
 and transitive dependencies of the remaining stages.
+
+`AUTO_MEMORIES_DIR` defaults to `$(RESULTS_DIR)/memories`. Synthesis
+writes the views there and every later stage reads them from there, so a
+variant whose stages run on another variant's synthesis, with
+`FLOW_INPUT_VARIANT` naming it, reads that variant's memories by setting
+`AUTO_MEMORIES_DIR` to its directory for every stage it runs.
 
 Memories that are *not* converted stay in the netlist and synthesize to
 flip-flops, like any other RTL.

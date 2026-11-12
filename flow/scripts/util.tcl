@@ -112,7 +112,7 @@ proc env_var_exists_and_non_empty { env_var } {
   return [expr { [info exists ::env($env_var)] && ![string equal $::env($env_var) ""] }]
 }
 
-# AUTO_MEMORIES: do-auto-memories writes into $RESULTS_DIR/memories the
+# AUTO_MEMORIES: do-auto-memories writes into $AUTO_MEMORIES_DIR the
 # lists below, and every later step reads the files they name, never
 # what a directory happens to hold.
 #
@@ -122,7 +122,7 @@ proc auto_memories_areas { } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
   }
-  set f "$::env(RESULTS_DIR)/memories/blackboxes.txt"
+  set f "$::env(AUTO_MEMORIES_DIR)/blackboxes.txt"
   set fh [open $f r]
   set content [string map {\r ""} [read $fh]]
   close $fh
@@ -154,7 +154,7 @@ proc auto_memories_names { list } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
   }
-  set f "$::env(RESULTS_DIR)/memories/$list"
+  set f "$::env(AUTO_MEMORIES_DIR)/$list"
   set fh [open $f r]
   set content [read $fh]
   close $fh
@@ -164,7 +164,7 @@ proc auto_memories_names { list } {
 # The view of every macro in blackboxes.txt, by extension (.lib, .lef).
 proc auto_memories_views { ext } {
   return [lmap m [dict keys [auto_memories_areas]] {
-    file join $::env(RESULTS_DIR) memories $m$ext
+    file join $::env(AUTO_MEMORIES_DIR) $m$ext
   }]
 }
 

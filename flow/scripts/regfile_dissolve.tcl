@@ -99,8 +99,8 @@ if { [llength $regfile_modules] > 0 } {
       utl::info FLW 9 "register file $module: no instance in the design (removed as dead logic)"
       continue
     }
-    set cells [regfile_netlist "$::env(RESULTS_DIR)/memories/$module.v"]
-    set place [regfile_place_file "$::env(RESULTS_DIR)/memories/$module.place"]
+    set cells [regfile_netlist "$::env(AUTO_MEMORIES_DIR)/$module.v"]
+    set place [regfile_place_file "$::env(AUTO_MEMORIES_DIR)/$module.place"]
     foreach macro $macros {
       set path [$macro getName]
       set parent [$macro getModule]

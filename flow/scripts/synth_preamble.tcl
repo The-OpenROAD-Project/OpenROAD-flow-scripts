@@ -67,7 +67,7 @@ proc read_auto_memories_inline { } {
     foreach {- name} [regexp -all -inline -- {parameter \\(\S+)} $dump] {
       setparam -unset $name t:$m
     }
-    read_verilog -overwrite "$::env(RESULTS_DIR)/memories/$m.v"
+    read_verilog -overwrite "$::env(AUTO_MEMORIES_DIR)/$m.v"
   }
 }
 
