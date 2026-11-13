@@ -24,8 +24,8 @@ Every step then writes `$(REPORTS_DIR)/<step>_endpoint_slack.json`, e.g.
 It works in the single-process `flow/scripts/flow.tcl` flow as well. Steps
 that just copy their input (`orfs_copy_db`, e.g. `5_3_fillcell` without fill
 cells) re-time the design if it is loaded, or else copy the previous step's
-snapshot. Intermediate `.odb` files written through `orfs_write_db` (e.g. CTS's
-`4_1_error.odb`) also get a snapshot; `*-failed` ones don't.
+snapshot. Any other `.odb` written through `orfs_write_db`, such as an
+ad-hoc checkpoint, also gets a snapshot; `*-failed` ones don't.
 
 A placed step is timed with the parasitics OpenROAD has for it: a bare
 `estimate_parasitics` estimates from the global routes when there are any,
