@@ -5,7 +5,6 @@ export PLATFORM    = nangate45
 export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/dynamic_node.pickle.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-
 export CORE_UTILIZATION = 40
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 5
@@ -18,3 +17,5 @@ export GPL_PLACE_IOS = 1
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
 export SYNTH_USE_SYN = 1
+
+export GLOBAL_ROUTE_USE_CUGR = 1
