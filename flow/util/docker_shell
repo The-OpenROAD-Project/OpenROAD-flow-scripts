@@ -67,7 +67,9 @@ OPENROAD_EXE=${OPENROAD_EXE:-/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/o
 KLAYOUT_CMD=${KLAYOUT_CMD:-/usr/bin/klayout}
 
 XSOCK=/tmp/.X11-unix
-XAUTH=/tmp/.docker.xauth
+XAUTH=$(mktemp /tmp/.docker.xauth.XXXXXXXXXX)
+trap 'rm -f "$XAUTH"' EXIT
+
 if ! $DRY_RUN; then
     xauth nlist ${DISPLAY:-:0} | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
 fi
@@ -100,6 +102,7 @@ CMD_STR=
 ENV_SH_CMD='if [ -f ../env.sh ]; then . ../env.sh; fi;'
 
 # Build the command once; dry-run prints it, otherwise exec it.
+
 DOCKER_CMD=(
     "$container_engine" run --rm -i
     $DOCKER_INTERACTIVE
@@ -129,4 +132,4 @@ if $DRY_RUN; then
     exit 0
 fi
 
-exec "${DOCKER_CMD[@]}"
+"${DOCKER_CMD[@]}"
