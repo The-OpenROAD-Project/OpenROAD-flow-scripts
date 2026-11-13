@@ -1,0 +1,14 @@
+common --registry=https://bcr.bazel.build/
+
+# kepler-formal and naja do not set the C++ standard on their targets,
+# so the build sets it, as their registry presubmits do. OpenROAD
+# requires C++20 too.
+build --cxxopt=-std=c++20
+build --host_cxxopt=-std=c++20
+build -c opt
+
+# As kepler-formal's own .bazelrc: link statically on Linux. The clang
+# toolchain is chosen by register_toolchains in MODULE.bazel, on x86-64
+# Linux only.
+common --enable_platform_specific_config
+build:linux --dynamic_mode=off
