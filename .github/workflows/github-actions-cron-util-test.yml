@@ -6,10 +6,18 @@ on:
     paths:
       - 'flow/util/*.py'
       - 'flow/test/test_*.py'
+      - 'flow/platforms/*/drc/*.py'
+      - 'flow/platforms/*/lvs/*.py'
+      - 'etc/requirements-common_lock.txt'
+      - '.github/workflows/github-actions-cron-util-test.yml'
   pull_request:
     paths:
       - 'flow/util/*.py'
       - 'flow/test/test_*.py'
+      - 'flow/platforms/*/drc/*.py'
+      - 'flow/platforms/*/lvs/*.py'
+      - 'etc/requirements-common_lock.txt'
+      - '.github/workflows/github-actions-cron-util-test.yml'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -27,8 +35,14 @@ jobs:
         with:
           fetch-depth: 1
           submodules: recursive
+      - name: Install Python packages
+        run: |
+          python3 -m venv venv
+          venv/bin/python3 -m pip install --no-cache-dir --upgrade --require-hashes -r etc/requirements-pip_lock.txt
+          venv/bin/python3 -m pip install --no-cache-dir -r etc/requirements-common_lock.txt
       - name: Run Tests
         run: |
+          source venv/bin/activate
           cd flow/test
           for file in *.py; do
               python3 "$file"

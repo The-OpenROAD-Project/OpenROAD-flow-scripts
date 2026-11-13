@@ -1045,6 +1045,20 @@ FILL_CONFIG:
 KLAYOUT_TECH_FILE:
   description: |
     A mapping from LEF/DEF to GDS using the KLayout tool.
+KLAYOUT_DRC_FILE:
+  description: >
+    The KLayout DRC deck `make drc` runs. A `.py` deck runs with the klayout
+    Python module; a Ruby deck (`.lydrc`) is deprecated and needs the KLayout
+    application. Empty when the platform has no deck.
+  stages:
+    - final
+KLAYOUT_LVS_FILE:
+  description: >
+    The KLayout LVS deck `make lvs` runs. A `.py` deck runs with the klayout
+    Python module; a Ruby deck (`.lylvs`) is deprecated and needs the KLayout
+    application. Empty when the platform has no deck.
+  stages:
+    - final
 IR_DROP_LAYER:
   description: |
     Default metal layer to report IR drop.

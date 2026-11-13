@@ -51,5 +51,8 @@ fi
 if [[ "$OSTYPE" == "darwin"* ]]; then
   "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
 else
-  sudo -u $SUDO_USER "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
+  # The Python packages, the klayout module among them, go into
+  # $DIR/.venv, which env.sh puts first on PATH.
+  sudo -u $SUDO_USER env VIRTUAL_ENV="$DIR/.venv" \
+    "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
 fi
