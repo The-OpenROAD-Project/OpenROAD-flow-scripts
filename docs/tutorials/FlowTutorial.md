@@ -191,7 +191,7 @@ configuration examples using the Tcl interface and other such details.
 
 Run the `ibex` design in OpenROAD-flow-scripts automated flow from
 RTL-to-GDS using `sky130hd`. Find `ibex` design details
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md)
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex_sv/README.md)
 and the design goals are:
 
 -   Area
