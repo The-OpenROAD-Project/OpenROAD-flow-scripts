@@ -45,8 +45,7 @@ export SYNTH_KEEP_MODULES ?= \
 export LIB_MODEL = CCS
 
 export VERILOG_FILES = $(DESIGN_HOME)/src/swerv/swerv_wrapper.sv2v.v \
-                       $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/macros.v \
-                       $(CLKGATE_MAP_FILE)
+                       $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/macros.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
 
 export ADDITIONAL_LEFS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lef/*.lef))
