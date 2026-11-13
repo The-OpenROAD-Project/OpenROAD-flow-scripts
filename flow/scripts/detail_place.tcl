@@ -6,21 +6,20 @@ source_step_tcl PRE DETAIL_PLACE
 
 proc do_dpl { } {
   # Only for use with hybrid rows
-  if { $::env(BALANCE_ROWS) } {
-    balance_row_usage
+  if { [command_runs balance_row_usage place.main $::env(BALANCE_ROWS)] } {
+    balance_row_usage {*}[command_args balance_row_usage place.main {}]
   }
 
   set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
-  detailed_placement_helper
+  detailed_placement_helper place.main
 
-  if { $::env(ENABLE_DPO) } {
-    if { [env_var_exists_and_non_empty DPO_MAX_DISPLACEMENT] } {
-      log_cmd improve_placement -max_displacement $::env(DPO_MAX_DISPLACEMENT)
-    } else {
-      log_cmd improve_placement
-    }
+  if { [command_runs improve_placement place.main $::env(ENABLE_DPO)] } {
+    set deprecated {}
+    append_env_var deprecated DPO_MAX_DISPLACEMENT -max_displacement 1
+    log_cmd improve_placement \
+      {*}[command_args improve_placement place.main $deprecated $deprecated]
   }
   log_cmd optimize_mirroring
 
