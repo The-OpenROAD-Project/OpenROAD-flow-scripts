@@ -11,7 +11,12 @@ def convert_drc(rdb):
 
     ordb = {"source": source, "description": "KLayout DRC conversion", "category": {}}
 
-    for category in rdb.each_category():
+    def iter_categories(categories):
+        for category in categories:
+            yield category
+            yield from iter_categories(category.each_sub_category())
+
+    for category in iter_categories(rdb.each_category()):
         if category.num_items() == 0:
             # ignore categories with no data
             continue
@@ -21,7 +26,7 @@ def convert_drc(rdb):
             "source": source,
             "violations": [],
         }
-        ordb["category"][category.name()] = ordb_category
+        ordb["category"][category.path()] = ordb_category
 
         for item in rdb.each_item_per_category(category.rdb_id()):
             violation = {
