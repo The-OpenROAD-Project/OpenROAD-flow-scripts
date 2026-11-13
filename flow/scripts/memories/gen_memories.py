@@ -22,6 +22,10 @@ collects its $mem_v2 cells, merges user-supplied `.memories` files
                                 the .lib states it — what synthesis
                                 blackboxes and the cost it gives each
 
+FakeRAM writes the .lib/.lef of each idiomatic memory and generate_ram
+those of each register file; this script alone writes the lists, once
+every view exists.
+
 Everything downstream consumes these files; nothing else is passed
 between the generator and the flow.
 """
@@ -93,11 +97,18 @@ def _spec_mode(spec: Path) -> str:
 
 def _lib_area(lib: Path) -> str:
     """The cell area `lib` states, in um^2: what blackboxes.txt gives a
-    register file beside its name, as FakeRAM does for its macros."""
+    macro beside its name."""
     m = re.search(r"^\s*area\s*:\s*([0-9.eE+-]+)\s*;", lib.read_text(), re.M)
     if not m:
         raise SystemExit(f"gen_memories: {lib} states no area")
     return m.group(1)
+
+
+def _shape(spec: Path, module: str, macro_place: set[str]) -> str:
+    """How a register file stands in for its module: its spec's mode when
+    AUTO_MEMORIES_MACRO_PLACE names it, else inline."""
+    mode = _spec_mode(spec)
+    return mode if module in macro_place else "inline"
 
 
 def _regfile_memory(spec: Path, module: str, reason: str) -> schema.Memory:
@@ -115,13 +126,43 @@ def _regfile_memory(spec: Path, module: str, reason: str) -> schema.Memory:
     return mem
 
 
+def regfile_memories(
+    specs: list[Path], macro_place: list[str] | None = None
+) -> list[schema.Memory]:
+    """The memories.json record of every listed register file."""
+    macro_place = set(macro_place or [])
+    memories = []
+    for spec in specs:
+        module = _spec_module(spec)
+        shape = _shape(spec, module, macro_place)
+        memories.append(
+            _regfile_memory(spec, module, f"register file, generate_ram, {shape}")
+        )
+    return memories
+
+
+def write_blackboxes(out_dir: Path, macros: list[str]) -> None:
+    """blackboxes.txt: each macro once, with the area its .lib states."""
+    areas: dict[str, str] = {}
+    for name in macros:
+        if name in areas:
+            raise SystemExit(
+                f"gen_memories: two macros are named {name}, and the "
+                "second's views overwrote the first's"
+            )
+        areas[name] = _lib_area(out_dir / f"{name}.lib")
+    (out_dir / "blackboxes.txt").write_text(
+        "".join(f"{name} {area}\n" for name, area in areas.items())
+    )
+
+
 def run_regfiles(
     specs: list[Path],
     openroad: str | None,
     lefs: list[Path],
     out_dir: Path,
     macro_place: list[str] | None = None,
-) -> list[schema.Memory]:
+) -> list[str]:
     """Generate every listed register file with OpenROAD's generate_ram,
     through regfile_ram.py: a wrapper in the RTL module's place connects
     its ports to the generated RAM's.
@@ -136,7 +177,8 @@ def run_regfiles(
     A register file named in AUTO_MEMORIES_MACRO_PLACE is a macro to
     synthesis and to macro placement: its
     abstract LEF and model liberty land beside the FakeRAM views and the
-    module joins blackboxes.txt. In `mode netlist` it then dissolves into
+    RAM it wraps is one of the macros returned, for blackboxes.txt. In
+    `mode netlist` it then dissolves into
     its placed cells after macro placement (regfile_dissolve.tcl), which
     reads its structural netlist and the placement of its core
     (<m>.v, <m>.place) and finds it in regfiles.txt. A spec whose ports
@@ -172,19 +214,14 @@ def run_regfiles(
             + ", which no AUTO_MEMORIES_REGFILES spec builds; it lists "
             + " ".join(modules)
         )
-    memories = []
     dissolve = []
     cores = []
     inline = []
     for spec, module in zip(specs, modules):
-        mode = _spec_mode(spec)
         # the RTL module's place taken by a wrapper around the RAM
-        shape = mode if module in macro_place else "inline"
+        shape = _shape(spec, module, macro_place)
         regfile_ram.check(spec)
         ram = regfile_ram.generate(spec, module, shape, openroad, lefs, out_dir)
-        memories.append(
-            _regfile_memory(spec, module, f"register file, generate_ram, {shape}")
-        )
         inline.append(module)
         if ram["macro"]:
             cores.append(ram["block"])
@@ -194,17 +231,10 @@ def run_regfiles(
             f"gen_memories: {module} -> register file, generate_ram, "
             f"{shape} ({spec.name})\n"
         )
-    with (out_dir / "blackboxes.txt").open("a") as f:
-        f.write(
-            "".join(
-                f"{name} {_lib_area(out_dir / f'{name}.lib')}\n"
-                for name in [m.name for m in memories if m.name not in inline] + cores
-            )
-        )
     (out_dir / "regfiles.txt").write_text("".join(f"{m}\n" for m in dissolve))
     (out_dir / "inline.txt").write_text("".join(f"{m}\n" for m in inline))
     (out_dir / "regfile_cores.txt").write_text("".join(f"{m}\n" for m in cores))
-    return memories
+    return cores
 
 
 def run(
@@ -249,6 +279,13 @@ def run(
         if mem.name in override_names:
             mem.source = "override"
 
+    # A listed register file is that, whatever the detector made of its
+    # module: its record replaces the module's before FakeRAM, which builds
+    # views for every idiomatic record of memories.json, reads it.
+    regfiles = regfile_memories(regfile_specs or [], macro_place)
+    listed = {m.name for m in regfiles}
+    memories = [m for m in memories if m.name not in listed] + regfiles
+
     out_dir.mkdir(parents=True, exist_ok=True)
     json_path.parent.mkdir(parents=True, exist_ok=True)
     schema.dump(memories, json_path, platform)
@@ -268,15 +305,13 @@ def run(
         ]
     )
 
-    # After FakeRAM has written blackboxes.txt for the inferred memories,
-    # and recorded in memories.json beside them.
-    regfiles = run_regfiles(
+    cores = run_regfiles(
         regfile_specs or [], openroad, lefs or [], out_dir, macro_place
     )
-    if regfiles:
-        listed = {m.name for m in regfiles}
-        memories = [m for m in memories if m.name not in listed] + regfiles
-        schema.dump(memories, json_path, platform)
+
+    # once every view exists: the macros FakeRAM built, then the register
+    # files' RAMs
+    write_blackboxes(out_dir, [m.name for m in converted] + cores)
 
     for mem in sorted(memories, key=lambda m: m.name):
         verdict = mem.kind

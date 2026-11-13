@@ -11,6 +11,9 @@ single-port RAM whose ports carry the module's names.
 A memory whose pins were synthesized by the detector rather than read off
 the module (port_convention "") has no such names and gets FakeRAM's
 historical single-port pins, which is what earlier ORFS releases emitted.
+
+Only the views are written here; gen_memories.py, which runs this, lists
+the macros in blackboxes.txt once every view exists.
 """
 
 import json
@@ -129,7 +132,6 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
     process = Process(ASAP7_PROCESS_CONFIG)
     timing_data = TimingData(ASAP7_TIMING_CONFIG)
 
-    blackboxes = []
     for m in converted:
         name = m["name"]
         bits = int(m.get("bits", 32))
@@ -174,9 +176,4 @@ def run_orfs_asap7(platform: str, out_dir: Path, json_path: Path):
         with open(lef_path, "w") as f:
             LefExporter(ram).export(f)
 
-        # the area the .lib states, beside the name: synthesis costs the
-        # blackbox by it
-        blackboxes.append(f"{name} {ram.physical.get_area(False):.6f}\n")
-
-    (out_dir / "blackboxes.txt").write_text("".join(blackboxes))
     return 0

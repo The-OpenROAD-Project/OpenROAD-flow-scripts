@@ -43,18 +43,11 @@ proc read_checkpoint { file } {
   }
 }
 
-# AUTO_MEMORIES: memory modules whose generated liberty view replaces
-# their behavioral body during synthesis, each with that view's area in
-# um^2. The list is produced by scripts/memories/gen_memories.py before
-# canonicalization, one `<module> <area>` per line; see
-# docs/user/AutoMemories.md.
+# AUTO_MEMORIES: what synthesis does to the modules util.tcl's
+# auto_memories_blackboxes names; see docs/user/AutoMemories.md.
 source $::env(SCRIPTS_DIR)/memories/check_blackboxed.tcl
 source $::env(SCRIPTS_DIR)/memories/max_bits.tcl
 source $::env(SCRIPTS_DIR)/memories/drop_parameters.tcl
-
-proc auto_memories_blackboxes { } {
-  return [dict keys [auto_memories_areas]]
-}
 
 proc read_auto_memories_inline { } {
   foreach m [auto_memories_names inline.txt] {
