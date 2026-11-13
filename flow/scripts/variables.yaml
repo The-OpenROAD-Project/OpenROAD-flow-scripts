@@ -47,6 +47,21 @@ RECOVER_POWER:
     Specifies how many percent of paths with positive slacks can be slowed for
     power savings [0-100].
   default: 0
+REPAIR_POWER:
+  description: >
+    Run repair_power after the global route timing repair: cells with setup
+    slack to spare are swapped to a higher VT of the same footprint to cut
+    power. With LOWEST_VT_ONLY, the power recovery may use every VT.
+  default: 0
+  stages:
+    - grt
+REPAIR_POWER_VT_BUDGET:
+  description: >
+    Passed as -vt_budget to repair_power: pairs of library cell patterns and
+    the largest percent of the logic cells their instances may be, e.g.
+    `*_SL 5 {*_SL *_L} 20`.
+  stages:
+    - grt
 SKIP_INCREMENTAL_REPAIR:
   default: 0
   description: >
@@ -159,6 +174,30 @@ PLATFORM_TCL:
 DONT_USE_CELLS:
   description: |
     Dont use cells eases pin access in detailed routing.
+LOWEST_VT_ONLY:
+  description: >
+    Synthesize, place and repair timing with the lowest (fastest) VT only:
+    the cells in NON_LOWEST_VT_CELLS are added to the dont use cells. Use
+    REPAIR_POWER to move cells with slack back to the higher VTs after the
+    global route timing repair. No effect on a platform with a single VT.
+  default: 0
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+NON_LOWEST_VT_CELLS:
+  description: >
+    Library cell patterns of every VT but the lowest, set by the platform.
+    Used by LOWEST_VT_ONLY. Empty on a platform with a single VT.
+  default: ""
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
 SYNTH_GUT:
   description: >
     Load design and remove all internal logic before doing synthesis. This is

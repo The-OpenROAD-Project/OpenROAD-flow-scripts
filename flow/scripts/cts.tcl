@@ -24,7 +24,7 @@ if { [env_var_exists_and_non_empty CTS_ARGS] } {
   set cts_args $::env(CTS_ARGS)
 }
 
-set_dont_use $::env(DONT_USE_CELLS)
+set_dont_use [dont_use_cells]
 
 log_cmd clock_tree_synthesis {*}$cts_args
 

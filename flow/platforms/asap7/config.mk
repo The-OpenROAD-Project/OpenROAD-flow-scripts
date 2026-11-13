@@ -119,6 +119,10 @@ export VT_LIST = $(if $(strip $(ASAP7_USE_VT)), $(ASAP7_USE_VT), RVT)
 
 # # The first VT in the ASAP7_USE_VT list is the primary VT. The others get added to OTHER_VT
 export PRIMARY_VT = $(word 1, $(VT_LIST))
+# Cells of every loaded VT but the lowest one (SLVT < LVT < RVT), for
+# LOWEST_VT_ONLY
+.LOWEST_VT = $(firstword $(foreach vt,SLVT LVT RVT,$(filter $(vt),$(VT_LIST))))
+export NON_LOWEST_VT_CELLS ?= $(patsubst %VT,*_ASAP7_75t_%,$(filter-out $(.LOWEST_VT),$(VT_LIST)))
 export PRIMARY_VT_TAG = $(strip $(patsubst %VT, %, $(PRIMARY_VT)))
 export OTHER_VT = $(wordlist 2, $(words $(VT_LIST)), $(VT_LIST))
 

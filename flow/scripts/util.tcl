@@ -81,6 +81,41 @@ proc recover_power_helper { } {
   report_power
 }
 
+# Cells the flow must not use: DONT_USE_CELLS, plus the cells of every VT but
+# the lowest in a lowest-VT-only flow
+proc dont_use_cells { } {
+  set cells [env_var_or_empty DONT_USE_CELLS]
+  if { $::env(LOWEST_VT_ONLY) } {
+    lappend cells {*}$::env(NON_LOWEST_VT_CELLS)
+  }
+  return $cells
+}
+
+proc repair_power_helper { } {
+  puts "Switching non critical gates to higher VT for power recovery"
+  report_tns
+  report_wns
+  report_power
+  # The power recovery of a lowest-VT-only flow may use every VT
+  if { $::env(LOWEST_VT_ONLY) } {
+    log_cmd reset_dont_use
+    log_cmd set_dont_use [env_var_or_empty DONT_USE_CELLS]
+  }
+  set additional_args "-verbose"
+  if { $::env(SETUP_SLACK_MARGIN) != 0 } {
+    lappend additional_args -setup_margin $::env(SETUP_SLACK_MARGIN)
+  }
+  append_env_var additional_args REPAIR_POWER_VT_BUDGET -vt_budget 1
+  log_cmd repair_power {*}$additional_args
+  if { $::env(LOWEST_VT_ONLY) } {
+    log_cmd reset_dont_use
+    log_cmd set_dont_use [dont_use_cells]
+  }
+  report_tns
+  report_wns
+  report_power
+}
+
 proc extract_stage { input_file } {
   # Match the stage prefix on the basename, not the full path: an ancestor
   # dir like ".../4_something/3_place.odb" would otherwise match "4_" -> stage 4.

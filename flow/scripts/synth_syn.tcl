@@ -13,9 +13,7 @@ if { [env_var_exists_and_non_empty ADDITIONAL_LEFS] } {
     log_cmd read_lef $lef
   }
 }
-if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
-  log_cmd set_dont_use $::env(DONT_USE_CELLS)
-}
+log_cmd set_dont_use [dont_use_cells]
 
 # Setup verilog include directories
 set vIdirsArgs ""
