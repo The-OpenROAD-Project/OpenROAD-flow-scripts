@@ -150,8 +150,10 @@ LIB_MODEL:
     Selects between NLDM and CCS timing models for the ASAP7 platform.
     Valid values: NLDM (default), CCS. Used in
     flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and
-    accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list,
-    and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.
+    accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list.
+    With CCS the prima delay calculator is used from the global routing
+    stage on, where the parasitics come from global routing; placement
+    and CTS use the table delay calculator on their estimates.
   default: NLDM
 PLATFORM_TCL:
   description: |

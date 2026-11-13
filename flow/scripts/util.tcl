@@ -391,6 +391,21 @@ proc final_extracts_parasitics { } {
   }]
 }
 
+# LIB_MODEL=CCS reads CCS libraries. The prima delay calculator simulates
+# the driver waveform on the RC network and costs tens of table lookups
+# per net, so it is used from the global routing stage on, where the
+# parasitics come from global routing; the stages before it use the table
+# calculator on their placement estimates.
+proc set_ccs_delay_calculator { design_file } {
+  if { [env_var_equals LIB_MODEL CCS] } {
+    set design_stage [lindex [extract_stage $design_file] 0]
+    if { $design_stage >= 4 } {
+      puts "Using CCS delay calculation"
+      log_cmd set_delay_calculator prima
+    }
+  }
+}
+
 # Load the parasitics that step is timed with and return where they came
 # from: the extracted 6_final.spef when final writes one, else, once the
 # design is placed, what OpenROAD estimates (global routes if there are
