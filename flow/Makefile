@@ -404,7 +404,7 @@ $(eval $(call OPEN_GUI_SHORTCUT,5_1_grt-failed,5_1_grt-failed.odb))
 # A "do-synth" step would be welcomed, but it isn't strictly necessary
 # for the Bazel use-case.
 #
-# do-floorplan, do-place, do-cts, do-route, do-finish are the
+# do-floorplan, do-place, do-cts, do-grt, do-route, do-finish are the
 # supported interface to execute those stages without checking
 # for dependencies.
 #
@@ -630,7 +630,7 @@ $(eval $(call do-copy,5_route,5_3_fillcell))
 
 .PHONY: do-route
 do-route:
-	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_3_fillcell do-5_route
+	$(UNSET_AND_MAKE) do-5_2_route do-5_3_fillcell do-5_route
 
 .PHONY: do-grt
 do-grt:
