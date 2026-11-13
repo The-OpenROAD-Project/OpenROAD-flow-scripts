@@ -1,7 +1,7 @@
-set_layer_rc -layer Metal2 -resistance 2.25636E-04 -capacitance 1.35357E-04
-set_layer_rc -layer Metal3 -resistance 2.25636E-04 -capacitance 1.46141E-04
-set_layer_rc -layer Metal4 -resistance 2.25637E-04 -capacitance 1.50688E-04
-set_layer_rc -layer Metal5 -resistance 5.85545E-05 -capacitance 1.55595E-04
+set_layer_rc -layer Metal2 -resistance 2.25636E-01 -capacitance 1.35357E-04
+set_layer_rc -layer Metal3 -resistance 2.25636E-01 -capacitance 1.46141E-04
+set_layer_rc -layer Metal4 -resistance 2.25637E-01 -capacitance 1.50688E-04
+set_layer_rc -layer Metal5 -resistance 5.85545E-02 -capacitance 1.55595E-04
 
 regexp {(\d+)} $::env(METAL_OPTION) metal
 
