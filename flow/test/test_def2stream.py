@@ -355,19 +355,18 @@ class TestMissingCells(unittest.TestCase):
 class TestAutoMemoriesCells(unittest.TestCase):
     def test_off_reads_nothing(self):
         self.assertEqual(
-            def2stream.auto_memories_cells({"RESULTS_DIR": "/nonexistent"}),
+            def2stream.auto_memories_cells({"AUTO_MEMORIES_DIR": "/nonexistent"}),
             frozenset(),
         )
 
     def test_names_from_blackboxes_txt(self):
-        with tempfile.TemporaryDirectory() as results:
-            os.mkdir(os.path.join(results, "memories"))
-            with open(os.path.join(results, "memories", "blackboxes.txt"), "w") as f:
+        with tempfile.TemporaryDirectory() as memories:
+            with open(os.path.join(memories, "blackboxes.txt"), "w") as f:
                 # a name per line, optionally followed by more columns
                 f.write("tage_entry_sram\nmbtb_entry_sram 491.400000\n\n")
             self.assertEqual(
                 def2stream.auto_memories_cells(
-                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                    {"AUTO_MEMORIES": "1", "AUTO_MEMORIES_DIR": memories}
                 ),
                 frozenset(["tage_entry_sram", "mbtb_entry_sram"]),
             )
@@ -375,23 +374,25 @@ class TestAutoMemoriesCells(unittest.TestCase):
     def test_missing_list_is_an_error(self):
         # the flow always writes it; a missing list is a broken flow, not
         # a design without generated macros
-        with tempfile.TemporaryDirectory() as results:
+        with tempfile.TemporaryDirectory() as memories:
             with self.assertRaisesRegex(RuntimeError, "blackboxes.txt is missing"):
                 def2stream.auto_memories_cells(
-                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                    {"AUTO_MEMORIES": "1", "AUTO_MEMORIES_DIR": memories}
                 )
 
-    def test_missing_results_dir_is_an_error(self):
-        with self.assertRaisesRegex(RuntimeError, "RESULTS_DIR is not set"):
-            def2stream.auto_memories_cells({"AUTO_MEMORIES": "1"})
+    def test_missing_auto_memories_dir_is_an_error(self):
+        # RESULTS_DIR is no stand-in: the memories may be another variant's
+        with self.assertRaisesRegex(RuntimeError, "AUTO_MEMORIES_DIR is not set"):
+            def2stream.auto_memories_cells(
+                {"AUTO_MEMORIES": "1", "RESULTS_DIR": "/nonexistent"}
+            )
 
     def test_empty_list_allows_nothing(self):
-        with tempfile.TemporaryDirectory() as results:
-            os.mkdir(os.path.join(results, "memories"))
-            open(os.path.join(results, "memories", "blackboxes.txt"), "w").close()
+        with tempfile.TemporaryDirectory() as memories:
+            open(os.path.join(memories, "blackboxes.txt"), "w").close()
             self.assertEqual(
                 def2stream.auto_memories_cells(
-                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                    {"AUTO_MEMORIES": "1", "AUTO_MEMORIES_DIR": memories}
                 ),
                 frozenset(),
             )

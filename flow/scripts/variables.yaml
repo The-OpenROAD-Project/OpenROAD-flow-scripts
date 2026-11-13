@@ -183,6 +183,15 @@ SYNTH_USE_SYN:
   stages:
     - synth
   default: 0
+AUTO_MEMORIES_DIR:
+  description: >
+    Directory AUTO_MEMORIES writes its generated views and lists to in
+    synthesis, and every later stage reads them from. Defaults to
+    $(RESULTS_DIR)/memories. Set it to another variant's directory to run
+    stages on that variant's synthesis without copying its memories, with
+    FLOW_INPUT_VARIANT naming the variant the stage input is read from.
+    Like AUTO_MEMORIES, not tied to stages: every step that reads the
+    views needs it, the abstract among them.
 AUTO_MEMORIES:
   description: >
     Experimental. When set to 1, memories that yosys infers in the RTL
@@ -190,7 +199,7 @@ AUTO_MEMORIES:
     pre-synthesis, inventoried in
     `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM
     macro — given generated .lib/.lef views under
-    `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and
+    `$(AUTO_MEMORIES_DIR)`. Synthesis blackboxes those modules and
     all later stages read the generated views, so an existing design
     gets macro-based results without a memory compiler. Supported for
     the asap7 platform only. See docs/user/AutoMemories.md.
@@ -241,7 +250,7 @@ AUTO_MEMORIES_REGFILES:
     bits, read and write ports by the RTL's own port names, and the cells.
     memories/regfile_ram.py checks the spec against the module's ports
     and has OpenROAD's generate_ram build it as `<module>_ram`, under
-    `$(RESULTS_DIR)/memories/`, with a wrapper in the module's place. A
+    `$(AUTO_MEMORIES_DIR)`, with a wrapper in the module's place. A
     module named in AUTO_MEMORIES_MACRO_PLACE is blackboxed like an
     AUTO_MEMORIES macro and placed as one; any other is inlined as its
     generated netlist. A placed spec in `mode netlist` then dissolves into
@@ -1643,8 +1652,8 @@ FLOW_INPUT_VARIANT:
     runs, then leaves it at the default: the shared stages run once, and
     the fork writes only its own results. A stage's later steps read the
     stage's own results. A stage stops when its input is in both
-    variants. Not with AUTO_MEMORIES=1, whose memories are read from the
-    variant that synthesised them.
+    variants. With AUTO_MEMORIES=1, AUTO_MEMORIES_DIR names the memories
+    of the variant that synthesised them, for every stage the fork runs.
   stages:
     - floorplan
     - place
