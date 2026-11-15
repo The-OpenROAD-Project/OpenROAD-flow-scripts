@@ -57,6 +57,7 @@ log_cmd pin_access {*}$additional_args
 
 do_global_route $res_aware $use_cugr
 
+use_ccs_delay_calculator
 set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)

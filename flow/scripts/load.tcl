@@ -76,8 +76,5 @@ proc load_design_from { dir design_file } {
     log_cmd set_wire_load_model -name $::env(WIRE_LOAD_MODEL)
   }
 
-  if { [env_var_equals LIB_MODEL CCS] } {
-    puts "Using CCS delay calculation"
-    log_cmd set_delay_calculator prima
-  }
+  use_ccs_delay_calculator
 }
