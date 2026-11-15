@@ -637,13 +637,12 @@ case "${os}" in
             exit 1
         fi
 
-        # First install OpenROAD base
-        _installORDependencies
-
-        # Only EL8 and EL9 are supported; other versions stop here.
+        # Only EL8 and EL9 are supported; other versions stop before any install.
         case "${elVersion}" in
             "8"|"9")
                 # EL8/EL9 = RHEL, Rocky Linux, or AlmaLinux
+                # First install OpenROAD base
+                _installORDependencies
                 if [[ "${option}" == "base" || "${option}" == "all" ]]; then
                     _install_EL8_EL9_Packages
                     _install_EL8_EL9_CleanUp
