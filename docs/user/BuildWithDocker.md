@@ -119,12 +119,6 @@ docker run --rm -it \
            openroad/orfs
 ```
 
-Then use:
-
-```
-docker run --rm -it -e DISPLAY=<IP_LIKE_FROM_TUTORIAL>:0 --network host --privileged <IMAGE_NAME>
-```
-
 Alternatively, you may also use the `docker_shell` utility for GUI as follows.
 It is important that you are in the `flow` directory.
 
