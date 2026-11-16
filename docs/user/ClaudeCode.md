@@ -93,6 +93,7 @@ are mounted so their contents survive:
 | `~/.claude/` | `~/.claude/` | Credentials, settings, conversation history |
 | `~/.cache/bazel-claude/` | `~/.cache/bazel/` | Bazel external dependencies |
 | `~/.gitconfig` | `~/.gitconfig` | Git identity (read-only) |
+| Worktree and main `.git` (worktree only) | Same host paths | Git refs, objects, hooks, config |
 | `$SSH_AUTH_SOCK` | forwarded | SSH agent for git over SSH |
 
 ## Environment variables
@@ -143,10 +144,16 @@ and the `--user` mode in `flow/util/docker_shell`.
 Wrapper script that assembles the `docker run` command with the correct
 volume mounts, environment variables, and entrypoint arguments.
 
-When you run `claude.sh` from a git worktree, it also mounts the main checkout's `.git` directory at its host path.
-The worktree's `.git` file points to that path, so git works in the container.
-The wrapper also sets `gc.worktreePruneExpire=never` in the container.
-The other worktrees' paths do not exist in the container, so without this setting `git gc` could delete their records from the shared `.git` directory.
+When you run `claude.sh` from a git worktree, it also mounts the worktree and the main checkout's `.git` directory at their host paths.
+The shell starts in the worktree's host path.
+The worktree's `.git` file and the `.git` files of its submodules point to these paths, so git works in the container.
+The worktree is also at `/workspace`.
+If one of these host paths is under `/workspace` or `/home/claude-user`, the wrapper prints a warning and adds no mounts, and git does not work in the container.
+
+The paths of the other worktrees do not exist in the container, so git sees them as stale.
+The wrapper sets `gc.worktreePruneExpire=never` in the container, so `git gc` keeps their records.
+`git gc` still removes the record of a worktree that has no index file.
+Do not run `git worktree prune` or `git worktree repair` in the container: they change the records of the other worktrees.
 
 Check the mounts with a stub `docker` command, without a container engine:
 
@@ -161,7 +168,8 @@ container, meaning it can execute any shell command without confirmation.
 The Docker container provides the isolation:
 
 - File access is limited to the mounted repository.
-  From a git worktree, this includes the main checkout's `.git` directory, which holds the refs and objects of all its worktrees.
+  From a git worktree, this includes the main checkout's `.git` directory, with the refs and objects of all its worktrees.
+  It also holds git hooks and config, which run on the host at the next git command, so code in the container can run code on the host.
 - No access to host system packages, services, or other projects
 - No access to host network services bound to localhost
 - `docker kill claude-orfs` stops everything instantly
