@@ -146,11 +146,6 @@ _installORDependencies() {
 }
 
 _installPipCommon() {
-    if [[ -f /opt/rh/rh-python38/enable ]]; then
-        set +u
-        source /opt/rh/rh-python38/enable
-        set -u
-    fi
     local lockfile piplock
     lockfile="${_script_dir}/requirements-common_lock.txt"
     piplock="${_script_dir}/requirements-pip_lock.txt"
@@ -188,43 +183,12 @@ _installPipSystem() {
     apt-get -y install python3-pandas python3-numpy python3-click python3-yaml python3-yamlfix
 }
 
-# Enterprise Linux 7 cleanup
-_install_EL7_CleanUp() {
-    yum clean -y all
-}
-
-# Enterprise Linux 7 package installation (EL7 = RHEL 7 or CentOS 7)
-_install_EL7_Packages() {
-    yum -y update
-    yum -y install \
-        time \
-        readline \
-        ruby \
-        ruby-devel \
-        tcl-tclreadline \
-        tcl-tclreadline-devel
-
-    if ! [ -x "$(command -v klayout)" ]; then
-      yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-    else
-      currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-      if _versionCompare $currentVersion -ge $klayoutVersion; then
-        echo "KLayout version greater than or equal to ${klayoutVersion}"
-      else
-        echo "KLayout version less than ${klayoutVersion}"
-        sudo yum remove -y klayout
-        yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-      fi
-    fi
-}
-
-
 # Enterprise Linux 8/9 cleanup
 _install_EL8_EL9_CleanUp() {
     dnf clean -y all
 }
 
-# Enterprise Linux 8/9 package installation (EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8 as no CentOS 9 exists)
+# Enterprise Linux 8/9 package installation (EL8/EL9 = RHEL, Rocky Linux, or AlmaLinux)
 _install_EL8_EL9_Packages() {
     # Re-detect EL version for appropriate KLayout package
     if [[ -f /etc/os-release ]]; then
@@ -659,7 +623,7 @@ case "${platform}" in
 esac
 
 case "${os}" in
-    "CentOS Linux" | "Red Hat Enterprise Linux"* | "AlmaLinux" | "Rocky Linux")
+    "Red Hat Enterprise Linux"* | "AlmaLinux" | "Rocky Linux")
         # Enterprise Linux support - dispatch based on specific version
         if [[ ${CI} == "yes" ]]; then
             echo "WARNING: Installing CI dependencies is only supported on Ubuntu 24.04 and 26.04" >&2
@@ -673,20 +637,12 @@ case "${os}" in
             exit 1
         fi
 
-        # First install OpenROAD base
-        _installORDependencies
-
-        # Determine between EL7 vs EL8/9, since yum vs dnf should be used, and different Klayout builds exist
+        # Only EL8 and EL9 are supported; other versions stop before any install.
         case "${elVersion}" in
-            "7")
-                # EL7 = RHEL 7 or CentOS 7
-                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
-                    _install_EL7_Packages
-                    _install_EL7_CleanUp
-                fi
-                ;;
             "8"|"9")
-                # EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8+
+                # EL8/EL9 = RHEL, Rocky Linux, or AlmaLinux
+                # First install OpenROAD base
+                _installORDependencies
                 if [[ "${option}" == "base" || "${option}" == "all" ]]; then
                     _install_EL8_EL9_Packages
                     _install_EL8_EL9_CleanUp
