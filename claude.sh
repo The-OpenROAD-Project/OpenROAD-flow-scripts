@@ -94,6 +94,25 @@ DOCKER_RUN_ARGS=(
     -w /workspace
 )
 
+# A git worktree's .git file points to the main checkout by absolute path.
+# Mount that git directory at the same path, so git works in the container.
+GIT_COMMON_DIR=$(git -C "${SCRIPT_DIR}" rev-parse --path-format=absolute \
+    --git-common-dir 2> /dev/null || true)
+if [[ -n "${GIT_COMMON_DIR}" ]]; then
+    case "${GIT_COMMON_DIR}/" in
+        "$(cd "${SCRIPT_DIR}" && pwd -P)"/*) ;;
+        *) DOCKER_RUN_ARGS+=(-v "${GIT_COMMON_DIR}:${GIT_COMMON_DIR}") ;;
+    esac
+fi
+
+# Host paths of other worktrees do not exist in the container, so git gc
+# would prune their records from the shared .git. Stop that.
+DOCKER_RUN_ARGS+=(
+    -e GIT_CONFIG_COUNT=1
+    -e GIT_CONFIG_KEY_0=gc.worktreePruneExpire
+    -e GIT_CONFIG_VALUE_0=never
+)
+
 # TTY/stdin handling for interactive, CI, and piped-input cases:
 #   * terminal in + terminal out → -it   (normal interactive use)
 #   * anything else              → -i    (pass stdin through; no TTY)

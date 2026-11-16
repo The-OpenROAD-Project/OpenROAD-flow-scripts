@@ -143,13 +143,25 @@ and the `--user` mode in `flow/util/docker_shell`.
 Wrapper script that assembles the `docker run` command with the correct
 volume mounts, environment variables, and entrypoint arguments.
 
+When you run `claude.sh` from a git worktree, it also mounts the main checkout's `.git` directory at its host path.
+The worktree's `.git` file points to that path, so git works in the container.
+The wrapper also sets `gc.worktreePruneExpire=never` in the container.
+The other worktrees' paths do not exist in the container, so without this setting `git gc` could delete their records from the shared `.git` directory.
+
+Check the mounts with a stub `docker` command, without a container engine:
+
+```shell
+bash docker/test-claude-sh.sh
+```
+
 ## Security model
 
 Claude Code runs with `--dangerously-skip-permissions` **inside** the
 container, meaning it can execute any shell command without confirmation.
 The Docker container provides the isolation:
 
-- File access is limited to the mounted repository
+- File access is limited to the mounted repository.
+  From a git worktree, this includes the main checkout's `.git` directory, which holds the refs and objects of all its worktrees.
 - No access to host system packages, services, or other projects
 - No access to host network services bound to localhost
 - `docker kill claude-orfs` stops everything instantly
