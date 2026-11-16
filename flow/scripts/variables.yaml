@@ -150,8 +150,10 @@ LIB_MODEL:
     Selects between NLDM and CCS timing models for the ASAP7 platform.
     Valid values: NLDM (default), CCS. Used in
     flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and
-    accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list,
-    and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.
+    accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list.
+    With CCS the prima delay calculator is used from the global routing
+    stage on, where the parasitics come from global routing; placement
+    and CTS use the table delay calculator on their estimates.
   default: NLDM
 PLATFORM_TCL:
   description: |
@@ -822,12 +824,6 @@ CTS_ARGS:
     Override `clock_tree_synthesis` arguments.
   stages:
     - cts
-CTS_SNAPSHOTS:
-  description: |
-    Create ODB/SDC files at different stages of CTS.
-  stages:
-    - cts
-  default: 0
 HOLD_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing hold violations.
@@ -1051,6 +1047,20 @@ FILL_CONFIG:
 KLAYOUT_TECH_FILE:
   description: |
     A mapping from LEF/DEF to GDS using the KLayout tool.
+KLAYOUT_DRC_FILE:
+  description: >
+    The KLayout DRC deck `make drc` runs. A `.py` deck runs with the klayout
+    Python module; a Ruby deck (`.lydrc`) is deprecated and needs the KLayout
+    application. Empty when the platform has no deck.
+  stages:
+    - final
+KLAYOUT_LVS_FILE:
+  description: >
+    The KLayout LVS deck `make lvs` runs. A `.py` deck runs with the klayout
+    Python module; a Ruby deck (`.lylvs`) is deprecated and needs the KLayout
+    application. Empty when the platform has no deck.
+  stages:
+    - final
 IR_DROP_LAYER:
   description: |
     Default metal layer to report IR drop.
@@ -1647,6 +1657,23 @@ FOOTPRINT_TCL:
     Specifies a Tcl script with custom footprint-related commands for floorplan setup.
   stages:
     - floorplan
+FLOW_INPUT_VARIANT:
+  description: >
+    Flow variant a stage reads the previous stage's result from, the
+    .odb and the .sdc beside it. Defaults to FLOW_VARIANT. A variant
+    forked off another sets it to that variant for the first stage it
+    runs, then leaves it at the default: the shared stages run once, and
+    the fork writes only its own results. A stage's later steps read the
+    stage's own results. A stage stops when its input is in both
+    variants. Not with AUTO_MEMORIES=1, whose memories are read from the
+    variant that synthesised them.
+  stages:
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
 FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.

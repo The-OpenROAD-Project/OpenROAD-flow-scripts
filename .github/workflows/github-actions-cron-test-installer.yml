@@ -9,6 +9,7 @@ on:
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
       - 'env.sh'
+      - 'setup.sh'
       - 'flow/Makefile'
   pull_request:
     paths:
@@ -17,6 +18,7 @@ on:
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
       - 'env.sh'
+      - 'setup.sh'
       - 'flow/Makefile'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -55,3 +57,41 @@ jobs:
         run: |
           docker rm -f "$INSTALLER_CONTAINER" || true
           docker image rm "openroad/flow-${{ matrix.os }}-builder:$INSTALLER_TAG" "openroad/flow-${{ matrix.os }}-dev:$INSTALLER_TAG" || true
+
+  testSetup:
+    # The documented path: sudo ./setup.sh by a normal user, no VIRTUAL_ENV
+    # set, then env.sh; the flow's PYTHON_EXE must have the klayout module.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu:26.04", "ubuntu:24.04"]
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted-ubuntu-26.04' || 'ubuntu-26.04' }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      - name: Run setup.sh as a user and check PYTHON_EXE
+        run: |
+          script=$(cat <<'EOF'
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y --no-install-recommends sudo git ca-certificates
+          useradd -m orfs
+          cp -a /src /home/orfs/orfs
+          chown -R orfs: /home/orfs/orfs
+          git config --system --add safe.directory '*'
+          cd /home/orfs/orfs
+          unset VIRTUAL_ENV
+          SUDO_USER=orfs ./setup.sh
+          sudo -u orfs bash -ex <<'USER'
+          test -z "${VIRTUAL_ENV:-}"
+          source ./env.sh
+          python_exe=$(make -s -C flow print-PYTHON_EXE | sed -n 's/^PYTHON_EXE: //p')
+          test "$python_exe" = /home/orfs/orfs/.venv/bin/python3
+          "$python_exe" -c "import klayout.db"
+          USER
+          EOF
+          )
+          docker run --rm -v "$PWD:/src:ro" "${{ matrix.os }}" bash -exc "$script"

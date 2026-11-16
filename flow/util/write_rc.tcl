@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 6_final.odb 6_final.sdc
+load_design 6_final.odb
 
 source $::env(UTILS_DIR)/write_rc_helper.tcl
 
