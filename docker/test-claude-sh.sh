@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Check the git mounts that claude.sh adds, with a stub docker command.
+# Check the git mounts that claude.sh adds, with a stub docker command, and
+# which env.sh the entrypoint sources.
 # Needs bash and git only; no container engine runs.
 set -euo pipefail
 
@@ -102,3 +103,28 @@ echo "A folder inside another repository does not get its .git"
 check_worktree "old git, worktree" "$(PATH="${tmp}/oldgit:${PATH}" run_args "${tmp}/wt")"
 check_plain "old git, main checkout" "$(PATH="${tmp}/oldgit:${PATH}" run_args "${tmp}/main")"
 echo "Git without --path-format gives the same mounts"
+
+# The entrypoint, here without UID mapping, sources env.sh from its start
+# directory, which claude.sh sets to the worktree's host path.
+mkdir "${tmp}/start"
+echo 'export CLAUDE_TEST_ENV="${BASH_SOURCE[0]}"' > "${tmp}/start/env.sh"
+sourced() { # Print which env.sh the entrypoint sourced when started in $1.
+    (cd "$1" && env -u HOST_UID -u HOST_GID \
+        bash "${SCRIPT_DIR}/claude-entrypoint.sh" printenv CLAUDE_TEST_ENV) || true
+}
+[[ "$(sourced "${tmp}/start")" == "${tmp}/start/env.sh" ]] ||
+    fail "entrypoint: env.sh in the start directory is not sourced"
+[[ -z "$(sourced "${tmp}/plain")" ]] ||
+    fail "entrypoint: a start directory without env.sh sourced something"
+echo "The entrypoint sources env.sh from its start directory"
+
+# The entrypoint sources env.sh from a host path, which can contain spaces.
+mkdir "${tmp}/with space"
+cp "${SCRIPT_DIR}/../env.sh" "${tmp}/with space/env.sh"
+printf '#!/bin/sh\necho /brew\n' > "${tmp}/bin/brew" # env.sh calls brew on macOS
+chmod +x "${tmp}/bin/brew"
+flow_home=$(PATH="${tmp}/bin:${PATH}" bash -c \
+    '. "$1/env.sh" > /dev/null && echo "${FLOW_HOME}"' _ "${tmp}/with space")
+[[ "${flow_home}" == "$(cd "${tmp}/with space" && pwd -P)/flow" ]] ||
+    fail "env.sh in a path with a space: FLOW_HOME is '${flow_home}'"
+echo "env.sh works in a path with a space"
