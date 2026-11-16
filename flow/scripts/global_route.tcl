@@ -1,7 +1,7 @@
 utl::set_metrics_stage "globalroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables grt
-load_design 4_cts.odb 4_cts.sdc
+load_stage_input 4_cts.odb
 
 source_step_tcl PRE GLOBAL_ROUTE
 
@@ -30,6 +30,7 @@ proc set_grt_seed { } {
 proc run_global_route_and_catch_failures { args } {
   if { [catch { log_cmd global_route {*}$args } errMsg] } {
     log_cmd write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
+    log_cmd write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt-failed.sdc
     error $errMsg
   }
 }
@@ -56,6 +57,7 @@ log_cmd pin_access {*}$additional_args
 
 do_global_route $res_aware $use_cugr
 
+use_ccs_delay_calculator
 set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
@@ -80,12 +82,14 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
 
   # Running DPL to fix overlapped instances
   # Run to get modified net by DPL
+  utl::push_metrics_stage "globalroute__repair_design__{}"
   log_cmd global_route -start_incremental {*}$allow_congestion
   detailed_placement_helper -quiet
   # Route only the modified net by DPL
   run_global_route_and_catch_failures -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
+  utl::pop_metrics_stage
 
   # Repair timing using global route parasitics
   puts "Repair setup and hold violations..."
@@ -97,6 +101,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
     report_metrics 5 "global route post repair timing"
   }
 
+  utl::push_metrics_stage "globalroute__repair_timing__{}"
   log_cmd global_route -start_incremental {*}$allow_congestion
   detailed_placement_helper -quiet
   log_cmd check_placement -placeable -verbose
@@ -104,6 +109,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
   run_global_route_and_catch_failures -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+  utl::pop_metrics_stage
 
   log_cmd estimate_parasitics
 
@@ -125,12 +131,14 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
 }
 
 if { !$::env(OPT_POST_GRT_WNS) } {
+  utl::push_metrics_stage "globalroute__recover_power__{}"
   log_cmd global_route -start_incremental {*}$allow_congestion
   recover_power_helper
   # Route the modified nets by rsz journal restore
   run_global_route_and_catch_failures -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  utl::pop_metrics_stage
 }
 
 if {
@@ -157,4 +165,3 @@ source [file join $::env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
 write_guides $::env(RESULTS_DIR)/route.guide
 source_step_tcl POST GLOBAL_ROUTE
 orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
-orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc

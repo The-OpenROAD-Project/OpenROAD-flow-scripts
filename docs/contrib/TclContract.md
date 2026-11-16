@@ -26,8 +26,8 @@ to follow.
 
 - **A script never writes its own version of an idiom `util.tcl` already
   has.** An optional flag is added with `append_env_var`, a command that does
-  real work runs through `log_cmd`, a result is written with `orfs_write_db`
-  and `orfs_write_sdc`. An idiom a change needs in two places becomes a proc
+  real work runs through `log_cmd`, a result is written with `orfs_write_db`,
+  which writes the `.odb` and its `.sdc`. An idiom a change needs in two places becomes a proc
   in `util.tcl`.
   *Breaks:* each copy grows its own small bug, and nobody can grep for the
   places that do the same thing.

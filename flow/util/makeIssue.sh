@@ -89,7 +89,6 @@ cat > ${RUN_ME_SCRIPT} <<EOF
 #!/usr/bin/env bash
 cd "\$(dirname "\$0")"
 source ./$(basename ${VARS_BASENAME}).sh
-export PYTHON_EXE=\${PYTHON_EXE:-\$(command -v python3)}
 yosys ${YOSYS_FLAGS:-} -c \${SCRIPTS_DIR}/${ISSUE_TARGET}.tcl
 EOF
 else

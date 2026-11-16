@@ -18,21 +18,15 @@ if { [env_var_exists_and_non_empty CORNERS] } {
 }
 
 # AUTO_MEMORIES: liberty views generated pre-synthesis by
-# scripts/memories/gen_memories.py. The file names are only known at
-# run time, so they are globbed here rather than threaded through
-# LIB_FILES. The _pre_layout variants (ideal clock) are for pre-CTS
-# consumers that select lib files themselves.
-if { [env_var_equals AUTO_MEMORIES 1] } {
-  foreach libFile [glob -nocomplain $::env(RESULTS_DIR)/memories/*.lib] {
-    if { [string match *_pre_layout.lib $libFile] } {
-      continue
+# scripts/memories/gen_memories.py, named by blackboxes.txt. The
+# _pre_layout variants (ideal clock) are for pre-CTS consumers that
+# select lib files themselves.
+foreach libFile [auto_memories_views .lib] {
+  if { [env_var_exists_and_non_empty CORNERS] } {
+    foreach corner $::env(CORNERS) {
+      log_cmd read_liberty -corner $corner $libFile
     }
-    if { [env_var_exists_and_non_empty CORNERS] } {
-      foreach corner $::env(CORNERS) {
-        log_cmd read_liberty -corner $corner $libFile
-      }
-    } else {
-      log_cmd read_liberty $libFile
-    }
+  } else {
+    log_cmd read_liberty $libFile
   }
 }

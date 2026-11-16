@@ -33,14 +33,8 @@ if { [env_var_exists_and_non_empty DEF_FILE] } {
 }
 
 proc read_timing { input_file } {
-  set result [find_sdc_file $input_file]
-  set design_stage [lindex $result 0]
-  set sdc_file [lindex $result 1]
-
-  if { $sdc_file == "" } {
-    set sdc_file $::env(SDC_FILE)
-  }
-  log_cmd read_sdc $sdc_file
+  set design_stage [lindex [extract_stage $input_file] 0]
+  log_cmd read_sdc [sdc_file_of $input_file]
   if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     source $::env(PLATFORM_DIR)/derate.tcl
   }
@@ -72,10 +66,7 @@ if { [ord::openroad_gui_compiled] } {
     "OpenROAD - $::env(PLATFORM)/$::env(DESIGN_NICKNAME)/$::env(FLOW_VARIANT) - ${db_basename}"
 }
 
-if { [env_var_equals LIB_MODEL CCS] } {
-  puts "Using CCS delay calculation"
-  log_cmd set_delay_calculator prima
-}
+use_ccs_delay_calculator
 
 if { $::env(GUI_TIMING) } {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
