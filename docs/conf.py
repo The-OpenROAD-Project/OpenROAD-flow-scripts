@@ -179,6 +179,11 @@ def setup(app):
     )
     with open("contrib/GitGuideAdapter.md", "r") as f:
         adapter_content = f.read()
+    if "## Creating a branch" not in content:
+        raise RuntimeError(
+            "contrib/GitGuide.md: heading '## Creating a branch' not found; "
+            "check OpenROAD docs/contrib/GitGuide.md"
+        )
     content = content.replace(
         "## Creating a branch", adapter_content + "\n## Creating a branch"
     )
@@ -200,8 +205,8 @@ def setup(app):
 
     if match is None:
         raise RuntimeError(
-            f"SupportedOS.md: no text between '{start_pattern}' and "
-            f"'{end_pattern}'; check the headings in OpenROAD docs/index.md"
+            f"SupportedOS.md: '{start_pattern}' followed by '{end_pattern}' "
+            "not found; check the headings in OpenROAD docs/index.md"
         )
     extracted_content = match.group(1)
     extracted_content = "\n#### Supported Operating Systems" + extracted_content
@@ -212,7 +217,7 @@ def setup(app):
         existing_content = f.read()
     match = re.search(r"### Setup", existing_content)
     if match is None:
-        raise RuntimeError("index2.md: heading '### Setup' not found")
+        raise RuntimeError("docs/index.md: heading '### Setup' not found")
     with open("index2.md", "w") as f:
         insert_position = match.end() + 1
         before_insert = existing_content[:insert_position]
