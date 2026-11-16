@@ -67,6 +67,19 @@ _setup() {
             fromImage="${FROM_IMAGE_OVERRIDE:-"${org}/flow-${os}-dev"}:${imageTag}"
             context="."
             buildArgs+=" --build-arg numThreads=${numThreads}"
+            # The image has no git metadata, so pass the tool versions in.
+            local or_version yosys_commit
+            or_version=$(git -C tools/OpenROAD describe --tags \
+                --match '[0-9][0-9]Q[0-9]' --always --dirty)
+            echo "OpenROAD version: ${or_version}"
+            buildArgs+=" --build-arg openroadVersion=${or_version}"
+            # Same format as a Yosys build from a git checkout.
+            yosys_commit=$(git -C tools/yosys rev-parse --short=9 HEAD)
+            if ! git -C tools/yosys diff --quiet; then
+                yosys_commit+="-dirty"
+            fi
+            echo "Yosys commit: ${yosys_commit}"
+            buildArgs+=" --build-arg yosysCommit=${yosys_commit}"
             ;;
         "dev" )
             fromImage="${FROM_IMAGE_OVERRIDE:-$osBaseImage}"

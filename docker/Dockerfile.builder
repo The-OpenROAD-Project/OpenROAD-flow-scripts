@@ -33,10 +33,17 @@ COPY --link --exclude=OpenROAD --exclude=AutoTuner --exclude=install tools tools
 COPY --link etc/kepler-formal etc/kepler-formal
 ARG numThreads=$(nproc)
 ARG verificPath=""
+# The build context has no git metadata for the submodules, so the callers
+# (etc/DockerHelper.sh and CI) pass the Yosys commit. Yosys reads .gitcommit
+# when it has no git checkout, and reports UNKNOWN when it is unset.
+ARG yosysCommit=""
 
 RUN <<EOF
 set -e
 echo "" > tools/yosys/abc/.gitcommit
+if [ -n "${yosysCommit}" ]; then
+    echo "${yosysCommit}" > tools/yosys/.gitcommit
+fi
 if [ -n "${verificPath}" ]; then
     verificArgs="--with-verific ${verificPath}"
 else
@@ -74,9 +81,13 @@ FROM orfs-builder-base AS orfs-openroad-builder
 COPY --link --from=tools /OpenROAD-flow-scripts/tools/install tools/install
 COPY --link tools/OpenROAD tools/OpenROAD
 ARG numThreads=$(nproc)
+# The OpenROAD version, e.g. 26Q4-1798-g6932b6296c. Without git metadata,
+# OpenROAD reports "unknown" unless this is set.
+ARG openroadVersion=""
 
 RUN <<EOF
 set -e
+OPENROAD_VERSION="${openroadVersion}" \
 ./build_openroad.sh --no_init \
                     --local \
                     --openroad_only \
