@@ -374,17 +374,6 @@ __local_build()
                 export LIBRARY_PATH="${_joined_paths}${LIBRARY_PATH:+:$LIBRARY_PATH}"
                 echo "[INFO] General LIBRARY_PATH=$LIBRARY_PATH"
         fi
-        if [[ -f "/opt/rh/rh-python38/enable" ]]; then
-                set +u
-                source /opt/rh/rh-python38/enable
-                set -u
-        fi
-        if [[ -f "/opt/rh/devtoolset-8/enable" ]]; then
-                # the scl script has unbound variables
-                set +u
-                source /opt/rh/devtoolset-8/enable
-                set -u
-        fi
         # EL8: the default GCC 8 is too old for Yosys, which needs C++20.
         # It stays active for kepler-formal, which uses the host compiler
         # where no downloaded clang is registered (aarch64).

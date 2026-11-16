@@ -70,13 +70,11 @@ log_cmd repair_design -pre_placement
 
 report_metrics 1 "synth" false false
 
-orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
-# Canonicalize 1_synth.sdc. The original SDC_FILE provided by
+# Also canonicalizes 1_synth.sdc. The original SDC_FILE provided by
 # the user could have dependencies, such as sourcing util.tcl,
 # which are read in here and a canonicalized version is written
-# out by OpenSTA that has no dependencies. Sole writer of
-# 1_synth.sdc.
-orfs_write_sdc $::env(RESULTS_DIR)/1_synth.sdc
+# out by OpenSTA that has no dependencies.
+orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 
 # Gate-level netlist for downstream consumers. The Bazel synthesis action
 # declares this file as an output, so it must be written unconditionally.

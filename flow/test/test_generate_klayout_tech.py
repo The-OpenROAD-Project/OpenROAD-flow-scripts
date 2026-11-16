@@ -226,5 +226,34 @@ class TestRealPlatformLyt(unittest.TestCase):
         )
 
 
+class TestBlackboxLefs(unittest.TestCase):
+    def test_lists_the_lef_of_each_macro(self):
+        with tempfile.TemporaryDirectory() as d:
+            blackboxes = os.path.join(d, "blackboxes.txt")
+            with open(blackboxes, "w") as f:
+                f.write("ram_a 12.5\n\nram_b 3.0\n")
+            self.assertEqual(
+                generate_klayout_tech.blackbox_lefs(blackboxes),
+                [os.path.join(d, "ram_a.lef"), os.path.join(d, "ram_b.lef")],
+            )
+
+    def test_ignores_a_lef_the_list_does_not_name(self):
+        with tempfile.TemporaryDirectory() as d:
+            blackboxes = os.path.join(d, "blackboxes.txt")
+            with open(blackboxes, "w") as f:
+                f.write("ram_a 12.5\n")
+            for name in ("ram_a.lef", "stale.lef"):
+                open(os.path.join(d, name), "w").close()
+            self.assertEqual(
+                generate_klayout_tech.blackbox_lefs(blackboxes),
+                [os.path.join(d, "ram_a.lef")],
+            )
+
+    def test_missing_list_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(FileNotFoundError):
+                generate_klayout_tech.blackbox_lefs(os.path.join(d, "blackboxes.txt"))
+
+
 if __name__ == "__main__":
     unittest.main()

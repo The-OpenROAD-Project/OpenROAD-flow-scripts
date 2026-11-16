@@ -1,7 +1,7 @@
 utl::set_metrics_stage "finish__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables final
-load_design 6_1_fill.odb 6_1_fill.sdc
+load_design 6_1_fill.odb
 source_step_tcl PRE FINAL_REPORT
 
 set_propagated_clock [all_clocks]
