@@ -64,7 +64,12 @@ get_container_engine
 WORKSPACE=$(pwd)
 YOSYS_EXE=${YOSYS_EXE:-/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys}
 OPENROAD_EXE=${OPENROAD_EXE:-/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad}
-KLAYOUT_CMD=${KLAYOUT_CMD:-/usr/bin/klayout}
+# KLAYOUT_CMD only when the caller sets it; otherwise the flow looks for
+# klayout on the image's PATH.
+KLAYOUT_ENV=()
+if [[ -n "${KLAYOUT_CMD:-}" ]]; then
+    KLAYOUT_ENV=(-e "KLAYOUT_CMD=$KLAYOUT_CMD")
+fi
 
 XSOCK=/tmp/.X11-unix
 XAUTH=/tmp/.docker.xauth
@@ -116,7 +121,7 @@ DOCKER_CMD=(
     -e WORK_HOME=/work
     -e "YOSYS_EXE=$YOSYS_EXE"
     -e "OPENROAD_EXE=$OPENROAD_EXE"
-    -e "KLAYOUT_CMD=$KLAYOUT_CMD"
+    "${KLAYOUT_ENV[@]}"
     -v "$WORKSPACE:/work:Z"
     --network host
     "${PORT_ARGS[@]}"

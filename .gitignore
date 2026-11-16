@@ -107,4 +107,5 @@ MODULE.bazel.lock
 
 # python venv
 venv/
+.venv/
 tmp/
