@@ -93,6 +93,7 @@ are mounted so their contents survive:
 | `~/.claude/` | `~/.claude/` | Credentials, settings, conversation history |
 | `~/.cache/bazel-claude/` | `~/.cache/bazel/` | Bazel external dependencies |
 | `~/.gitconfig` | `~/.gitconfig` | Git identity (read-only) |
+| Worktree and main `.git` (worktree only) | Same host paths | Git refs, objects, hooks, config |
 | `$SSH_AUTH_SOCK` | forwarded | SSH agent for git over SSH |
 
 ## Environment variables
@@ -131,8 +132,8 @@ volume mount.
 Handles UID/GID mapping so files created inside the container have the
 correct ownership on the host. The entrypoint:
 
-1. Creates a user matching the host UID/GID, or reuses an existing account
-2. Sources `env.sh` to set up tool paths
+1. Creates a user matching the host UID/GID
+2. Sources `env.sh` to set up tool paths, from the start directory if it has one, else from `/workspace`
 3. Drops privileges via `setpriv` before running the command
 
 The mapped user's account record and `HOME` both use `/home/claude-user`.
@@ -160,13 +161,38 @@ It also checks that the user can create `~/.cache/bazelisk` beside the mounted B
 Wrapper script that assembles the `docker run` command with the correct
 volume mounts, environment variables, and entrypoint arguments.
 
+When you run `claude.sh` from the top of a git worktree, it also mounts the worktree and the main checkout's `.git` directory at their host paths.
+The shell starts in the worktree's host path.
+The worktree's `.git` file and the `.git` files of its submodules point to these paths, so git works in the container.
+The entrypoint sources `env.sh` from there, so `OPENROAD`, `FLOW_HOME` and `PATH` use the host path too.
+Rebuild the image with `./claude.sh --build` to get this entrypoint.
+The worktree is also at `/workspace`, but git links in submodules do not resolve from that path.
+If one of these host paths is under `/workspace` or `/home/claude-user`, the wrapper prints a warning and adds no mounts, and git does not work in the container.
+
+The paths of the other worktrees do not exist in the container, so git sees them as stale.
+The wrapper sets `gc.worktreePruneExpire=never` in the container, so `git gc` keeps their records.
+`git gc` still removes the record of a worktree that has no index file.
+Do not run `git worktree prune` or `git worktree repair` in the container: they change the records of the other worktrees.
+
+The start directory is part of some keys and caches.
+Claude Code stores the history of a worktree session under the host path, not under `/workspace`, so earlier `/workspace` sessions of that worktree do not resume.
+Bazel uses a new output base, and a CMake build directory that you configured under `/workspace` must be configured again.
+
+Check the mounts with a stub `docker` command, without a container engine:
+
+```shell
+bash docker/test-claude-sh.sh
+```
+
 ## Security model
 
 Claude Code runs with `--dangerously-skip-permissions` **inside** the
 container, meaning it can execute any shell command without confirmation.
 The Docker container provides the isolation:
 
-- File access is limited to the mounted repository
+- File access is limited to the mounted repository.
+  From a git worktree, this includes the main checkout's `.git` directory, with the refs and objects of all its worktrees.
+  It also holds git hooks and config, which run on the host at the next git command, so code in the container can run code on the host.
 - No access to host system packages, services, or other projects
 - No access to host network services bound to localhost
 - `docker kill claude-orfs` stops everything instantly

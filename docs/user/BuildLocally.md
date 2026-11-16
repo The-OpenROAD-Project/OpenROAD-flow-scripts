@@ -4,13 +4,17 @@
 
 The `setup.sh` script installs all of the dependencies, including OpenROAD dependencies, if they are not already installed.
 
-Supported configurations are: Ubuntu 26.04, Ubuntu 24.04, RHEL 8 and RockyLinux 9.
+Supported configurations are: Ubuntu 26.04 and Ubuntu 24.04.
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
 sudo ./setup.sh
 ```
+
+`setup.sh` installs the Python packages the flow uses, the `klayout`
+module that writes GDS among them, into a virtual environment in `.venv`,
+which `env.sh` puts first on `PATH`.
 
 ## Build
 
