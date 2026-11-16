@@ -153,6 +153,7 @@ CONTAINER_ENGINE=podman bash docker/test-claude-entrypoint.sh
 The check covers an existing UID and a new UID.
 It verifies that the launched command can read and write fixture settings through `HOME`.
 It also checks that the account's recorded home matches `HOME`.
+It also checks that the user can create `~/.cache/bazelisk` beside the mounted Bazel cache.
 
 ### `claude.sh`
 

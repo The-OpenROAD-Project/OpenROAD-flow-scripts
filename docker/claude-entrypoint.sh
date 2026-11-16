@@ -33,9 +33,11 @@ if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
     echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/claude-user
     chmod 0440 /etc/sudoers.d/claude-user
 
-    mkdir -p "${USER_HOME}"
+    # The engine creates .cache as root when it mounts .cache/bazel.
+    # Bazelisk writes to .cache/bazelisk, so the user owns .cache too.
+    mkdir -p "${USER_HOME}/.cache"
     export HOME="${USER_HOME}"
-    chown "${HOST_UID}:${HOST_GID}" "${USER_HOME}"
+    chown "${HOST_UID}:${HOST_GID}" "${USER_HOME}" "${USER_HOME}/.cache"
     touch "${USER_HOME}/.hushlogin"
 
     # Set up ORFS environment (PATH to tools, FLOW_HOME, etc.)

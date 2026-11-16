@@ -14,7 +14,10 @@ if [[ "${1:-}" == --assert ]]; then
     fi
     test "$(cat "${HOME}/.claude/settings.json")" = fixture
     echo updated > "${HOME}/.claude/settings.json"
+    # Bazelisk downloads Bazel into ~/.cache/bazelisk.
+    mkdir "${HOME}/.cache/bazelisk"
     echo "UID $2 reads and writes settings through HOME"
+    echo "UID $2 creates ~/.cache/bazelisk next to the mounted Bazel cache"
     exit 0
 fi
 
@@ -33,6 +36,9 @@ if [[ "${1:-}" == --inside ]]; then
     mkdir -p /home/claude-user/.claude /etc/sudoers.d
     echo fixture > /home/claude-user/.claude/settings.json
     chown -R "${uid}:${gid}" /home/claude-user/.claude
+    # claude.sh mounts the Bazel cache here; the engine leaves .cache owned by root.
+    mkdir -p /home/claude-user/.cache/bazel
+    chown "${uid}:${gid}" /home/claude-user/.cache/bazel
     export HOST_UID=${uid} HOST_GID=${gid}
     exec bash /test/claude-entrypoint.sh bash /test/test-claude-entrypoint.sh --assert "${uid}"
 fi
