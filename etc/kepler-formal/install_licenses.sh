@@ -41,9 +41,12 @@ for repo in ${repos}; do
               -o -path './lib/python*/LICENSE.txt' \) \) \
         -print -prune)"
     [[ -n "${files}" ]] || continue
-    mkdir -p "${dest}/${repo}"
+    # Keep each notice's path under the repository. cp --parents is GNU
+    # only, so make the directory first: this also runs on macOS.
     while IFS= read -r f; do
-        (cd "${external}/${repo}" && cp -rL --parents "${f}" "${dest}/${repo}/")
+        target="${dest}/${repo}/${f#./}"
+        mkdir -p "$(dirname "${target}")"
+        cp -RL "${external}/${repo}/${f#./}" "${target}"
     done <<< "${files}"
     count=$((count + 1))
 done

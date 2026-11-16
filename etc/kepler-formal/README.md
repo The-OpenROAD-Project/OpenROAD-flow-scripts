@@ -22,6 +22,13 @@ runfiles to `share/kepler-formal/licenses/<module>/`:
 ./install_licenses.sh "$(pwd)/../../tools/install/kepler-formal"
 ```
 
+## macOS
+
+`build_openroad.sh --local` takes the same path on macOS, where Bazel
+builds kepler-formal with the host's Apple clang: the downloaded clang is
+registered on x86-64 Linux only. That combination has not been tested;
+reports and pull requests are welcome.
+
 ## How this maps to `DependencyInstaller.sh`
 
 `DependencyInstaller.sh` downloads a pinned CMake from Kitware when the
