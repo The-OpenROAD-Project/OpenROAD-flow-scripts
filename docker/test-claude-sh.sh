@@ -23,7 +23,7 @@ git -c init.defaultBranch=main init -q "${tmp}/main"
 cp "${SCRIPT_DIR}/../claude.sh" "${tmp}/main/claude.sh"
 git -C "${tmp}/main" add claude.sh
 git -C "${tmp}/main" -c user.name=test -c user.email=test@example.invalid \
-    -c core.hooksPath=/dev/null commit -q -m init
+    -c core.hooksPath=/dev/null -c commit.gpgsign=false commit -q -m init
 git -C "${tmp}/main" worktree add -q "${tmp}/wt"
 common=$(cd "${tmp}/main/.git" && pwd -P)
 wt=$(cd "${tmp}/wt" && pwd -P)
