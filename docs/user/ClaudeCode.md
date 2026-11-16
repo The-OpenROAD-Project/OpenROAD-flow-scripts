@@ -133,7 +133,7 @@ Handles UID/GID mapping so files created inside the container have the
 correct ownership on the host. The entrypoint:
 
 1. Creates a user matching the host UID/GID
-2. Sources `env.sh` to set up tool paths
+2. Sources `env.sh` to set up tool paths, from the start directory if it has one, else from `/workspace`
 3. Drops privileges via `setpriv` before running the command
 
 This follows the same pattern as `tools/OpenROAD/etc/docker-entrypoint.sh`
@@ -144,16 +144,22 @@ and the `--user` mode in `flow/util/docker_shell`.
 Wrapper script that assembles the `docker run` command with the correct
 volume mounts, environment variables, and entrypoint arguments.
 
-When you run `claude.sh` from a git worktree, it also mounts the worktree and the main checkout's `.git` directory at their host paths.
+When you run `claude.sh` from the top of a git worktree, it also mounts the worktree and the main checkout's `.git` directory at their host paths.
 The shell starts in the worktree's host path.
 The worktree's `.git` file and the `.git` files of its submodules point to these paths, so git works in the container.
-The worktree is also at `/workspace`.
+The entrypoint sources `env.sh` from there, so `OPENROAD`, `FLOW_HOME` and `PATH` use the host path too.
+Rebuild the image with `./claude.sh --build` to get this entrypoint.
+The worktree is also at `/workspace`, but git links in submodules do not resolve from that path.
 If one of these host paths is under `/workspace` or `/home/claude-user`, the wrapper prints a warning and adds no mounts, and git does not work in the container.
 
 The paths of the other worktrees do not exist in the container, so git sees them as stale.
 The wrapper sets `gc.worktreePruneExpire=never` in the container, so `git gc` keeps their records.
 `git gc` still removes the record of a worktree that has no index file.
 Do not run `git worktree prune` or `git worktree repair` in the container: they change the records of the other worktrees.
+
+The start directory is part of some keys and caches.
+Claude Code stores the history of a worktree session under the host path, not under `/workspace`, so earlier `/workspace` sessions of that worktree do not resume.
+Bazel uses a new output base, and a CMake build directory that you configured under `/workspace` must be configured again.
 
 Check the mounts with a stub `docker` command, without a container engine:
 

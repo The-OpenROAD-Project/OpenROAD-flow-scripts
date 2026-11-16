@@ -28,6 +28,27 @@ common=$(cd "${tmp}/main/.git" && pwd -P)
 wt=$(cd "${tmp}/wt" && pwd -P)
 mkdir "${tmp}/plain"
 cp "${SCRIPT_DIR}/../claude.sh" "${tmp}/plain/claude.sh"
+# A plain folder inside another repository, for example a home in git.
+git -c init.defaultBranch=main init -q "${tmp}/parent"
+mkdir -p "${tmp}/parent/src/orfs"
+cp "${SCRIPT_DIR}/../claude.sh" "${tmp}/parent/src/orfs/claude.sh"
+parent_git=$(cd "${tmp}/parent/.git" && pwd -P)
+
+# Git before 2.31 does not know --path-format. rev-parse then prints the
+# option as output and exits 0. This wrapper does the same.
+mkdir "${tmp}/oldgit"
+cat > "${tmp}/oldgit/git" << EOF
+#!/usr/bin/env bash
+args=()
+for arg in "\$@"; do
+    case "\${arg}" in
+        --path-format=*) echo "\${arg}" ;;
+        *) args+=("\${arg}") ;;
+    esac
+done
+exec "$(command -v git)" "\${args[@]}"
+EOF
+chmod +x "${tmp}/oldgit/git"
 
 run_args() { # Print the docker run arguments of claude.sh in checkout $1.
     env -u SSH_AUTH_SOCK HOME="${tmp}/home" PATH="${tmp}/bin:${PATH}" \
@@ -52,15 +73,17 @@ check_plain() { # check_plain NAME ARGS: only /workspace, prune guard set.
         fail "$1: automatic worktree prune is not disabled"
 }
 
-args=$(run_args "${tmp}/wt")
-grep -qxF "${common}:${common}" <<< "${args}" ||
-    fail "worktree: ${common} is not mounted at its host path"
-grep -qxF "${wt}:${wt}" <<< "${args}" ||
-    fail "worktree: ${wt} is not mounted at its host path"
-[[ "$(workdir "${args}")" == "${wt}" ]] ||
-    fail "worktree: workdir is not ${wt}"
-grep -qxF GIT_CONFIG_VALUE_0=never <<< "${args}" ||
-    fail "worktree: automatic worktree prune is not disabled"
+check_worktree() { # check_worktree NAME ARGS: host-path mounts and workdir.
+    grep -qxF "${common}:${common}" <<< "$2" ||
+        fail "$1: ${common} is not mounted at its host path"
+    grep -qxF "${wt}:${wt}" <<< "$2" ||
+        fail "$1: ${wt} is not mounted at its host path"
+    [[ "$(workdir "$2")" == "${wt}" ]] || fail "$1: workdir is not ${wt}"
+    grep -qxF GIT_CONFIG_VALUE_0=never <<< "$2" ||
+        fail "$1: automatic worktree prune is not disabled"
+}
+
+check_worktree worktree "$(run_args "${tmp}/wt")"
 echo "A worktree gets its host path and the main .git at their host paths"
 
 check_plain "main checkout" "$(run_args "${tmp}/main")"
@@ -69,16 +92,13 @@ echo "A main checkout gets no extra mount"
 check_plain "not a repository" "$(run_args "${tmp}/plain")"
 echo "A folder outside git gets no extra mount"
 
-# Git before 2.31 prints an unknown option as output and exits 0.
-mkdir "${tmp}/oldgit"
-cat > "${tmp}/oldgit/git" << EOF
-#!/usr/bin/env bash
-if [[ "\$*" == *rev-parse* ]]; then
-    echo --path-format=absolute
+args=$(run_args "${tmp}/parent/src/orfs")
+check_plain "folder in a parent repository" "${args}"
+if grep -qF "${parent_git}" <<< "${args}"; then
+    fail "folder in a parent repository: the parent .git is mounted"
 fi
-exec "$(command -v git)" "\$@"
-EOF
-chmod +x "${tmp}/oldgit/git"
-PATH="${tmp}/oldgit:${PATH}" check_plain "old git, main checkout" \
-    "$(PATH="${tmp}/oldgit:${PATH}" run_args "${tmp}/main")"
-echo "Unexpected git output adds no mount"
+echo "A folder inside another repository does not get its .git"
+
+check_worktree "old git, worktree" "$(PATH="${tmp}/oldgit:${PATH}" run_args "${tmp}/wt")"
+check_plain "old git, main checkout" "$(PATH="${tmp}/oldgit:${PATH}" run_args "${tmp}/main")"
+echo "Git without --path-format gives the same mounts"

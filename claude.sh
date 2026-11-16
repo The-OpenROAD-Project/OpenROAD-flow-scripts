@@ -91,8 +91,11 @@ CONTAINER_HOME="/home/claude-user"
 # host path, so these links resolve in the container. /workspace stays.
 HOST_DIR=$(cd "${SCRIPT_DIR}" && pwd -P)
 CONTAINER_WORKDIR=/workspace
+GIT_TOP=""
 GIT_COMMON_DIR=""
-if git_common=$(git -C "${HOST_DIR}" rev-parse --git-common-dir 2> /dev/null); then
+if git_top=$(git -C "${HOST_DIR}" rev-parse --show-toplevel 2> /dev/null) &&
+    git_common=$(git -C "${HOST_DIR}" rev-parse --git-common-dir 2> /dev/null); then
+    GIT_TOP=$(cd "${git_top}" 2> /dev/null && pwd -P) || GIT_TOP=""
     GIT_COMMON_DIR=$(cd "${HOST_DIR}" && cd "${git_common}" 2> /dev/null && pwd -P) ||
         GIT_COMMON_DIR=""
 fi
@@ -103,7 +106,10 @@ outside_container_paths() {
 }
 
 GIT_MOUNTS=()
-if [[ -n "${GIT_COMMON_DIR}" && "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
+# Only for the top of a checkout: a plain folder inside another repository
+# must not get that repository's .git.
+if [[ "${GIT_TOP}" == "${HOST_DIR}" && -n "${GIT_COMMON_DIR}" &&
+    "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
     if outside_container_paths "${HOST_DIR}" &&
         outside_container_paths "${GIT_COMMON_DIR}"; then
         GIT_MOUNTS=(
@@ -112,8 +118,9 @@ if [[ -n "${GIT_COMMON_DIR}" && "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
         )
         CONTAINER_WORKDIR=${HOST_DIR}
     else
-        echo "Warning: git data in ${GIT_COMMON_DIR} cannot be mounted at its" \
-            "host path, so git does not work in the container." >&2
+        echo "Warning: ${HOST_DIR} and its git data in ${GIT_COMMON_DIR} cannot" \
+            "both be mounted at their host paths, because one of them is under" \
+            "/workspace or ${CONTAINER_HOME}. Git does not work in the container." >&2
     fi
 fi
 
