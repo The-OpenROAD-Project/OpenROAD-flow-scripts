@@ -455,7 +455,24 @@ INFER_CLKGATES:
     Enables Yosys clock gate inference. By default, it uses the Liberty cell
     definitions to determine clock gating cell. The selection can be overridden
     using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.
+    Every stage reads it: a platform may make the clock gating cells it
+    inserts usable for OpenROAD through DONT_USE_CELLS, as asap7 does.
   default: 0
+  stages:
+    - All stages
+INFER_CLKGATES_EXCLUDE:
+  description: >
+    Space-separated Yosys module name patterns whose flip-flops
+    INFER_CLKGATES leaves ungated, e.g. a module whose enable logic is
+    timing-critical. Only modules that still exist at clock gate inference
+    can be excluded, see SYNTH_HIERARCHICAL and SYNTH_KEEP_MODULES.
+  stages:
+    - synth
+INFER_CLKGATES_MIN_NET_SIZE:
+  description: >
+    Minimum number of flip-flops sharing a clock and enable for
+    INFER_CLKGATES to replace their enable with a clock gating cell. Smaller
+    groups keep their enable flip-flops. Unset gates every group.
   stages:
     - synth
 NEG_CLKGATE_AND_PORTS:
