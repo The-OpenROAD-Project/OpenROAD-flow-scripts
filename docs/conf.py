@@ -228,6 +228,10 @@ def setup(app):
 
         f.write(updated_content)
 
-    # Get Manpage file
-    url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/openroad/utl/README.md"
-    get_file_from_url(url, "Manpage.md")
+    # Get Manpage file. OpenROAD renames its src/ directory to openroad/;
+    # the src/ path serves OpenROAD master from before the rename.
+    base = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master"
+    try:
+        get_file_from_url(f"{base}/openroad/utl/README.md", "Manpage.md")
+    except requests.HTTPError:
+        get_file_from_url(f"{base}/src/utl/README.md", "Manpage.md")
