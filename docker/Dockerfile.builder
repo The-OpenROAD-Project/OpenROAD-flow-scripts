@@ -87,10 +87,11 @@ if [ ! -x tools/install/OpenROAD/bin/openroad ]; then
 fi
 EOF
 
-# tools/OpenROAD/src/sta is excluded because it is covered by a separate
-# commercial license agreement.
+# The OpenSTA submodule (tools/OpenROAD/openroad/sta, or src/sta in an
+# OpenROAD commit from before the rename) is excluded because it is covered
+# by a separate commercial license agreement.
 RUN find /OpenROAD-flow-scripts/tools/OpenROAD \( -name "*LICENSE*" -o -name "*LICENSES*" \) \
-    | grep -v '/OpenROAD/src/sta/' \
+    | grep -vE '/OpenROAD/(openroad|src)/sta/' \
     | while IFS= read -r f; do \
         rel="${f#/OpenROAD-flow-scripts/tools/}"; \
         mkdir -p "/OpenROAD-flow-scripts/tools/install/licenses/$(dirname "$rel")"; \
