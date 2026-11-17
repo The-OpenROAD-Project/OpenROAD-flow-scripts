@@ -991,11 +991,11 @@ SKIP_FLOORPLAN_REPAIR_TIMING:
 ENABLE_PLACE_REPAIR_TIMING:
   description: >
     Run setup repair_timing (without the last-gasp phase) during the
-    placement resize stage using placement parasitics. Set to 0 to skip
-    pre-CTS setup repair.
+    placement resize stage using placement parasitics. Disabled by default;
+    the repair also runs when SWAP_ARITH_OPERATORS swaps a module.
   stages:
     - place
-  default: 1
+  default: 0
 SKIP_REPAIR_TIE_FANOUT:
   description: >
     Skip repair_tie_fanout at floorplan step.

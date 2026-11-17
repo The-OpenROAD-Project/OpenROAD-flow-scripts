@@ -147,7 +147,7 @@ configuration file.
 | <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
 | <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
 | <a name="ENABLE_DPO"></a>ENABLE_DPO| Enable detail placement with improve_placement feature.| 1|
-| <a name="ENABLE_PLACE_REPAIR_TIMING"></a>ENABLE_PLACE_REPAIR_TIMING| Run setup repair_timing (without the last-gasp phase) during the placement resize stage using placement parasitics. Set to 0 to skip pre-CTS setup repair.| 1|
+| <a name="ENABLE_PLACE_REPAIR_TIMING"></a>ENABLE_PLACE_REPAIR_TIMING| Run setup repair_timing (without the last-gasp phase) during the placement resize stage using placement parasitics. Disabled by default; the repair also runs when SWAP_ARITH_OPERATORS swaps a module.| 0|
 | <a name="ENABLE_RESISTANCE_AWARE"></a>ENABLE_RESISTANCE_AWARE| Passed as -resistance_aware to global_route.| |
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| |
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
