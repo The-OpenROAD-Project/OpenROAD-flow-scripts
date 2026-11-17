@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -314,6 +315,74 @@ class GenMemoriesTest(unittest.TestCase):
             with self.assertRaises(SystemExit) as stop:
                 gen_memories.regfile_ram.check(spec)
             self.assertIn(message, str(stop.exception))
+
+    def test_fold_rule(self):
+        # a word folds toward the square while the array is more than 8
+        # times as wide as tall, or while a word runs over WORD_SPAN_UM
+        folds = gen_memories.regfile_ram._folds
+        self.assertEqual(folds(100, 100, 100, 64), 1)
+        self.assertEqual(folds(600, 17.6, 100, 64), 8)
+        self.assertEqual(folds(300, 100, 300, 64), 2)
+        # never an empty fold: 3 bits fold at most in two
+        self.assertEqual(folds(600, 17.6, 600, 3), 2)
+
+    def _generate(self, bit_folds, outline):
+        # generate() with generate_ram stubbed: the generate script writes
+        # the outline (dx dy dbu), the views script stops the run
+        d = Path(self.tmp.name)
+        spec = d / "rf.regfile"
+        spec.write_text(
+            "module rf\nwords 32\nbits 64\nclock clk\nread ra rd\n"
+            "write wa wd we\n" + (f"bit_folds {bit_folds}\n" if bit_folds else "")
+        )
+
+        class Views(Exception):
+            pass
+
+        scripts = []
+
+        def openroad(cmd):
+            script = Path(cmd[-1])
+            scripts.append(script.name)
+            if script.name.endswith(".generate.tcl"):
+                (d / "rf_ram.outline").write_text(outline)
+            else:
+                raise Views()
+
+        with mock.patch.dict("os.environ", {"LIB_FILES": "cells.lib"}):
+            with mock.patch.object(
+                gen_memories.regfile_ram.subprocess, "check_call", openroad
+            ):
+                with self.assertRaises((Views, SystemExit)) as stop:
+                    gen_memories.regfile_ram.generate(
+                        spec, "rf", "inline", "openroad", [], d
+                    )
+        return stop.exception, scripts
+
+    def test_named_folds_refused_below_rule(self):
+        # a long, thin array: the rule folds a word in 8; a spec naming
+        # fewer is refused with the fold the rule would choose
+        stop, scripts = self._generate(1, "600000 17600 1000\n")
+        self.assertIsInstance(stop, SystemExit)
+        self.assertIn("bit_folds 1", str(stop))
+        self.assertIn("34.1 times as wide as tall", str(stop))
+        self.assertIn("600 um long", str(stop))
+        self.assertIn("folds it 8 times", str(stop))
+        self.assertEqual(scripts, ["rf.generate.tcl"])
+
+    def test_named_folds_accepted_at_rule(self):
+        # the same array folded as the rule would fold it is built as named
+        stop, scripts = self._generate(8, "140000 140000 1000\n")
+        self.assertNotIsInstance(stop, SystemExit)
+        self.assertEqual(scripts, ["rf.generate.tcl", "rf.views.tcl"])
+
+    def test_rule_folds_unnamed(self):
+        # with no bit_folds the rule folds and builds again
+        stop, scripts = self._generate(None, "600000 17600 1000\n")
+        self.assertNotIsInstance(stop, SystemExit)
+        self.assertEqual(
+            scripts, ["rf.generate.tcl", "rf.generate.tcl", "rf.views.tcl"]
+        )
 
 
 if __name__ == "__main__":
