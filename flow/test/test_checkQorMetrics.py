@@ -484,13 +484,35 @@ class ReportTest(CheckQorMetricsTest):
     def test_absent_metrics_are_named_not_tabled(self):
         _, output, _ = self.run_check(dashboard=self.table_reply())
         self.assertIn(
-            "[WARN] 2 ruled metric(s) absent from the baseline build, not evaluated:\n"
+            "[WARN] 2 metric(s) absent from the baseline build, not evaluated:\n"
             "  cts__clock__skew\n"
             "  route__wirelength\n",
             output,
         )
         for row in self.table_rows(output):
             self.assertNotIn("route__wirelength", row)
+
+    def test_inconclusive_reply_names_only_the_first_absent_metrics(self):
+        names = [f"metric__{index:03}" for index in range(300)]
+        reply = response(
+            status="inconclusive",
+            metrics=[
+                {"metricName": name, "status": "missing_from_baseline"}
+                for name in reversed(names)
+            ],
+        )
+        code, output, _ = self.run_check(dashboard=Dashboard(reply))
+        self.assertEqual(code, 0)
+        self.assertEqual(self.table_rows(output), [])
+        shown = checkQorMetrics.ABSENT_NAMED
+        self.assertIn(
+            "[WARN] 300 metric(s) absent from the baseline build, not evaluated:\n"
+            + "".join(f"  {name}\n" for name in names[:shown])
+            + f"  ... and {300 - shown} more\n",
+            output,
+        )
+        self.assertNotIn(names[shown], output)
+        self.assertIn("QoR check: INCONCLUSIVE", output)
 
     def test_quiet_leaves_out_only_the_table(self):
         for flag in ("--quiet", "-q"):

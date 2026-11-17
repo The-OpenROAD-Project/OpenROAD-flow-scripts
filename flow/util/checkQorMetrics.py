@@ -41,7 +41,8 @@ DASHBOARD_API_KEY alone lets the default pipelines resolve it.
 
 Each run's report has a table of every metric a rule evaluated, with its
 baseline, current value, limit, change and PASS/FAIL status (--quiet leaves
-the table out), and names each ruled metric absent from the baseline build.
+the table out). It counts the metrics absent from the baseline build and
+names the first few.
 
 Exit status: 1 when the dashboard reports a failed rule for any checked run,
 or when a metadata.json is missing, malformed, or holds no numeric metric.
@@ -101,6 +102,7 @@ DEFAULT_MERGE_BASE_REF = "origin/master"
 NAME_W = 46
 ROW_FMT = "| {:46} | {:>12} | {:>12} | {:>12} | {:>7} | {:6} |"
 BANNER = "-" * 79
+ABSENT_NAMED = 10
 
 
 def fit(text, width):
@@ -571,12 +573,16 @@ def render_run(result, quiet):
         for metric in metrics
         if metric.get("status") == "missing_from_baseline"
     )
+    # An inconclusive reply marks every metric sent as absent, hundreds per
+    # design, so name only the first few.
     if absent:
         lines.append(
-            f"[WARN] {len(absent)} ruled metric(s) absent from the baseline "
-            "build, not evaluated:"
+            f"[WARN] {len(absent)} metric(s) absent from the baseline build, "
+            "not evaluated:"
         )
-        lines.extend(f"  {name}" for name in absent)
+        lines.extend(f"  {name}" for name in absent[:ABSENT_NAMED])
+        if len(absent) > ABSENT_NAMED:
+            lines.append(f"  ... and {len(absent) - ABSENT_NAMED} more")
 
     # A rule that fell back reports a different threshold than the one it was
     # configured with, so surface it. thresholdPct is deliberately not shown in
