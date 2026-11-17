@@ -1764,6 +1764,15 @@ WRITE_ODB_AND_SDC_EACH_STAGE:
   stages:
     - All stages
   default: 1
+WRITE_ON_FAILURE:
+  description: >
+    If set to 1, a step that fails writes the design as it was at the
+    failure to $RESULTS_DIR/failed.odb and failed.sdc, then fails with
+    the original error. `make web_failed.odb` opens it. Set to 0 where
+    writing a large design on failure costs too much time or disk.
+  stages:
+    - All stages
+  default: 1
 LEC_CHECK:
   description: >
     Perform formal equivalence checks between before and after netlists.

@@ -79,8 +79,9 @@ Several of the rules exist for them.
   variable and is recorded.
   *Breaks:* caching a step's result, the QoR check against a baseline, and
   bisecting a regression.
-- **A failing step never calls `exit`.** It writes `<step>-failed.odb` and
-  calls `error`, as `flow/scripts/global_place.tcl` does.
+- **A failing step never calls `exit`.** It calls `error`, and
+  `flow/scripts/run_step.tcl` writes `failed.odb` and `failed.sdc`
+  (`WRITE_ON_FAILURE`).
   *Breaks:* the log and the exit status stop saying where the step failed,
   and there is no checkpoint to inspect.
 - **A `PRE_<STEP>_TCL` hook never runs before the design is loaded.** Hooks
