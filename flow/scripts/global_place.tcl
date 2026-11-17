@@ -68,13 +68,9 @@ proc do_placement { global_placement_args } {
   log_cmd global_placement {*}$all_args
 }
 
-set result [catch { do_placement $global_placement_args } errMsg]
+do_placement $global_placement_args
 if { $place_ios } {
   log_cmd reset_place_config
-}
-if { $result != 0 } {
-  orfs_write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
-  error $errMsg
 }
 
 log_cmd estimate_parasitics
