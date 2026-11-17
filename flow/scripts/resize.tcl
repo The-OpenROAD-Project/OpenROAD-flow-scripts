@@ -40,7 +40,7 @@ if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
   # Phase 1 stops at the looser target above; phase 2 then unlocks every
   # instance and brings the whole design back to 0.1.
   log_cmd global_placement -incremental -density $density -overflow $overflow \
-    -incremental_phase2 -incremental_phase2_overflow 0.1
+    -incremental_phase2_overflow 0.1
 }
 
 repair_design_helper
