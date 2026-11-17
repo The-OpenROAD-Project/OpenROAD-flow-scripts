@@ -15,8 +15,8 @@ proc write_failure_checkpoint { } {
   }
   set stem $::env(RESULTS_DIR)/$::env(STEP_NAME)-failed
   puts "Writing failure checkpoint $stem.odb"
-  write_sdc -no_timestamp $stem.sdc
   write_db $stem.odb
+  write_sdc -no_timestamp $stem.sdc
 }
 
 # Any status but 0 fails the step: an error, and a break, continue or
