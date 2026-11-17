@@ -387,9 +387,6 @@ web_$(1):
 	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_WEB_CMD) $(SCRIPTS_DIR)/open.tcl
 endef
 
-# Enables "make gui_5_1_grt-failed"
-$(eval $(call OPEN_GUI_SHORTCUT,5_1_grt-failed,5_1_grt-failed.odb))
-
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
 # target, or when building a wafer thin layer on top of
@@ -425,6 +422,9 @@ ifeq ($(if $(4),$(4),.odb),.odb)
 $(1): $(RESULTS_DIR)/$(1).odb
 
 $(eval $(call OPEN_GUI_SHORTCUT,$(1),$(1).odb))
+# "make gui_<step>-failed" opens the checkpoint run_step.tcl writes when
+# the step fails
+$(eval $(call OPEN_GUI_SHORTCUT,$(1)-failed,$(1)-failed.odb))
 endif
 
 .PHONY: do-$(1)

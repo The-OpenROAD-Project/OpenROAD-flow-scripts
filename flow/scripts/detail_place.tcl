@@ -29,11 +29,7 @@ proc do_dpl { } {
   log_cmd estimate_parasitics
 }
 
-set result [catch { do_dpl } errMsg]
-if { $result != 0 } {
-  orfs_write_db $::env(RESULTS_DIR)/3_5_place_dp-failed.odb
-  error $errMsg
-}
+do_dpl
 
 report_metrics 3 "detailed place" true false
 
