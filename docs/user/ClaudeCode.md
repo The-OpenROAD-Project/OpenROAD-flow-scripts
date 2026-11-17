@@ -52,7 +52,7 @@ Arguments after `--` are passed directly to `claude`.
 ./claude.sh
 
 # Pass a prompt to Claude Code
-./claude.sh -- -p "fix the failing test in src/drt"
+./claude.sh -- -p "fix the failing test in openroad/drt"
 
 # Interactive bash shell (for manual builds)
 ./claude.sh --shell
