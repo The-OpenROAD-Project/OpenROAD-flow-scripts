@@ -30,6 +30,7 @@ FROM orfs-builder-base AS orfs-tools-builder
 # Exclude install so a local build's output (e.g. tools/install/OpenROAD)
 # cannot leak into the image; the build below starts from an empty install.
 COPY --link --exclude=OpenROAD --exclude=AutoTuner --exclude=install tools tools
+COPY --link etc/kepler-formal etc/kepler-formal
 ARG numThreads=$(nproc)
 ARG verificPath=""
 
