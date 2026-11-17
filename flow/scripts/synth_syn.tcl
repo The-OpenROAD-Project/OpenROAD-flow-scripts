@@ -33,6 +33,12 @@ set elaborate_args [list \
 set verilog_files [synth_verilog_files]
 lappend elaborate_args {*}$verilog_files
 
+# The platform's clock gate, as the Yosys flow reads it
+# (synth_preamble.tcl)
+if { [env_var_exists_and_non_empty CLKGATE_MAP_FILE] } {
+  lappend elaborate_args $::env(CLKGATE_MAP_FILE)
+}
+
 # Apply top-level parameters
 dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
   lappend elaborate_args -G "$key=$value"
