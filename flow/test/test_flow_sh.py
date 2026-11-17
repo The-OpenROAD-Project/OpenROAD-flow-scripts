@@ -78,6 +78,7 @@ class TestFlowSh(unittest.TestCase):
                 import os, sys
                 with open({marker!r}, "a") as m:
                     m.write(" ".join(sys.argv[1:]) + "\\n")
+                    m.write(os.environ.get("STEP_TCL", "") + "\\n")
                 run_command = os.path.join({SCRIPTS_DIR!r}, "run_command.py")
                 os.execv(sys.executable, [sys.executable, run_command] + sys.argv[1:])
                 """))
@@ -87,7 +88,10 @@ class TestFlowSh(unittest.TestCase):
 
         self.assertTrue(os.path.exists(marker), "RUN_CMD did not run the stage")
         with open(marker) as f:
-            self.assertIn("floorplan.tcl", f.read())
+            argv, step_tcl = f.read().splitlines()
+        # The stage runs through run_step.tcl, which sources STEP_TCL.
+        self.assertIn("run_step.tcl", argv)
+        self.assertEqual(os.path.basename(step_tcl), "floorplan.tcl")
         self.assertIn("Elapsed time:", log)
         self.assert_summary(log)
 
