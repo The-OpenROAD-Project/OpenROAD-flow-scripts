@@ -17,11 +17,13 @@ proc write_failure_checkpoint { } {
   write_db $::env(RESULTS_DIR)/failed.odb
 }
 
-if { [catch { uplevel #0 [list source $::env(STEP_TCL)] } msg opts] } {
-  set info [dict get $opts -errorinfo]
-  set code [dict get $opts -errorcode]
+# Any status but 0 fails the step: an error, and a break, continue or
+# other code no loop caught. A top-level return in the script is status 0,
+# as source makes it. The status, message and stack are raised again as
+# they were.
+if { [catch { uplevel #0 [list source $::env(STEP_TCL)] } msg opts] != 0 } {
   if { [catch { write_failure_checkpoint } checkpoint_error] } {
     puts "Warning: failure checkpoint not written: $checkpoint_error"
   }
-  error $msg $info $code
+  return -options $opts $msg
 }
