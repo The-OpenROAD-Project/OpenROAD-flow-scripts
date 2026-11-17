@@ -70,8 +70,8 @@ to follow.
   *Breaks:* the guard is a code path no CI run exercises, and a missing
   variable or file shows up later, somewhere else, as a wrong result.
 - **A failing step never writes the file a successful step writes.** It
-  calls `error`, and `flow/scripts/run_step.tcl` writes `failed.odb` and
-  `failed.sdc` (`WRITE_ON_FAILURE`).
+  calls `error`, and `flow/scripts/run_step.tcl` writes
+  `<step>-failed.odb` and `.sdc` (`WRITE_ON_FAILURE`).
   *Breaks:* make, and any flow built on it, takes the file as proof that the
   step succeeded.
 - **A script never adds error numbers or checks that belong in OpenROAD.**

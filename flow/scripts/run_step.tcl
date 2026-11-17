@@ -1,7 +1,8 @@
 # Runs one step's script, $STEP_TCL, for flow.sh. With WRITE_ON_FAILURE=1,
 # an error anywhere in the step writes the design as it was at the failure
-# to $RESULTS_DIR/failed.odb and failed.sdc, so it can be inspected without
-# running the step again; the step then fails with the original error.
+# to $RESULTS_DIR/$STEP_NAME-failed.odb and .sdc, e.g. 3_3_place_gp-failed.odb,
+# so it can be inspected without running the step again; the step then
+# fails with the original error.
 
 proc write_failure_checkpoint { } {
   if { !$::env(WRITE_ON_FAILURE) } {
@@ -12,9 +13,10 @@ proc write_failure_checkpoint { } {
     puts "No design loaded, no failure checkpoint written"
     return
   }
-  puts "Writing failure checkpoint $::env(RESULTS_DIR)/failed.odb"
-  write_sdc -no_timestamp $::env(RESULTS_DIR)/failed.sdc
-  write_db $::env(RESULTS_DIR)/failed.odb
+  set stem $::env(RESULTS_DIR)/$::env(STEP_NAME)-failed
+  puts "Writing failure checkpoint $stem.odb"
+  write_sdc -no_timestamp $stem.sdc
+  write_db $stem.odb
 }
 
 # Any status but 0 fails the step: an error, and a break, continue or

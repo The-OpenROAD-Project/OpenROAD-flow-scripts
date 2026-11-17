@@ -10,12 +10,12 @@ RUN_CMD="${RUN_CMD:-$PYTHON_EXE $SCRIPTS_DIR/run_command.py}"
 
 echo "Running $2.tcl, stage $1"
 
-# A failure checkpoint belongs to the step that failed last; one left by
-# an earlier run is not this step's.
-rm -f "$RESULTS_DIR/failed.odb" "$RESULTS_DIR/failed.sdc"
+# A failure checkpoint left by an earlier run of this step is stale.
+rm -f "$RESULTS_DIR/$1-failed.odb" "$RESULTS_DIR/$1-failed.sdc"
 
 (
   trap 'mv "$LOG_DIR/$1.tmp.log" "$LOG_DIR/$1.log"' EXIT
+  export STEP_NAME="$1"
   export STEP_TCL="$SCRIPTS_DIR/$2.tcl"
 
   eval "$OPENROAD_EXE $OPENROAD_ARGS -exit \"$SCRIPTS_DIR/noop.tcl\"" \

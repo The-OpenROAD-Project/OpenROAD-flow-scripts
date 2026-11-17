@@ -350,7 +350,7 @@ configuration file.
 | <a name="VIA_IN_PIN_MIN_LAYER"></a>VIA_IN_PIN_MIN_LAYER| Passed as -via_in_pin_bottom_layer to pin_access and detailed_route.| |
 | <a name="WIRE_LOAD_MODEL"></a>WIRE_LOAD_MODEL| Name of a Liberty wire_load group applied with set_wire_load_model whenever open.tcl reads timing. OpenSTA applies a wire-load model only to nets without parasitics, so it gives wire delay to timing read before placement and leaves placed and routed timing unaffected. An unknown name is an error. Empty, the default, applies none. A platform whose libraries define no wire_load group can supply one in a Liberty file listed in ADDITIONAL_LIBS.| |
 | <a name="WRITE_ODB_AND_SDC_EACH_STAGE"></a>WRITE_ODB_AND_SDC_EACH_STAGE| Save out .sdc and .odb file after each stage, useful to disable when using a single OpenROAD instance to run all stages of the flow.| 1|
-| <a name="WRITE_ON_FAILURE"></a>WRITE_ON_FAILURE| If set to 1, a step that fails writes the design as it was at the failure to $RESULTS_DIR/failed.odb and failed.sdc, then fails with the original error. `make web_failed.odb` opens it. Set to 0 where writing a large design on failure costs too much time or disk.| 1|
+| <a name="WRITE_ON_FAILURE"></a>WRITE_ON_FAILURE| If set to 1, a step that fails writes the design as it was at the failure to $RESULTS_DIR/<step>-failed.odb and .sdc, then fails with the original error. `make web_<step>-failed.odb` opens it, e.g. `make web_3_3_place_gp-failed.odb`. Set to 0 where writing a large design on failure costs too much time or disk.| 1|
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3|
 ## synth variables
 

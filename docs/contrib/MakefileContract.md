@@ -80,7 +80,7 @@ Several of the rules exist for them.
   *Breaks:* caching a step's result, the QoR check against a baseline, and
   bisecting a regression.
 - **A failing step never calls `exit`.** It calls `error`, and
-  `flow/scripts/run_step.tcl` writes `failed.odb` and `failed.sdc`
+  `flow/scripts/run_step.tcl` writes `<step>-failed.odb` and `.sdc`
   (`WRITE_ON_FAILURE`).
   *Breaks:* the log and the exit status stop saying where the step failed,
   and there is no checkpoint to inspect.
