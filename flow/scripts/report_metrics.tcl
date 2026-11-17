@@ -271,7 +271,7 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
     foreach corner $::env(CORNERS) {
       report_puts "Corner: $corner"
       report_power -scene $corner >> $filename
-      report_power_metric -scene $corner
+      report_power_metric -corner $corner
     }
     unset corner
   } else {
