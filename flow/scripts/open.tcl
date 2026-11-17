@@ -33,8 +33,7 @@ if { [env_var_exists_and_non_empty DEF_FILE] } {
 }
 
 proc read_timing { input_file } {
-  # The .sdc beside the design file says which clocks are propagated, so
-  # its name need not say which stage it is from.
+  set design_stage [lindex [extract_stage $input_file] 0]
   log_cmd read_sdc [sdc_file_of $input_file]
   if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     source $::env(PLATFORM_DIR)/derate.tcl
@@ -48,6 +47,10 @@ proc read_timing { input_file } {
   if { [env_var_exists_and_non_empty WIRE_LOAD_MODEL] } {
     # OpenSTA applies a wire-load model only to nets without parasitics.
     log_cmd set_wire_load_model -name $::env(WIRE_LOAD_MODEL)
+  }
+  if { $design_stage >= 4 } {
+    # CTS has run, so propagate clocks
+    set_propagated_clock [all_clocks]
   }
 
   orfs_load_parasitics [file rootname [file tail $input_file]]
