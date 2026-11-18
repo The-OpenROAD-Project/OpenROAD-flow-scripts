@@ -82,7 +82,7 @@ make_worktree() {
 }
 
 run_case() {
-    local checkout=$1 name=$2 original original_module
+    local checkout=$1 name=$2 original original_module ref
     original=$(cat "${checkout}/.git") || return 1
     original_module=$(cat "${checkout}/module/.git") || return 1
     echo fixture > "${tmp}/settings/.claude/settings.json"
@@ -97,6 +97,7 @@ test "$(git -C module rev-parse --show-toplevel)" = "$(pwd -P)/module"
 status=$(git status --porcelain)
 test -z "${status}"
 test "$(git -C module show HEAD:content)" = module
+git switch -qc "test-$(basename "$(git rev-parse --absolute-git-dir)")"
 echo modified > content
 git add content
 git -c commit.gpgsign=false commit -qm modified
@@ -114,9 +115,10 @@ SH
         echo "FAIL: ${name}" >&2
         return 1
     fi
+    ref=$(git -C "${checkout}" symbolic-ref HEAD) || return 1
     if [[ "$(cat "${checkout}/.git")" != "${original}" ||
         "$(cat "${checkout}/module/.git")" != "${original_module}" ||
-        "$(git -C "${checkout}" show HEAD:content)" != modified ||
+        "$(git -C "${checkout}" show "${ref}:content")" != modified ||
         "$(cat "${tmp}/settings/.claude/settings.json")" != updated ||
         ! -f "${tmp}/settings/.cache/bazel-claude/marker" ]]; then
         echo "FAIL: ${name}: unexpected host state" >&2
@@ -135,11 +137,22 @@ git -C "${workspace_fixture}/main" -c worktree.useRelativePaths=true \
 git -C "${tmp}/workspace-data" -c protocol.file.allow=always submodule update --init -q
 make_worktree "${home_fixture}/main" "${tmp}/home-data"
 
+# A linked checkout can contain its main repository after the main
+# repository moves and Git repairs the links.
+nested_checkout="${workspace_fixture}/nested"
+make_main "${tmp}/nested-main"
+git -C "${tmp}/nested-main" worktree add --detach -q "${nested_checkout}"
+mv "${tmp}/nested-main" "${nested_checkout}/main"
+git -C "${nested_checkout}/main" worktree repair "${nested_checkout}"
+echo /main/ >> "${nested_checkout}/main/.git/info/exclude"
+git -C "${nested_checkout}" -c protocol.file.allow=always submodule update --init -q
+
 failed=0
 run_case "${workspace_fixture}/worktree" "worktree under /workspace" || failed=1
 run_case "${home_fixture}/worktree" "worktree under /home/claude-user" || failed=1
 run_case "${tmp}/workspace-data" "Git data under /workspace" || failed=1
 run_case "${tmp}/home-data" "Git data under /home/claude-user" || failed=1
+run_case "${nested_checkout}" "Git data inside the worktree" || failed=1
 
 # Use /workspace itself only after removing this test's nested fixtures.
 rm -rf "${workspace_fixture}"

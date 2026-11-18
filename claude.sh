@@ -106,25 +106,29 @@ outside_container_paths() {
 
 GIT_MOUNTS=()
 GIT_LINK_DIR=""
-# Only for the top of a checkout: a plain folder inside another repository
-# must not get that repository's .git.
-if [[ "${GIT_TOP}" == "${HOST_DIR}" && -n "${GIT_COMMON_DIR}" &&
-    "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
-    mount_prefix=""
-    # The existing checkout mount already preserves an exact /workspace path.
-    if { [[ "${HOST_DIR}" != /workspace ]] && ! outside_container_paths "${HOST_DIR}"; } ||
-        ! outside_container_paths "${GIT_COMMON_DIR}"; then
-        mount_prefix=/tmp/claude-worktree
-    fi
+mount_prefix=""
+# The existing checkout mount already preserves an exact /workspace path.
+if { [[ "${HOST_DIR}" != /workspace ]] && ! outside_container_paths "${HOST_DIR}"; } ||
+    ! outside_container_paths "${GIT_COMMON_DIR}"; then
+    mount_prefix=/tmp/claude-worktree
+fi
 
+# Only for the top of a checkout: a plain folder inside another repository
+# must not get that repository's .git. A gitfile also needs relocation when
+# it points inside the checkout but the /workspace mount hides the host path.
+if [[ "${GIT_TOP}" == "${HOST_DIR}" && -n "${GIT_COMMON_DIR}" &&
+    ( "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ||
+      ( -n "${mount_prefix}" && "${HOST_DIR}" != /workspace && -f "${HOST_DIR}/.git" ) ) ]]; then
     CONTAINER_WORKDIR="${mount_prefix}${HOST_DIR}"
     if [[ "${CONTAINER_WORKDIR}" != /workspace ]]; then
         GIT_MOUNTS+=(-v "${HOST_DIR}:${CONTAINER_WORKDIR}")
     fi
-    GIT_MOUNTS+=(-v "${GIT_COMMON_DIR}:${mount_prefix}${GIT_COMMON_DIR}")
+    if [[ "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
+        GIT_MOUNTS+=(-v "${GIT_COMMON_DIR}:${mount_prefix}${GIT_COMMON_DIR}")
+    fi
     if [[ -n "${mount_prefix}" && -f "${HOST_DIR}/.git" ]]; then
         # Overlay the gitfile so its absolute target uses the new prefix.
-        # Git writes to the shared metadata through the unchanged directory mount.
+        # Git still writes to the shared metadata through the directory mount.
         git_dir=$(git -C "${HOST_DIR}" rev-parse --absolute-git-dir)
         git_dir=$(cd "${git_dir}" && pwd -P)
         # Keep the source on a path already shared with the container engine.
