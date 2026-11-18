@@ -41,8 +41,8 @@ class Parse(unittest.TestCase):
         self.assertEqual(parse('-a "x y"')[0]["value"], "x y")
         self.assertEqual(parse("-a {}")[0]["value"], "")
 
-    def test_on_off_and_scopes(self):
-        e = parse("off cts:on grt.wns:-x 1 floorplan:~-y")
+    def test_run_switch_and_scopes(self):
+        e = parse("0 cts:1 grt.wns:-x 1 floorplan:~-y")
         self.assertEqual(
             [(x["op"], x["stage"], x["call"]) for x in e],
             [("off", "", ""), ("on", "cts", ""), ("set", "grt", "wns")]
@@ -53,19 +53,54 @@ class Parse(unittest.TestCase):
         self.assertEqual(parse("-file a:b")[0]["value"], "a:b")
 
     def test_platform_names_the_command(self):
-        e = parse("rtl_macro_placer:-halo_width 5 repair_timing:grt:off", True)
+        e = parse("rtl_macro_placer:-halo_width 5 repair_timing:grt:0", True)
         self.assertEqual(
             [(x["command"], x["stage"], x["op"]) for x in e],
             [("rtl_macro_placer", "", "set"), ("repair_timing", "grt", "off")],
         )
 
+    def test_one_or_zero_after_an_option_is_its_value(self):
+        e = parse("-setup_margin 0 -x 1")
+        self.assertEqual(
+            [(x["op"], x["option"], x["value"]) for x in e],
+            [("set", "-setup_margin", "0"), ("set", "-x", "1")],
+        )
+        self.assertEqual(parse("-flag 0")[0]["op"], "set")
+
+    def test_one_or_zero_elsewhere_is_the_run_switch(self):
+        e = parse("0 -flag -x 2 1 ~-y 0 -z cts:0 grt.wns:1")
+        self.assertEqual(
+            [(x["op"], x["stage"], x["option"]) for x in e],
+            [
+                ("off", "", ""),
+                ("flag", "", "-flag"),
+                ("set", "", "-x"),
+                ("on", "", ""),
+                ("delete", "", "-y"),
+                ("off", "", ""),
+                ("flag", "", "-z"),
+                ("off", "cts", ""),
+                ("on", "grt", ""),
+            ],
+        )
+        e = parse("repair_timing:0 repair_timing:-x repair_timing:cts:1", True)
+        self.assertEqual([x["op"] for x in e], ["off", "flag", "on"])
+
     def test_round_trip(self):
         for text in [
-            "-a 1 -b ~-c on cts:off grt.wns:-x {1 2}",
-            "-file {a:b} -name {-x} -v {on}",
+            "-a 1 -b ~-c 1 cts:0 grt.wns:-x {1 2}",
+            "-file {a:b} -name {-x} -v {on} -w 0",
+            "-flag 1 -other",
         ]:
             self.assertEqual(fmt(fmt(text)), fmt(text))
-            self.assertEqual(parse(fmt(text)), parse(text))
+            edits = parse(text)
+            switches = [e for e in edits if e["op"] in ("on", "off")]
+            others = [e for e in edits if e["op"] not in ("on", "off")]
+            self.assertEqual(parse(fmt(text)), switches + others)
+        # A flag, then the switch: written "-b 0", the 0 would be -b's value.
+        edits = parse("-b") + parse("0")
+        self.assertEqual(G["format_args"](edits), "0 -b")
+        self.assertEqual(parse("0 -b"), edits[1:] + edits[:1])
         text = "repair_timing:grt:-x 1 clock_tree_synthesis:~-y"
         self.assertEqual(parse(fmt(text, True), True), parse(text, True))
 
@@ -93,6 +128,12 @@ class SyntaxErrors(unittest.TestCase):
         self.check("cts:grt:-x", "too many scopes")
         self.check("~x", "'~' deletes an option")
 
+    def test_on_and_off_are_not_the_run_switch(self):
+        self.check("on", "the run switch is 1 or 0")
+        self.check("-x 1 off", "write 0")
+        self.check("cts:off", "write cts:0")
+        self.check("repair_timing:grt.wns:on", "write repair_timing:grt.wns:1", True)
+
     def test_platform(self):
         self.check("-x 1", "must start with the command", True)
         self.check("cts:-x 1", "must start with the command", True)
@@ -100,9 +141,9 @@ class SyntaxErrors(unittest.TestCase):
 
 class StageArgs(unittest.TestCase):
     def test_only_this_stage(self):
-        text = "-a 1 cts:-b 2 grt.wns:off"
+        text = "-a 1 cts:-b 2 grt.wns:0"
         self.assertEqual(G["stage_args"]("X", text, "cts", STAGES), "-a 1 cts:-b 2")
-        self.assertEqual(G["stage_args"]("X", text, "grt", STAGES), "-a 1 grt.wns:off")
+        self.assertEqual(G["stage_args"]("X", text, "grt", STAGES), "grt.wns:0 -a 1")
         self.assertEqual(G["stage_args"]("X", text, "place", STAGES), "-a 1")
 
 
@@ -159,8 +200,8 @@ class Resolve(unittest.TestCase):
         }
         self.assertEqual(run(env)[1], ["-x", "2"])
 
-    def test_on_off(self):
-        env = {"REPAIR_TIMING_ARGS": "off cts:on"}
+    def test_run_switch(self):
+        env = {"REPAIR_TIMING_ARGS": "0 cts:1"}
         self.assertFalse(run(env)[0])
         self.assertTrue(run(env, stage="cts")[0])
         self.assertFalse(
@@ -177,9 +218,7 @@ class Resolve(unittest.TestCase):
         self.assertIn("takes no value here", str(cm.exception))
 
     def test_no_note_for_an_edit_that_changes_nothing(self):
-        self.assertEqual(
-            run({"REPAIR_TIMING_ARGS": "-x 1 on"}, flow=["-x", "1"])[2], []
-        )
+        self.assertEqual(run({"REPAIR_TIMING_ARGS": "-x 1 1"}, flow=["-x", "1"])[2], [])
 
     def test_no_note_for_a_variable_at_its_default(self):
         env = {"GLOBAL_ROUTE_ARGS": "-verbose"}
@@ -253,7 +292,7 @@ class Check(unittest.TestCase):
             "deprecated": 1,
             "default": 0,
             "stages": ["cts"],
-            "replacement": {"1": "REPAIR_TIMING_ARGS = cts:off"},
+            "replacement": {"1": "REPAIR_TIMING_ARGS = cts:0"},
         },
         "RTLMP_MIN_CHANNEL_SIZE": {
             "deprecated": 1,
@@ -416,7 +455,7 @@ class Main(unittest.TestCase):
         self.assertEqual((out, err), (["1"], ["[grt.wns] repair_timing"]))
 
     def test_runs(self):
-        env = {"REPORT_METRICS_ARGS": "grt:off"}
+        env = {"REPORT_METRICS_ARGS": "grt:0"}
         self.assertEqual(
             self.capture(["runs", "report_metrics", "grt.x", "1"], env)[0], ["0"]
         )

@@ -8,8 +8,8 @@ command's own options, as the command's help prints them:
 
 ```make
 export CLOCK_TREE_SYNTHESIS_ARGS = -sink_clustering_size 30 ~-repair_clock_nets
-export REPAIR_TIMING_ARGS        = -setup_margin 0.05 grt:-setup_margin 0.1 floorplan:off
-export REPORT_METRICS_ARGS       = off cts:on
+export REPAIR_TIMING_ARGS        = -setup_margin 0.05 grt:-setup_margin 0.1 floorplan:0
+export REPORT_METRICS_ARGS       = 0 cts:1
 ```
 
 The flow's own arguments stay, except where you change them. The log shows
@@ -29,10 +29,16 @@ clock_tree_synthesis -sink_clustering_enable -sink_clustering_size 30
 | `-option value` | set the value |
 | `-flag` | add the flag |
 | `~-option` | delete the option, and its value if it has one, where it is passed |
-| `on` / `off` | run the command / don't run it |
+| `1` / `0` | run the command / don't run it |
 | `stage:` in front of any of these | only in that stage: `synth`, `floorplan`, `place`, `cts`, `grt`, `route` or `final` |
 | `stage.call:` in front | only at that call (see the table below) |
 | `{a b}` or `"a b"` | a value with spaces in it, as in Tcl |
+
+`1` and `0` are the values ORFS variables take for yes and no. Right after
+an option that takes a value they are its value, as in `-setup_margin 0`;
+anywhere else, or after a scope, they run the command or don't. So
+`-flag 0` sets `-flag` to 0: to add the flag and not run the command, write
+`0 -flag`.
 
 Within one variable, a call edit beats a stage edit, a stage edit beats an
 unscoped one, and later beats earlier. A syntax error stops the flow before
@@ -74,8 +80,8 @@ A flow variant skips repair before CTS and reports only at CTS:
 
 ```make
 ifeq ($(FLOW_VARIANT),fast)
-  export REPAIR_TIMING_ARGS  = floorplan:off place:off
-  export REPORT_METRICS_ARGS = off cts:on
+  export REPAIR_TIMING_ARGS  = floorplan:0 place:0
+  export REPORT_METRICS_ARGS = 0 cts:1
 endif
 ```
 
@@ -89,7 +95,7 @@ The same from the shell environment, used when the design doesn't set the
 variable with `=`:
 
 ```sh
-export REPORT_METRICS_ARGS='off cts:on'
+export REPORT_METRICS_ARGS='0 cts:1'
 make DESIGN_CONFIG=designs/asap7/gcd/config.mk
 ```
 
@@ -114,7 +120,7 @@ make DESIGN_CONFIG=designs/asap7/gcd/config.mk
 | `report_metrics` | named after the report: `cts.cts_final` for the report "cts final", `grt.global_route_post_repair_timing`, ... |
 | `rtl_macro_placer` | `floorplan.main` |
 
-`report_metrics` takes only `on` and `off`.
+`report_metrics` takes only `1` and `0`.
 
 ## Deprecated variables
 
@@ -129,7 +135,7 @@ or off, are deprecated. Each still works, ranks between `PLATFORM_ARGS` and
 [Flow Variables](./FlowVariables.md) lists each one with its replacement.
 `CTS_ARGS` and `RTLMP_ARGS` still replace the flow's arguments, and
 `DETAILED_ROUTE_ARGS` does too while it holds a plain command line, with no
-`~`, `on`, `off` or scope; when that command line differs from the same text
+`~`, run switch `1` or `0`, or scope; when that command line differs from the same text
 read as edits, the log says which `~-option` deletions keep it.
 
 ## Implementation

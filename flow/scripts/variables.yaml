@@ -65,7 +65,7 @@ DETAILED_METRICS:
     - grt
   deprecated: 1
   replacement:
-    '1': REPORT_METRICS_ARGS = cts:on grt:on
+    '1': REPORT_METRICS_ARGS = cts:1 grt:1
 CORE_UTILIZATION:
   description: |
     The core utilization percentage (0-100).
@@ -123,7 +123,7 @@ SKIP_REPORT_METRICS:
   default: 0
   deprecated: 1
   replacement:
-    '1': REPORT_METRICS_ARGS = off
+    '1': REPORT_METRICS_ARGS = 0
 PROCESS:
   description: |
     Technology node or process in use.
@@ -594,12 +594,12 @@ DONT_BUFFER_PORTS:
   default: 0
   deprecated: 1
   replacement:
-    '1': BUFFER_PORTS_ARGS = off
+    '1': BUFFER_PORTS_ARGS = 0
 BUFFER_PORTS_ARGS:
   description: >
     Edits to the arguments the flow passes to `buffer_ports`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
 BALANCE_ROWS:
@@ -610,7 +610,7 @@ BALANCE_ROWS:
   default: 0
   deprecated: 1
   replacement:
-    '1': BALANCE_ROW_USAGE_ARGS = on
+    '1': BALANCE_ROW_USAGE_ARGS = 1
 ADDITIONAL_SITES:
   description: >
     Passed as -additional_sites to initialize_floorplan.
@@ -748,7 +748,7 @@ PLACE_PINS_ARGS:
   description: >
     Edits to the arguments the flow passes to `place_pins`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
 PLACE_DENSITY:
@@ -783,7 +783,7 @@ GLOBAL_PLACEMENT_ARGS:
   description: >
     Edits to the arguments the flow passes to `global_placement`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
 ENABLE_DPO:
@@ -794,7 +794,7 @@ ENABLE_DPO:
     - place
   deprecated: 1
   replacement:
-    '0': IMPROVE_PLACEMENT_ARGS = off
+    '0': IMPROVE_PLACEMENT_ARGS = 0
 DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
@@ -1040,7 +1040,7 @@ SKIP_CTS_REPAIR_TIMING:
   default: 0
   deprecated: 1
   replacement:
-    '1': REPAIR_TIMING_ARGS = cts:off
+    '1': REPAIR_TIMING_ARGS = cts:0
 SKIP_FLOORPLAN_REPAIR_TIMING:
   description: >
     Skipping floorplan repair which sometimes does too much optimization
@@ -1050,7 +1050,7 @@ SKIP_FLOORPLAN_REPAIR_TIMING:
   default: 0
   deprecated: 1
   replacement:
-    '1': REPAIR_TIMING_ARGS = floorplan:off
+    '1': REPAIR_TIMING_ARGS = floorplan:0
 ENABLE_PLACE_REPAIR_TIMING:
   description: >
     Run repair_timing during the placement resize stage using placement
@@ -1061,7 +1061,7 @@ ENABLE_PLACE_REPAIR_TIMING:
   default: 0
   deprecated: 1
   replacement:
-    '1': REPAIR_TIMING_ARGS = place:on
+    '1': REPAIR_TIMING_ARGS = place:1
 SKIP_REPAIR_TIE_FANOUT:
   description: >
     Skip repair_tie_fanout at floorplan step.
@@ -1070,7 +1070,7 @@ SKIP_REPAIR_TIE_FANOUT:
   default: 0
   deprecated: 1
   replacement:
-    '1': REPAIR_TIE_FANOUT_ARGS = off
+    '1': REPAIR_TIE_FANOUT_ARGS = 0
 MIN_ROUTING_LAYER:
   description: |
     The lowest metal layer name to be used in routing.
@@ -1112,10 +1112,10 @@ DETAILED_ROUTE_ARGS:
   description: >
     Edits to the arguments the flow passes to `detailed_route`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
     Until it is removed, a value that is a plain command line, with
-    no `~`, `on`, `off` or scope, replaces the flow's arguments, as
-    it always has.
+    no `~`, run switch `1` or `0`, or scope, replaces the flow's
+    arguments, as it always has.
   stages:
     - route
 DISABLE_VIA_GEN:
@@ -1376,12 +1376,12 @@ CLUSTER_FLOPS:
   default: 0
   deprecated: 1
   replacement:
-    '1': CLUSTER_FLOPS_ARGS = on
+    '1': CLUSTER_FLOPS_ARGS = 1
 CLUSTER_FLOPS_ARGS:
   description: >
     Edits to the arguments the flow passes to `cluster_flops`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
   default: ""
@@ -1595,7 +1595,7 @@ GLOBAL_ROUTE_ARGS:
   description: >
     Edits to the arguments the flow passes to `global_route`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
     Edits the first global_route; the incremental ones after repair
     take -allow_congestion from it.
   stages:
@@ -1857,7 +1857,7 @@ SKIP_ANTENNA_REPAIR_POST_DRT:
     - route
   deprecated: 1
   replacement:
-    '1': REPAIR_ANTENNAS_ARGS = route:off
+    '1': REPAIR_ANTENNAS_ARGS = route:0
 SKIP_ANTENNA_REPAIR:
   default: 0
   description: >
@@ -1866,7 +1866,7 @@ SKIP_ANTENNA_REPAIR:
     - grt
   deprecated: 1
   replacement:
-    '1': REPAIR_ANTENNAS_ARGS = grt:off
+    '1': REPAIR_ANTENNAS_ARGS = grt:0
 SKIP_DETAILED_ROUTE:
   default: 0
   description: >
@@ -2022,7 +2022,7 @@ BALANCE_ROW_USAGE_ARGS:
     Edits to the arguments the flow passes to `balance_row_usage`, in the grammar
     of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
 CLOCK_TREE_SYNTHESIS_ARGS:
@@ -2030,7 +2030,7 @@ CLOCK_TREE_SYNTHESIS_ARGS:
     Edits to the arguments the flow passes to `clock_tree_synthesis`, in the grammar
     of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - cts
 DETAILED_PLACEMENT_ARGS:
@@ -2038,7 +2038,7 @@ DETAILED_PLACEMENT_ARGS:
     Edits to the arguments the flow passes to `detailed_placement`, in the grammar
     of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
     - cts
@@ -2048,14 +2048,14 @@ IMPROVE_PLACEMENT_ARGS:
     Edits to the arguments the flow passes to `improve_placement`, in the grammar
     of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
 REPAIR_ANTENNAS_ARGS:
   description: >
     Edits to the arguments the flow passes to `repair_antennas`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - grt
     - route
@@ -2063,7 +2063,7 @@ REPAIR_DESIGN_ARGS:
   description: >
     Edits to the arguments the flow passes to `repair_design`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - place
     - grt
@@ -2072,14 +2072,14 @@ REPAIR_TIE_FANOUT_ARGS:
     Edits to the arguments the flow passes to `repair_tie_fanout`, in the grammar
     of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - floorplan
 REPAIR_TIMING_ARGS:
   description: >
     Edits to the arguments the flow passes to `repair_timing`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - floorplan
     - place
@@ -2089,7 +2089,7 @@ REPORT_METRICS_ARGS:
   description: >
     Edits to the arguments the flow passes to `report_metrics`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - synth
     - floorplan
@@ -2102,7 +2102,7 @@ RTL_MACRO_PLACER_ARGS:
   description: >
     Edits to the arguments the flow passes to `rtl_macro_placer`, in the grammar of
     docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`,
-    `on`/`off`, each optionally scoped `stage:` or `stage.call:`.
+    `1`/`0`, each optionally scoped `stage:` or `stage.call:`.
   stages:
     - floorplan
 PLATFORM_ARGS:

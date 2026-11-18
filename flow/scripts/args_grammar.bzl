@@ -5,7 +5,8 @@ See docs/user/CommandArguments.md for the user's view. In short:
     -option value     set the value
     -flag             add the flag
     ~-option          delete the option, and its value if it has one
-    on / off          run the command / do not run it
+    1 / 0             run the command / do not run it; right after an
+                      option, 1 or 0 is its value, as in -setup_margin 0
     stage:            in front of an edit: only in that stage
     stage.call:       in front of an edit: only at that call
     command:          in front of an edit: the command it is for; only in
@@ -109,8 +110,24 @@ def _tokenize(name, text):
         tokens.append((current, braced))
     return tokens
 
+# The run switch, as written and as the op of the edit it makes. 1 and 0
+# are the values ORFS variables take.
+_SWITCH = {"1": "on", "0": "off"}
+
 def _is_edit_word(word):
-    return word in ("on", "off") or _is_option(word) or (word.startswith("~") and len(word) > 1)
+    return word in _SWITCH or _is_option(word) or (word.startswith("~") and len(word) > 1)
+
+def _check_not_on_off(name, token):
+    """Fails on the run switch written on or off, which it is not."""
+    parts = token.split(":")
+    if parts[-1] in ("on", "off"):
+        parts[-1] = "1" if parts[-1] == "on" else "0"
+        fail("{}: '{}': the run switch is 1 or 0, as in ORFS variables; write {}, or {{{}}} for a value".format(
+            name,
+            token,
+            ":".join(parts),
+            token,
+        ))
 
 def _split_scope(name, token, platform, stages):
     """Returns [command, stage, call, edit] for a scoped token, else None."""
@@ -165,19 +182,26 @@ def parse_args(name, text, stages, platform = False):
 
     Returns:
       A list of dicts with keys command, stage, call, op ("set", "flag",
-      "delete", "on" or "off"), option and value. Fails on a syntax error.
+      "delete", "on" for 1 or "off" for 0), option and value. Fails on a
+      syntax error.
+
+    A 1 or 0 right after an option waiting for its value is that value, as
+    in -setup_margin 0; anywhere else, or after a scope, it is the run
+    switch.
     """
     edits = []
     pending = None
     for token, braced in _tokenize(name, text):
         scoped = None
         if not braced:
+            _check_not_on_off(name, token)
             scoped = _split_scope(name, token, platform, stages)
         if scoped != None:
             command, stage, call, word = scoped
         else:
             command, stage, call, word = "", "", "", token
-        if braced or (scoped == None and not _is_edit_word(word)):
+        is_value = scoped == None and (not _is_edit_word(word) or (pending != None and word in _SWITCH))
+        if braced or is_value:
             if pending == None:
                 fail("{}: '{}' is a value with no option before it; a value with spaces goes in braces".format(name, token))
             pending["op"] = "set"
@@ -188,8 +212,8 @@ def parse_args(name, text, stages, platform = False):
             fail("{}: '{}' must start with the command it is for, as in clock_tree_synthesis:{}".format(name, token, token))
         pending = None
         e = {"command": command, "stage": stage, "call": call, "op": "", "option": "", "value": None}
-        if word in ("on", "off"):
-            e["op"] = word
+        if word in _SWITCH:
+            e["op"] = _SWITCH[word]
         elif word.startswith("~"):
             if not _is_option(word[1:]):
                 fail("{}: '{}': '~' deletes an option, as in ~-repair_clock_nets".format(name, token))
@@ -212,9 +236,17 @@ def quote_value(value):
     return value
 
 def format_args(edits, platform = False):
-    """Writes edits back in the grammar: the inverse of parse_args()."""
+    """Writes edits back in the grammar: the inverse of parse_args().
+
+    The run switches go first, in their order, so that a 0 or 1 is never
+    read back as the value of a flag before it. resolve() evaluates switches
+    apart from options, so moving them changes nothing it returns but the
+    order of its changes.
+    """
     words = []
-    for e in edits:
+    switches = [e for e in edits if e["op"] in ("on", "off")]
+    options = [e for e in edits if e["op"] not in ("on", "off")]
+    for e in switches + options:
         prefix = ""
         if platform:
             prefix = e["command"] + ":"
@@ -224,7 +256,7 @@ def format_args(edits, platform = False):
                 prefix += "." + e["call"]
             prefix += ":"
         if e["op"] in ("on", "off"):
-            words.append(prefix + e["op"])
+            words.append(prefix + ("1" if e["op"] == "on" else "0"))
         elif e["op"] == "delete":
             words.append(prefix + "~" + e["option"])
         else:
@@ -279,7 +311,7 @@ def resolve(layers, command, stage, call, run = True):
       command: the command being called.
       stage: the stage it is called in.
       call: the call's name within the stage.
-      run: whether the command runs when no layer says on or off.
+      run: whether the command runs when no layer says 1 or 0.
 
     Returns:
       A dict: "run", a bool; "args", the words to pass, in the order the

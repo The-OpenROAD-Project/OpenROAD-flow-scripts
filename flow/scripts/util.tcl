@@ -40,7 +40,7 @@ proc command_args { cmd call flow { deprecated {} } { legacy {} } } {
   return [lrange [split $out \n] 1 end]
 }
 
-# Whether a call runs: run is the flow's choice, and on or off in
+# Whether a call runs: run is the flow's choice, and 1 or 0 in
 # PLATFORM_ARGS or <COMMAND>_ARGS changes it.
 proc command_runs { cmd call run } {
   return [exec $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/args.py runs $cmd $call $run 2>@ stderr]
