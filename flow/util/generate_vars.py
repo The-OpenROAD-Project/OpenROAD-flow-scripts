@@ -115,8 +115,7 @@ def relative_value(name, value, env, flow_root, orfs_root, work_root):
 
 
 def write_vars(basename, env):
-    """Writes <basename>.sh and <basename>.tcl, and appends to
-    <basename>.gdb, from env's ISSUE_VARIABLES."""
+    """Writes <basename>.sh, .tcl and .gdb from env's ISSUE_VARIABLES."""
     flow_root = os.path.realpath(env["FLOW_HOME"])
     orfs_root = os.path.realpath(env["FLOW_HOME"] + "/../")
     work_root = os.path.realpath(env.get("WORK_HOME") or ".")
@@ -136,8 +135,8 @@ def write_vars(basename, env):
             tcl.append(f'set env({name}) "{value}"\n')
             gdb.append(f"set env {name} {value}\n")
 
-    for ext, lines, mode in [("sh", sh, "w"), ("tcl", tcl, "w"), ("gdb", gdb, "a")]:
-        with open(f"{basename}.{ext}", mode) as f:
+    for ext, lines in [("sh", sh), ("tcl", tcl), ("gdb", gdb)]:
+        with open(f"{basename}.{ext}", "w") as f:
             f.write("".join(lines))
 
 

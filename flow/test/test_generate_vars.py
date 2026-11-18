@@ -196,6 +196,26 @@ class TestFlowHome(VarsTestCase):
         self.assertIn('set env(SCRIPTS_DIR) "./scripts"', lines["tcl"])
 
 
+class TestWrittenAfresh(VarsTestCase):
+    """`make vars` run again writes the files afresh: the .gdb file held
+    every earlier run's variables too, and gdb set each one again from
+    the oldest value to the newest."""
+
+    def test_written_afresh(self):
+        self.generate("A=old\n")
+        lines = self.generate("A=new\n")
+        for ext, line in [
+            ("sh", 'export A="new"'),
+            ("tcl", 'set env(A) "new"'),
+            ("gdb", "set env A new"),
+        ]:
+            self.assertEqual(
+                [l for l in lines[ext] if "A" in l and "PYTHON" not in l],
+                [line],
+                ext,
+            )
+
+
 class TestCommandLine(VarsTestCase):
     """The flow's Makefile runs it as `generate_vars.py <basename>` with
     the variables in its environment."""

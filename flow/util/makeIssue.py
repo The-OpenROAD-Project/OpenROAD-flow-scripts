@@ -223,9 +223,6 @@ def make_issue(target, env):
         run_me_script, run_me_text(env, issue_target, vars_basename, yosys)
     )
 
-    for ext in ["sh", "tcl", "gdb"]:
-        if os.path.exists(f"{vars_basename}.{ext}"):
-            os.remove(f"{vars_basename}.{ext}")
     generate_vars.write_vars(vars_basename, env)
 
     issue_name = f"{issue_target}_{issue_tag}"
