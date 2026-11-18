@@ -232,5 +232,72 @@ class TestCompressor(unittest.TestCase):
             self.assertEqual(makeIssue.compressor(), "gzip")
 
 
+class TestFileVariables(StubFlowTestCase):
+    """Every file a file variable names is archived on its own, whatever
+    else is set (#914: DFF_LIB_FILE and LIB_FILES ran together into one
+    name), and a variable may name several files or a glob
+    (ADDITIONAL_FILES, #2060)."""
+
+    def files(self, **variables):
+        env = dict(
+            variables,
+            PLATFORM_DIR=self.stub.platform_dir,
+            UTILS_DIR=UTILS_DIR,
+        )
+        return makeIssue.issue_files(env, "work/vars", "work/run-me.sh")
+
+    def test_adjacent_variables_stay_separate(self):
+        files = self.files(DFF_LIB_FILE="dff.lib", LIB_FILES="a.lib b.lib")
+        for name in ["dff.lib", "a.lib", "b.lib"]:
+            self.assertIn(name, files)
+
+    def test_every_design_and_platform_variable_is_archived(self):
+        variables = {
+            name: f"{name.lower()}.file"
+            for name in makeIssue.DESIGN_FILE_VARS + makeIssue.PLATFORM_FILE_VARS
+        }
+        files = self.files(**variables)
+        for name, path in variables.items():
+            self.assertIn(path, files, name)
+
+    def test_a_glob_names_the_files_it_matches(self):
+        extra = os.path.join(self.stub.platform_dir, "extra")
+        for name in ["a.v", "b.v"]:
+            self.stub.write(os.path.join(extra, name), "\n")
+        files = self.files(ADDITIONAL_FILES=f"{extra}/*.v")
+        self.assertIn(os.path.join(extra, "a.v"), files)
+        self.assertIn(os.path.join(extra, "b.v"), files)
+        self.assertNotIn(f"{extra}/*.v", files)
+
+    def test_the_issue_files_are_archived(self):
+        files = self.files()
+        for name in [
+            "work/run-me.sh",
+            "work/vars.sh",
+            "work/vars.tcl",
+            "work/vars.gdb",
+        ]:
+            self.assertIn(name, files)
+
+    def test_exclude_platform_leaves_out_platform_variables(self):
+        files = self.files(EXCLUDE_PLATFORM="1", LIB_FILES="a.lib", SDC_FILE="d.sdc")
+        self.assertNotIn("a.lib", files)
+        self.assertIn("d.sdc", files)
+
+    def test_archived_end_to_end(self):
+        lib = os.path.join(self.stub.platform_dir, "dff.lib")
+        cells = os.path.join(self.stub.platform_dir, "cells.lib")
+        for path in [lib, cells]:
+            self.stub.write(path, "\n")
+        names = [
+            os.path.basename(m)
+            for m in self.stub.members(
+                self.stub.make_issue(".", DFF_LIB_FILE=lib, LIB_FILES=cells)
+            )
+        ]
+        self.assertIn("dff.lib", names)
+        self.assertIn("cells.lib", names)
+
+
 if __name__ == "__main__":
     unittest.main()
