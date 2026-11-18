@@ -58,7 +58,7 @@ while read -r VAR; do
 
     # PII members use PRESERVE_PATHS=1 make issue ...
     if [[ ! -v PRESERVE_PATHS ]]; then
-        # Relativize paths under WORK_HOME (e.g. a CI workspace); makeIssue.sh
+        # Relativize paths under WORK_HOME (e.g. a CI workspace); makeIssue.py
         # stores those files at the tarball root. Both the literal and the
         # symlink-resolved form may appear in values. Skip when WORK_HOME is
         # FLOW_HOME, which is handled via ${FLOW_HOME} below.
