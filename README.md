@@ -163,6 +163,6 @@ If you like the tools, please give us a star on our GitHub repos!
 The OpenROAD-flow-scripts repository (build and run scripts) has a BSD 3-Clause License.
 The flow relies on several tools, platforms and designs that each have their own licenses:
 
-- Find the tool license at: `OpenROAD-flow-scripts/tools/{tool}/` or `OpenROAD-flow-scripts/tools/OpenROAD/src/{tool}/`.
+- Find the tool license at: `OpenROAD-flow-scripts/tools/{tool}/` or `OpenROAD-flow-scripts/tools/OpenROAD/openroad/{tool}/`.
 - Find the platform license at: `OpenROAD-flow-scripts/flow/platforms/{platform}/`.
 - Find the design license at: `OpenROAD-flow-scripts/flow/designs/src/{design}/`.

@@ -52,7 +52,7 @@ Arguments after `--` are passed directly to `claude`.
 ./claude.sh
 
 # Pass a prompt to Claude Code
-./claude.sh -- -p "fix the failing test in src/drt"
+./claude.sh -- -p "fix the failing test in openroad/drt"
 
 # Interactive bash shell (for manual builds)
 ./claude.sh --shell
@@ -132,7 +132,8 @@ volume mount.
 Handles UID/GID mapping so files created inside the container have the
 correct ownership on the host. The entrypoint:
 
-1. Creates a user matching the host UID/GID
+1. Reuses the account with the host UID if that UID already exists in the container.
+   Otherwise, it creates an account with the host UID/GID.
 2. Sources `env.sh` to set up tool paths, from the start directory if it has one, else from `/workspace`
 3. Drops privileges via `setpriv` before running the command
 
