@@ -488,5 +488,44 @@ class TestVarsFiles(StubFlowTestCase):
         self.assertIn(f'export RESULTS_DIR="{work}/results_dir/', text)
 
 
+class TestPlatformAndDesignFiles(StubFlowTestCase):
+    """The platform's Tcl, SDC and .cfg files are archived, and only
+    those it has (#2222); of the design and platform directories only the
+    config files are, unless FULL_ISSUE asks for all of them (#1771),
+    every platform config*.mk among them (#3870)."""
+
+    def names(self, **extra):
+        archive = self.stub.make_issue(".", **extra)
+        return [os.path.basename(m) for m in self.stub.members(archive)]
+
+    def test_platform_sdc_and_cfg(self):
+        for name in ["constraints.sdc", "fill.cfg"]:
+            self.stub.write(os.path.join(self.stub.platform_dir, name), "\n")
+        names = self.names()
+        for name in ["pdn.tcl", "constraints.sdc", "fill.cfg"]:
+            self.assertIn(name, names)
+
+    def test_no_glob_for_files_the_platform_does_not_have(self):
+        globs = makeIssue.platform_globs(self.stub.platform_dir)
+        self.assertEqual(globs, [f"{self.stub.platform_dir}/*.tcl"])
+
+    def test_only_config_files_by_default(self):
+        self.stub.write(os.path.join(self.stub.platform_dir, "config_extra.mk"), "\n")
+        self.stub.write(os.path.join(self.stub.platform_dir, "cells.gds"), "\n")
+        self.stub.write(os.path.join(self.stub.design_dir, "rtl.v"), "\n")
+        names = self.names()
+        self.assertIn("config.mk", names)
+        self.assertIn("config_extra.mk", names)
+        self.assertNotIn("cells.gds", names)
+        self.assertNotIn("rtl.v", names)
+
+    def test_full_issue_archives_everything(self):
+        self.stub.write(os.path.join(self.stub.platform_dir, "cells.gds"), "\n")
+        self.stub.write(os.path.join(self.stub.design_dir, "rtl.v"), "\n")
+        names = self.names(FULL_ISSUE="1")
+        self.assertIn("cells.gds", names)
+        self.assertIn("rtl.v", names)
+
+
 if __name__ == "__main__":
     unittest.main()
