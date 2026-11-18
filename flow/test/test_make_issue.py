@@ -338,5 +338,58 @@ class TestFileVariableNames(unittest.TestCase):
         self.assertEqual(unread, [])
 
 
+class TestRunMeScript(StubFlowTestCase):
+    """The run-me script runs the step's tool on the step's script from
+    the unpacked archive: the script is found through the archive's own
+    SCRIPTS_DIR, not the path of the flow that made it (#1410), it is
+    named after the step and not after the WORK_HOME path makeIssue is
+    given (#3466), openroad gets the flow's thread count (#3870), and a
+    synthesis step runs yosys, not openroad (#4129)."""
+
+    SCRIPTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "scripts")
+
+    def text(self, yosys, **env):
+        return makeIssue.run_me_text(env, "cts", "/abs/work/vars-x", yosys)
+
+    def test_script_found_through_the_archive_scripts_dir(self):
+        text = self.text(False)
+        self.assertIn("${SCRIPTS_DIR}/cts.tcl", text)
+        self.assertNotIn(self.SCRIPTS, text)
+
+    def test_vars_sourced_next_to_run_me(self):
+        text = self.text(False)
+        self.assertIn('cd "$(dirname "$0")"', text)
+        self.assertIn("source ./vars-x.sh", text)
+        self.assertNotIn("/abs/work", text)
+
+    def test_openroad_threads(self):
+        self.assertIn("-threads 8 ", self.text(False, NUM_CORES="8"))
+        self.assertIn("-threads 1 ", self.text(False))
+
+    def test_gdb_on_request(self):
+        self.assertIn("gdb --args openroad", self.text(False))
+
+    def test_yosys_step_runs_yosys(self):
+        text = self.text(True, YOSYS_FLAGS="-v 3")
+        self.assertIn("yosys -v 3 -c ${SCRIPTS_DIR}/cts.tcl", text)
+        self.assertNotIn("openroad", text)
+
+    def test_the_flow_scripts_pick_their_tool(self):
+        def tool(script):
+            path = os.path.join(self.SCRIPTS, script + ".tcl")
+            return "yosys" if makeIssue.is_yosys_step(path) else "openroad"
+
+        for script in ["synth", "synth_canonicalize"]:
+            self.assertEqual(tool(script), "yosys", script)
+        for script in ["floorplan", "global_place", "cts", "global_route"]:
+            self.assertEqual(tool(script), "openroad", script)
+
+    def test_step_named_after_the_target_not_its_path(self):
+        archive = self.stub.make_issue(os.path.join(self.stub.tmp, "work"))
+        recorded = self.stub.run_me(self.stub.unpack(archive))
+        self.assertEqual(os.path.basename(recorded["script"]), STEP + ".tcl")
+        self.assertTrue(recorded["script"].startswith("./scripts/"), recorded)
+
+
 if __name__ == "__main__":
     unittest.main()
