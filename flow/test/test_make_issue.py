@@ -391,5 +391,62 @@ class TestRunMeScript(StubFlowTestCase):
         self.assertTrue(recorded["script"].startswith("./scripts/"), recorded)
 
 
+class TestArchiveLayout(StubFlowTestCase):
+    """Archive members are relative to the archive's root: files under
+    FLOW_HOME lose its path, so a design outside the ORFS checkout works
+    (#1410), and so do files under an absolute WORK_HOME, however it is
+    spelled: through a symlink or with a trailing slash (#4274). A
+    directory that only starts with WORK_HOME's name keeps its path
+    (#4274)."""
+
+    def root_entries(self, archive):
+        prefix = f"{STEP}_{TAG}/"
+        members = self.stub.members(archive)
+        for member in members:
+            self.assertTrue(member.startswith(prefix), member)
+        return {os.path.normpath(m[len(prefix) :]).split("/")[0] for m in members}
+
+    def assert_at_root(self, work_home, **extra):
+        archive = self.stub.make_issue(work_home, **extra)
+        entries = self.root_entries(archive)
+        for entry in [
+            "results_dir",
+            "log_dir",
+            f"run-me-{FLOW_NAME}.sh",
+            f"vars-{FLOW_NAME}.sh",
+            "scripts",
+            "designs",
+            "platforms",
+        ]:
+            self.assertIn(entry, entries)
+        tmp_top = self.stub.tmp.strip("/").split("/")[0]
+        self.assertNotIn(tmp_top, entries)
+        return archive
+
+    def test_flow_home_files(self):
+        self.assert_at_root(".")
+
+    def test_absolute_work_home(self):
+        self.assert_at_root(os.path.join(self.stub.tmp, "work"))
+
+    def test_absolute_work_home_with_trailing_slash(self):
+        self.assert_at_root(os.path.join(self.stub.tmp, "work") + "/")
+
+    def test_work_home_through_a_symlink(self):
+        real = os.path.join(self.stub.tmp, "real_work")
+        os.makedirs(real)
+        link = os.path.join(self.stub.tmp, "work")
+        os.symlink(real, link)
+        self.assert_at_root(link)
+
+    def test_a_sibling_of_work_home_keeps_its_path(self):
+        work = os.path.join(self.stub.tmp, "work")
+        sibling = os.path.join(self.stub.tmp, "work_other", "d.sdc")
+        self.stub.write(sibling, "\n")
+        archive = self.stub.make_issue(work, SDC_FILE=sibling)
+        members = self.stub.members(archive)
+        self.assertIn(f"{STEP}_{TAG}{sibling}", members)
+
+
 if __name__ == "__main__":
     unittest.main()
