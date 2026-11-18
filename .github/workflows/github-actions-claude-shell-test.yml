@@ -1,0 +1,35 @@
+name: Test Claude Docker scripts
+
+on:
+  push:
+    branches: [master]
+    paths: &claude_paths
+      - 'claude.sh'
+      - 'env.sh'
+      - 'docker/*claude*.sh'
+      - '.github/workflows/github-actions-claude-shell-test.yml'
+  pull_request:
+    paths: *claude_paths
+
+permissions:
+  contents: read
+
+jobs:
+  shell-tests:
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test wrapper arguments
+        run: bash docker/test-claude-sh.sh
+      - name: Pull container test image
+        run: docker pull openroad/flow-ubuntu26.04-dev:latest
+      - name: Test entrypoint account and settings
+        run: bash docker/test-claude-entrypoint.sh
+      - name: Test Git with reserved host paths
+        run: |
+          sudo mkdir /workspace /home/claude-user
+          sudo chown "$(id -u):$(id -g)" /workspace /home/claude-user
+          bash docker/test-claude-worktree-paths.sh

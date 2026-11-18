@@ -93,7 +93,7 @@ are mounted so their contents survive:
 | `~/.claude/` | `~/.claude/` | Credentials, settings, conversation history |
 | `~/.cache/bazel-claude/` | `~/.cache/bazel/` | Bazel external dependencies |
 | `~/.gitconfig` | `~/.gitconfig` | Git identity (read-only) |
-| Worktree and main `.git` (worktree only) | Same host paths | Git refs, objects, hooks, config |
+| Worktree and main `.git` (worktree only) | Host paths, or paths under `/tmp/claude-worktree` if they overlap a container mount | Git refs, objects, hooks, config |
 | `$SSH_AUTH_SOCK` | forwarded | SSH agent for git over SSH |
 
 ## Environment variables
@@ -168,7 +168,9 @@ The worktree's `.git` file and the `.git` files of its submodules point to these
 The entrypoint sources `env.sh` from there, so `OPENROAD`, `FLOW_HOME` and `PATH` use the host path too.
 Rebuild the image with `./claude.sh --build` to get this entrypoint.
 The worktree is also at `/workspace`, but git links in submodules do not resolve from that path.
-If one of these host paths is under `/workspace` or `/home/claude-user`, the wrapper prints a warning and adds no mounts, and git does not work in the container.
+If a host path would overlap `/workspace` or `/home/claude-user`, the wrapper adds `/tmp/claude-worktree` before both host paths.
+It starts the shell at the resulting worktree path and uses a temporary Git pointer there.
+A worktree at exactly `/workspace` can use the existing checkout mount if its Git data is outside the reserved paths.
 
 The paths of the other worktrees do not exist in the container, so git sees them as stale.
 The wrapper sets `gc.worktreePruneExpire=never` in the container, so `git gc` keeps their records.
@@ -176,7 +178,7 @@ The wrapper sets `gc.worktreePruneExpire=never` in the container, so `git gc` ke
 Do not run `git worktree prune` or `git worktree repair` in the container: they change the records of the other worktrees.
 
 The start directory is part of some keys and caches.
-Claude Code stores the history of a worktree session under the host path, not under `/workspace`, so earlier `/workspace` sessions of that worktree do not resume.
+Claude Code stores the history of a worktree session under its start path, so changing that path changes which sessions can resume.
 Bazel uses a new output base, and a CMake build directory that you configured under `/workspace` must be configured again.
 
 Check the mounts with a stub `docker` command, without a container engine:
@@ -184,6 +186,9 @@ Check the mounts with a stub `docker` command, without a container engine:
 ```shell
 bash docker/test-claude-sh.sh
 ```
+
+The Claude Docker CI workflow also runs `docker/test-claude-worktree-paths.sh` on a disposable Linux runner.
+It checks Git in the launched shell, including the initialized submodule and writes to the original checkout.
 
 ## Security model
 
