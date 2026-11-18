@@ -11,6 +11,7 @@ gzip needs to be installed.
 """
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -297,6 +298,44 @@ class TestFileVariables(StubFlowTestCase):
         ]
         self.assertIn("dff.lib", names)
         self.assertIn("cells.lib", names)
+
+
+class TestFileVariableNames(unittest.TestCase):
+    """The file variables makeIssue archives are variables the flow reads.
+    A flow variable that is renamed or retired takes makeIssue's list with
+    it (SYNTH_NETLIST_FILES #2899, PRE_GLOBAL_ROUTE_TCL #3333,
+    MACRO_PLACEMENT_TCL #3469, GLOBAL_CONNECT_TCL #4785); a name left
+    behind silently archives nothing."""
+
+    FLOW = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+    SOURCES = [".tcl", ".mk", ".py", ".sh", ".yaml", ".cfg"]
+
+    def flow_text(self):
+        texts = []
+        for top in ["scripts", "util", "platforms", "Makefile"]:
+            top = os.path.join(self.FLOW, top)
+            paths = (
+                [top]
+                if os.path.isfile(top)
+                else [os.path.join(d, f) for d, _, fs in os.walk(top) for f in fs]
+            )
+            for path in paths:
+                if os.path.basename(path) == "makeIssue.py":
+                    continue
+                if path != top and os.path.splitext(path)[1] not in self.SOURCES:
+                    continue
+                with open(path, errors="replace") as f:
+                    texts.append(f.read())
+        return "\n".join(texts)
+
+    def test_every_file_variable_is_read_by_the_flow(self):
+        text = self.flow_text()
+        unread = [
+            name
+            for name in makeIssue.DESIGN_FILE_VARS + makeIssue.PLATFORM_FILE_VARS
+            if not re.search(r"\b" + name + r"\b", text)
+        ]
+        self.assertEqual(unread, [])
 
 
 if __name__ == "__main__":
