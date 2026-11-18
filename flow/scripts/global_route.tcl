@@ -27,14 +27,6 @@ proc set_grt_seed { } {
   }
 }
 
-proc run_global_route_and_catch_failures { args } {
-  if { [catch { log_cmd global_route {*}$args } errMsg] } {
-    log_cmd write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
-    log_cmd write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt-failed.sdc
-    error $errMsg
-  }
-}
-
 proc do_global_route { res_aware use_cugr } {
   set_grt_seed
   # CUGR runs a full 3D maze pass per iteration; use a tighter default.
@@ -46,7 +38,7 @@ proc do_global_route { res_aware use_cugr } {
     -congestion_report_file $::global_route_congestion_report] \
     $cong_iters $::env(GLOBAL_ROUTE_ARGS) {*}$res_aware {*}$use_cugr]
 
-  run_global_route_and_catch_failures {*}$all_args
+  log_cmd global_route {*}$all_args
 }
 set additional_args ""
 append_env_var additional_args dbProcessNode -db_process_node 1
@@ -57,6 +49,7 @@ log_cmd pin_access {*}$additional_args
 
 do_global_route $res_aware $use_cugr
 
+use_ccs_delay_calculator
 set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
@@ -85,7 +78,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
   log_cmd global_route -start_incremental {*}$allow_congestion
   detailed_placement_helper -quiet
   # Route only the modified net by DPL
-  run_global_route_and_catch_failures -end_incremental {*}$res_aware \
+  log_cmd global_route -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
   utl::pop_metrics_stage
@@ -105,7 +98,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
   detailed_placement_helper -quiet
   log_cmd check_placement -placeable -verbose
   # Route only the modified net by DPL
-  run_global_route_and_catch_failures -end_incremental {*}$res_aware \
+  log_cmd global_route -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   utl::pop_metrics_stage
@@ -134,7 +127,7 @@ if { !$::env(OPT_POST_GRT_WNS) } {
   log_cmd global_route -start_incremental {*}$allow_congestion
   recover_power_helper
   # Route the modified nets by rsz journal restore
-  run_global_route_and_catch_failures -end_incremental {*}$res_aware \
+  log_cmd global_route -end_incremental {*}$res_aware \
     {*}$allow_congestion \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
   utl::pop_metrics_stage

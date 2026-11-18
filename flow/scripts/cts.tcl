@@ -19,6 +19,7 @@ append_env_var cts_args CTS_CLUSTER_SIZE -sink_clustering_size 1
 append_env_var cts_args CTS_CLUSTER_DIAMETER -sink_clustering_max_diameter 1
 append_env_var cts_args CTS_BUF_LIST -buf_list 1
 append_env_var cts_args CTS_LIB_NAME -library 1
+append_env_var cts_args CTS_USEFUL_SKEW -useful_skew 0
 
 if { [env_var_exists_and_non_empty CTS_ARGS] } {
   set cts_args $::env(CTS_ARGS)
@@ -39,11 +40,7 @@ set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
-set result [catch { detailed_placement_helper -quiet } msg]
-if { $result != 0 } {
-  orfs_write_db $::env(RESULTS_DIR)/4_1_error.odb
-  error "Detailed placement failed in CTS: $msg"
-}
+detailed_placement_helper -quiet
 
 log_cmd estimate_parasitics
 
@@ -60,11 +57,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
     run_lec_test 4_rsz 4_before_rsz_lec.v 4_after_rsz_lec.v
   }
 
-  set result [catch { detailed_placement_helper -quiet } msg]
-  if { $result != 0 } {
-    orfs_write_db $::env(RESULTS_DIR)/4_1_error.odb
-    error "Detailed placement failed in CTS: $msg"
-  }
+  detailed_placement_helper -quiet
 
   log_cmd check_placement -placeable -verbose
 

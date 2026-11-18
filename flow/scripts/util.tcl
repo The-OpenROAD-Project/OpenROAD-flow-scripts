@@ -114,7 +114,8 @@ proc env_var_exists_and_non_empty { env_var } {
 
 # AUTO_MEMORIES: do-auto-memories writes into $RESULTS_DIR/memories the
 # lists below, and every later step reads the files they name, never
-# what a directory happens to hold. The stages after synthesis read them
+# what a directory happens to hold. gen_memories.py writes each list
+# whole, after every view exists. The stages after synthesis read them
 # from AUTO_MEMORIES_DIR, as a stage reads its input from
 # INPUT_RESULTS_DIR; synthesis reads what it wrote.
 #
@@ -123,31 +124,27 @@ proc auto_memories_synthesis { } {
   set ::env(AUTO_MEMORIES_DIR) $::env(RESULTS_DIR)/memories
 }
 
-# blackboxes.txt, `<module> <area>` a line: the macros, each with its
-# <module>.lib and <module>.lef, and the area synthesis costs it by.
-proc auto_memories_areas { } {
+# The words of one of those lists; none without AUTO_MEMORIES.
+proc auto_memories_words { list } {
   if { ![env_var_equals AUTO_MEMORIES 1] } {
     return {}
   }
-  set f "$::env(AUTO_MEMORIES_DIR)/blackboxes.txt"
-  set fh [open $f r]
-  set content [string map {\r ""} [read $fh]]
+  set fh [open "$::env(AUTO_MEMORIES_DIR)/$list" r]
+  set content [read $fh]
   close $fh
-  set areas [dict create]
-  foreach line [split $content "\n"] {
-    if { [string trim $line] == "" } {
-      continue
-    }
-    set fields [regexp -all -inline {\S+} $line]
-    if {
-      [llength $fields] != 2
-      || ![string is double -strict [lindex $fields 1]]
-    } {
-      error "$f: expected `<module> <area>`, got `$line`"
-    }
-    dict set areas {*}$fields
-  }
-  return $areas
+  return [regexp -all -inline {\S+} $content]
+}
+
+# blackboxes.txt, `<module> <area>` a line: the macros, each with its
+# <module>.lib and <module>.lef, and the area synthesis costs it by. Its
+# words are a dict of the area of each module.
+proc auto_memories_areas { } {
+  return [auto_memories_words blackboxes.txt]
+}
+
+# The modules synthesis blackboxes, the macros of blackboxes.txt.
+proc auto_memories_blackboxes { } {
+  return [dict keys [auto_memories_areas]]
 }
 
 # A list of module names, one a line:
@@ -158,19 +155,12 @@ proc auto_memories_areas { } {
 # - regfiles.txt: register files that dissolve into their cells after
 #   macro placement (<module>.v, <module>.place).
 proc auto_memories_names { list } {
-  if { ![env_var_equals AUTO_MEMORIES 1] } {
-    return {}
-  }
-  set f "$::env(AUTO_MEMORIES_DIR)/$list"
-  set fh [open $f r]
-  set content [read $fh]
-  close $fh
-  return [regexp -all -inline {\S+} $content]
+  return [auto_memories_words $list]
 }
 
 # The view of every macro in blackboxes.txt, by extension (.lib, .lef).
 proc auto_memories_views { ext } {
-  return [lmap m [dict keys [auto_memories_areas]] {
+  return [lmap m [auto_memories_blackboxes] {
     file join $::env(AUTO_MEMORIES_DIR) $m$ext
   }]
 }
@@ -396,6 +386,18 @@ proc final_extracts_parasitics { } {
     [env_var_exists_and_non_empty RCX_RULES]
     && !$::env(SKIP_DETAILED_ROUTE)
   }]
+}
+
+# LIB_MODEL=CCS reads CCS libraries. The prima delay calculator simulates
+# the driver waveform on the RC network and costs tens of table lookups
+# per net, so it is used only once the design has global routes, which is
+# when estimate_parasitics switches from placement estimates to global
+# routing parasitics. Call it after the design is loaded or routed.
+proc use_ccs_delay_calculator { } {
+  if { $::env(LIB_MODEL) eq "CCS" && [grt::have_routes] } {
+    puts "Using CCS delay calculation"
+    log_cmd set_delay_calculator prima
+  }
 }
 
 # Load the parasitics that step is timed with and return where they came

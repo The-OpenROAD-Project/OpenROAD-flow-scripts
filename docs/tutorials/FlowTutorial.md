@@ -191,7 +191,7 @@ configuration examples using the Tcl interface and other such details.
 
 Run the `ibex` design in OpenROAD-flow-scripts automated flow from
 RTL-to-GDS using `sky130hd`. Find `ibex` design details
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md)
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex_sv/README.md)
 and the design goals are:
 
 -   Area
@@ -365,7 +365,7 @@ The log structure is as follows:
 View design area and its core utilization:
 
 ```shell
-make gui_final
+make gui_final DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 ```
 
 In the `Tcl Commands` section:
@@ -387,7 +387,7 @@ the OpenROAD GUI to visualize further and debug. Learn more about the
 [GUI](https://openroad.readthedocs.io/en/latest/main/README.html#gui).
 
 ```shell
-make gui_final
+make gui_final DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 ```
 
 Use the following commands in the `Tcl Commands` section of GUI:
@@ -1338,9 +1338,11 @@ openroad
 Copy and paste the following Tcl commands.
 
 ```tcl
-define_corners fast slow
-read_liberty -corner slow Nangate45/Nangate45_slow.lib
-read_liberty -corner fast Nangate45/Nangate45_fast.lib
+read_liberty Nangate45/Nangate45_slow.lib
+read_liberty Nangate45/Nangate45_fast.lib
+define_scene fast -liberty Nangate45/Nangate45_fast.lib
+define_scene slow -liberty Nangate45/Nangate45_slow.lib
+set_scene fast
 read_lef Nangate45/Nangate45.lef
 read_def repair_setup1.def
 create_clock -period 0.3 clk

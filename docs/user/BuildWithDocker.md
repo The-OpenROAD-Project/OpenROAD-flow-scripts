@@ -42,12 +42,19 @@ You can start the container in an interactive mode using
 the command below.
 
 ```shell
-docker run -it ubuntu:22.04
+docker run -it ubuntu:26.04
 ```
 
 Now you are ready to install the prebuilt binaries.
 Please refer to the instructions for installing prebuilt binaries
 [here](./BuildWithPrebuilt.md).
+
+The root `Dockerfile` assembles a runtime image from the published Ubuntu 26.04 development image, flow tools, and OpenROAD installation.
+Build it without compiling the tools:
+
+```shell
+docker build -t openroad/orfs-local .
+```
 
 ### Build Using Docker from sources
 
@@ -85,7 +92,7 @@ Then, inside docker:
 ``` shell
 source ./env.sh
 yosys -help
-yosys -m slang -p "slang_version"
+yosys -p "slang_version"
 openroad -help
 cd flow
 make
@@ -105,7 +112,7 @@ util/docker_shell make
 To use the GUI feature you will need to start the docker with the
 following command,
 
-For Ubuntu/Debian OS users:
+For Ubuntu users:
 
 ```
 docker run --rm -it \
@@ -117,14 +124,6 @@ docker run --rm -it \
            --network host \
            --security-opt seccomp=unconfined \
            openroad/orfs
-```
-
-Running GUI with Docker on Mac OS X users, refer [here](https://cntnr.io/running-guis-with-docker-on-mac-os-x-a14df6a76efc).
-
-Then use:
-
-```
-docker run --rm -it -e DISPLAY=<IP_LIKE_FROM_TUTORIAL>:0 --network host --privileged <IMAGE_NAME>
 ```
 
 Alternatively, you may also use the `docker_shell` utility for GUI as follows.

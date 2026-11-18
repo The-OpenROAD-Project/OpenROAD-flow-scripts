@@ -270,7 +270,7 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   if { [env_var_exists_and_non_empty CORNERS] } {
     foreach corner $::env(CORNERS) {
       report_puts "Corner: $corner"
-      report_power -corner $corner >> $filename
+      report_power -scene $corner >> $filename
       report_power_metric -corner $corner
     }
     unset corner

@@ -136,7 +136,9 @@ html_theme_options = {
 
 
 def get_file_from_url(url, fname):
-    r = requests.get(url)
+    # Fail the build on an HTTP error instead of writing an error page to fname.
+    r = requests.get(url, timeout=60)
+    r.raise_for_status()
     with open(fname, "wb") as f:
         f.write(r.content)
 
@@ -177,6 +179,11 @@ def setup(app):
     )
     with open("contrib/GitGuideAdapter.md", "r") as f:
         adapter_content = f.read()
+    if "## Creating a branch" not in content:
+        raise RuntimeError(
+            "contrib/GitGuide.md: heading '## Creating a branch' not found; "
+            "check OpenROAD docs/contrib/GitGuide.md"
+        )
     content = content.replace(
         "## Creating a branch", adapter_content + "\n## Creating a branch"
     )
@@ -196,7 +203,11 @@ def setup(app):
 
     match = re.search(f"{start_pattern}(.*?){end_pattern}", markdown_content, re.DOTALL)
 
-    assert match is not None, "No match found, check the OR Doc pattern on index.md"
+    if match is None:
+        raise RuntimeError(
+            f"SupportedOS.md: '{start_pattern}' followed by '{end_pattern}' "
+            "not found; check the headings in OpenROAD docs/index.md"
+        )
     extracted_content = match.group(1)
     extracted_content = "\n#### Supported Operating Systems" + extracted_content
     print(extracted_content)
@@ -205,7 +216,8 @@ def setup(app):
     with open("index2.md", "r") as f:
         existing_content = f.read()
     match = re.search(r"### Setup", existing_content)
-    assert match is not None, "Check search keyword."
+    if match is None:
+        raise RuntimeError("docs/index.md: heading '### Setup' not found")
     with open("index2.md", "w") as f:
         insert_position = match.end() + 1
         before_insert = existing_content[:insert_position]
@@ -216,6 +228,10 @@ def setup(app):
 
         f.write(updated_content)
 
-    # Get Manpage file
-    url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/src/utl/README.md"
-    get_file_from_url(url, "Manpage.md")
+    # Get Manpage file. OpenROAD renames its src/ directory to openroad/;
+    # the src/ path serves OpenROAD master from before the rename.
+    base = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master"
+    try:
+        get_file_from_url(f"{base}/openroad/utl/README.md", "Manpage.md")
+    except requests.HTTPError:
+        get_file_from_url(f"{base}/src/utl/README.md", "Manpage.md")
