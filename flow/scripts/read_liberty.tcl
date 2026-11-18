@@ -26,9 +26,7 @@ if { [env_var_exists_and_non_empty CORNERS] } {
 }
 
 # AUTO_MEMORIES: liberty views generated pre-synthesis by
-# scripts/memories/gen_memories.py, named by blackboxes.txt. The
-# _pre_layout variants (ideal clock) are for pre-CTS consumers that
-# select lib files themselves.
+# scripts/memories/gen_memories.py, named by blackboxes.txt.
 foreach libFile [auto_memories_views .lib] {
   log_cmd read_liberty $libFile
   if { [env_var_exists_and_non_empty CORNERS] } {
