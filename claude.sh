@@ -86,9 +86,8 @@ CONTAINER_HOME="/home/claude-user"
 
 # --- Git data of a worktree ---
 # A worktree's .git file, and the .git files of its submodules, point to the
-# main checkout's git directory by host path, absolute or relative. Mount that
-# directory and the worktree at their host paths, and start in the worktree's
-# host path, so these links resolve in the container. /workspace stays.
+# main checkout's git directory by absolute or relative paths. Keep their
+# relative layout so links from submodules resolve in the container.
 HOST_DIR=$(cd "${SCRIPT_DIR}" && pwd -P)
 CONTAINER_WORKDIR=/workspace
 GIT_TOP=""
@@ -106,21 +105,37 @@ outside_container_paths() {
 }
 
 GIT_MOUNTS=()
+GIT_LINK_DIR=""
+mount_prefix=""
+# The existing checkout mount already preserves an exact /workspace path.
+if { [[ "${HOST_DIR}" != /workspace ]] && ! outside_container_paths "${HOST_DIR}"; } ||
+    ! outside_container_paths "${GIT_COMMON_DIR}"; then
+    mount_prefix=/tmp/claude-worktree
+fi
+
 # Only for the top of a checkout: a plain folder inside another repository
-# must not get that repository's .git.
+# must not get that repository's .git. A gitfile also needs relocation when
+# it points inside the checkout but the /workspace mount hides the host path.
 if [[ "${GIT_TOP}" == "${HOST_DIR}" && -n "${GIT_COMMON_DIR}" &&
-    "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
-    if outside_container_paths "${HOST_DIR}" &&
-        outside_container_paths "${GIT_COMMON_DIR}"; then
-        GIT_MOUNTS=(
-            -v "${HOST_DIR}:${HOST_DIR}"
-            -v "${GIT_COMMON_DIR}:${GIT_COMMON_DIR}"
-        )
-        CONTAINER_WORKDIR=${HOST_DIR}
-    else
-        echo "Warning: ${HOST_DIR} and its git data in ${GIT_COMMON_DIR} cannot" \
-            "both be mounted at their host paths, because one of them is under" \
-            "/workspace or ${CONTAINER_HOME}. Git does not work in the container." >&2
+    ( "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ||
+      ( -n "${mount_prefix}" && "${HOST_DIR}" != /workspace && -f "${HOST_DIR}/.git" ) ) ]]; then
+    CONTAINER_WORKDIR="${mount_prefix}${HOST_DIR}"
+    if [[ "${CONTAINER_WORKDIR}" != /workspace ]]; then
+        GIT_MOUNTS+=(-v "${HOST_DIR}:${CONTAINER_WORKDIR}")
+    fi
+    if [[ "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
+        GIT_MOUNTS+=(-v "${GIT_COMMON_DIR}:${mount_prefix}${GIT_COMMON_DIR}")
+    fi
+    if [[ -n "${mount_prefix}" && -f "${HOST_DIR}/.git" ]]; then
+        # Overlay the gitfile so its absolute target uses the new prefix.
+        # Git still writes to the shared metadata through the directory mount.
+        git_dir=$(git -C "${HOST_DIR}" rev-parse --absolute-git-dir)
+        git_dir=$(cd "${git_dir}" && pwd -P)
+        # Keep the source on a path already shared with the container engine.
+        GIT_LINK_DIR=$(mktemp -d "${git_dir}/claude-link.XXXXXX")
+        trap 'rm -rf -- "${GIT_LINK_DIR}"' EXIT
+        printf 'gitdir: %s%s\n' "${mount_prefix}" "${git_dir}" > "${GIT_LINK_DIR}/gitfile"
+        GIT_MOUNTS+=(-v "${GIT_LINK_DIR}/gitfile:${CONTAINER_WORKDIR}/.git:ro")
     fi
 fi
 
@@ -197,13 +212,24 @@ DOCKER_RUN_ARGS+=(-v "${BAZEL_CACHE_DIR}:${CONTAINER_HOME}/.cache/bazel")
 
 # --- Run ---
 if [[ "${SHELL_MODE}" -eq 1 ]]; then
-    exec docker run \
-        "${DOCKER_RUN_ARGS[@]}" \
-        "${CLAUDE_IMAGE}" \
-        bash
+    command=(bash)
 else
-    exec docker run \
-        "${DOCKER_RUN_ARGS[@]}" \
-        "${CLAUDE_IMAGE}" \
-        claude --dangerously-skip-permissions "${CLAUDE_ARGS[@]}"
+    command=(claude --dangerously-skip-permissions "${CLAUDE_ARGS[@]}")
 fi
+
+if [[ -z "${GIT_LINK_DIR}" ]]; then
+    exec docker run "${DOCKER_RUN_ARGS[@]}" "${CLAUDE_IMAGE}" "${command[@]}"
+fi
+
+# Wait for Docker before removing the temporary bind source. Keep stdin open
+# and pass signals sent to the wrapper through to the Docker client.
+docker run "${DOCKER_RUN_ARGS[@]}" "${CLAUDE_IMAGE}" "${command[@]}" <&0 &
+docker_pid=$!
+forward_signal() {
+    kill -s "$1" "${docker_pid}" 2>/dev/null || return 0
+    wait "${docker_pid}" || true
+}
+trap 'forward_signal HUP' HUP
+trap 'forward_signal INT' INT
+trap 'forward_signal TERM' TERM
+wait "${docker_pid}"
