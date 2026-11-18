@@ -12,13 +12,13 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/ariane133/ariane.sdc
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_256x16.lef
 export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_256x16.lib
 
-export CORE_UTILIZATION = 50
+export CORE_UTILIZATION = 45
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 5
 
 export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
 
-export RTLMP_MIN_CHANNEL_SIZE = 16 16
+export RTLMP_MIN_CHANNEL_SIZE = 15 15
 
 export SKIP_GATE_CLONING   = 1
 
