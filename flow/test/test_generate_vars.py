@@ -84,6 +84,58 @@ class TestVarsFiles(VarsTestCase):
         self.assertIn(mock.call(self.flow), realpath.call_args_list)
 
 
+class TestLeftOut(VarsTestCase):
+    """The vars hold the flow's and the design's variables, not make's own
+    or the machine's, which mean nothing elsewhere: make's step and copy
+    macros (#1240, #1231) and its other internals, commands, executables,
+    the shell and search paths (#1303), names that are not shell names
+    (#1303, #1331), FLOW_HOME, which the shell file sets once from where
+    it is sourced (#1380), the newline macro (#1386), and CURDIR and the
+    GUI switches (#1410). Variables named *_DIR stay (#1331)."""
+
+    LEFT_OUT = [
+        "do-step",
+        "do-copy",
+        "get_variables",
+        "UNSET_VARIABLES_NAMES",
+        "MAKE",
+        "MAKEFLAGS",
+        "MAKEFILE_LIST",
+        "OPENROAD_EXE",
+        "YOSYS_EXE",
+        "OPENROAD_CMD",
+        "TIME_CMD",
+        "SHELL",
+        "HOME",
+        "PWD",
+        "LD_LIBRARY_PATH",
+        "PATH",
+        "NPROC",
+        "NUM_CORES",
+        "FLOW_HOME",
+        "\\n",
+        "CURDIR",
+        "OPEN_GUI",
+        "OPEN_GUI_SHORTCUT",
+        "COMMAND_LINE_ARGS",
+        "a.b",
+        "1ST",
+    ]
+
+    def test_left_out(self):
+        lines = self.generate("".join(f"{name}=x\n" for name in self.LEFT_OUT))
+        for ext, header in [("sh", 2), ("tcl", 1), ("gdb", 0)]:
+            self.assertEqual(lines[ext][header:], [], ext)
+
+    def test_dir_variables_stay(self):
+        lines = self.generate("RESULTS_DIR=results\n")
+        self.assertIn('export RESULTS_DIR="results"', lines["sh"])
+
+    def test_flow_home_set_once(self):
+        sh = self.generate(f"FLOW_HOME={self.flow}\n")["sh"]
+        self.assertEqual([l for l in sh if "FLOW_HOME=" in l], [sh[0]])
+
+
 class TestCommandLine(VarsTestCase):
     """The flow's Makefile runs it as `generate_vars.py <basename>` with
     the variables in its environment."""
