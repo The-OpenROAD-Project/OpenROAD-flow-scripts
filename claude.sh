@@ -84,6 +84,46 @@ fi
 # The entrypoint creates /home/claude-user for the mapped user.
 CONTAINER_HOME="/home/claude-user"
 
+# --- Git data of a worktree ---
+# A worktree's .git file, and the .git files of its submodules, point to the
+# main checkout's git directory by host path, absolute or relative. Mount that
+# directory and the worktree at their host paths, and start in the worktree's
+# host path, so these links resolve in the container. /workspace stays.
+HOST_DIR=$(cd "${SCRIPT_DIR}" && pwd -P)
+CONTAINER_WORKDIR=/workspace
+GIT_TOP=""
+GIT_COMMON_DIR=""
+if git_top=$(git -C "${HOST_DIR}" rev-parse --show-toplevel 2> /dev/null) &&
+    git_common=$(git -C "${HOST_DIR}" rev-parse --git-common-dir 2> /dev/null); then
+    GIT_TOP=$(cd "${git_top}" 2> /dev/null && pwd -P) || GIT_TOP=""
+    GIT_COMMON_DIR=$(cd "${HOST_DIR}" && cd "${git_common}" 2> /dev/null && pwd -P) ||
+        GIT_COMMON_DIR=""
+fi
+
+# True when host path $1 does not overlap a path that the container already uses.
+outside_container_paths() {
+    [[ "$1/" != /workspace/* && "$1/" != "${CONTAINER_HOME}/"* ]]
+}
+
+GIT_MOUNTS=()
+# Only for the top of a checkout: a plain folder inside another repository
+# must not get that repository's .git.
+if [[ "${GIT_TOP}" == "${HOST_DIR}" && -n "${GIT_COMMON_DIR}" &&
+    "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
+    if outside_container_paths "${HOST_DIR}" &&
+        outside_container_paths "${GIT_COMMON_DIR}"; then
+        GIT_MOUNTS=(
+            -v "${HOST_DIR}:${HOST_DIR}"
+            -v "${GIT_COMMON_DIR}:${GIT_COMMON_DIR}"
+        )
+        CONTAINER_WORKDIR=${HOST_DIR}
+    else
+        echo "Warning: ${HOST_DIR} and its git data in ${GIT_COMMON_DIR} cannot" \
+            "both be mounted at their host paths, because one of them is under" \
+            "/workspace or ${CONTAINER_HOME}. Git does not work in the container." >&2
+    fi
+fi
+
 # --- Assemble docker run arguments ---
 DOCKER_RUN_ARGS=(
     --rm
@@ -91,7 +131,18 @@ DOCKER_RUN_ARGS=(
     -v "${SCRIPT_DIR}:/workspace"
     -e "HOST_UID=$(id -u)"
     -e "HOST_GID=$(id -g)"
-    -w /workspace
+    -w "${CONTAINER_WORKDIR}"
+)
+if [[ ${#GIT_MOUNTS[@]} -gt 0 ]]; then
+    DOCKER_RUN_ARGS+=("${GIT_MOUNTS[@]}")
+fi
+
+# The host paths of other worktrees do not exist in the container, so git gc
+# there would prune their records from the shared .git directory. Stop that.
+DOCKER_RUN_ARGS+=(
+    -e GIT_CONFIG_COUNT=1
+    -e GIT_CONFIG_KEY_0=gc.worktreePruneExpire
+    -e GIT_CONFIG_VALUE_0=never
 )
 
 # TTY/stdin handling for interactive, CI, and piped-input cases:

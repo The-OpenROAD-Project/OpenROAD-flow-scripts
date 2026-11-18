@@ -1,7 +1,7 @@
 utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 1_synth.odb
+load_stage_input 1_synth.odb
 
 # The global connections, before any step can mark an instance
 # dont_touch: global_connect skips one (ODB-0383). The rules stay in the

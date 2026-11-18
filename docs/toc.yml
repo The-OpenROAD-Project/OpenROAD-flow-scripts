@@ -25,6 +25,8 @@ entries:
     title: Command Arguments
   - file: user/AutoMemories.md
     title: Generated Memory Macros (AUTO_MEMORIES)
+  - file: user/KLayoutPythonDecks.md
+    title: KLayout DRC and LVS Decks in Python
   - file: user/LargeDesigns.md
     title: Tips on building large design
   - file: contrib/Metrics.md

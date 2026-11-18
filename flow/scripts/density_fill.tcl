@@ -1,6 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables final
-load_design 5_route.odb
+load_stage_input 5_route.odb
 source_step_tcl PRE DENSITY_FILL
 
 if { $::env(USE_FILL) } {
@@ -11,7 +11,7 @@ if { $::env(USE_FILL) } {
   write_verilog $::env(RESULTS_DIR)/6_1_fill.v
   orfs_write_db $::env(RESULTS_DIR)/6_1_fill.odb
 } else {
-  orfs_copy_db $::env(RESULTS_DIR)/5_route.odb $::env(RESULTS_DIR)/6_1_fill.odb
+  orfs_copy_db $::env(INPUT_RESULTS_DIR)/5_route.odb $::env(RESULTS_DIR)/6_1_fill.odb
   # There is no 5_route.v file to copy
 }
 

@@ -158,8 +158,10 @@ LIB_MODEL:
     Selects between NLDM and CCS timing models for the ASAP7 platform.
     Valid values: NLDM (default), CCS. Used in
     flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and
-    accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list,
-    and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.
+    accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list.
+    With CCS the prima delay calculator is used from the global routing
+    stage on, where the parasitics come from global routing; placement
+    and CTS use the table delay calculator on their estimates.
   default: NLDM
 PLATFORM_TCL:
   description: |
@@ -461,7 +463,24 @@ INFER_CLKGATES:
     Enables Yosys clock gate inference. By default, it uses the Liberty cell
     definitions to determine clock gating cell. The selection can be overridden
     using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.
+    Every stage reads it: a platform may make the clock gating cells it
+    inserts usable for OpenROAD through DONT_USE_CELLS, as asap7 does.
   default: 0
+  stages:
+    - All stages
+INFER_CLKGATES_EXCLUDE:
+  description: >
+    Space-separated Yosys module name patterns whose flip-flops
+    INFER_CLKGATES leaves ungated, e.g. a module whose enable logic is
+    timing-critical. Only modules that still exist at clock gate inference
+    can be excluded, see SYNTH_HIERARCHICAL and SYNTH_KEEP_MODULES.
+  stages:
+    - synth
+INFER_CLKGATES_MIN_NET_SIZE:
+  description: >
+    Minimum number of flip-flops sharing a clock and enable for
+    INFER_CLKGATES to replace their enable with a clock gating cell. Smaller
+    groups keep their enable flip-flops. Unset gates every group.
   stages:
     - synth
 NEG_CLKGATE_AND_PORTS:
@@ -1138,6 +1157,20 @@ FILL_CONFIG:
 KLAYOUT_TECH_FILE:
   description: |
     A mapping from LEF/DEF to GDS using the KLayout tool.
+KLAYOUT_DRC_FILE:
+  description: >
+    The KLayout DRC deck `make drc` runs. A `.py` deck runs with the klayout
+    Python module; a Ruby deck (`.lydrc`) is deprecated and needs the KLayout
+    application. Empty when the platform has no deck.
+  stages:
+    - final
+KLAYOUT_LVS_FILE:
+  description: >
+    The KLayout LVS deck `make lvs` runs. A `.py` deck runs with the klayout
+    Python module; a Ruby deck (`.lylvs`) is deprecated and needs the KLayout
+    application. Empty when the platform has no deck.
+  stages:
+    - final
 IR_DROP_LAYER:
   description: |
     Default metal layer to report IR drop.
@@ -1377,6 +1410,12 @@ CTS_LIB_NAME:
     - cts
   deprecated: 1
   replacement: CLOCK_TREE_SYNTHESIS_ARGS = -library {value}
+CTS_USEFUL_SKEW:
+  description: |
+    Enable useful skew during the CTS balancing phase.
+  stages:
+    - cts
+  default: 0
 POST_CTS_TCL:
   description: |
     Specifies a Tcl script with commands to run after CTS is completed.
@@ -1789,6 +1828,23 @@ FOOTPRINT_TCL:
     Specifies a Tcl script with custom footprint-related commands for floorplan setup.
   stages:
     - floorplan
+FLOW_INPUT_VARIANT:
+  description: >
+    Flow variant a stage reads the previous stage's result from, the
+    .odb and the .sdc beside it. Defaults to FLOW_VARIANT. A variant
+    forked off another sets it to that variant for the first stage it
+    runs, then leaves it at the default: the shared stages run once, and
+    the fork writes only its own results. A stage's later steps read the
+    stage's own results. A stage stops when its input is in both
+    variants. Not with AUTO_MEMORIES=1, whose memories are read from the
+    variant that synthesised them.
+  stages:
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
 FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.
@@ -1867,6 +1923,16 @@ WRITE_ODB_AND_SDC_EACH_STAGE:
   description: >
     Save out .sdc and .odb file after each stage, useful to disable
     when using a single OpenROAD instance to run all stages of the flow.
+  stages:
+    - All stages
+  default: 1
+WRITE_ON_FAILURE:
+  description: >
+    If set to 1, a step that fails writes the design as it was at the
+    failure to $RESULTS_DIR/<step>-failed.odb and .sdc, then fails with
+    the original error. `make web_<step>-failed.odb` opens it, e.g.
+    `make web_3_3_place_gp-failed.odb`. Set to 0 where writing a large
+    design on failure costs too much time or disk.
   stages:
     - All stages
   default: 1

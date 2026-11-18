@@ -266,6 +266,15 @@ if { [env_var_equals INFER_CLKGATES 1] } {
     # Let yosys decide on which clock gating cell to use
     lappend clkgate_args {*}$lib_args
   }
+  if { [env_var_exists_and_non_empty INFER_CLKGATES_MIN_NET_SIZE] } {
+    lappend clkgate_args -min_net_size $::env(INFER_CLKGATES_MIN_NET_SIZE)
+  }
+  if { [env_var_exists_and_non_empty INFER_CLKGATES_EXCLUDE] } {
+    lappend clkgate_args *
+    foreach pattern $::env(INFER_CLKGATES_EXCLUDE) {
+      lappend clkgate_args $pattern %d
+    }
+  }
   log_cmd clockgate {*}$clkgate_args
 }
 

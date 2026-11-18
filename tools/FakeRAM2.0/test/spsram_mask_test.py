@@ -210,24 +210,19 @@ class BackendTest(unittest.TestCase):
             inv.write_text(json.dumps(inventory))
             out = Path(d) / "memories"
             self.assertEqual(run_orfs_asap7("asap7", out, inv), 0)
+            # the views only: gen_memories.py writes blackboxes.txt
             self.assertEqual(
                 sorted(p.name for p in out.iterdir()),
                 [
                     "array_64x114.lef",
                     "array_64x114.lib",
                     "array_64x114_pre_layout.lib",
-                    "blackboxes.txt",
                 ],
             )
             lib = (out / "array_64x114.lib").read_text()
             self.assertIn("cell(array_64x114)", lib)
             self.assertIn("bus(RW0_wmask)", lib)
             self.assertIn("pin(RW0_en)", lib)
-            # `<module> <area>`: synthesis costs the blackbox by its area
-            [line] = (out / "blackboxes.txt").read_text().splitlines()
-            module, area = line.split()
-            self.assertEqual(module, "array_64x114")
-            self.assertGreater(float(area), 0)
 
     def test_declared_separate_ports_are_refused(self):
         pins = rw0_pins(32, 5, 0)

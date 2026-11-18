@@ -22,7 +22,11 @@ export WC_VOLTAGE          = 0.63
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
-export DONT_USE_CELLS          += SDF* ICG*
+export DONT_USE_CELLS          += SDF*
+# INFER_CLKGATES inserts ICG cells, which OpenROAD must then be free to size
+ifneq ($(INFER_CLKGATES),1)
+export DONT_USE_CELLS          += ICG*
+endif
 
 export SYNTH_MINIMUM_KEEP_SIZE       ?= 1000
 
@@ -76,7 +80,7 @@ export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
 
 # KLayout DRC ruledeck
-export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/asap7.lydrc
+export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/asap7_drc.py
 
 # OpenRCX extRules
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules

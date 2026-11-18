@@ -12,8 +12,6 @@ fi
 # Make sure we are on the correct folder before beginning
 cd "${_script_dir}/../"
 
-# package versions
-klayoutVersion=0.30.12
 if [[ "$OSTYPE" == "darwin"* ]]; then
     numThreads=$(sysctl -n hw.logicalcpu)
 else
@@ -26,7 +24,7 @@ _versionCompare() {
     test $a "$2" $b
 }
 
-# Yosys and kepler-formal are built with CMake. Yosys needs CMake >= 3.28,
+# Yosys is built with CMake and needs CMake >= 3.28,
 # newer than Ubuntu 22.04 ships, so fetch a release from Kitware when the
 # one on PATH is too old.
 cmakeMinVersion=3.28
@@ -108,36 +106,6 @@ _installBison() {
     rm -rf "${workDir}"
 }
 
-# kepler-formal needs oneTBB and its CMake package. EL8 ships TBB 2018, which
-# has neither, so build oneTBB there. Build it static, because the
-# kepler-formal RPATH does not include the prefix.
-tbbVersion=2021.13.0
-tbbChecksum=3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1
-
-_installTbb() {
-    local prefix=${PREFIX:-"/usr/local"}
-    if compgen -G "${prefix}/lib*/cmake/TBB/TBBConfig.cmake" > /dev/null; then
-        echo "oneTBB found in ${prefix}, skipping install"
-        return
-    fi
-    local tarball="oneTBB-${tbbVersion}.tar.gz"
-    local workDir
-    workDir=$(mktemp -d)
-    (
-        # _installCmake may have put CMake in a prefix that is not on PATH.
-        export PATH="${prefix}/bin:${PATH}"
-        cd "${workDir}"
-        wget -q -O "${tarball}" "https://github.com/uxlfoundation/oneTBB/archive/refs/tags/v${tbbVersion}.tar.gz"
-        sha256sum -c <(echo "${tbbChecksum}  ${tarball}")
-        tar xzf "${tarball}"
-        cmake -S "oneTBB-${tbbVersion}" -B build -DCMAKE_BUILD_TYPE=Release \
-            -DTBB_TEST=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="${prefix}"
-        cmake --build build -j "${numThreads}"
-        cmake --install build
-    )
-    rm -rf "${workDir}"
-}
-
 _installORDependencies() {
     if [[ ${YOSYS_VER} == "" ]]; then
         YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
@@ -146,11 +114,6 @@ _installORDependencies() {
 }
 
 _installPipCommon() {
-    if [[ -f /opt/rh/rh-python38/enable ]]; then
-        set +u
-        source /opt/rh/rh-python38/enable
-        set -u
-    fi
     local lockfile piplock
     lockfile="${_script_dir}/requirements-common_lock.txt"
     piplock="${_script_dir}/requirements-pip_lock.txt"
@@ -188,45 +151,14 @@ _installPipSystem() {
     apt-get -y install python3-pandas python3-numpy python3-click python3-yaml python3-yamlfix
 }
 
-# Enterprise Linux 7 cleanup
-_install_EL7_CleanUp() {
-    yum clean -y all
-}
-
-# Enterprise Linux 7 package installation (EL7 = RHEL 7 or CentOS 7)
-_install_EL7_Packages() {
-    yum -y update
-    yum -y install \
-        time \
-        readline \
-        ruby \
-        ruby-devel \
-        tcl-tclreadline \
-        tcl-tclreadline-devel
-
-    if ! [ -x "$(command -v klayout)" ]; then
-      yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-    else
-      currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-      if _versionCompare $currentVersion -ge $klayoutVersion; then
-        echo "KLayout version greater than or equal to ${klayoutVersion}"
-      else
-        echo "KLayout version less than ${klayoutVersion}"
-        sudo yum remove -y klayout
-        yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-      fi
-    fi
-}
-
-
 # Enterprise Linux 8/9 cleanup
 _install_EL8_EL9_CleanUp() {
     dnf clean -y all
 }
 
-# Enterprise Linux 8/9 package installation (EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8 as no CentOS 9 exists)
+# Enterprise Linux 8/9 package installation (EL8/EL9 = RHEL, Rocky Linux, or AlmaLinux)
 _install_EL8_EL9_Packages() {
-    # Re-detect EL version for appropriate KLayout package
+    # Re-detect EL version
     if [[ -f /etc/os-release ]]; then
         elVersion=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g' | cut -d. -f1)
     else
@@ -236,14 +168,12 @@ _install_EL8_EL9_Packages() {
 
     # EL8 and EL9 use `dnf`, instead of `yum`
     dnf -y update
-    # EPEL has tcl-tclreadline and capnproto.
+    # EPEL has tcl-tclreadline.
     dnf -y install "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${elVersion}.noarch.rpm"
-    # The rest builds Yosys and kepler-formal.
+    # The rest builds Yosys.
     dnf -y install \
         bison \
         boost-devel \
-        capnproto \
-        capnproto-devel \
         findutils \
         flex \
         gcc \
@@ -264,7 +194,7 @@ _install_EL8_EL9_Packages() {
         wget \
         zlib-devel
 
-    # kepler-formal and the pip lock files need Python 3.10 or newer, which
+    # The pip lock files need Python 3.10 or newer, which
     # is newer than the EL8 and EL9 defaults.
     dnf -y install python3.12 python3.12-devel python3.12-pip
     update-alternatives --install /usr/bin/python3 python3 "$(command -v python3.12)" 50
@@ -276,70 +206,19 @@ _install_EL8_EL9_Packages() {
             readline-devel \
             tcl-tclreadline \
             tcl-tclreadline-devel
-        # The default GCC 8 is too old for kepler-formal.
+        # The default GCC 8 is too old for Yosys, which needs C++20.
         dnf -y install gcc-toolset-13
     fi
 
     if [[ "${elVersion}" == "9" ]]; then
-        # EL8 builds oneTBB instead, in -common.
-        dnf -y install tbb-devel
         dnf -y install \
             https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/readline-devel-8.1-4.el9.x86_64.rpm
     fi
-
-    # Install KLayout based on EL version, note the different URLs
-    case "${elVersion}" in
-        "8")
-            if ! [ -x "$(command -v klayout)" ]; then
-                dnf -y install https://www.klayout.org/downloads/CentOS_8/klayout-${klayoutVersion}-0.x86_64.rpm
-            else
-                currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-                if _versionCompare "$currentVersion" -ge $klayoutVersion; then
-                    echo "KLayout version greater than or equal to ${klayoutVersion}"
-                else
-                    echo "KLayout version less than ${klayoutVersion}"
-                    sudo dnf remove -y klayout
-                    dnf -y install https://www.klayout.org/downloads/CentOS_8/klayout-${klayoutVersion}-0.x86_64.rpm
-                fi
-            fi
-            ;;
-        "9")
-            if ! [ -x "$(command -v klayout)" ]; then
-                dnf -y install https://www.klayout.org/downloads/RockyLinux_9/klayout-${klayoutVersion}-0.x86_64.rpm
-            else
-                currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-                if _versionCompare "$currentVersion" -ge $klayoutVersion; then
-                    echo "KLayout version greater than or equal to ${klayoutVersion}"
-                else
-                    echo "KLayout version less than ${klayoutVersion}"
-                    sudo dnf remove -y klayout
-                    dnf -y install https://www.klayout.org/downloads/RockyLinux_9/klayout-${klayoutVersion}-0.x86_64.rpm
-                fi
-            fi
-            ;;
-        *)
-            echo "ERROR: Unsupported Enterprise Linux version: ${elVersion}"
-            exit 1
-            ;;
-    esac
 }
 
 _installUbuntuCleanUp() {
     apt-get autoclean -y
     apt-get autoremove -y
-}
-
-_installKlayoutDependenciesUbuntuAarch64() {
-    echo "Installing Klayout dependencies"
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get -y update
-    apt-get -y install  build-essential \
-                        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
-                        ruby ruby-dev \
-                        python3 python3-dev \
-                        libz-dev\
-                        libgit2-dev
-    echo "All dependencies installed successfully"
 }
 
 _installUbuntuPackages() {
@@ -349,13 +228,11 @@ _installUbuntuPackages() {
         bison \
         build-essential \
         ca-certificates \
-        capnproto \
         curl \
         flex \
         git \
         help2man \
         libboost-iostreams-dev \
-        libcapnp-dev \
         libffi-dev \
         libfl-dev \
         libfl2 \
@@ -368,7 +245,6 @@ _installUbuntuPackages() {
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
         libreadline-dev \
-        libtbb-dev \
         libz-dev \
         perl \
         pkg-config \
@@ -399,44 +275,8 @@ _installUbuntuPackages() {
     fi
     apt-get install -y --no-install-recommends ${packages[@]}
 
-    # install KLayout
-    if  [[ $1 == "rodete" ]]; then
-        apt-get -y install --no-install-recommends klayout python3-pandas
-    else
-        arch=$(uname -m)
-        lastDir="$(pwd)"
-        # temp dir to download and compile
-        baseDir=/tmp/installers
-        klayoutPrefix=${PREFIX:-"/usr/local"}
-        mkdir -p "${baseDir}"
-        cd "${baseDir}"
-        if [[ $arch == "aarch64" ]]; then
-            if [ ! -f ${klayoutPrefix}/klayout ]; then
-                _installKlayoutDependenciesUbuntuAarch64
-                echo "Installing KLayout for aarch64 architecture"
-                git clone --depth=1 -b "v${klayoutVersion}" https://github.com/KLayout/klayout.git
-                cd klayout
-                ./build.sh -bin "${klayoutPrefix}" -option -j "${numThreads}"
-            else
-                echo "Klayout is already installed"
-        fi
-        else
-            if [[ $1 == 22.04 ]]; then
-                klayoutChecksum=6dfffa50f385881768dee30bdc759608
-            elif [[ $1 == 24.04 ]]; then
-                klayoutChecksum=0181713e60891e461d6d1664c1b8e213
-            elif [[ $1 == 26.04 ]]; then
-                klayoutChecksum=904f60fd05c3a5029cab8a2840029f49
-            else
-                echo "Unsupported Ubuntu version $1. KLayout ${klayoutVersion} packages are pinned for 22.04, 24.04, and 26.04. Please upgrade to a supported LTS release or install KLayout ${klayoutVersion} manually from https://www.klayout.org/build.html"
-                exit 1
-            fi
-            wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
-            md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-            dpkg -i klayout_${klayoutVersion}-1_amd64.deb
-        fi
-        cd "${lastDir}"
-        rm -rf "${baseDir}"
+    if [[ $1 == "rodete" ]]; then
+        apt-get -y install --no-install-recommends python3-pandas
     fi
 
     if command -v docker &> /dev/null; then
@@ -471,9 +311,8 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib cmake
+    brew install python libomp doxygen bison flex boost spdlog zlib cmake
     brew link --force libomp
-    brew install --cask klayout
     brew install docker docker-buildx
 }
 
@@ -659,7 +498,7 @@ case "${platform}" in
 esac
 
 case "${os}" in
-    "CentOS Linux" | "Red Hat Enterprise Linux"* | "AlmaLinux" | "Rocky Linux")
+    "Red Hat Enterprise Linux"* | "AlmaLinux" | "Rocky Linux")
         # Enterprise Linux support - dispatch based on specific version
         if [[ ${CI} == "yes" ]]; then
             echo "WARNING: Installing CI dependencies is only supported on Ubuntu 24.04 and 26.04" >&2
@@ -673,20 +512,12 @@ case "${os}" in
             exit 1
         fi
 
-        # First install OpenROAD base
-        _installORDependencies
-
-        # Determine between EL7 vs EL8/9, since yum vs dnf should be used, and different Klayout builds exist
+        # Only EL8 and EL9 are supported; other versions stop before any install.
         case "${elVersion}" in
-            "7")
-                # EL7 = RHEL 7 or CentOS 7
-                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
-                    _install_EL7_Packages
-                    _install_EL7_CleanUp
-                fi
-                ;;
             "8"|"9")
-                # EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8+
+                # EL8/EL9 = RHEL, Rocky Linux, or AlmaLinux
+                # First install OpenROAD base
+                _installORDependencies
                 if [[ "${option}" == "base" || "${option}" == "all" ]]; then
                     _install_EL8_EL9_Packages
                     _install_EL8_EL9_CleanUp
@@ -701,9 +532,6 @@ case "${os}" in
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCmake
             _installBison
-            if [[ "${elVersion}" == "8" ]]; then
-                _installTbb
-            fi
             _installPipCommon
         fi
         ;;
@@ -724,31 +552,30 @@ case "${os}" in
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCmake
         fi
-        if [[ $version != "rodete" ]]; then
-            if _versionCompare ${version} -lt 23.04 ; then
-                if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                    _installPipCommon
-                fi
-            else
-                # The system Python is externally managed (PEP 668): its
-                # packages come from apt, in -base with the other system
-                # packages. The lock, which also has packages apt does not
-                # carry, goes into a virtual environment when one is named.
-                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
-                    _installPipSystem
-                fi
-                if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                    if [[ -n "${VIRTUAL_ENV:-}" ]]; then
-                        _installPipCommon
-                    else
-                        echo "Python packages from apt only. For those in" \
-                            "etc/requirements-common_lock.txt that apt does" \
-                            "not carry, set VIRTUAL_ENV and run -common again."
-                    fi
-                fi
+        if [[ $version != "rodete" ]] && _versionCompare ${version} -lt 23.04 ; then
+            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+                _installPipCommon
             fi
         else
-            echo "Skip pip packages for rodete"
+            # The system Python is externally managed (PEP 668): its
+            # packages come from apt, in -base with the other system
+            # packages. The lock, which also has packages apt does not
+            # carry, among them the klayout module the flow writes GDS
+            # with, goes into the virtual environment VIRTUAL_ENV names;
+            # setup.sh names the checkout's .venv.
+            if [[ $version != "rodete" ]] && [[ "${option}" == "base" || "${option}" == "all" ]]; then
+                _installPipSystem
+            fi
+            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+                if [[ -z "${VIRTUAL_ENV:-}" ]]; then
+                    echo "ERROR: the system Python is externally managed;" \
+                        "set VIRTUAL_ENV to the virtual environment to" \
+                        "install etc/requirements-common_lock.txt into," \
+                        "or run setup.sh, which installs it into .venv." >&2
+                    exit 1
+                fi
+                _installPipCommon
+            fi
         fi
         ;;
     "Darwin" )

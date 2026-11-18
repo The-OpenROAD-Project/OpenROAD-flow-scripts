@@ -2,7 +2,7 @@ utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 source $::env(SCRIPTS_DIR)/formal_check.tcl
 erase_non_stage_variables cts
-load_design 3_place.odb
+load_stage_input 3_place.odb
 source_step_tcl PRE CTS
 
 # Clone clock tree inverters next to register loads
@@ -16,6 +16,7 @@ append_env_var deprecated CTS_CLUSTER_SIZE -sink_clustering_size 1
 append_env_var deprecated CTS_CLUSTER_DIAMETER -sink_clustering_max_diameter 1
 append_env_var deprecated CTS_BUF_LIST -buf_list 1
 append_env_var deprecated CTS_LIB_NAME -library 1
+append_env_var deprecated CTS_USEFUL_SKEW -useful_skew 0
 set cts_args [list -sink_clustering_enable -repair_clock_nets {*}$deprecated]
 
 # CTS_ARGS, deprecated, replaces the flow's arguments.
@@ -41,11 +42,7 @@ set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
-set result [catch { detailed_placement_helper cts.main -quiet } msg]
-if { $result != 0 } {
-  orfs_write_db $::env(RESULTS_DIR)/4_1_error.odb
-  error "Detailed placement failed in CTS: $msg"
-}
+detailed_placement_helper cts.main -quiet
 
 log_cmd estimate_parasitics
 
@@ -62,11 +59,7 @@ if { [command_runs repair_timing cts.main [expr { !$::env(SKIP_CTS_REPAIR_TIMING
     run_lec_test 4_rsz 4_before_rsz_lec.v 4_after_rsz_lec.v
   }
 
-  set result [catch { detailed_placement_helper cts.repair_timing -quiet } msg]
-  if { $result != 0 } {
-    orfs_write_db $::env(RESULTS_DIR)/4_1_error.odb
-    error "Detailed placement failed in CTS: $msg"
-  }
+  detailed_placement_helper cts.repair_timing -quiet
 
   log_cmd check_placement -placeable -verbose
 
