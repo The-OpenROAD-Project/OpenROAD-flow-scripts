@@ -201,6 +201,9 @@ class TestRunMe(StubFlowTestCase):
     def test_work_home_absolute(self):
         self.assert_runs(os.path.join(self.stub.tmp, "work"))
 
+    def test_work_home_relative(self):
+        self.assert_runs("work/stub")
+
 
 class TestOptions(StubFlowTestCase):
     def test_copy_issue_copies_the_archive(self):

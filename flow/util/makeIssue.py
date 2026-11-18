@@ -99,13 +99,31 @@ def is_yosys_step(script):
         return YOSYS_SCRIPT.search(f.read()) is not None
 
 
+def archive_root_from_run_me(work_home, vars_basename):
+    """Where run-me changes to, relative to its own directory, and the vars
+    file's path from there: the archive's root, where the vars' paths
+    start. run-me is at the root when WORK_HOME is absolute (its path is
+    stripped from the members) or the flow directory; a relative WORK_HOME
+    keeps its place under the root, and run-me climbs back from it."""
+    here = os.path.realpath(".")
+    if work_home.startswith("/") or os.path.realpath(work_home) == here:
+        return None, f"./{os.path.basename(vars_basename)}.sh"
+    root = os.path.relpath(here, os.path.realpath(work_home))
+    vars_path = os.path.relpath(os.path.realpath(vars_basename), here)
+    return root, f"./{vars_path}.sh"
+
+
 def run_me_text(env, issue_target, vars_basename, yosys):
-    """The run-me script: it changes to its own directory, sources the vars
-    file from there and runs the step's script."""
+    """The run-me script: it changes to the archive's root, sources the
+    vars file from there and runs the step's script."""
+    root, vars_path = archive_root_from_run_me(
+        env.get("WORK_HOME") or ".", vars_basename
+    )
+    run_me_dir = '"$(dirname "$0")"' if root is None else f'"$(dirname "$0")/{root}"'
     lines = [
         "#!/usr/bin/env bash",
-        'cd "$(dirname "$0")"',
-        f"source ./{os.path.basename(vars_basename)}.sh",
+        f"cd {run_me_dir}",
+        f"source {vars_path}",
     ]
     script = "${SCRIPTS_DIR}/" + issue_target + ".tcl"
     if yosys:
