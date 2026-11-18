@@ -56,7 +56,10 @@ class StubFlow:
     def __init__(self):
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.tmp = self.tmp_dir.name
-        self.flow = os.path.join(self.tmp, "flow")
+        # FLOW_HOME/.. is the ORFS root, which the vars files spell
+        # ${FLOW_HOME}/..; a WORK_HOME in self.tmp is outside it, as a CI
+        # workspace is.
+        self.flow = os.path.join(self.tmp, "orfs", "flow")
         self.scripts = os.path.join(self.flow, "scripts")
         self.platform_dir = os.path.join(self.flow, "platforms", PLATFORM)
         self.design_dir = os.path.join(self.flow, "designs", PLATFORM, NICKNAME)
@@ -446,6 +449,43 @@ class TestArchiveLayout(StubFlowTestCase):
         archive = self.stub.make_issue(work, SDC_FILE=sibling)
         members = self.stub.members(archive)
         self.assertIn(f"{STEP}_{TAG}{sibling}", members)
+
+
+class TestVarsFiles(StubFlowTestCase):
+    """The archive's vars files run on another machine: python3 is the
+    default PYTHON_EXE in both the shell and the Tcl vars (#4792), paths
+    under an absolute WORK_HOME are relative to the archive's root while
+    a directory that only starts with WORK_HOME's name keeps its path
+    (#4274), and paths under a docker image's /workspace and /platforms
+    are relative too (#3870). PRESERVE_PATHS keeps every path."""
+
+    def vars_text(self, work_home, ext, **extra):
+        root = self.stub.unpack(self.stub.make_issue(work_home, **extra))
+        with open(self.stub.find(root, f"vars-{FLOW_NAME}.{ext}")) as f:
+            return f.read()
+
+    def test_python_exe_default(self):
+        self.assertIn(
+            "export PYTHON_EXE=${PYTHON_EXE:-python3}", self.vars_text(".", "sh")
+        )
+        self.assertIn("set env(PYTHON_EXE) python3", self.vars_text(".", "tcl"))
+
+    def test_work_home_paths_are_relative(self):
+        work = os.path.join(self.stub.tmp, "work")
+        text = self.vars_text(work, "sh", SIBLING=f"{work}_other/x")
+        self.assertIn(
+            f'export RESULTS_DIR="./results_dir/{PLATFORM}/{NICKNAME}/{VARIANT}"', text
+        )
+        self.assertIn(f'export SIBLING="{work}_other/x"', text)
+
+    def test_docker_paths_are_relative(self):
+        text = self.vars_text(".", "sh", DOCKER_FILE="/workspace/a /platforms/b")
+        self.assertIn('export DOCKER_FILE="./workspace/a ./platforms/b"', text)
+
+    def test_preserve_paths(self):
+        work = os.path.join(self.stub.tmp, "work")
+        text = self.vars_text(work, "sh", PRESERVE_PATHS="1")
+        self.assertIn(f'export RESULTS_DIR="{work}/results_dir/', text)
 
 
 if __name__ == "__main__":
