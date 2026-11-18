@@ -2,6 +2,7 @@ utl::set_metrics_stage "synth__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 source $::env(SCRIPTS_DIR)/formal_check.tcl
 erase_non_stage_variables synth
+auto_memories_synthesis
 load_design 1_2_yosys.v
 source_step_tcl PRE SYNTH
 
