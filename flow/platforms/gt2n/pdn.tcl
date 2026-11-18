@@ -1,10 +1,4 @@
 ####################################
-# global connections
-####################################
-add_global_connection -net {vdd} -inst_pattern {.*} -pin_pattern {^vdd$} -power
-add_global_connection -net {vss} -inst_pattern {.*} -pin_pattern {^vss$} -ground
-global_connect
-####################################
 # voltage domains
 ####################################
 set_voltage_domain -name {CORE} -power {vdd} -ground {vss}

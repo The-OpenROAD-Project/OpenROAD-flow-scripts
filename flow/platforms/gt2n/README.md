@@ -1,6 +1,8 @@
 # GT2N PDK
 
 > **Source:** copied verbatim from [azadnaeemi/GT2N](https://github.com/azadnaeemi/GT2N) at commit [`308b221`](https://github.com/azadnaeemi/GT2N/commit/308b221b82e19199a9691f2f78cbc7ce981481ca) (2026-06-09). This release splits the original `gt2_6t_tap_w*_*` cell into a frontside-PDN variant (`gt2_6t_tapfspdn_w*_*`, M1 + BPR pins, full width) and a backside-PDN variant (`gt2_6t_tapbspdn_w*_*`, BPR-only pins, half width) in both the LEF and the GDS, resolving the LEF / GDS mismatch we filed as [azadnaeemi/GT2N#16](https://github.com/azadnaeemi/GT2N/issues/16). The platform `TAP_CELL_NAME` points at the backside-PDN variant since the PDN here is backside-only. Also incorporates the BPR `OBS` → `PORT` fix from [azadnaeemi/GT2N#12](https://github.com/azadnaeemi/GT2N/issues/12).
+>
+> **Local modification:** the LEFs carry Vt implant layers that upstream does not. `add_vt_implant.py` declares `ELVT`/`ULVT`/`LVT`/`SVT`/`HVT` `IMPLANT` layers in `gt2_tech.lef` and adds a full-cell `OBS` rectangle on the matching layer to every macro, mirroring the per-cell Vt rectangle in the GDS (`LVT` is the base device and is LEF-only). OpenROAD's resizer identifies a cell's Vt from these implant obstructions; without them every W/Vt flavor looks like the same Vt and Vt swapping does nothing. Rerun `python3 add_vt_implant.py` after re-syncing the LEFs from upstream.
 
 <img src="./VirtualFabricationDemo.gif" alt="VirtualFabricationDemo" width="400">
 

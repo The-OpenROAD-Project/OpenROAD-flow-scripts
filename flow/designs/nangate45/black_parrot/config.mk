@@ -33,8 +33,9 @@ export PLACE_DENSITY_LB_ADDON = 0.05
 
 export MACRO_PLACEMENT_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/macro_placement.tcl
 
-export MACRO_PLACE_HALO    = 15 15
+export RTLMP_MIN_CHANNEL_SIZE = 30 30
 
 export TNS_END_PERCENT     = 100
+export GPL_PLACE_IOS       = 1
 
 export HOLD_SLACK_MARGIN = 0.03

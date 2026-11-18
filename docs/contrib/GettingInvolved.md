@@ -44,7 +44,7 @@ Please pay careful attention to the
 [tool checklist](https://openroad.readthedocs.io/en/latest/contrib/DeveloperGuide.html#tool-checklist) for all code. If you want
 to add or improve functionality in OpenROAD, please start with the
 top-level [app](https://github.com/The-OpenROAD-Project/OpenROAD/) repo. You
-can see in the `src` directory that submodules exist pointing to tested
+can see in the `openroad` directory that submodules exist pointing to tested
 versions of the other relevant repos in the project. Please look at the
 tool workflow in the developer guide [document](DeveloperGuide.md)
 to work with the app and its submodule repos in an efficient way.
@@ -75,11 +75,11 @@ project like OpenROAD with many application subcomponents, the software
 architecture can quickly get out of control. Changes with lots of new
 dependencies which are not necessary are less likely to be integrated.
 
-If you want to add Tcl code to define a new tool command, look at [pdngen](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/pdn)
+If you want to add Tcl code to define a new tool command, look at [pdngen](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/openroad/pdn)
 as an example of how to do so. Take a look at the
-[CMakeLists file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/CMakeLists.txt)
-which automatically sources the Tcl code and the
-[Tcl file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pdn/src/pdn.tcl)
+[BUILD file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/openroad/pdn/BUILD)
+which encodes the Tcl code into the binary and the
+[Tcl file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/openroad/pdn/src/pdn.tcl)
 itself.
 
 To accept contributions, we require each commit to be made with a DCO (Developer

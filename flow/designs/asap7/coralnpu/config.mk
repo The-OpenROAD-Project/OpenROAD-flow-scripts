@@ -20,9 +20,10 @@ export SDC_FILE                = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/c
 export SYNTH_HDL_FRONTEND     ?= slang
 
 export CORE_UTILIZATION        = 65
+export GPL_PLACE_IOS           = 1
 
 export SYNTH_HIERARCHICAL      = 1
 export SYNTH_MINIMUM_KEEP_SIZE = 40000
 
-export MACRO_PLACE_HALO = 2 2
+export RTLMP_MIN_CHANNEL_SIZE = 4 4
 

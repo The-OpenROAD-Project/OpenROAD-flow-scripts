@@ -1,32 +1,15 @@
 #!/usr/bin/env python3
 import json
-import os
+import re
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import gen_memories
-
-# Setup FAKERAM_RUN_PY using runfiles if available, otherwise assume a relative path
-if "TEST_WORKSPACE" in os.environ:
-    # Bazel test execution
-    runfiles_dir = Path(os.environ.get("RUNFILES_DIR", "."))
-    candidates = list(runfiles_dir.glob("**/fakeram*/run.py")) + list(
-        runfiles_dir.glob("**/run.py")
-    )
-    fakeram_run = candidates[0] if candidates else runfiles_dir / "fakeram" / "run.py"
-else:
-    fakeram_run = (
-        Path(__file__).resolve().parent.parent.parent.parent
-        / "tools"
-        / "FakeRAM2.0"
-        / "run.py"
-    )
-
-os.environ["FAKERAM_RUN_PY"] = str(fakeram_run)
 
 SAMPLE_YOSYS_NETLIST = {
     "modules": {
@@ -78,6 +61,16 @@ SAMPLE_YOSYS_NETLIST = {
         },
     }
 }
+
+# a register-file spec for the idiomatic mem_128x32
+REGFILE_SPEC = """\
+module mem_128x32
+words 128
+bits 32
+clock clk
+read ra rd
+write wa wd we
+"""
 
 FORCE_TAGS = """\
 {
@@ -132,19 +125,104 @@ class GenMemoriesTest(unittest.TestCase):
             sorted(p.name for p in mems_dir.iterdir()),
             [
                 "blackboxes.txt",
+                "inline.txt",
                 "mem_128x32.lef",
                 "mem_128x32.lib",
                 "mem_128x32_pre_layout.lib",
+                "regfile_cores.txt",
+                "regfiles.txt",
             ],
         )
-        self.assertEqual((mems_dir / "blackboxes.txt").read_text(), "mem_128x32\n")
+        # one `<module> <area>` line; the area is the one the .lib states,
+        # as it states it, which synthesis costs the blackbox by
+        [line] = (mems_dir / "blackboxes.txt").read_text().splitlines()
+        name, area = line.split()
+        self.assertEqual(name, "mem_128x32")
+        lib_area = re.search(
+            r"^\s*area\s*:\s*([0-9.]+)\s*;",
+            (mems_dir / "mem_128x32.lib").read_text(),
+            re.M,
+        ).group(1)
+        self.assertEqual(area, lib_area)
+        self.assertGreater(float(area), 0)
+
+    def run_with_regfile(self, macro_place):
+        """mem_128x32, idiomatic, also listed as a register file; a stub
+        stands in for generate_ram and writes the RAM's .lib."""
+        d = Path(self.tmp.name)
+        netlist_json = d / "memories_inferred.json"
+        netlist_json.write_text(json.dumps(SAMPLE_YOSYS_NETLIST))
+        spec = d / "mem_128x32.regfile"
+        spec.write_text(REGFILE_SPEC)
+
+        def generate(spec, module, shape, openroad, lefs, out_dir):
+            block = f"{module}_ram"
+            if shape != "inline":
+                (out_dir / f"{block}.lib").write_text(
+                    f"library ({block}) {{\n  cell ({block}) {{\n"
+                    "    area : 42.5;\n  }\n}\n"
+                )
+            return {
+                "block": block,
+                "macro": shape != "inline",
+                "dissolve": shape == "netlist",
+            }
+
+        with mock.patch.object(gen_memories.regfile_ram, "generate", generate):
+            code = gen_memories.run(
+                netlist_json,
+                [],
+                "asap7",
+                d / "memories",
+                d / "memories.json",
+                regfile_specs=[spec],
+                openroad="openroad",
+                lefs=[d / "tech.lef"],
+                macro_place=macro_place,
+            )
+        self.assertEqual(code, 0)
+        return d
+
+    def test_listed_regfile_is_not_a_fakeram(self):
+        # a module both idiomatic and listed is a register file, once: no
+        # FakeRAM views, one memories.json record, and blackboxes.txt
+        # names the RAM that stands in for it, never the module
+        for macro_place, blackboxes in (
+            ([], ""),
+            (["mem_128x32"], "mem_128x32_ram 42.5\n"),
+        ):
+            with self.subTest(macro_place=macro_place):
+                d = self.run_with_regfile(macro_place)
+                mems_dir = d / "memories"
+                for view in ("mem_128x32.lib", "mem_128x32_pre_layout.lib"):
+                    self.assertFalse((mems_dir / view).exists(), view)
+                self.assertFalse((mems_dir / "mem_128x32.lef").exists())
+                self.assertEqual((mems_dir / "blackboxes.txt").read_text(), blackboxes)
+                doc = json.loads((d / "memories.json").read_text())
+                records = [m for m in doc["memories"] if m["name"] == "mem_128x32"]
+                self.assertEqual(len(records), 1)
+                self.assertEqual(records[0]["kind"], "regfile")
+                self.assertFalse(records[0]["idiomatic"])
+
+    def test_blackboxes_names_each_macro_once(self):
+        # two macros of one name would share one set of views
+        d = Path(self.tmp.name)
+        (d / "ram.lib").write_text("cell (ram) {\n  area : 1.0;\n}\n")
+        gen_memories.write_blackboxes(d, ["ram"])
+        self.assertEqual((d / "blackboxes.txt").read_text(), "ram 1.0\n")
+        with self.assertRaises(SystemExit) as stop:
+            gen_memories.write_blackboxes(d, ["ram", "ram"])
+        self.assertIn("two macros are named ram", str(stop.exception))
 
     def test_additional_memories_forces_conversion(self):
         force = Path(self.tmp.name) / "force.memories"
         force.write_text(FORCE_TAGS)
         code, d = self.run_generator(memories_files=[force])
         self.assertEqual(code, 0)
-        blackboxes = (d / "memories" / "blackboxes.txt").read_text().split()
+        blackboxes = [
+            line.split()[0]
+            for line in (d / "memories" / "blackboxes.txt").read_text().splitlines()
+        ]
         self.assertEqual(sorted(blackboxes), ["cache_tags", "mem_128x32"])
         self.assertTrue((d / "memories" / "cache_tags.lib").exists())
         self.assertTrue((d / "memories" / "cache_tags.lef").exists())
@@ -152,6 +230,41 @@ class GenMemoriesTest(unittest.TestCase):
         tags = next(m for m in doc["memories"] if m["name"] == "cache_tags")
         self.assertTrue(tags["idiomatic"])
         self.assertIn("forced", tags["reason"])
+
+    def test_deep_memory_is_folded_square(self):
+        # 512x17 with one bit line per column is 2.3 x 166.6 um, 73:1, a
+        # sliver macro placement cannot fit; the column mux folds it. The
+        # fold squares the bit-cell counts, and a bit cell is not square,
+        # so the bound leaves room for that.
+        netlist = json.loads(json.dumps(SAMPLE_YOSYS_NETLIST))
+        mem = netlist["modules"].pop("\\mem_128x32")
+        mem["cells"]["\\$mem_0"]["parameters"].update(SIZE=512, WIDTH=17)
+        # as yosys writes it: a data bit and a write enable bit per bit
+        conn = mem["cells"]["\\$mem_0"]["connections"]
+        for port in ("RD_DATA", "WR_DATA"):
+            conn[port] = conn[port][:17]
+        conn["WR_EN"] = conn["WR_EN"][:1] * 17
+        netlist["modules"] = {"\\mem_512x17": mem}
+        d = Path(self.tmp.name)
+        (d / "netlist.json").write_text(json.dumps(netlist))
+        code = gen_memories.main(
+            [
+                "--platform",
+                "asap7",
+                "--out-dir",
+                str(d / "memories"),
+                "--json",
+                str(d / "memories.json"),
+                "--yosys-json",
+                str(d / "netlist.json"),
+            ]
+        )
+        self.assertEqual(code, 0)
+        lef = (d / "memories" / "mem_512x17.lef").read_text()
+        size = re.search(r"SIZE\s+(\S+)\s+BY\s+(\S+)", lef)
+        self.assertIsNotNone(size, "no SIZE in the generated LEF")
+        width, height = map(float, size.groups())
+        self.assertLessEqual(max(width, height) / min(width, height), 8.0)
 
     def test_unsupported_platform_fails_clearly(self):
         code, _d = self.run_generator(platform="nangate45")
@@ -162,6 +275,22 @@ class GenMemoriesTest(unittest.TestCase):
         bad.write_text("{not json")
         with self.assertRaises(json.JSONDecodeError):
             self.run_generator(memories_files=[bad])
+
+    def test_missing_yosys_json_fails(self):
+        d = Path(self.tmp.name)
+        with self.assertRaises(FileNotFoundError):
+            gen_memories.main(
+                [
+                    "--platform",
+                    "asap7",
+                    "--out-dir",
+                    str(d / "memories"),
+                    "--json",
+                    str(d / "memories.json"),
+                    "--yosys-json",
+                    str(d / "missing.json"),
+                ]
+            )
 
     def test_no_memories_still_writes_contract_files(self):
         d = Path(self.tmp.name)
@@ -182,6 +311,156 @@ class GenMemoriesTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(json.loads((d / "memories.json").read_text())["memories"], [])
         self.assertEqual((d / "memories" / "blackboxes.txt").read_text(), "")
+        self.assertEqual((d / "memories" / "regfiles.txt").read_text(), "")
+        self.assertEqual((d / "memories" / "inline.txt").read_text(), "")
+        self.assertEqual((d / "memories" / "regfile_cores.txt").read_text(), "")
+
+    def test_regfile_area_is_the_lib_cell_area(self):
+        # a register file's blackboxes.txt line carries the area its
+        # generated .lib states, as FakeRAM's do
+        with tempfile.TemporaryDirectory() as d:
+            lib = Path(d) / "RegFile.lib"
+            lib.write_text(
+                "library (RegFile) {\n  cell (RegFile) {\n"
+                "    area : 153.527400;\n  }\n}\n"
+            )
+            self.assertEqual(gen_memories._lib_area(lib), "153.527400")
+
+    def test_regfile_lib_without_area_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            lib = Path(d) / "RegFile.lib"
+            lib.write_text("library (RegFile) {\n  cell (RegFile) {\n  }\n}\n")
+            with self.assertRaises(SystemExit):
+                gen_memories._lib_area(lib)
+
+    def test_initialized_register_file_stops(self):
+        # a spec naming a module whose memory has an initial value stops:
+        # generate_ram's storage has none, and the value would be lost
+        d = Path(self.tmp.name)
+        netlist = json.loads(json.dumps(SAMPLE_YOSYS_NETLIST))
+        cell = netlist["modules"]["\\cache_tags"]["cells"]["\\$mem_0"]
+        cell["parameters"]["INIT"] = "x" * 75 + "01" * 12 + "1"
+        netlist_json = d / "memories_inferred.json"
+        netlist_json.write_text(json.dumps(netlist))
+        spec = d / "cache_tags.regfile"
+        spec.write_text("module cache_tags\n")
+        with self.assertRaises(SystemExit) as stop:
+            gen_memories.run(
+                netlist_json,
+                [],
+                "asap7",
+                d / "memories",
+                d / "memories.json",
+                regfile_specs=[spec],
+            )
+        self.assertIn("cache_tags", str(stop.exception))
+        self.assertIn("initial value", str(stop.exception))
+
+    def test_spec_mode(self):
+        # mode netlist is the only mode, and the default; mode macro stops
+        # with the advice to run the register file as a design of its own
+        d = Path(self.tmp.name)
+        spec = d / "rf.regfile"
+        spec.write_text("module rf\n")
+        self.assertEqual(gen_memories._spec_mode(spec), "netlist")
+        spec.write_text("module rf\nmode netlist\n")
+        self.assertEqual(gen_memories._spec_mode(spec), "netlist")
+        spec.write_text("module rf\nmode macro\n")
+        with self.assertRaises(SystemExit) as stop:
+            gen_memories._spec_mode(spec)
+        self.assertIn("design of its own", str(stop.exception))
+        spec.write_text("module rf\nmode other\n")
+        with self.assertRaises(SystemExit):
+            gen_memories._spec_mode(spec)
+
+    def test_spec_check(self):
+        # a spec missing a key the translation needs, or with a count that
+        # is not a positive integer, stops before generate_ram runs
+        d = Path(self.tmp.name)
+        spec = d / "rf.regfile"
+        good = "module rf\nwords 32\nbits 8\nclock clk\nread ra rd\nwrite wa wd we\n"
+        spec.write_text(good)
+        gen_memories.regfile_ram.check(spec)
+        for bad, message in (
+            (good.replace("clock clk\n", ""), "no `clock`"),
+            (good.replace("read ra rd\n", ""), "no `read` or `read_banked`"),
+            (good.replace("words 32", "words 0"), "`words` takes one positive"),
+            (good.replace("bits 8", "bits eight"), "`bits` takes one positive"),
+            (good + "bit_folds 2 3\n", "`bit_folds` takes one positive"),
+            (good + "colour red\n", "unknown key `colour`"),
+        ):
+            spec.write_text(bad)
+            with self.assertRaises(SystemExit) as stop:
+                gen_memories.regfile_ram.check(spec)
+            self.assertIn(message, str(stop.exception))
+
+    def test_fold_rule(self):
+        # a word folds toward the square while the array is more than 8
+        # times as wide as tall, or while a word runs over WORD_SPAN_UM
+        folds = gen_memories.regfile_ram._folds
+        self.assertEqual(folds(100, 100, 100, 64), 1)
+        self.assertEqual(folds(600, 17.6, 100, 64), 8)
+        self.assertEqual(folds(300, 100, 300, 64), 2)
+        # never an empty fold: 3 bits fold at most in two
+        self.assertEqual(folds(600, 17.6, 600, 3), 2)
+
+    def _generate(self, bit_folds, outline):
+        # generate() with generate_ram stubbed: the generate script writes
+        # the outline (dx dy dbu), the views script stops the run
+        d = Path(self.tmp.name)
+        spec = d / "rf.regfile"
+        spec.write_text(
+            "module rf\nwords 32\nbits 64\nclock clk\nread ra rd\n"
+            "write wa wd we\n" + (f"bit_folds {bit_folds}\n" if bit_folds else "")
+        )
+
+        class Views(Exception):
+            pass
+
+        scripts = []
+
+        def openroad(cmd):
+            script = Path(cmd[-1])
+            scripts.append(script.name)
+            if script.name.endswith(".generate.tcl"):
+                (d / "rf_ram.outline").write_text(outline)
+            else:
+                raise Views()
+
+        with mock.patch.dict("os.environ", {"LIB_FILES": "cells.lib"}):
+            with mock.patch.object(
+                gen_memories.regfile_ram.subprocess, "check_call", openroad
+            ):
+                with self.assertRaises((Views, SystemExit)) as stop:
+                    gen_memories.regfile_ram.generate(
+                        spec, "rf", "inline", "openroad", [], d
+                    )
+        return stop.exception, scripts
+
+    def test_named_folds_refused_below_rule(self):
+        # a long, thin array: the rule folds a word in 8; a spec naming
+        # fewer is refused with the fold the rule would choose
+        stop, scripts = self._generate(1, "600000 17600 1000\n")
+        self.assertIsInstance(stop, SystemExit)
+        self.assertIn("bit_folds 1", str(stop))
+        self.assertIn("34.1 times as wide as tall", str(stop))
+        self.assertIn("600 um long", str(stop))
+        self.assertIn("folds it 8 times", str(stop))
+        self.assertEqual(scripts, ["rf.generate.tcl"])
+
+    def test_named_folds_accepted_at_rule(self):
+        # the same array folded as the rule would fold it is built as named
+        stop, scripts = self._generate(8, "140000 140000 1000\n")
+        self.assertNotIsInstance(stop, SystemExit)
+        self.assertEqual(scripts, ["rf.generate.tcl", "rf.views.tcl"])
+
+    def test_rule_folds_unnamed(self):
+        # with no bit_folds the rule folds and builds again
+        stop, scripts = self._generate(None, "600000 17600 1000\n")
+        self.assertNotIsInstance(stop, SystemExit)
+        self.assertEqual(
+            scripts, ["rf.generate.tcl", "rf.generate.tcl", "rf.views.tcl"]
+        )
 
 
 if __name__ == "__main__":

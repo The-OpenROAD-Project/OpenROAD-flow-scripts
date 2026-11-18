@@ -8,6 +8,32 @@
 ################################################################################
 
 
+import math
+
+
+def pick_column_mux_factor(rows, bits):
+    """Fold a tall array into a square one.
+
+    The array is rows/factor cells tall and bits*factor cells wide, so
+    the factor that squares it is sqrt(rows/bits). Rounded to a power of
+    two because a column mux selects one of 2^n bit lines, and clamped
+    at 1 so a wide, shallow memory is left alone.
+
+    Area does not change: this moves cells between the two dimensions
+    rather than adding or removing any.
+    """
+    if rows <= 0 or bits <= 0:
+        return 1
+    ideal = math.sqrt(float(rows) / float(bits))
+    if ideal <= 1.0:
+        return 1
+    lo = 2 ** math.floor(math.log2(ideal))
+    hi = lo * 2
+    # Nearest in log space, which is what "closest to square" means when
+    # the candidates are powers of two.
+    return lo if (ideal / lo) <= (hi / ideal) else hi
+
+
 class Process:
     def __init__(self, json_data):
         """Initialize from json_data imported from config file"""
@@ -23,9 +49,14 @@ class Process:
         self.contacted_poly_pitch_nm = json_data.get("contacted_poly_pitch_nm", None)
         self.fin_pitch_nm = json_data.get("fin_pitch_nm", None)
         self.manufacturing_grid_nm = int(json_data["manufacturing_grid_nm"])
-        self.column_mux_factor = int(json_data["column_mux_factor"])
 
         # Optional keys
+        # Absent means get_macro_dimensions picks one per memory
+        self.column_mux_factor = (
+            int(json_data["column_mux_factor"])
+            if "column_mux_factor" in json_data
+            else None
+        )
         self.snap_width_nm = (
             int(json_data["snap_width_nm"]) if "snap_width_nm" in json_data else 1
         )
@@ -60,6 +91,17 @@ class Process:
         self._calc_y_step()
         self.bitcell_width_um = json_data.get("bitcell_width_um", None)
         self.bitcell_height_um = json_data.get("bitcell_height_um", None)
+        # The narrowest macro the platform's power grid can reach; 0 for
+        # no floor. See ASAP7_PROCESS_CONFIG in orfs_asap7/generate.py.
+        self.min_width_um = json_data.get("min_width_um", 0.0)
+        if (
+            not isinstance(self.min_width_um, (int, float))
+            or isinstance(self.min_width_um, bool)
+            or self.min_width_um < 0
+        ):
+            raise Exception(
+                "min_width_um %r is not a width in um" % (self.min_width_um,)
+            )
 
         # Set to True when we want to use the process parameters or bitcell
         # sizes to calculate the macro dimensions. Set to False for spreadsheet
@@ -99,7 +141,6 @@ class Process:
         and process parameters
         """
 
-        column_mux_factor = self.column_mux_factor
         bitcell_width, bitcell_height = self.get_bitcell_dimensions()
 
         all_bitcell_height = bitcell_height * depth
@@ -111,6 +152,11 @@ class Process:
         elif num_banks != 1:
             raise Exception("Unsupported number of banks: {}".format(num_banks))
 
+        column_mux_factor = self.column_mux_factor
+        if column_mux_factor is None:
+            column_mux_factor = pick_column_mux_factor(
+                depth / num_banks, width_in_bits * num_banks
+            )
         all_bitcell_height = all_bitcell_height / column_mux_factor
         all_bitcell_width = all_bitcell_width * column_mux_factor
 
@@ -118,6 +164,7 @@ class Process:
         total_width = all_bitcell_width * 1.2
 
         total_height += additional_height
+        total_width = max(total_width, self.min_width_um)
 
         return (total_width, total_height)
 
@@ -202,7 +249,7 @@ class Process:
         return self.y_step
 
     def get_column_mux_factor(self):
-        """Returns the column mux factor"""
+        """Returns the column mux factor, None if picked per memory"""
         return self.column_mux_factor
 
     def set_calc_dimensions(self, val):

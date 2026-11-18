@@ -14,8 +14,10 @@ itself a welcome signal that someone is using it.
 
 ## What it does
 
-With `AUTO_MEMORIES=1`, a pre-synthesis step runs
-`scripts/memories/gen_memories.py` over `VERILOG_FILES` and writes:
+With `AUTO_MEMORIES=1`, a pre-synthesis yosys pass
+(`scripts/memories/extract_memories.tcl`) elaborates `VERILOG_FILES`
+into `$(RESULTS_DIR)/memories_inferred.json`, and
+`scripts/memories/gen_memories.py` reads that netlist and writes:
 
 | File | Content |
 | --- | --- |
@@ -23,39 +25,52 @@ With `AUTO_MEMORIES=1`, a pre-synthesis step runs
 | `$(RESULTS_DIR)/memories/<m>.lib` | Generated Liberty view per converted memory. |
 | `$(RESULTS_DIR)/memories/<m>_pre_layout.lib` | Ideal-clock (zero clock-tree insertion) variant for pre-CTS consumers that select lib files themselves. The Makefile flow uses `<m>.lib` throughout. |
 | `$(RESULTS_DIR)/memories/<m>.lef` | Abstract LEF per converted memory. |
-| `$(RESULTS_DIR)/memories/blackboxes.txt` | Names of the converted modules — what synthesis blackboxes. |
+| `$(RESULTS_DIR)/memories/blackboxes.txt` | `<module> <area>` per converted module — what synthesis blackboxes, and the area in um² its `.lib` states, which `SYNTH_MINIMUM_KEEP_SIZE` costs it by. |
 
 Synthesis (canonicalization) blackboxes the converted modules so the
 liberty view wins over their behavioral bodies; floorplan through final
-read the generated `.lib`/`.lef` alongside `ADDITIONAL_LIBS`/
-`ADDITIONAL_LEFS`. Everything downstream keys off the files above —
-nothing else passes between the generator and the flow. That file-based
-handoff is what lets build systems (e.g. bazel-orfs) declare the
-generated artifacts as ordinary stage outputs and transitive
-dependencies of the remaining stages.
+read the `<m>.lib`/`<m>.lef` of each module `blackboxes.txt` lists,
+alongside `ADDITIONAL_LIBS`/`ADDITIONAL_LEFS`. Everything downstream keys
+off the files above, by the names the lists give: a file in `memories/`
+that no list names is not read, and a list that is missing stops the
+step that reads it. Nothing else passes between the generator and the
+flow. That file-based handoff is what lets build systems (e.g.
+bazel-orfs) declare the generated artifacts as ordinary stage outputs
+and transitive dependencies of the remaining stages.
+
+Synthesis writes the views and lists to its own
+`$(RESULTS_DIR)/memories`. Every step reads them from
+`AUTO_MEMORIES_DIR`, synthesis included, which defaults to that
+directory; with make, leave it there. `AUTO_MEMORIES_DIR` is for a build
+system that runs a stage of one variant on another variant's synthesis
+(e.g. bazel-orfs): it sets it for each step it runs, synthesis included,
+to the memories of the variant that synthesised them.
 
 Memories that are *not* converted stay in the netlist and synthesize to
 flip-flops, like any other RTL.
 
 ## How memories are detected
 
-Detection is a fast Python scan (`scripts/memories/detect.py`) for
-modules whose entire port list follows the firtool (CIRCT) memory port
-convention: every port named `<R|W|RW><n>_<function>`, e.g. `R0_addr`,
-`W0_en`, `RW0_wdata`, including the subword-split forms `RW0_wdata_3` /
-`W0_mask_2`. This is what Chisel/firtool emits for module-separated
-memories, and what the rocket-chip generation of Chisel emitted (the
-in-tree tinyRocket design).
+Yosys infers the memories. `scripts/memories/extract_memories.tcl`
+reads the design sources with the design's frontend, runs `hierarchy`,
+`proc` and `memory -nomap`, and writes the netlist as JSON.
+`scripts/memories/detect.py` then takes each `$mem_v2` cell in it:
+
+- depth and width from `SIZE` and `WIDTH`, read and write port counts
+  from `RD_PORTS` and `WR_PORTS`, and write-mask lanes from the width
+  of `WR_EN`. Read-write ports are not inferred; a `.memories` override
+  can describe them (see below).
+- pins named `R<n>_clk/addr/en/data` and `W<n>_clk/addr/en/data`, plus
+  `W<n>_mask` when there are mask lanes.
+- the module's name when the `$mem_v2` is the only cell in its module,
+  otherwise the cell's name.
 
 Two consequences, documented as deliberate scope:
 
-- **Module boundary only.** A memory embedded inside a larger module
-  (a bare `reg [7:0] mem [0:255]` next to other logic) is not detected.
-  Yosys's memory-inference pass sees those; FPGA tools extract them
-  into block RAMs. Wiring yosys up as the detector — or growing such a
-  pass in OpenROAD SYN, which currently has no memory inference and
-  therefore cannot be leaned on here either — is future work; this
-  feature punts on it with the simple scanner.
+- **Module boundary only.** Synthesis blackboxes converted memories by
+  module name, so only a memory alone in its module is replaced by a
+  macro. A memory inferred next to other logic is named after its
+  cell, which matches no module.
 - **No banking.** Each detected memory maps to exactly one macro. A
   memory too wide, too deep, or too ported for a single sensible macro
   is not decomposed across several macros — a future extension.
@@ -76,9 +91,9 @@ To overrule the gate, list a `.memories` file in `ADDITIONAL_MEMORIES`:
   "version": 1,
   "memories": [
     {
-      "name": "tag_array",
+      "name": "small_array",
       "idiomatic": true,
-      "reason": "forced: the RTL provides no behavioral fallback"
+      "reason": "forced: a macro despite the floors"
     }
   ]
 }
@@ -87,45 +102,213 @@ To overrule the gate, list a `.memories` file in `ADDITIONAL_MEMORIES`:
 Entries merge by name onto the detected set: fields the override
 carries win, everything else (geometry, pins) is kept from detection. A
 `.memories` entry naming a module the scanner never found is taken
-whole — it must then describe its pins itself. The
-`designs/asap7/tinyRocket` design demonstrates the forced-conversion
-case: its `tag_array` wrapper is 4 entries deep (rejected by the gate)
-but instantiates a module the sources never define, so flops are not an
-option and the design forces conversion.
+whole — it must then describe its pins itself.
+
+Write-mask lanes split the word evenly. A word that is not a whole
+number of lanes, such as pulp's `tc_sram` with byte enables over a
+25-bit word, needs `mask_lane_width` in its entry. Every lane is that
+wide except the last, which holds the remaining bits:
+
+```json
+{
+  "name": "tag_ram",
+  "rows": 64,
+  "bits": 25,
+  "addr_w": 6,
+  "rw_ports": 1,
+  "mask_lanes": 4,
+  "mask_lane_width": 8,
+  "idiomatic": true,
+  "reason": "one read-write port, byte enables, the last 1 bit",
+  "pins": [
+    {"name": "clk", "direction": "input", "width": 1, "port_id": "RW0", "function": "clk"},
+    {"name": "cs", "direction": "input", "width": 1, "port_id": "RW0", "function": "en"},
+    {"name": "we", "direction": "input", "width": 1, "port_id": "RW0", "function": "wmode"},
+    {"name": "addr", "direction": "input", "width": 6, "port_id": "RW0", "function": "addr"},
+    {"name": "wdata", "direction": "input", "width": 25, "port_id": "RW0", "function": "data_in"},
+    {"name": "be", "direction": "input", "width": 4, "port_id": "RW0", "function": "mask"},
+    {"name": "rdata", "direction": "output", "width": 25, "port_id": "RW0", "function": "data_out"}
+  ]
+}
+```
+
+The lanes must cover the word with a last lane of 1 to
+`mask_lane_width` bits; anything else is refused, as is an uneven split
+without `mask_lane_width`.
+
+The macro takes its lane count from the mask pin's width, so every
+mask pin must be `mask_lanes` wide, and a memory with `mask_lanes` must
+have one; anything else is refused, naming the memory. An override
+merged onto a detected memory keeps the detected pins: one that changes
+`mask_lanes` must bring its pins, with a mask pin to match.
 
 ## Generated views
 
-The `.lib` mirrors the structural shape OpenROAD's abstract writer
-produces for hardened blocks: `bus()` groups **with per-bit `pin()`
-records** (a bus without per-bit siblings makes yosys silently drop bit
-connections at parent instances), per-port clock pins with
-`min/max_clock_tree_path` arcs, setup/hold constraints on inputs,
-clock-to-out arcs on outputs, and `internal_power()` records under a
-`power_lut_template` so SAIF-driven power reporting is non-zero.
+The views come from FakeRAM2.0's asap7 backend
+(`tools/FakeRAM2.0/orfs_asap7/generate.py`), which `gen_memories.py` runs
+as `run.py --orfs_asap7_backend`.
+Every converted memory becomes a FakeRAM2.0 single-port RAM of its depth
+and width. Its other ports and write-mask lanes are not modelled, and the
+views use FakeRAM2.0's pin names, not the memory's own.
 
-The `.lef` is an abstract following the conventions of the platform's
-fakeram abstracts: `CLASS BLOCK`, per-bit signal pin pads stacked along
-the macro edge, interleaved horizontal power/ground straps the
-platform's PDN macro grid connects to, and a full-footprint multi-layer
-`OBS`.
+The `.lib` has `bus()` groups `addr_in`, `wd_in` and `rd_out` and pins
+`clk`, `we_in` and `ce_in`. Inputs have setup/hold constraints, `rd_out`
+has a clock-to-out arc, and pins have `internal_power()` records under a
+`power_lut_template`. `<m>_pre_layout.lib` has the same content as
+`<m>.lib`.
 
-Timing and area come from simple parametric models
-(`scripts/memories/liberty.py`, `scripts/memories/sram_area_model.py`):
-log2(rows) decode depth and √bits bit-line scaling for timing; an area
-model anchored to published 7 nm SP-SRAM figures (Suzuki et al., ISSCC
-2018). These are budgetary models — good enough to make floorplanning,
-placement, and timing behave representatively; not sign-off numbers.
+Timing, power and leakage are FakeRAM2.0's built-in asap7 defaults,
+the same for every memory. Only area and bus widths depend on the
+memory. Each bit is 2 contacted poly pitches by 10 fin pitches, and the
+bit array gets 20% extra in each direction: that is the `.lib` area.
+The `.lef` size is at least that array, rounded up to a multiple of
+0.19 µm in width and 1.4 µm in height; a shallow memory is made taller
+to leave room for its pins.
+
+The `.lef` is a `CLASS BLOCK` abstract with signal pins on M4 stacked up
+the left edge, alternating horizontal M4 `VDD`/`VSS` straps across the
+macro (which the platform's PDN macro grid connects to M5), and an `OBS`
+covering M1 to M4.
+
+## Register files
+
+A register file, many read and write ports over a few words, is no
+SRAM: FakeRAM's single-port model does not describe it, and synthesised
+to flops its mux trees are placed by a placer that does not know they
+are an array. `AUTO_MEMORIES_REGFILES` lists spec files, one per RTL
+module, and OpenROAD's `generate_ram` builds each as an array of placed
+standard cells: a flop per bit, its write logic beside it, the read
+trees in columns. The spec names the module, its words and bits, its
+read and write ports by the module's own port names, and the cells:
+
+```
+module RegFile
+mode netlist
+words 16
+bits 8
+clock clock
+read io_r0_addr io_r0_data
+write io_w0_addr io_w0_data io_w0_en
+cell flop DFFHQNx1_ASAP7_75t_R
+...
+```
+
+A listed module is a register file even where the idiomatic gate would
+convert it: FakeRAM builds no view for it, and `memories.json` records
+it once, as a register file.
+
+`memories/regfile_ram.py` translates the spec to `generate_ram_netlist`
+options (ports, banks, folds, the zero word, reset, read latency, write
+style and priority, cells) and checks it against the module's ports,
+from synthesis: a port in one and not the other, or a data port of
+another width, stops the build rather than miswire the parent. The RAM
+is a block `<m>_ram`, and a wrapper takes the module's place,
+connecting the module's ports to the RAM's (an active-high reset
+inverted for an active-low flop, an address narrowed or widened). What
+happens next depends on `AUTO_MEMORIES_MACRO_PLACE`, the register files
+to place as macros:
+
+- **Not listed (the default): inlined.** Synthesis reads the wrapper
+  and the RAM's netlist in the module's place; from there on their cells
+  are placed, sized and buffered with the rest of the design. No macro,
+  no abstract, no dissolve. The better shape for a small design, where a
+  macro's outline and channels cost more core than the array saves.
+- **Listed: a macro.** `<m>_ram` is a macro to synthesis and macro
+  placement: its abstract `<m>_ram.lef` and a liberty of its area and
+  pins land beside the FakeRAM views and it joins `blackboxes.txt`. In
+  `mode netlist` (the only one) `generate_ram` places only the array's
+  core and leaves its periphery (decode, select and input buffers) to
+  the parent, and the macro dissolves into its cells at the end of macro
+  placement (`regfile_dissolve.tcl`): the core lands FIRM where the
+  macro was placed, flipped as the macro was, on the parent's rows; the
+  periphery is left to global placement and the resizer, and dead logic
+  is eliminated as at synthesis. A large design whose floorplan plans
+  its register files lists them.
+- **A macro of its own.** A register file wanted as a macro to the end
+  is a design of its own: run its module through the flow, its spec
+  listed and macro-placed so it dissolves there, and give the parent
+  its abstract as a macro. Its clock tree is then built and its timing
+  model is written from it. `mode macro` stops with that advice: a
+  timing model written from `generate_ram`'s netlist before any clock
+  tree would have the whole unbuffered clock net as one pin.
+
+A word holds its value between writes either through a hold mux per
+bit (`write_style mux`, the default here) or through one integrated
+clock gate per word, enabled by its write selects (`write_style
+clock_gate`, `generate_ram`'s own default). Where a row holds more than
+one word (`bank_columns`), each word's bits sit side by side, so its
+selects and write enables are no longer than its bits; and a word whose
+bits would run more than 150 um is folded into more rows. `tap_columns`
+and `service_sites` leave empty columns in the array for the buffers a
+parent puts on the nets that cross it.
+
+Listed register files appear in `memories.json` with kind `regfile`;
+the rest have kind `fakeram` or `flops`.
+
+Moving the dissolve into OpenROAD is left for later: it would make it
+faster, testable at unit level and maintained with the database it
+edits.
+
+### Designs to measure it on
+
+What a register file of placed cells buys is a shorter minimum clock
+period (the read mux trees are columns, not a cloud) and a shorter
+build (fewer cells for synthesis, placement and the resizer to work
+on). The ORFS designs whose register file is flip-flops today and its
+own module, the seam a spec needs, measured as flops against
+`AUTO_MEMORIES_REGFILES`:
+
+| Design | Module | Today | Shape | Ready? |
+|---|---|---|---|---|
+| asap7/riscv32i | `regfile` | flip-flops: `reg [31:0] rf[31:0]`, mapped to flops (no AUTO_MEMORIES) | 32 x 32, 2R1W, x0 reads 0 | Yes: the ports are the spec's (`zero_word 0`). Also exercises `OPENROAD_HIERARCHICAL=1` beside two FakeRAM macros. |
+| asap7/ibex | `ibex_register_file_ff` | flip-flops: `RegFile = RegFileFF`, the default | 32 x 32, 2R1W, x0 reads 0 | Yes: `unused` names `test_en_i` and `dummy_instr_id_i`, ports the array does not use, and `async_reset rst_ni low` resets the flops to 0 as ibex does; simulated against ibex's RTL. |
+| asap7/cva6 | `ariane_regfile` (`ariane_regfile_ff.sv`) | flip-flops: cv32a65x has `FpgaEn` 0 | 32 x 32, 2R1W | Not yet: the ports are packed arrays (`raddr_i[1:0][4:0]`), one port per slice, which a spec cannot yet address; asynchronous reset as ibex. |
+| asap7/swerv_wrapper | `dec_gpr_ctl_*` | flip-flops | 32 x 32, 4R3W | Not yet: read enables, bank ids and scan ports around the array need a seam in the RTL. |
+
+coralnpu's `Regfile` (8R4W) and `FRegfile` (3R2W) carry their
+scoreboard and bypass logic in the same module, and picorv32 and
+tinyRocket keep their register file inside the CPU module: those need a
+seam in their RTL first.
+
+### Status: at parity on riscv32i, on a smaller core
+
+riscv32i with its register file generated and inlined (a spec in
+`AUTO_MEMORIES_REGFILES`, `zero_word 0`), at riscv32i's own
+utilisation, against `designs/asap7/riscv32i`. To global route, 950 ps
+clock, minimum period from placement parasitics on the global-route
+database:
+
+| | flops | register file |
+|---|---|---|
+| minimum period | 950 ps | 943 ps |
+| core area | 4 012 um2 | 3 503 um2 |
+
+Both are limited by the same single-cycle path: the instruction into
+the register file's read, the ALU, the data memory and back into the
+register file's write. The register file's share of it, decode and read
+tree, is about 260 ps in either.
+
+What did not pay, measured on the same design:
+
+- the register file as a macro dissolved after macro placement: it does
+  not fit riscv32i's 62 % beside the four FakeRAMs, and at 55 % it is
+  959 ps on a 4 644 um2 core;
+- a hold mux per bit instead of the clock gate: 994 ps inlined, every
+  array endpoint carrying the mux;
+- predecoded read selects: 960 ps;
+- a tree of 2:1 muxes steered by the address bits instead of a decoded
+  one-hot read: 959 ps, the address bits' fanout (about 1 000 inputs a
+  port) needs as many buffer levels as the decode it replaces;
+- four-input gates in the read tree, stronger cells: 950 to 954 ps,
+  within what any change to the placement moves.
 
 ## Platform support
 
-**asap7 only.** The emitters are split into general structure
-(`liberty.py`, `lef.py`, parameterized by a `PdkParams`) and platform
-constants (`pdk_asap7.py`: pins and power straps on M4 — where the
-platform's PDN macro grid connects — pin pad/pitch, strap geometry,
-OBS layers, nominal voltage). Generalizing to other PDKs means
-providing their `PdkParams` — the code seam exists, the calibration
-work does not. `AUTO_MEMORIES=1` on any other platform fails with a
-clear error.
+**asap7 only.** `gen_memories.py` rejects any other platform. The
+asap7 process parameters (layers, pin pitch, poly and fin pitch, snap grid)
+are constants in `ASAP7_PROCESS_CONFIG` in
+`tools/FakeRAM2.0/orfs_asap7/generate.py`, not read from the platform.
+Another PDK would need its own backend there.
 
 ## Trying it
 
@@ -133,12 +316,14 @@ clear error.
 make DESIGN_CONFIG=designs/asap7/tinyRocket/config.mk synth floorplan
 ```
 
-The generator can also be run standalone to inspect what it would do:
+The generator can also be run standalone, on the
+`memories_inferred.json` that run leaves in the results directory, to
+inspect what it would do:
 
 ```shell
 python3 flow/scripts/memories/gen_memories.py \
   --platform asap7 --out-dir /tmp/mems --json /tmp/memories.json \
-  --verilog flow/designs/src/tinyRocket/freechips.rocketchip.system.TinyConfig.v
+  --yosys-json flow/results/asap7/tinyRocket/base/memories_inferred.json
 ```
 
 ## Consuming from bazel-orfs
@@ -178,3 +363,5 @@ bazel-orfs implements this.
 
 - [AUTO_MEMORIES](FlowVariables.md#AUTO_MEMORIES)
 - [ADDITIONAL_MEMORIES](FlowVariables.md#ADDITIONAL_MEMORIES)
+- [AUTO_MEMORIES_MACRO_PLACE](FlowVariables.md#AUTO_MEMORIES_MACRO_PLACE)
+- [AUTO_MEMORIES_REGFILES](FlowVariables.md#AUTO_MEMORIES_REGFILES)

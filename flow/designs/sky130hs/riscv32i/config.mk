@@ -10,10 +10,9 @@ export PLACE_DENSITY_LB_ADDON = 0.1
 # many east pins cause global routing congestion
 export PLACE_PINS_ARGS=-min_distance 6 -min_distance_in_tracks
 export TNS_END_PERCENT = 100
+export SETUP_REPAIR_PHASES = PARALLEL_EVAL
 
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
-
-export REMOVE_ABC_BUFFERS = 1
 
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1

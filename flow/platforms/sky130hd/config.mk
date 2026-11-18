@@ -97,13 +97,14 @@ export IO_PLACER_H ?= met3
 export IO_PLACER_V ?= met2
 
 # Define default PDN config
+export GLOBAL_CONNECT_TCL ?= $(PLATFORM_DIR)/global_connect.tcl
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
 export TAP_CELL_NAME = sky130_fd_sc_hd__tapvpwrvgnd_1
 export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
-export MACRO_PLACE_HALO ?= 40 40
+export RTLMP_MIN_CHANNEL_SIZE ?= 80 80
 
 #---------------------------------------------------------
 # Place
@@ -147,9 +148,9 @@ export GND_NETS_VOLTAGES  ?= VSS 0.0
 export IR_DROP_LAYER ?= met1
 
 # DRC Check
-export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/$(PLATFORM).lydrc
+export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/$(PLATFORM)_drc.py
 
 #LVS Check
 export CDL_FILE = $(PLATFORM_DIR)/cdl/$(PLATFORM).cdl
-export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/$(PLATFORM).lylvs
+export KLAYOUT_LVS_FILE ?= $(PLATFORM_DIR)/lvs/$(PLATFORM)_lvs.py
 export REMOVE_CELLS_FOR_LEC = sky130_fd_sc_hd__tapvpwrvgnd*

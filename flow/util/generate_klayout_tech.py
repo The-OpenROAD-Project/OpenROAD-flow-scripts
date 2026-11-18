@@ -30,6 +30,21 @@ def replace_map_files(content, map_files):
     return content
 
 
+def blackbox_lefs(blackboxes):
+    """The LEF of every macro AUTO_MEMORIES' blackboxes.txt lists.
+
+    blackboxes.txt has a `<module> <area>` line per macro, and
+    do-auto-memories writes <module>.lef beside it.
+    """
+    directory = os.path.dirname(blackboxes)
+    with open(blackboxes, encoding="utf-8") as f:
+        return [
+            os.path.join(directory, line.split()[0] + ".lef")
+            for line in f
+            if line.strip()
+        ]
+
+
 def generate_klayout_tech(template_lyt, output_lyt, lef_files, map_files=None):
     """Generate a klayout .lyt file from a platform template.
 
@@ -76,12 +91,21 @@ def main():
     parser.add_argument(
         "--map-files", nargs="*", default=[], help="Map files to include"
     )
+    parser.add_argument(
+        "--blackboxes",
+        help="AUTO_MEMORIES' blackboxes.txt; the LEF of each macro it lists"
+        " is included after --lef-files",
+    )
     args = parser.parse_args()
+
+    lef_files = list(args.lef_files)
+    if args.blackboxes:
+        lef_files += blackbox_lefs(args.blackboxes)
 
     generate_klayout_tech(
         template_lyt=args.template,
         output_lyt=args.output,
-        lef_files=args.lef_files,
+        lef_files=lef_files,
         map_files=args.map_files,
     )
 

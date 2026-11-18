@@ -3,9 +3,10 @@ try:
 except ImportError:
     pya = None
 
+import argparse
+import os
 import re
 import sys
-import os
 
 
 def merge_gds(
@@ -18,6 +19,7 @@ def merge_gds(
     seal_file,
     out_file,
     allow_empty="",
+    allow_empty_cells=frozenset(),
 ):
     """Merge DEF and GDS/OAS files into a single stream file.
 
@@ -31,6 +33,7 @@ def merge_gds(
         seal_file: Path to seal ring GDS/OAS file (empty string if none).
         out_file: Path to output GDS/OAS file.
         allow_empty: Regex pattern for cells allowed to be empty.
+        allow_empty_cells: Names of cells allowed to be empty.
 
     Returns:
         Number of errors encountered.
@@ -88,6 +91,11 @@ def merge_gds(
                         i.name
                     )
                 )
+            elif i.name in allow_empty_cells:
+                print(
+                    "[WARNING] LEF Cell '{0}' ignored. AUTO_MEMORIES generated"
+                    " its views; it has no GDS.".format(i.name)
+                )
             else:
                 print(
                     "[ERROR] LEF Cell '{0}' has no matching GDS/OAS cell."
@@ -128,24 +136,65 @@ def merge_gds(
     return errors
 
 
-# When run via klayout -r, globals tech_file, layer_map, in_def, etc.
-# are set by klayout's -rd mechanism.
-if pya is not None:
-    try:
-        # These globals are set by klayout -rd flags
-        sys.exit(
-            merge_gds(
-                pya_mod=pya,
-                tech_file=tech_file,  # noqa: F821 - set by klayout -rd
-                layer_map=layer_map,  # noqa: F821
-                in_def=in_def,  # noqa: F821
-                design_name=design_name,  # noqa: F821
-                in_files=in_files,  # noqa: F821
-                seal_file=seal_file,  # noqa: F821
-                out_file=out_file,  # noqa: F821
-                allow_empty=os.environ.get("GDS_ALLOW_EMPTY", ""),
-            )
+def auto_memories_cells(environ):
+    """The modules AUTO_MEMORIES turned into macros.
+
+    Their LEF and liberty views are generated and they have no GDS, so
+    they are empty in the merged layout by design.
+    """
+    if environ.get("AUTO_MEMORIES") != "1":
+        return frozenset()
+    # do-auto-memories always writes the list, empty when nothing was
+    # converted; without it the merge cannot tell a generated macro from
+    # a cell whose GDS is missing.
+    memories_dir = environ.get("AUTO_MEMORIES_DIR")
+    if not memories_dir:
+        raise RuntimeError("AUTO_MEMORIES=1 but AUTO_MEMORIES_DIR is not set")
+    path = os.path.join(memories_dir, "blackboxes.txt")
+    if not os.path.isfile(path):
+        raise RuntimeError(
+            f"AUTO_MEMORIES=1 but {path} is missing; do-auto-memories writes it"
         )
-    except NameError:
-        # Not running under klayout -r, pya available but no -rd globals
-        pass
+    with open(path, encoding="utf-8") as f:
+        return frozenset(line.split()[0] for line in f if line.strip())
+
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(
+        description="Merge a DEF file and GDS/OAS files into one stream file."
+    )
+    parser.add_argument("--design-name", required=True)
+    parser.add_argument("--in-def", required=True)
+    parser.add_argument("--in-files", default="")
+    parser.add_argument("--seal-file", default="")
+    parser.add_argument("--out-file", required=True)
+    parser.add_argument("--tech-file", required=True)
+    parser.add_argument("--layer-map", default="")
+    return parser.parse_args(argv)
+
+
+def main(argv, environ=os.environ):
+    """Write the stream file with the klayout Python module."""
+    args = parse_args(argv)
+    if pya is None:
+        print(
+            "ERROR: the klayout Python module is not installed, pip install"
+            " klayout (etc/requirements-common_lock.txt)"
+        )
+        return 1
+    return merge_gds(
+        pya_mod=pya,
+        tech_file=args.tech_file,
+        layer_map=args.layer_map,
+        in_def=args.in_def,
+        design_name=args.design_name,
+        in_files=args.in_files,
+        seal_file=args.seal_file,
+        out_file=args.out_file,
+        allow_empty=environ.get("GDS_ALLOW_EMPTY", ""),
+        allow_empty_cells=auto_memories_cells(environ),
+    )
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

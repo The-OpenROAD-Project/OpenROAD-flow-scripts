@@ -66,12 +66,6 @@ export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sg13g2_buf_4
 export ABC_LOAD_IN_FF = 6.0
-ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
-  ifneq ($(wildcard $(SDC_FILE)),)
-    # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-    export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
-  endif
-endif
 
 # -----------------------------------------------------
 #  Sizing
@@ -92,6 +86,7 @@ export IO_PLACER_V ?= Metal2
 export IO_PLACER_H ?= Metal3
 
 # Define default PDN config
+export GLOBAL_CONNECT_TCL ?= $(PLATFORM_DIR)/global_connect.tcl
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # To allow the core rings to fit inside the core area
@@ -101,7 +96,7 @@ export CORE_MARGIN ?= 17.5
 # `cut_rows` has to be called from the tapcell script.
 export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
-export MACRO_PLACE_HALO ?= 40 40
+export RTLMP_MIN_CHANNEL_SIZE ?= 80 80
 
 # Will be placed left to right
 export IO_NORTH_PINS ??=
@@ -168,11 +163,11 @@ export GND_NETS_VOLTAGES  ?= VSS 0.0
 export IR_DROP_LAYER ?= Metal1
 
 # DRC Check
-export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/sg13g2_minimal.lydrc
+export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/sg13g2_minimal_drc.py
 
 #LVS Check
 export CDL_FILE ?= $(PLATFORM_DIR)/cdl/sg13g2_stdcell.cdl
-#export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/$(PLATFORM).lylvs
+export KLAYOUT_LVS_FILE ?= $(PLATFORM_DIR)/lvs/sg13g2_lvs.py
 
 export REMOVE_CELLS_FOR_LEC ?= "bondpad_70* sg13g2*"
 

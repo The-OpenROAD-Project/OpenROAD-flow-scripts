@@ -54,13 +54,14 @@ export IO_PLACER_H ?= metal5
 export IO_PLACER_V ?= metal6
 
 # Define default PDN config
+export GLOBAL_CONNECT_TCL ?= $(PLATFORM_DIR)/global_connect.tcl
 export PDN_TCL ?= $(PLATFORM_DIR)/grid_strategy-M1-M4-M7.tcl
 
 # Endcap and Welltie cells
 export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 export TAP_CELL_NAME = TAPCELL_X1
 
-export MACRO_PLACE_HALO ?= 22.4 15.12
+export RTLMP_MIN_CHANNEL_SIZE ?= 44.8 30.24
 
 #---------------------------------------------------------
 # Place
@@ -84,10 +85,7 @@ export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/FreePDK45.lyt
 
 # KLayout DRC ruledeck
-export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/FreePDK45.lydrc
-
-# KLayout LVS ruledeck
-export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/FreePDK45.lylvs
+export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/FreePDK45_drc.py
 
 # Allow empty GDS cell
 export GDS_ALLOW_EMPTY ?= fakeram.*

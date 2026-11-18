@@ -22,7 +22,11 @@ export WC_VOLTAGE          = 0.63
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
-export DONT_USE_CELLS          += SDF* ICG*
+export DONT_USE_CELLS          += SDF*
+# INFER_CLKGATES inserts ICG cells, which OpenROAD must then be free to size
+ifneq ($(INFER_CLKGATES),1)
+export DONT_USE_CELLS          += ICG*
+endif
 
 export SYNTH_MINIMUM_KEEP_SIZE       ?= 1000
 
@@ -37,6 +41,8 @@ export PLACE_SITE              ?= asap7sc7p5t
 export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 
 # Define default PDN config
+export GLOBAL_CONNECT_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/global_connect.tcl
+
 ifeq ($(BLOCKS),)
    export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M1-M2-M5-M6.tcl
 else
@@ -48,7 +54,7 @@ endif
 export IO_PLACER_H             ?= M4
 export IO_PLACER_V             ?= M5
 
-export MACRO_PLACE_HALO        ?= 10 10
+export RTLMP_MIN_CHANNEL_SIZE  ?= 20 20
 
 # the followings create a keep out / halo between
 # macro and core rows
@@ -59,8 +65,6 @@ export PLACE_DENSITY ?= 0.60
 
 # Endcap and Welltie cells
 export TAPCELL_TCL             ?= $(PLATFORM_DIR)/openRoad/tapcell.tcl
-
-export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
 # Route options
 export MIN_ROUTING_LAYER        ?= M2
@@ -76,7 +80,7 @@ export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
 
 # KLayout DRC ruledeck
-export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/asap7.lydrc
+export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/asap7_drc.py
 
 # OpenRCX extRules
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules

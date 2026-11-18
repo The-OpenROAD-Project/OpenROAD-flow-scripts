@@ -1,12 +1,22 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 2_3_floorplan_tapcell.odb 2_1_floorplan.sdc
+load_design 2_3_floorplan_tapcell.odb
 source_step_tcl PRE PDN
 
 source $::env(PDN_TCL)
+# The rules floorplan stored, for the instances made since (tap and
+# endcap cells), and any PDN_TCL adds.
+global_connect
 pdngen
 
 source_step_tcl POST PDN
+
+# Check fixed instances once, after pdngen since blocked layers need the PDN
+set_placement_padding -global \
+  -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
+  -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
+log_cmd check_placement -fixed -verbose
+set_placement_padding -global -left 0 -right 0
 
 # Check all supply nets
 set block [ord::get_db_block]

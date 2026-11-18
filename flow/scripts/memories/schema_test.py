@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json
-import re
 import sys
 import tempfile
 import unittest
@@ -116,46 +115,50 @@ class SchemaTest(unittest.TestCase):
         with self.assertRaises(schema.SchemaError):
             schema.validate_emittable(dataless)
 
+    def test_mask_lanes_cover_the_word(self):
+        # even split, ragged last lane (tc_sram's bytes over 25 bits), none
+        schema.lane_width_check("m", 64, 8, 0)
+        schema.lane_width_check("m", 25, 4, 8)
+        schema.lane_width_check("m", 25, 0, 0)
+        for bits, lanes, width in (
+            (25, 4, 0),  # not even, and no width given
+            (25, 4, 6),  # 24 bits of lanes for 25
+            (25, 4, 9),  # the last lane would be empty
+            (25, 0, 8),  # a width with no lanes
+        ):
+            with self.assertRaises(schema.SchemaError):
+                schema.lane_width_check("m", bits, lanes, width)
 
-FLOW_DIR = Path(__file__).resolve().parents[2]
+    def test_mask_pin_matches_mask_lanes(self):
+        masked = sample_memory()
+        masked.mask_lanes = 4
+        masked.pins.append(schema.Pin("W0_mask", "input", 4, "W0", "mask"))
+        schema.validate_emittable(masked)  # no raise
+        # the override changed mask_lanes, the detected pin is per bit
+        narrow = sample_memory()
+        narrow.mask_lanes = 4
+        narrow.pins.append(schema.Pin("W0_mask", "input", 32, "W0", "mask"))
+        # mask_lanes on a memory with no mask pin
+        pinless = sample_memory()
+        pinless.mask_lanes = 4
+        # a mask pin with no mask_lanes
+        laneless = sample_memory()
+        laneless.pins.append(schema.Pin("W0_mask", "input", 4, "W0", "mask"))
+        for mem in (narrow, pinless, laneless):
+            with self.assertRaisesRegex(schema.SchemaError, mem.name):
+                schema.validate_emittable(mem)
 
-
-def module_ports(verilog: Path, module: str) -> dict[str, tuple[str, int]]:
-    """{name: (direction, width)} from an ANSI-style module header."""
-    ports = {}
-    in_header = False
-    for line in verilog.read_text().splitlines():
-        if line.startswith(f"module {module}("):
-            in_header = True
-            continue
-        if in_header:
-            if line.startswith(");"):
-                return ports
-            m = re.match(r"\s*(input|output)\s+(?:\[(\d+):0\])?\s*(\w+)", line)
-            if m:
-                direction, msb, name = m.groups()
-                ports[name] = (direction, int(msb) + 1 if msb else 1)
-    raise AssertionError(f"module {module} not found in {verilog}")
-
-
-class TinyRocketTagArrayTest(unittest.TestCase):
-    """tinyRocket's tag_array wrapper has no inferred memory for detection
-    to find, so its override is taken whole and must be emittable on its
-    own, with the pins of the module it replaces."""
-
-    def setUp(self):
-        path = FLOW_DIR / "designs/asap7/tinyRocket/tag_array.memories"
-        (self.mem,) = schema.merge([], schema.load(path))
-
-    def test_override_is_emittable(self):
-        schema.validate_emittable(self.mem)
-
-    def test_pins_match_the_rtl(self):
-        rtl = (
-            FLOW_DIR / "designs/src/tinyRocket/freechips.rocketchip.system.TinyConfig.v"
-        )
-        pins = {p.name: (p.direction, p.width) for p in self.mem.pins}
-        self.assertEqual(pins, module_ports(rtl, "tag_array"))
+    def test_mask_lane_width_survives_merge_and_dump(self):
+        base = sample_memory()
+        override = schema.Memory(name=base.name, mask_lanes=4, mask_lane_width=8)
+        [merged] = schema.merge([base], [override])
+        self.assertEqual(merged.mask_lane_width, 8)
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "memories.json"
+            schema.dump([merged], path, "asap7")
+            self.assertEqual(
+                json.loads(path.read_text())["memories"][0]["mask_lane_width"], 8
+            )
 
 
 if __name__ == "__main__":

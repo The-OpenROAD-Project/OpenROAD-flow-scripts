@@ -140,6 +140,13 @@ class LefExporter(Exporter):
             )
         if rw_port_group.get_data_input_bus_name():
             self.write_signal_bus(fid, rw_port_group.get_data_input_bus_name(), 0, bits)
+        if rw_port_group.get_write_mask_bus_name():
+            self.write_signal_bus(
+                fid,
+                rw_port_group.get_write_mask_bus_name(),
+                0,
+                rw_port_group.get_write_mask_lanes(),
+            )
         if rw_port_group.get_address_bus_name():
             self.write_signal_bus(
                 fid,

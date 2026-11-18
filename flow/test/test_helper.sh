@@ -17,6 +17,8 @@ Options:
   --design-path DIR     Root path containing 'designs/' (default: ./)
   --variant NAME        Flow variant (default: unset)
   --target STR          Make target(s), space-separated (default: 'finish metadata')
+                        'finish metadata-generate' keeps all full-flow follow-up steps
+                        and leaves QoR checking to an external caller
   --work-home DIR       Work home (default: .)
   --private-dir DIR     Private tool scripts dir (default: ../../private_tool_scripts)
   --save-to-db          Save metrics to DB (requires private.mk)
@@ -86,6 +88,10 @@ fi
 mkdir -p "$(dirname "$LOG_FILE")"
 "${__make[@]}" clean_all clean_metadata 2>&1 | tee "$LOG_FILE"
 
+REPORT_LOG_DIR=$("${__make[@]}" --no-print-directory -s print-LOG_DIR)
+REPORT_LOG_DIR=${REPORT_LOG_DIR#LOG_DIR: }
+rm -f "$REPORT_LOG_DIR/0_make.log"
+
 # turn off abort on error so we can always capture the result
 set +e
 
@@ -96,7 +102,13 @@ read -r -a TARGET_ARR <<< "$TARGET"
 # the results
 ret=$?
 
-if [ "${TARGET}" != "finish metadata" ]; then
+# Make can fail on a prerequisite before any stage creates a log.
+if [ "$ret" -ne 0 ] && ! compgen -G "$REPORT_LOG_DIR/*.log" > /dev/null; then
+  mkdir -p "$REPORT_LOG_DIR"
+  command cp "$LOG_FILE" "$REPORT_LOG_DIR/0_make.log"
+fi
+
+if [ "${TARGET}" != "finish metadata" ] && [ "${TARGET}" != "finish metadata-generate" ]; then
   exit $ret
 fi
 

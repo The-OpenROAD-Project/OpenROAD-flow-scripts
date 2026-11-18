@@ -25,14 +25,14 @@ then is recommended that you restrict the number of CPUs used by the scripts
 :::
 
 ``` shell
-docker run --rm ubuntu:22.04 nproc
+docker run --rm ubuntu:26.04 nproc
 ```
 
 ### Build Using Docker from pre-built binaries
 
 Courtesy of [Precision Innovations](https://precisioninno.com/),
-they release `.deb` installers of OpenROAD for Ubuntu
-and Debian on a regular basis.
+pre-built `.deb` installers of OpenROAD for Ubuntu
+are available from [OpenROAD VaultLink](https://vaultlink.precisioninno.com/).
 This greatly helps to reduce the compilation time needed.
 
 We recommend to use a Docker image of a supported OS
@@ -42,12 +42,19 @@ You can start the container in an interactive mode using
 the command below.
 
 ```shell
-docker run -it ubuntu:22.04
+docker run -it ubuntu:26.04
 ```
 
 Now you are ready to install the prebuilt binaries.
 Please refer to the instructions for installing prebuilt binaries
 [here](./BuildWithPrebuilt.md).
+
+The root `Dockerfile` assembles a runtime image from the published Ubuntu 26.04 development image, flow tools, and OpenROAD installation.
+Build it without compiling the tools:
+
+```shell
+docker build -t openroad/orfs-local .
+```
 
 ### Build Using Docker from sources
 
@@ -57,7 +64,7 @@ do follow the instructions below.
 
 #### Clone and Build
 
-The following instructions build the docker image with Ubuntu 22.04 as the base OS:
+The following instructions build the docker image with Ubuntu 26.04 as the base OS:
 
 
 ``` shell
@@ -85,7 +92,7 @@ Then, inside docker:
 ``` shell
 source ./env.sh
 yosys -help
-yosys -m slang -p "slang_version"
+yosys -p "slang_version"
 openroad -help
 cd flow
 make
@@ -105,7 +112,7 @@ util/docker_shell make
 To use the GUI feature you will need to start the docker with the
 following command,
 
-For Ubuntu/Debian OS users:
+For Ubuntu users:
 
 ```
 docker run --rm -it \
@@ -117,14 +124,6 @@ docker run --rm -it \
            --network host \
            --security-opt seccomp=unconfined \
            openroad/orfs
-```
-
-Running GUI with Docker on Mac OS X users, refer [here](https://cntnr.io/running-guis-with-docker-on-mac-os-x-a14df6a76efc).
-
-Then use:
-
-```
-docker run --rm -it -e DISPLAY=<IP_LIKE_FROM_TUTORIAL>:0 --network host --privileged <IMAGE_NAME>
 ```
 
 Alternatively, you may also use the `docker_shell` utility for GUI as follows.
@@ -145,7 +144,7 @@ Do refer to the documentation [here](./DockerShell.md).
 
 The following instructions build the docker image with a parameterized OS
 in two stages. These are for CI and developers that wish to use an OS other
-than Ubuntu 22.04; regular users should use the steps from previous sections.
+than Ubuntu 26.04; regular users should use the steps from previous sections.
 The dev stage installs all dependencies and packages required to run OpenROAD
 and OpenROAD Flow Scripts. The build stage generates all binaries needed to run
 the flow (i.e., `openroad` and `yosys`).
@@ -156,3 +155,5 @@ cd OpenROAD-flow-scripts
 ./etc/DockerHelper.sh create -target=dev -os=$OS_NAME
 ./etc/DockerHelper.sh create -target=builder -os=$OS_NAME
 ```
+
+Valid values for `$OS_NAME` are `ubuntu26.04` and `ubuntu24.04`.

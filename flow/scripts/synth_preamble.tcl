@@ -43,23 +43,25 @@ proc read_checkpoint { file } {
   }
 }
 
-# AUTO_MEMORIES: memory modules whose generated liberty view replaces
-# their behavioral body during synthesis. The list is produced by
-# scripts/memories/gen_memories.py before canonicalization; see
-# docs/user/AutoMemories.md.
-proc auto_memories_blackboxes { } {
-  if { ![env_var_equals AUTO_MEMORIES 1] } {
-    return {}
+# AUTO_MEMORIES: what synthesis does to the modules util.tcl's
+# auto_memories_blackboxes names; see docs/user/AutoMemories.md.
+source $::env(SCRIPTS_DIR)/memories/check_blackboxed.tcl
+source $::env(SCRIPTS_DIR)/memories/max_bits.tcl
+source $::env(SCRIPTS_DIR)/memories/drop_parameters.tcl
+
+proc read_auto_memories_inline { } {
+  foreach m [auto_memories_names inline.txt] {
+    # A parameterized RTL module (ibex_register_file_ff #(...)) is
+    # instantiated with parameters the generated netlist has no
+    # declaration for, which hierarchy refuses. The netlist is that module
+    # at the instance's widths, as regfile_ram.py's port check has
+    # confirmed: drop the parameters from its instances.
+    set dump [tee -q -s result.string dump t:$m]
+    foreach {- name} [regexp -all -inline -- {parameter \\(\S+)} $dump] {
+      setparam -unset $name t:$m
+    }
+    read_verilog -overwrite "$::env(AUTO_MEMORIES_DIR)/$m.v"
   }
-  set f "$::env(RESULTS_DIR)/memories/blackboxes.txt"
-  if { ![file exists $f] } {
-    error "AUTO_MEMORIES=1 but $f is missing;\
-      the do-auto-memories step must run before synthesis"
-  }
-  set fh [open $f r]
-  set content [string map {\r ""} [read $fh]]
-  close $fh
-  return [regexp -all -inline {\S+} $content]
 }
 
 proc read_design_sources { } {
@@ -82,7 +84,7 @@ proc read_design_sources { } {
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
 
     # slang requires all files at once
-    lappend slang_args {*}$::env(VERILOG_FILES)
+    lappend slang_args {*}[synth_verilog_files]
 
     # Add clock gate cell definition, if available
     if { [env_var_exists_and_non_empty CLKGATE_MAP_FILE] } {
@@ -115,7 +117,7 @@ proc read_design_sources { } {
 
     # Blackbox AUTO_MEMORIES-detected memory modules so their generated
     # liberty view wins over their behavioral bodies.
-    foreach m [auto_memories_blackboxes] {
+    foreach m [concat [auto_memories_blackboxes] [auto_memories_names inline.txt]] {
       lappend slang_args --blackboxed-module "$m"
     }
 
@@ -123,6 +125,16 @@ proc read_design_sources { } {
     lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
 
     yosys read_slang {*}$slang_args
+    set cores [auto_memories_names regfile_cores.txt]
+    set sourced {}
+    foreach m [auto_memories_blackboxes] {
+      if { [lsearch -exact $cores $m] < 0 } {
+        lappend sourced $m
+      }
+    }
+    auto_memories_check_blackboxed $sourced
+    auto_memories_drop_parameters $sourced
+    read_auto_memories_inline
 
     # Workaround for yosys-slang#119
     setattr -unset init
@@ -133,7 +145,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
       verific -vlog-define {*}$::env(VERILOG_DEFINES)
     }
-    verific -sv2012 {*}$::env(VERILOG_FILES)
+    verific -sv2012 {*}[synth_verilog_files]
     verific -import -no-split-complex-ports $::env(DESIGN_NAME)
 
     dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
@@ -144,7 +156,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
       error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
     }
-    if { [llength [auto_memories_blackboxes]] > 0 } {
+    if { [llength [concat [auto_memories_blackboxes] [auto_memories_names inline.txt]]] > 0 } {
       error "AUTO_MEMORIES unsupported with HDL frontend \"$::env(SYNTH_HDL_FRONTEND)\""
     }
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
@@ -152,7 +164,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
       verilog_defaults -add {*}$::env(VERILOG_DEFINES)
     }
-    foreach file $::env(VERILOG_FILES) {
+    foreach file [synth_verilog_files] {
       read_verilog -defer -sv {*}$vIdirsArgs $file
     }
     # Read platform specific mapfile for OPENROAD_CLKGATE cells
@@ -173,9 +185,15 @@ proc read_design_sources { } {
     set auto_blackboxes [auto_memories_blackboxes]
     if { [llength $auto_blackboxes] > 0 } {
       hierarchy -top $::env(DESIGN_NAME)
+      # Not checked with auto_memories_check_blackboxed: slang is the
+      # supported frontend for AUTO_MEMORIES.
       foreach m $auto_blackboxes {
         blackbox $m
       }
+      hierarchy -check -top $::env(DESIGN_NAME)
+    }
+    if { [llength [auto_memories_names inline.txt]] > 0 } {
+      read_auto_memories_inline
       hierarchy -check -top $::env(DESIGN_NAME)
     }
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
@@ -189,7 +207,10 @@ proc read_design_sources { } {
   }
 }
 
-if { $::env(ABC_AREA) } {
+if { [env_var_exists_and_non_empty ABC_SCRIPT] } {
+  puts "Using ABC script $::env(ABC_SCRIPT)."
+  set abc_script $::env(ABC_SCRIPT)
+} elseif { $::env(ABC_AREA) } {
   puts "Using ABC area script."
   set abc_script $::env(SCRIPTS_DIR)/abc_area.script
 } else {
@@ -211,21 +232,17 @@ if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
     lappend lib_dont_use_args -dont_use $cell
   }
 }
+# Never map logic onto a hardened block. A block's timing model gives a
+# constant output a function, and ABC would take the block for a gate.
+if { [env_var_exists_and_non_empty BLOCKS] } {
+  foreach block $::env(BLOCKS) {
+    lappend lib_dont_use_args -dont_use $block
+  }
+}
 
 # Technology mapping for cells
 set abc_args [list -script $abc_script \
   {*}$lib_args {*}$lib_dont_use_args -constr $::env(OBJECTS_DIR)/abc.constr]
-
-if { [env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD] } {
-  puts "Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
-  set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
-  set clock_period [string trim [read $fp]]
-  if { $clock_period != "" } {
-    puts "Setting clock period to $clock_period"
-    lappend abc_args -D $clock_period
-  }
-  close $fp
-}
 
 set constr [open $::env(OBJECTS_DIR)/abc.constr w]
 puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
@@ -258,5 +275,35 @@ proc convert_liberty_areas { } {
     set area [rtlil::get_attr -mod -string $box area]
     set gate_eq [expr int($area / $found_cell_area)]
     rtlil::set_attr -mod -uint $box gate_cost_equivalent $gate_eq
+  }
+
+  # An AUTO_MEMORIES macro is a blackbox from the RTL's own module, not a
+  # Liberty cell: it costs its generated view's area, or
+  # keep_hierarchy -min_cost refuses it ("Missing cost information on
+  # instanced blackbox"). Its view is not read in its place, as its pins
+  # need not be the module's (FakeRAM uses its own names).
+  # One name per line, not a Tcl list: yosys lists an escaped module with
+  # its leading backslash (`\1d_ram`), which list parsing reads as an
+  # escape, and blackboxes.txt names it as read_slang takes it (`1d_ram`).
+  set modules {}
+  foreach line [split [tee -q -s result.string select -list-mod =*] "\n"] {
+    set line [string trim $line]
+    if { $line ne "" } {
+      lappend modules [regsub {^\\} $line {}]
+    }
+  }
+  dict for {m area} [auto_memories_areas] {
+    if { [lsearch -exact $modules $m] < 0 } {
+      # slang imports a blackboxed module only where it is instanced
+      continue
+    }
+    if { ![rtlil::has_attr -mod $m blackbox] } {
+      # e.g. slang's per-instance `<definition>$<instance path>`, which
+      # --blackboxed-module does not match: the body was elaborated
+      error "AUTO_MEMORIES macro $m is in the design but was not\
+        blackboxed; its name does not match the module's definition"
+    }
+    rtlil::set_attr -mod -uint $m gate_cost_equivalent \
+      [expr { int($area / $found_cell_area) }]
   }
 }

@@ -37,6 +37,9 @@ class RWPortGroup:
             self._clk_name = None
         self._related_pin_list = []
         self._related_busses = {}
+        # Optional write mask: one enable per lane of the data word.
+        self._write_mask_bus_name = None
+        self._write_mask_lanes = 0
 
     def set_suffix(self, suffix):
         """
@@ -85,6 +88,19 @@ class RWPortGroup:
     def get_data_output_bus_name(self):
         """Gets the data output bus name"""
         return self._data_output_bus_name
+
+    def set_write_mask_bus(self, name, lanes):
+        """Sets the write mask bus name and its lane count"""
+        self._write_mask_bus_name = name
+        self._write_mask_lanes = lanes
+
+    def get_write_mask_bus_name(self):
+        """Gets the write mask bus name, or None when unmasked"""
+        return self._write_mask_bus_name
+
+    def get_write_mask_lanes(self):
+        """Gets the number of write mask lanes, 0 when unmasked"""
+        return self._write_mask_lanes
 
     def add_related_pin(self, name):
         """Adds related pin"""

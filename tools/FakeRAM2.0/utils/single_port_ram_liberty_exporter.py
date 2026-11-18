@@ -46,3 +46,7 @@ class SinglePortRAMLibertyExporter(RAMLibertyExporter):
             True,
             addr_bus_name,
         )
+        if rw_port_group.get_write_mask_bus_name():
+            self.write_generic_bus(
+                out_fh, name, rw_port_group.get_write_mask_bus_name(), clk_pin_name
+            )

@@ -10,4 +10,5 @@ export ABC_AREA = 1
 export CORE_UTILIZATION ?= 80
 export PLACE_DENSITY_LB_ADDON = 0.20
 export TNS_END_PERCENT        = 100
+export GPL_PLACE_IOS          = 1
 

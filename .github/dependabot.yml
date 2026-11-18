@@ -1,6 +1,5 @@
 version: 2
 
-# MODULE.bazel is not covered: Dependabot has no Bazel ecosystem.
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"

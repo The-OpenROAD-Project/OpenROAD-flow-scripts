@@ -36,6 +36,10 @@
           pkgs.python3Packages.pyyaml
           pkgs.python3Packages.yamlfix
         ];
+        OPENROAD_EXE = "${openroad.packages.${system}.default}/bin/openroad";
+        OPENSTA_EXE  = "${openroad.packages.${system}.default}/bin/sta";
+        YOSYS_EXE    = "${yosys.packages.${system}.default}/bin/yosys";
+        PYTHON_EXE   = "${pkgs.python3}/bin/python3";
       };
     }
   );

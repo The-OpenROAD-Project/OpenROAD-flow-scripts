@@ -34,6 +34,7 @@ ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              POST_FLOORPLAN_TCL \
                              TAPCELL_TCL \
                              PDN_CFG \
+                             GLOBAL_CONNECT_TCL \
                              PDN_TCL \
                              POST_PDN_TCL \
                              POST_CTS_TCL \
@@ -88,7 +89,6 @@ cat > ${RUN_ME_SCRIPT} <<EOF
 #!/usr/bin/env bash
 cd "\$(dirname "\$0")"
 source ./$(basename ${VARS_BASENAME}).sh
-export PYTHON_EXE=\${PYTHON_EXE:-\$(command -v python3)}
 yosys ${YOSYS_FLAGS:-} -c \${SCRIPTS_DIR}/${ISSUE_TARGET}.tcl
 EOF
 else

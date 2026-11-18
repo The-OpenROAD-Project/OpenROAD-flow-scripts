@@ -1,12 +1,6 @@
 # macro level counterpart to BLOCKS_grid_strategy.tcl
 
 ####################################
-# global connections
-####################################
-add_global_connection -net {VDD} -inst_pattern {.*} -pin_pattern {^VDD$} -power
-add_global_connection -net {VSS} -inst_pattern {.*} -pin_pattern {^VSS$} -ground
-
-####################################
 # voltage domains
 ####################################
 set_voltage_domain -name {CORE} -power {VDD} -ground {VSS}

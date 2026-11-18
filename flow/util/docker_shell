@@ -9,7 +9,7 @@ set -ex
 #   -i, --image IMAGE Docker image (overrides $OR_IMAGE and default)
 #   --user            Map host UID/GID into the container via entrypoint.sh
 #   -p, --port SPEC   Forward a port, e.g. --port 8265:8265 (repeatable)
-#   --dry-run         Print the docker command without executing it
+#   --dry-run         Print the commands (xauth setup + docker run) without executing them
 #   -h|--help         Show this help and exit
 
 #
@@ -39,7 +39,7 @@ IMAGE=""
 CMD_ARGS=()
 
 usage() {
-    grep '^#' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '3,/^$/s/^# \{0,1\}//p' "$0"
     exit 0
 }
 
@@ -64,12 +64,22 @@ get_container_engine
 WORKSPACE=$(pwd)
 YOSYS_EXE=${YOSYS_EXE:-/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys}
 OPENROAD_EXE=${OPENROAD_EXE:-/OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad}
-KLAYOUT_CMD=${KLAYOUT_CMD:-/usr/bin/klayout}
+# KLAYOUT_CMD only when the caller sets it; otherwise the flow looks for
+# klayout on the image's PATH.
+KLAYOUT_ENV=()
+if [[ -n "${KLAYOUT_CMD:-}" ]]; then
+    KLAYOUT_ENV=(-e "KLAYOUT_CMD=$KLAYOUT_CMD")
+fi
 
 XSOCK=/tmp/.X11-unix
-XAUTH=/tmp/.docker.xauth
-if ! $DRY_RUN; then
-    xauth nlist ${DISPLAY:-:0} | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+
+if $DRY_RUN; then
+    # Use a fixed path so the printed commands work when run by hand
+    XAUTH=/tmp/.docker.xauth.dry-run
+else
+    XAUTH=$(mktemp /tmp/.docker.xauth.XXXXXXXXXX)
+    trap 'rm -f "$XAUTH"' EXIT
+    xauth nlist "${DISPLAY:-:0}" | sed -e 's/^..../ffff/' | xauth -f "$XAUTH" nmerge -
 fi
 
 if test -t 0; then
@@ -99,7 +109,7 @@ CMD_STR=
 
 ENV_SH_CMD='if [ -f ../env.sh ]; then . ../env.sh; fi;'
 
-# Build the command once; dry-run prints it, otherwise exec it.
+# Build the command once; dry-run prints it, otherwise run it.
 DOCKER_CMD=(
     "$container_engine" run --rm -i
     $DOCKER_INTERACTIVE
@@ -116,7 +126,7 @@ DOCKER_CMD=(
     -e WORK_HOME=/work
     -e "YOSYS_EXE=$YOSYS_EXE"
     -e "OPENROAD_EXE=$OPENROAD_EXE"
-    -e "KLAYOUT_CMD=$KLAYOUT_CMD"
+    "${KLAYOUT_ENV[@]}"
     -v "$WORKSPACE:/work:Z"
     --network host
     "${PORT_ARGS[@]}"
@@ -125,8 +135,11 @@ DOCKER_CMD=(
 )
 
 if $DRY_RUN; then
-    echo "${DOCKER_CMD[*]}"
+    echo "# Run both lines; the first creates $XAUTH for X forwarding"
+    echo "xauth nlist '${DISPLAY:-:0}' | sed -e 's/^..../ffff/' | xauth -f '$XAUTH' nmerge -"
+    printf '%q ' "${DOCKER_CMD[@]}"
+    echo
     exit 0
 fi
 
-exec "${DOCKER_CMD[@]}"
+"${DOCKER_CMD[@]}"

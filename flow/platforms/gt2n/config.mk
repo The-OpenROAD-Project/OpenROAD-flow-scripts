@@ -98,6 +98,7 @@ export IO_PLACER_H ?= M2
 export IO_PLACER_V ?= M3
 
 # Define default PDN config
+export GLOBAL_CONNECT_TCL ?= $(PLATFORM_DIR)/global_connect.tcl
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
@@ -106,7 +107,7 @@ export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 # (BPR pins only, half-width, no M1 shapes).
 export TAP_CELL_NAME = gt2_6t_tapbspdn_$(PRIMARY_WVT)
 
-export MACRO_PLACE_HALO ?= 1.0 1.0
+export RTLMP_MIN_CHANNEL_SIZE ?= 2.0 2.0
 
 #---------------------------------------------------------
 # Place

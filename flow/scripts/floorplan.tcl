@@ -1,7 +1,16 @@
 utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 1_synth.odb 1_synth.sdc
+load_stage_input 1_synth.odb
+
+# The global connections, before any step can mark an instance
+# dont_touch: global_connect skips one (ODB-0383). The rules stay in the
+# database for a later step that creates instances.
+if { [env_var_exists_and_non_empty GLOBAL_CONNECT_TCL] } {
+  log_cmd source $::env(GLOBAL_CONNECT_TCL)
+  log_cmd global_connect
+}
+
 source_step_tcl PRE FLOORPLAN
 
 proc report_unused_masters { } {
@@ -114,7 +123,7 @@ source_env_var_if_exists FOOTPRINT_TCL
 log_cmd set_dont_use $::env(DONT_USE_CELLS)
 
 # The transforms below (repair_tie_fanout, replace_arith_modules,
-# remove_buffers, repair_timing_helper) look like synthesis-stage
+# repair_timing_helper) look like synthesis-stage
 # operations: they all act on the netlist and don't touch placement.
 # But they DO depend on having a floorplan in place — initialize_floorplan
 # above placed the bterms on the die boundary and set_routing_layers
@@ -151,10 +160,7 @@ if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
   log_cmd replace_arith_modules
 }
 
-if { $::env(REMOVE_ABC_BUFFERS) } {
-  # remove buffers inserted by yosys/abc
-  log_cmd remove_buffers
-} else {
+if { !$::env(SKIP_FLOORPLAN_REPAIR_TIMING) } {
   # Skip clone & split
   repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
 }
@@ -169,4 +175,3 @@ source_step_tcl POST FLOORPLAN
 source_env_var_if_exists IO_CONSTRAINTS
 
 orfs_write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
-orfs_write_sdc $::env(RESULTS_DIR)/2_1_floorplan.sdc

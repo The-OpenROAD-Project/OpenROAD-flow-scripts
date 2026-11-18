@@ -125,13 +125,6 @@ To build from your own git repository:
     cd /home/me/myproject
     make --file=~/OpenROAD-flow-scripts/flow/Makefile DESIGN_CONFIG=somefolder/config.mk ...
 
-## Running a quick smoke-test of ORFS on your own Verilog
-
-You can [run ORFS on your own Verilog files](./flow/designs/asap7/minimal/README.md)
-without setting up a project or moving your Verilog files and even learn
-a thing or two about floorplan, placement and routing
-before you create an .sdc file and a config.mk file.
-
 ## Citing this Work
 
 If you use this software in any published work, we would appreciate a citation!
@@ -170,6 +163,6 @@ If you like the tools, please give us a star on our GitHub repos!
 The OpenROAD-flow-scripts repository (build and run scripts) has a BSD 3-Clause License.
 The flow relies on several tools, platforms and designs that each have their own licenses:
 
-- Find the tool license at: `OpenROAD-flow-scripts/tools/{tool}/` or `OpenROAD-flow-scripts/tools/OpenROAD/src/{tool}/`.
+- Find the tool license at: `OpenROAD-flow-scripts/tools/{tool}/` or `OpenROAD-flow-scripts/tools/OpenROAD/openroad/{tool}/`.
 - Find the platform license at: `OpenROAD-flow-scripts/flow/platforms/{platform}/`.
 - Find the design license at: `OpenROAD-flow-scripts/flow/designs/src/{design}/`.

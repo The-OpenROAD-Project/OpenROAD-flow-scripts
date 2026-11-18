@@ -3,6 +3,9 @@
 import json
 import argparse
 import os
+import re
+import sys
+from datetime import datetime, timezone
 
 # --- PUBSUB ---
 from google.cloud import pubsub_v1
@@ -16,6 +19,36 @@ INVOCATION_DIR = os.getcwd()
 
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+
+BUILD_TIME_FORMAT = "%Y-%m-%d %H:%M"
+# The backend drops a longer no_metrics_reason without an error.
+MAX_NO_METRICS_REASON = 100
+
+
+def _build_time(val):
+    """Validate --buildTime against BUILD_TIME_FORMAT; blank means unset."""
+    val = val.strip()
+    if not val:
+        return None
+    try:
+        parsed = datetime.strptime(val, BUILD_TIME_FORMAT)
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            f"'{val}' does not match the expected format 'YYYY-MM-DD HH:MM'"
+        )
+    # strptime accepts unpadded fields such as "2026-1-5 1:3".
+    return parsed.strftime(BUILD_TIME_FORMAT)
+
+
+def _non_negative_int(val):
+    try:
+        number = int(val)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"'{val}' is not an integer")
+    if number < 0:
+        raise argparse.ArgumentTypeError(f"'{val}' is negative")
+    return number
+
 
 # Create the argument parser
 parser = argparse.ArgumentParser(description="Process some integers.")
@@ -51,6 +84,52 @@ parser.add_argument(
     "pinned commit rather than the built one. When supplied alongside "
     "--jobName the payload is emitted as schema v4.",
 )
+parser.add_argument(
+    "--buildTime",
+    type=_build_time,
+    default=None,
+    help="When the build ran, emitted as build_time on the pipeline payload. "
+    "Defaults to now in UTC, in the format genMetrics.py uses for "
+    "run__flow__generate_date (%%Y-%%m-%%d %%H:%%M). The backend reads it "
+    "as UTC.",
+)
+parser.add_argument(
+    "--expectedDesigns",
+    type=_non_negative_int,
+    default=None,
+    help="Number of designs the pipeline set out to build. When positive, "
+    "emitted as design_count on the pipeline payload so the backend can tell "
+    "a build that produced fewer (or no) metrics from one that built fewer "
+    "designs. 0 is accepted but not sent, since the backend ignores it. Not "
+    "sent on the per-design fallback for oversized payloads.",
+)
+parser.add_argument(
+    "--noMetricsReason",
+    type=str,
+    default=None,
+    help="Why no design produced metrics, as a short code such as "
+    "no_reports_found (at most 100 characters; a longer value is dropped with "
+    "a warning). Emitted as no_metrics_reason only on a payload with no "
+    "designs.",
+)
+parser.add_argument(
+    "--buildUserEmail",
+    type=str,
+    default=None,
+    help="Email of the Jenkins user who started the build by hand "
+    "(BUILD_USER_EMAIL). Omitted for SCM, timer and branch-scan triggers. "
+    "The dashboard attributes the build to this user. Defaults to "
+    "$UPLOAD_BUILD_USER_EMAIL, which keeps the address out of a traced "
+    "(sh -x) command line.",
+)
+parser.add_argument(
+    "--changeAuthorEmail",
+    type=str,
+    default=None,
+    help="Email of the pull request's author on a PR build "
+    "(CHANGE_AUTHOR_EMAIL). Empty when the author's GitHub email is private. "
+    "Defaults to $UPLOAD_CHANGE_AUTHOR_EMAIL.",
+)
 
 # --- PUBSUB args ---
 parser.add_argument(
@@ -82,17 +161,154 @@ args = parser.parse_args()
 MAX_PUBSUB_BYTES = 8 * 1024 * 1024
 
 
-def build_design_record(dataFile, platform, design, variant):
-    """Return a dict for one design to be included in the pipeline-level payload."""
-    with open(dataFile) as f:
-        data = json.load(f)
-    metrics = {k.replace(":", "__"): v for k, v in data.items()}
+def build_design_record(dataFile, platform, design, variant, outcome=None):
+    """Return a dict for one design to be included in the pipeline-level payload.
+
+    ``dataFile`` is the design's metadata.json, or ``None`` for a run that ended
+    before writing one; such a record carries only its ``outcome``.
+    """
+    record = {"platform": platform, "design": design, "variant": variant}
+    if dataFile:
+        with open(dataFile) as f:
+            data = json.load(f)
+        record["metrics"] = {k.replace(":", "__"): v for k, v in data.items()}
+    if outcome:
+        record["outcome"] = outcome
+    return record
+
+
+# How a flow run ended, as the CI job records it next to the design's reports:
+# {"exit_code": int, "timed_out": bool, "elapsed_minutes": float,
+#  "limit_minutes": int}. Every key is optional.
+STATUS_FILENAME = "flow-status.json"
+MAX_OUTCOME_MESSAGE = 1024
+# Stage log names start with the step number: 1_2_yosys.log, 5_1_grt.log.
+STAGE_LOG = re.compile(r"^(\d+)_(?:(\d+)_)?.*\.log$")
+# The first matching line of a failing stage's log is the error reported. The
+# OpenROAD form carries the tool's message ID; Yosys prints "ERROR: ".
+ERROR_LINE = re.compile(
+    r"\[(?:ERROR|CRITICAL|FATAL) [A-Z][A-Z0-9]*-\d+\].*|^ERROR: .*|^Error: .*"
+)
+# What a tool that died on a signal leaves in its log, as opposed to an error it
+# reported itself.
+CRASH_LINE = re.compile(r"Signal \d+ received|Segmentation fault|core dumped")
+
+
+def _stage_name(log_name):
+    """The flow stage a stage log belongs to, e.g. 5_1_grt.log -> "grt"."""
+    match = STAGE_LOG.match(log_name)
+    if not match:
+        return None
+    step, sub = match.group(1), match.group(2)
+    if step == "5":
+        return "grt" if sub == "1" else "route"
     return {
-        "platform": platform,
-        "design": design,
-        "variant": variant,
-        "metrics": metrics,
-    }
+        "1": "synth",
+        "2": "floorplan",
+        "3": "place",
+        "4": "cts",
+        "6": "finish",
+    }.get(step)
+
+
+def _stage_logs(log_dir):
+    """The design's stage logs, last step first."""
+    try:
+        names = os.listdir(log_dir)
+    except OSError:
+        return []
+
+    def key(name):
+        match = STAGE_LOG.match(name)
+        return (int(match.group(1)), int(match.group(2) or 0), name)
+
+    return sorted((n for n in names if STAGE_LOG.match(n)), key=key, reverse=True)
+
+
+def _scan_log(path):
+    """The first error line of a log and whether it shows a crash."""
+    error_line = None
+    crashed = False
+    try:
+        with open(path, errors="replace") as f:
+            for line in f:
+                if error_line is None:
+                    match = ERROR_LINE.search(line)
+                    if match:
+                        error_line = match.group(0).strip()
+                if not crashed and CRASH_LINE.search(line):
+                    crashed = True
+                if error_line is not None and crashed:
+                    break
+    except OSError:
+        pass
+    return error_line, crashed
+
+
+def read_flow_outcome(report_dir, log_dir):
+    """The design's outcome from its flow-status.json and stage logs, or ``None``.
+
+    ``status`` is ``timeout`` when the time limit stopped the run, ``passed`` on
+    exit code 0, ``crash`` when the last stage log shows the tool died on a
+    signal, and ``error`` otherwise. A failed run also names the stage it ended
+    in and the first error line found in its logs, last stage first.
+    """
+    path = os.path.join(report_dir, STATUS_FILENAME)
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path) as f:
+            status = json.load(f)
+    except (OSError, ValueError) as e:
+        print(f"[WARN] Could not read {path}: {e}. Reporting no outcome.")
+        return None
+    if not isinstance(status, dict):
+        print(f"[WARN] {path} does not hold a JSON object. Reporting no outcome.")
+        return None
+
+    exit_code = status.get("exit_code")
+    timed_out = status.get("timed_out") is True
+    if not timed_out and not isinstance(exit_code, int):
+        print(f"[WARN] {path} has no exit_code. Reporting no outcome.")
+        return None
+
+    outcome = {}
+    for key in ("elapsed_minutes", "limit_minutes"):
+        value = status.get(key)
+        if (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and value >= 0
+        ):
+            outcome[key] = value
+
+    if not timed_out and exit_code == 0:
+        outcome["status"] = "passed"
+        return outcome
+
+    logs = _stage_logs(log_dir)
+    if logs:
+        stage = _stage_name(logs[0])
+        if stage:
+            outcome["stage"] = stage
+
+    message = None
+    crashed = False
+    for i, name in enumerate(logs):
+        error_line, log_crashed = _scan_log(os.path.join(log_dir, name))
+        if i == 0:
+            crashed = log_crashed
+        if error_line:
+            message = error_line
+            break
+    if message:
+        outcome["message"] = message[:MAX_OUTCOME_MESSAGE]
+
+    if timed_out:
+        outcome["status"] = "timeout"
+    else:
+        outcome["status"] = "crash" if crashed else "error"
+    return outcome
 
 
 def _submodule_defect(entry):
@@ -193,7 +409,77 @@ def resolve_schema_version(args, provenance):
     return 4 if provenance else 3
 
 
-def build_pipeline_payload(design_records, args, provenance=None):
+def resolve_requester(args):
+    """Who asked for the build, as the payload keys the backend reads.
+
+    Each value comes from its flag or, when the flag is absent, from its
+    environment variable. An empty flag counts as given, so it suppresses the
+    variable. Blank values are left out rather than sent empty, and a value
+    without an "@" is dropped with a warning: an unset Groovy variable
+    interpolates as the string "null", which must not be stored as an email.
+    The keys ride on every schema version: the backend reads them by presence,
+    and they describe the build rather than the payload's shape, so they do
+    not bump the version.
+    """
+    requester = {}
+    for key, flag, value, env_var in (
+        (
+            "build_user_email",
+            "--buildUserEmail",
+            args.buildUserEmail,
+            "UPLOAD_BUILD_USER_EMAIL",
+        ),
+        (
+            "change_author_email",
+            "--changeAuthorEmail",
+            args.changeAuthorEmail,
+            "UPLOAD_CHANGE_AUTHOR_EMAIL",
+        ),
+    ):
+        if value is None:
+            value = os.environ.get(env_var, "")
+        value = value.strip()
+        if not value:
+            continue
+        if "@" not in value:
+            print(f"[WARN] Not sending {flag}: '{value}' is not an email address.")
+            continue
+        requester[key] = value
+    return requester
+
+
+def resolve_build_time(args):
+    """The build time to report, defaulting to now in genMetrics.py's format.
+
+    The default is UTC because the backend reads the value as UTC; local time
+    would shift the build by the agent's offset wherever that is not UTC.
+    """
+    if args.buildTime:
+        return args.buildTime
+    return datetime.now(timezone.utc).strftime(BUILD_TIME_FORMAT)
+
+
+def resolve_no_metrics_reason(args, design_records):
+    """The no_metrics_reason to send, and why a given reason is not sent.
+
+    Returns ``(reason, problem)``: ``reason`` is ``None`` unless it goes on the
+    payload, and ``problem`` describes a non-blank reason that was dropped.
+    """
+    reason = args.noMetricsReason.strip() if args.noMetricsReason else ""
+    if not reason:
+        return None, None
+    # A reason only describes a build that produced nothing; on a payload with
+    # designs it would contradict the metrics it carries.
+    if design_records:
+        return None, "design records were collected"
+    if len(reason) > MAX_NO_METRICS_REASON:
+        return None, f"it is longer than {MAX_NO_METRICS_REASON} characters"
+    return reason, None
+
+
+def build_pipeline_payload(
+    design_records, args, provenance=None, no_metrics_reason=None, requester=None
+):
     """Return the pipeline-level payload dict.
 
     Emits schema v2 (no job name), v3 (job name) or v4 (job name plus build
@@ -210,16 +496,23 @@ def build_pipeline_payload(design_records, args, provenance=None):
         "change_branch": args.changeBranch,
         "commit_sha": args.commitSHA,
         "jenkins_url": args.jenkinsURL,
+        "build_time": resolve_build_time(args),
         "designs": design_records,
     }
     if job_name:
         payload["job_name"] = job_name
+    if args.expectedDesigns:
+        payload["design_count"] = args.expectedDesigns
+    if no_metrics_reason:
+        payload["no_metrics_reason"] = no_metrics_reason
     # Only a v4 payload carries provenance. Provenance without a job name cannot
     # be v4 (the backend requires job_name from v3 up), and attaching v4 keys to
     # a message labelled v2 would make payload_schema_version stop describing
     # the payload.
     if schema_version == 4:
         payload.update(provenance)
+    if requester:
+        payload.update(requester)
     return payload
 
 
@@ -243,12 +536,14 @@ def publish_pipeline_report(
     print(f"[INFO] Published pipeline report to Pub/Sub (message ID: {message_id}).")
 
 
-def publish_v1_per_design(publisher, topic_path, design_records, args, provenance=None):
+def publish_v1_per_design(
+    publisher, topic_path, design_records, args, provenance=None, requester=None
+):
     """Fallback path used when the v2 pipeline payload exceeds MAX_PUBSUB_BYTES.
 
     Emits one v1-format message per design (no payload_schema_version, metrics
     flattened at the root), matching the legacy schema the ingestion service
-    still supports.
+    still supports. Returns the number of designs that failed to publish.
 
     Provenance is mirrored onto every message: all of them resolve to the same
     build, and the backend upserts components by path, so N copies converge on
@@ -259,8 +554,23 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
     requirement: a v1 message declares no schema version, so there is nothing
     for the extra keys to contradict, and the backend reads provenance here by
     key presence rather than by version.
+
+    design_count is left off: the backend reads every v1 root key it does not
+    list as metadata as a metric, and design_count is not on that list, so it
+    would surface as a bogus metric. build_time and no_metrics_reason are
+    metadata there but not needed: each design's metrics carry
+    run__flow__generate_date, which the backend prefers, and a reason only
+    applies to an empty build, whose payload is far below the size cap.
+
+    The requester keys go on after the metrics, so a metric that happened to
+    share their name could not replace who asked for the build.
+
+    A design's outcome rides at the root as ``outcome``. A design that has only
+    an outcome carries no metrics to name it, so its message names the design
+    with the same run__flow__ keys metadata.json would hold, dated by the build.
     """
     futures = []
+    failed = 0
     for d in design_records:
         payload = {
             "build_id": args.buildID,
@@ -273,7 +583,21 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
         }
         if provenance:
             payload.update(provenance)
-        payload.update(d["metrics"])
+        if "metrics" in d:
+            payload.update(d["metrics"])
+        else:
+            payload.update(
+                {
+                    "run__flow__platform": d["platform"],
+                    "run__flow__design": d["design"],
+                    "run__flow__variant": d["variant"],
+                    "run__flow__generate_date": resolve_build_time(args),
+                }
+            )
+        if "outcome" in d:
+            payload["outcome"] = d["outcome"]
+        if requester:
+            payload.update(requester)
 
         message_data = json.dumps(payload, default=str).encode("utf-8")
         try:
@@ -284,8 +608,9 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
             )
             futures.append((d, future))
         except Exception as e:
+            failed += 1
             print(
-                f"[WARN] Pub/Sub v1 fallback publish failed for "
+                f"[ERROR] Pub/Sub v1 fallback publish failed for "
                 f"{d['platform']} {d['design']} {d['variant']}: {e}"
             )
 
@@ -297,10 +622,12 @@ def publish_v1_per_design(publisher, topic_path, design_records, args, provenanc
                 f"{d['platform']} {d['design']} {d['variant']}."
             )
         except Exception as e:
+            failed += 1
             print(
-                f"[WARN] Pub/Sub v1 fallback publish failed for "
+                f"[ERROR] Pub/Sub v1 fallback publish failed for "
                 f"{d['platform']} {d['design']} {d['variant']}: {e}"
             )
+    return failed
 
 
 # --- END PUBSUB ---
@@ -340,22 +667,52 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
     platform = dirList[1]
     design = dirList[2]
     variant = dirList[3]
-    dataFile = os.path.join(reportDir, RUN_FILENAME)
-    if not os.path.exists(dataFile):
-        print(f"[WARN] No data file for {platform} {design} {variant}.")
-        continue
     if platform == "sky130hd_fakestack" or platform == "src":
         print(f"[WARN] Skiping upload {platform} {design} {variant}.")
         continue
+    dataFile = os.path.join(reportDir, RUN_FILENAME)
+    if not os.path.exists(dataFile):
+        dataFile = None
+    outcome = read_flow_outcome(
+        reportDir, os.path.join("logs", platform, design, variant)
+    )
+    if dataFile is None and outcome is None:
+        print(f"[WARN] No data file for {platform} {design} {variant}.")
+        continue
+    if dataFile is None:
+        print(
+            f"[INFO] No data file for {platform} {design} {variant}; "
+            f"reporting its {outcome['status']} outcome only."
+        )
     # --- PUBSUB ---
     if publisher:
-        design_records.append(build_design_record(dataFile, platform, design, variant))
+        design_records.append(
+            build_design_record(dataFile, platform, design, variant, outcome)
+        )
     # --- END PUBSUB ---
 
 # --- PUBSUB ---
-if publisher and design_records:
+# A failed publish exits non-zero. A warning alone let CI builds pass while the
+# QoR dashboard stopped receiving results, which froze the baseline that later
+# builds are compared against.
+#
+# A build where no design produced metrics still publishes, with an empty
+# designs list, so the dashboard lists it as a build without metrics instead of
+# leaving it out.
+if publisher:
+    if not design_records:
+        print(
+            "[WARN] No design records were collected. Publishing an empty "
+            "(no-metrics) pipeline report."
+        )
+    no_metrics_reason, reason_problem = resolve_no_metrics_reason(args, design_records)
+    if reason_problem:
+        print(f"[WARN] Ignoring --noMetricsReason because {reason_problem}.")
     provenance = load_provenance(args.provenanceFile)
-    payload = build_pipeline_payload(design_records, args, provenance)
+    requester = resolve_requester(args)
+    payload = build_pipeline_payload(
+        design_records, args, provenance, no_metrics_reason, requester
+    )
     message_data = json.dumps(payload, default=str).encode("utf-8")
 
     if len(message_data) > MAX_PUBSUB_BYTES:
@@ -364,7 +721,19 @@ if publisher and design_records:
             f"{MAX_PUBSUB_BYTES // 1024} KB cap. Falling back to v1 per-design publish "
             f"({len(design_records)} messages)."
         )
-        publish_v1_per_design(publisher, topic_path, design_records, args, provenance)
+        if args.expectedDesigns:
+            print(
+                "[WARN] --expectedDesigns is not sent on the v1 fallback; the "
+                "backend will report this build's completeness as unknown."
+            )
+        failed = publish_v1_per_design(
+            publisher, topic_path, design_records, args, provenance, requester
+        )
+        if failed:
+            print(
+                f"[ERROR] {failed} of {len(design_records)} designs were not published."
+            )
+            sys.exit(1)
     else:
         try:
             publish_pipeline_report(
@@ -376,7 +745,8 @@ if publisher and design_records:
                 provenance,
             )
         except Exception as e:
-            print(f"[WARN] Pub/Sub publish failed for pipeline report: {e}")
-elif publisher and not design_records:
-    print("[WARN] Pub/Sub publisher initialized but no design records were collected.")
+            print(f"[ERROR] Pub/Sub publish failed for pipeline report: {e}")
+            sys.exit(1)
+        if not design_records:
+            print("[INFO] Published an empty (no-metrics) pipeline report.")
 # --- END PUBSUB ---

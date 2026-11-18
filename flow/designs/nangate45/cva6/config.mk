@@ -87,7 +87,7 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constr
 
 export CORE_UTILIZATION       = 60
 export CORE_MARGIN            = 2
-export MACRO_PLACE_HALO       = 10 10
+export RTLMP_MIN_CHANNEL_SIZE = 20 20
 export PLACE_DENSITY          = 0.75
 
 # a smoketest for this option, there are a
@@ -104,3 +104,4 @@ export SYNTH_CANONICALIZE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/canoni
 
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
+export SETUP_REPAIR_PHASES = PARALLEL_EVAL

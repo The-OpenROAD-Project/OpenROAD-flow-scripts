@@ -71,6 +71,29 @@ class MacroDimTest(unittest.TestCase):
             self.assertAlmostEqual(height, exp_height, delta=self._delta)
             self.assertAlmostEqual(width, exp_width, delta=self._delta)
 
+    def test_macro_dim_min_width(self):
+        """A narrow macro is widened to min_width_um; a wide one is not"""
+
+        process_data = TestUtils.get_base_process_data().copy()
+        process_data["min_width_um"] = 10.0
+        process = Process(process_data)
+        # 39 bits at 2048 deep is 5.054 um wide, below the floor
+        width, height = process.get_macro_dimensions(39, 2048, 1, 0)
+        self.assertAlmostEqual(width, 10.0, delta=self._delta)
+        self.assertAlmostEqual(height, 663.552, delta=self._delta)
+        # four banks make it 20.216 um wide, above the floor
+        width, _ = process.get_macro_dimensions(39, 2048, 4, 0)
+        self.assertAlmostEqual(width, 5.054 * 4, delta=self._delta)
+
+    def test_min_width_must_be_a_width(self):
+        """A min_width_um that is not a non-negative number is refused"""
+
+        for bad in (None, "5.6", -1.0):
+            process_data = TestUtils.get_base_process_data().copy()
+            process_data["min_width_um"] = bad
+            with self.assertRaises(Exception):
+                Process(process_data)
+
     def test_macro_dim_invalid_banks(self):
         """Tests detection that an invalid bank value was given"""
 
@@ -108,6 +131,39 @@ class MacroDimTest(unittest.TestCase):
         self.assertEqual(bitcell_height, process_data["bitcell_height_um"])
         self.assertAlmostEqual(width, exp_width, delta=self._delta)
         self.assertAlmostEqual(height, exp_height, delta=self._delta)
+
+    def _dimensions(self, column_mux_factor, width, depth, banks):
+        """Macro dimensions, column_mux_factor None leaves the key out"""
+
+        process_data = TestUtils.get_base_process_data().copy()
+        del process_data["column_mux_factor"]
+        if column_mux_factor is not None:
+            process_data["column_mux_factor"] = column_mux_factor
+        return Process(process_data).get_macro_dimensions(width, depth, banks, 0)
+
+    def test_macro_dim_column_mux_picked(self):
+        """An absent column_mux_factor folds a deep memory square"""
+
+        # sqrt(512 / 17) = 5.5, the nearest power of two is 4
+        picked = self._dimensions(None, 17, 512, 1)
+        self.assertEqual(picked, self._dimensions(4, 17, 512, 1))
+        width, height = picked
+        self.assertLessEqual(max(width, height) / min(width, height), 8.0)
+
+    def test_macro_dim_column_mux_explicit(self):
+        """An explicit column_mux_factor is kept, even when it is a sliver"""
+
+        width, height = self._dimensions(1, 17, 512, 1)
+        self.assertGreater(height / width, 50.0)
+
+    def test_macro_dim_column_mux_after_banks(self):
+        """The factor is picked for the array banking leaves"""
+
+        # 4 banks make 2048x39 a 512x156 array: sqrt(512 / 156) = 1.8,
+        # so 2, where sqrt(2048 / 39) = 7.2 would have given 8
+        self.assertEqual(
+            self._dimensions(None, 39, 2048, 4), self._dimensions(2, 39, 2048, 4)
+        )
 
 
 if __name__ == "__main__":
