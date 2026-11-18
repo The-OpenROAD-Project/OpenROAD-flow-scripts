@@ -573,5 +573,28 @@ class TestPlatformAndDesignFiles(StubFlowTestCase):
         self.assertIn("rtl.v", names)
 
 
+class TestExcludePlatformWorkHome(StubFlowTestCase):
+    """EXCLUDE_PLATFORM drops the liberty and LEF files from the archive
+    makeIssue writes in WORK_HOME, wherever WORK_HOME is."""
+
+    def assert_excluded(self, work_home):
+        for name in ["cells.lib", "cells.lef"]:
+            self.stub.write(os.path.join(self.stub.platform_dir, name), "\n")
+        archive = self.stub.make_issue(work_home, EXCLUDE_PLATFORM="1", FULL_ISSUE="1")
+        names = [os.path.basename(m) for m in self.stub.members(archive)]
+        self.assertNotIn("cells.lib", names)
+        self.assertNotIn("cells.lef", names)
+        self.assertIn("pdn.tcl", names)
+
+    def test_work_home_default(self):
+        self.assert_excluded(".")
+
+    def test_work_home_absolute(self):
+        self.assert_excluded(os.path.join(self.stub.tmp, "work"))
+
+    def test_work_home_relative(self):
+        self.assert_excluded("work/stub")
+
+
 if __name__ == "__main__":
     unittest.main()

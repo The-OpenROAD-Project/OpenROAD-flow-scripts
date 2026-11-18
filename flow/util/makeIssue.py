@@ -187,9 +187,9 @@ def tar_command(env, tar_name, issue_name, files):
     )
 
 
-def exclude_platform_library(tar_name, issue_name):
+def exclude_platform_library(tar_name):
     """Drops the liberty and LEF files from the archive."""
-    tar = f"{issue_name}.tar"
+    tar = tar_name[: -len(".gz")]
     subprocess.run(["gunzip", "-f", tar_name], check=True)
     members = subprocess.run(
         ["tar", "--list", "--file", tar],
@@ -232,7 +232,7 @@ def make_issue(target, env):
     subprocess.run(tar_command(env, tar_name, issue_name, files), check=True)
 
     if "EXCLUDE_PLATFORM" in env:
-        exclude_platform_library(tar_name, issue_name)
+        exclude_platform_library(tar_name)
 
     if "COPY_ISSUE" in env:
         os.makedirs(env["COPY_ISSUE"], exist_ok=True)
