@@ -136,6 +136,30 @@ class TestLeftOut(VarsTestCase):
         self.assertEqual([l for l in sh if "FLOW_HOME=" in l], [sh[0]])
 
 
+class TestValues(VarsTestCase):
+    """A value is written as make holds it: an empty one too, which make
+    spells '' (#1336), one with '=' in it (#3292), and a list such as
+    GND_NETS_VOLTAGES, a single quoted value in every file (#2673). The
+    blanks make's foreach puts around each line are not part of it."""
+
+    def test_empty_value(self):
+        lines = self.generate("EMPTY=''\n BLANK= \n")
+        for name in ["EMPTY", "BLANK"]:
+            self.assertIn(f'export {name}=""', lines["sh"])
+            self.assertIn(f'set env({name}) ""', lines["tcl"])
+            self.assertIn(f"set env {name} ", lines["gdb"])
+
+    def test_value_with_equals(self):
+        lines = self.generate("SYNTH_ARGS=-flatten -abc9=1\n")
+        self.assertIn('export SYNTH_ARGS="-flatten -abc9=1"', lines["sh"])
+
+    def test_list_value(self):
+        lines = self.generate("GND_NETS_VOLTAGES=VSS 0.0\n")
+        self.assertIn('export GND_NETS_VOLTAGES="VSS 0.0"', lines["sh"])
+        self.assertIn('set env(GND_NETS_VOLTAGES) "VSS 0.0"', lines["tcl"])
+        self.assertIn("set env GND_NETS_VOLTAGES VSS 0.0", lines["gdb"])
+
+
 class TestCommandLine(VarsTestCase):
     """The flow's Makefile runs it as `generate_vars.py <basename>` with
     the variables in its environment."""
