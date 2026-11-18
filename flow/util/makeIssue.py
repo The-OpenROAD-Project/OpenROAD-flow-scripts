@@ -10,7 +10,7 @@ Usage: makeIssue.py <WORK_HOME>/<step>
 
 The flow's Makefile exports the variables this reads (WORK_HOME, the
 *_DIR variables, DESIGN_NICKNAME, PLATFORM, FLOW_VARIANT, ...) and
-ISSUE_VARIABLES, which generate-vars.sh writes into the vars files.
+ISSUE_VARIABLES, which generate_vars.py writes into the vars files.
 """
 
 import datetime
@@ -20,6 +20,8 @@ import re
 import shutil
 import subprocess
 import sys
+
+import generate_vars
 
 UTILS_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -244,11 +246,7 @@ def make_issue(target, env):
     for ext in ["sh", "tcl", "gdb"]:
         if os.path.exists(f"{vars_basename}.{ext}"):
             os.remove(f"{vars_basename}.{ext}")
-    subprocess.run(
-        [os.path.join(UTILS_DIR, "generate-vars.sh"), vars_basename],
-        check=True,
-        env=env,
-    )
+    generate_vars.write_vars(vars_basename, env)
 
     issue_name = f"{issue_target}_{issue_tag}"
     tar_name = f"{issue_dest}/{issue_name}.tar.gz"
