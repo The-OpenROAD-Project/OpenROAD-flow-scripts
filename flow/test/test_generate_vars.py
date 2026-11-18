@@ -160,6 +160,42 @@ class TestValues(VarsTestCase):
         self.assertIn("set env GND_NETS_VOLTAGES VSS 0.0", lines["gdb"])
 
 
+class TestFlowHome(VarsTestCase):
+    """The vars spell the flow's paths through FLOW_HOME, so that they
+    work wherever the flow is: a path under FLOW_HOME and one under the
+    ORFS root above it (#1331), wherever in the value it is (#1976), and
+    each one of several (#2673). Tcl and gdb read FLOW_HOME from the
+    environment (#1386). SCRIPTS_DIR is the scripts next to the vars
+    files, which an issue archive carries (#2012)."""
+
+    def test_flow_and_orfs_paths(self):
+        lines = self.generate(
+            f"VERILOG_FILES={self.flow}/designs/a.v {self.orfs}/tools/b.v\n"
+            f"SYNTH_ARGS=-I{self.flow}/include\n"
+        )
+        self.assertIn(
+            'export VERILOG_FILES="${FLOW_HOME}/designs/a.v ${FLOW_HOME}/../tools/b.v"',
+            lines["sh"],
+        )
+        self.assertIn('export SYNTH_ARGS="-I${FLOW_HOME}/include"', lines["sh"])
+
+    def test_tcl_and_gdb_read_flow_home_from_the_environment(self):
+        lines = self.generate(f"LIBS={self.flow}/a.lib {self.flow}/b.lib\n")
+        self.assertIn(
+            'set env(LIBS) "$::env(FLOW_HOME)/a.lib $::env(FLOW_HOME)/b.lib"',
+            lines["tcl"],
+        )
+        self.assertIn(
+            'set env LIBS getenv("FLOW_HOME")/a.lib getenv("FLOW_HOME")/b.lib',
+            lines["gdb"],
+        )
+
+    def test_scripts_dir_next_to_the_vars(self):
+        lines = self.generate(f"SCRIPTS_DIR={self.flow}/scripts\n")
+        self.assertIn('export SCRIPTS_DIR="./scripts"', lines["sh"])
+        self.assertIn('set env(SCRIPTS_DIR) "./scripts"', lines["tcl"])
+
+
 class TestCommandLine(VarsTestCase):
     """The flow's Makefile runs it as `generate_vars.py <basename>` with
     the variables in its environment."""
