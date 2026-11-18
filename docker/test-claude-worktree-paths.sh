@@ -165,5 +165,9 @@ run_case "${nested_checkout}" "Git data inside the worktree" || failed=1
 rm -rf "${workspace_fixture}"
 make_worktree "${tmp}/main" /workspace
 run_case /workspace "worktree at /workspace" || failed=1
-git -C "${tmp}/main" worktree remove --force /workspace
+# The caller provides /workspace. Remove the fixture files and let the exit
+# trap remove the temporary repository that stores their Git data.
+rm -rf -- /workspace/{.git,.gitmodules,claude.sh,content,module}
+workspace_entries=$(ls -A /workspace)
+test -z "${workspace_entries}"
 exit "${failed}"
