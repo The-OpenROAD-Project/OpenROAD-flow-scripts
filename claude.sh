@@ -217,8 +217,19 @@ else
     command=(claude --dangerously-skip-permissions "${CLAUDE_ARGS[@]}")
 fi
 
-if [[ -n "${GIT_LINK_DIR}" ]]; then
-    docker run "${DOCKER_RUN_ARGS[@]}" "${CLAUDE_IMAGE}" "${command[@]}"
-else
+if [[ -z "${GIT_LINK_DIR}" ]]; then
     exec docker run "${DOCKER_RUN_ARGS[@]}" "${CLAUDE_IMAGE}" "${command[@]}"
 fi
+
+# Wait for Docker before removing the temporary bind source. Keep stdin open
+# and pass signals sent to the wrapper through to the Docker client.
+docker run "${DOCKER_RUN_ARGS[@]}" "${CLAUDE_IMAGE}" "${command[@]}" <&0 &
+docker_pid=$!
+forward_signal() {
+    kill -s "$1" "${docker_pid}" 2>/dev/null || return 0
+    wait "${docker_pid}" || true
+}
+trap 'forward_signal HUP' HUP
+trap 'forward_signal INT' INT
+trap 'forward_signal TERM' TERM
+wait "${docker_pid}"

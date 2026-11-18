@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   shell-tests:
+    # The Git fixture creates /workspace and /home/claude-user on a fresh VM.
     runs-on: ubuntu-26.04
     steps:
       - name: Check out repository

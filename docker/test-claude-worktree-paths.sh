@@ -82,9 +82,10 @@ make_worktree() {
 }
 
 run_case() {
-    local checkout=$1 name=$2 original original_module ref
+    local checkout=$1 name=$2 original original_module ref git_dir
     original=$(cat "${checkout}/.git") || return 1
     original_module=$(cat "${checkout}/module/.git") || return 1
+    git_dir=$(git -C "${checkout}" rev-parse --absolute-git-dir) || return 1
     echo fixture > "${tmp}/settings/.claude/settings.json"
     rm -f "${tmp}/settings/.cache/bazel-claude/marker"
     if ! env -u SSH_AUTH_SOCK -u ANTHROPIC_API_KEY -u AWS_ACCESS_KEY_ID \
@@ -116,6 +117,10 @@ SH
         return 1
     fi
     ref=$(git -C "${checkout}" symbolic-ref HEAD) || return 1
+    if compgen -G "${git_dir}/claude-link.*" > /dev/null; then
+        echo "FAIL: ${name}: temporary Git pointer was left behind" >&2
+        return 1
+    fi
     if [[ "$(cat "${checkout}/.git")" != "${original}" ||
         "$(cat "${checkout}/module/.git")" != "${original_module}" ||
         "$(git -C "${checkout}" show "${ref}:content")" != modified ||

@@ -167,9 +167,11 @@ The shell starts in the worktree's host path.
 The worktree's `.git` file and the `.git` files of its submodules point to these paths, so git works in the container.
 The entrypoint sources `env.sh` from there, so `OPENROAD`, `FLOW_HOME` and `PATH` use the host path too.
 Rebuild the image with `./claude.sh --build` to get this entrypoint.
-The worktree is also at `/workspace`, but git links in submodules do not resolve from that path.
+The worktree is also at `/workspace`.
+Use the start path for Git commands in submodules when `/workspace` is an alias for the worktree.
 If a host path would overlap `/workspace` or `/home/claude-user`, the wrapper adds `/tmp/claude-worktree` before both host paths.
-It starts the shell at the resulting worktree path and uses a temporary Git pointer there.
+It starts Claude Code or the shell at the resulting worktree path and uses a temporary Git pointer there.
+Submodules in a relocated worktree use the relative Git links that Git creates during normal initialization.
 A worktree at exactly `/workspace` can use the existing checkout mount if its Git data is outside the reserved paths.
 
 The paths of the other worktrees do not exist in the container, so git sees them as stale.
