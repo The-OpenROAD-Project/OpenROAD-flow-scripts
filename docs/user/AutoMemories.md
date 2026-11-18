@@ -38,6 +38,14 @@ flow. That file-based handoff is what lets build systems (e.g.
 bazel-orfs) declare the generated artifacts as ordinary stage outputs
 and transitive dependencies of the remaining stages.
 
+Synthesis writes the views and lists to its own
+`$(RESULTS_DIR)/memories`. Every step reads them from
+`AUTO_MEMORIES_DIR`, synthesis included, which defaults to that
+directory; with make, leave it there. `AUTO_MEMORIES_DIR` is for a build
+system that runs a stage of one variant on another variant's synthesis
+(e.g. bazel-orfs): it sets it for each step it runs, synthesis included,
+to the memories of the variant that synthesised them.
+
 Memories that are *not* converted stay in the netlist and synthesize to
 flip-flops, like any other RTL.
 

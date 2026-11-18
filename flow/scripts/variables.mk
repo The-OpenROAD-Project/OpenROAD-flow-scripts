@@ -57,6 +57,10 @@ export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 # Where a stage reads the previous stage's result.
 export FLOW_INPUT_VARIANT ?= $(FLOW_VARIANT)
 export INPUT_RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_INPUT_VARIANT)
+# Where every step reads AUTO_MEMORIES' generated views; synthesis writes
+# them to its own $(RESULTS_DIR)/memories. Set by a build system that
+# runs a stage of one variant on another variant's synthesis.
+export AUTO_MEMORIES_DIR ?= $(RESULTS_DIR)/memories
 
 #-------------------------------------------------------------------------------
 ifeq (,$(strip $(NUM_CORES)))

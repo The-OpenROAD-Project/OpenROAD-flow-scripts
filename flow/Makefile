@@ -205,7 +205,7 @@ do-klayout:
 		--output $(OBJECTS_DIR)/klayout.lyt \
 		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS) \
 		--map-files $(wildcard $(FLOW_HOME)/platforms/$(PLATFORM)/*map) \
-		$(if $(filter 1,$(AUTO_MEMORIES)),--blackboxes $(RESULTS_DIR)/memories/blackboxes.txt)
+		$(if $(filter 1,$(AUTO_MEMORIES)),--blackboxes $(AUTO_MEMORIES_DIR)/blackboxes.txt)
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
 	$(UNSET_AND_MAKE) do-klayout_wrap
@@ -284,9 +284,13 @@ $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL
 
 yosys-dependencies: $(RESULTS_DIR)/memories.json
 $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
+$(RESULTS_DIR)/memories/blackboxes.txt: $(RESULTS_DIR)/memories.json ;
 # The generated LEFs are part of the KLayout technology the GDS merge
-# reads the final DEF with.
-$(OBJECTS_DIR)/klayout.lyt: $(RESULTS_DIR)/memories.json
+# reads the final DEF with. Synthesis writes its own memories;
+# AUTO_MEMORIES_DIR is where the stages after it read them, as
+# INPUT_RESULTS_DIR is where a stage reads its input, and another
+# variant's blackboxes.txt has no rule here.
+$(OBJECTS_DIR)/klayout.lyt: $(AUTO_MEMORIES_DIR)/blackboxes.txt
 endif
 
 # OpenROAD stages read binary liberty (.blib) files from a cache shared by

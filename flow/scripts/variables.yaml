@@ -185,6 +185,16 @@ SYNTH_USE_SYN:
   stages:
     - synth
   default: 0
+AUTO_MEMORIES_DIR:
+  description: >
+    Directory every step reads AUTO_MEMORIES' generated views and lists
+    from, synthesis included. Synthesis writes them to its own
+    $(RESULTS_DIR)/memories, the default; with make, leave it there. For
+    a build system that runs a stage of one variant on another variant's
+    synthesis (e.g. bazel-orfs), which sets it for each step it runs,
+    synthesis included, to the memories of the variant that synthesised
+    them. Like AUTO_MEMORIES, not tied to stages: every step that reads
+    the views needs it, the abstract among them.
 AUTO_MEMORIES:
   description: >
     Experimental. When set to 1, memories that yosys infers in the RTL
@@ -1682,8 +1692,8 @@ FLOW_INPUT_VARIANT:
     runs, then leaves it at the default: the shared stages run once, and
     the fork writes only its own results. A stage's later steps read the
     stage's own results. A stage stops when its input is in both
-    variants. Not with AUTO_MEMORIES=1, whose memories are read from the
-    variant that synthesised them.
+    variants. With AUTO_MEMORIES=1, AUTO_MEMORIES_DIR names the memories
+    of the variant that synthesised them, for every stage the fork runs.
   stages:
     - floorplan
     - place
