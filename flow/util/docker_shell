@@ -9,6 +9,7 @@ set -ex
 #   -i, --image IMAGE Docker image (overrides $OR_IMAGE and default)
 #   --user            Map host UID/GID into the container via entrypoint.sh
 #   -p, --port SPEC   Forward a port, e.g. --port 8265:8265 (repeatable)
+#   --pids-limit N    Container PID limit: -1 = unlimited (default: -1)
 #   --dry-run         Print the commands (xauth setup + docker run) without executing them
 #   -h|--help         Show this help and exit
 
@@ -31,6 +32,7 @@ get_container_engine () {
 }
 
 DEFAULT_IMAGE="openroad/orfs:latest"
+PIDS_LIMIT=-1
 FLOW_DIR="/OpenROAD-flow-scripts/flow"
 USE_USER=false
 DRY_RUN=false
@@ -45,19 +47,25 @@ usage() {
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -i|--image)  IMAGE="$2"; shift 2 ;;
-        --user)      USE_USER=true; shift ;;
-        -p|--port)   PORTS+=("$2"); shift 2 ;;
-        --dry-run)   DRY_RUN=true; shift ;;
-        -h|--help)   usage ;;
-        --)          shift; CMD_ARGS=("$@"); break ;;
-        -*)          echo "Unknown option: $1" >&2; exit 1 ;;
-        *)           CMD_ARGS=("$@"); break ;;
+        -i|--image)   IMAGE="$2"; shift 2 ;;
+        --user)       USE_USER=true; shift ;;
+        -p|--port)    PORTS+=("$2"); shift 2 ;;
+        --pids-limit) PIDS_LIMIT="$2"; shift 2 ;;
+        --dry-run)    DRY_RUN=true; shift ;;
+        -h|--help)    usage ;;
+        --)           shift; CMD_ARGS=("$@"); break ;;
+        -*)           echo "Unknown option: $1" >&2; exit 1 ;;
+        *)            CMD_ARGS=("$@"); break ;;
     esac
 done
 
 # Image resolution: --image > $OR_IMAGE > default
 IMAGE="${IMAGE:-${OR_IMAGE:-$DEFAULT_IMAGE}}"
+
+if ! [[ "$PIDS_LIMIT" =~ ^-?[0-9]+$ ]] || [ "$PIDS_LIMIT" -lt -1 ] || [ "$PIDS_LIMIT" -eq 0 ]; then
+    echo "Invalid PID limit: $PIDS_LIMIT (expected -1 for unlimited, or a positive integer)" >&2
+    exit 1
+fi
 
 get_container_engine
 
@@ -113,6 +121,7 @@ ENV_SH_CMD='if [ -f ../env.sh ]; then . ../env.sh; fi;'
 DOCKER_CMD=(
     "$container_engine" run --rm -i
     $DOCKER_INTERACTIVE
+    --pids-limit "$PIDS_LIMIT"
     $user_env $user_args
     -e LIBGL_ALWAYS_SOFTWARE=1
     -e QT_X11_NO_MITSHM=1
