@@ -255,14 +255,28 @@ class TestFileVariables(StubFlowTestCase):
         for name in ["dff.lib", "a.lib", "b.lib"]:
             self.assertIn(name, files)
 
-    def test_every_design_and_platform_variable_is_archived(self):
+    def test_every_file_variable_is_archived(self):
         variables = {
-            name: f"{name.lower()}.file"
-            for name in makeIssue.DESIGN_FILE_VARS + makeIssue.PLATFORM_FILE_VARS
+            name: f"{name.lower()}.file" for name in makeIssue.file_variables()
         }
         files = self.files(**variables)
         for name, path in variables.items():
             self.assertIn(path, files, name)
+
+    def test_other_variables_are_not_archived(self):
+        self.assertNotIn("gcd.v", self.files(DESIGN_NAME="gcd.v"))
+
+    def test_a_file_variable_needs_only_its_variables_yaml_entry(self):
+        variables_yaml = os.path.join(self.stub.tmp, "variables.yaml")
+        self.stub.write(
+            variables_yaml,
+            "NEW_FILE:\n  description: x\n  type: file\n"
+            "NEW_NUMBER:\n  description: y\n  type: int\n",
+        )
+        with mock.patch.object(makeIssue, "VARIABLES_YAML", variables_yaml):
+            files = self.files(NEW_FILE="new.file", NEW_NUMBER="new.number")
+        self.assertIn("new.file", files)
+        self.assertNotIn("new.number", files)
 
     def test_a_glob_names_the_files_it_matches(self):
         extra = os.path.join(self.stub.platform_dir, "extra")
@@ -283,10 +297,26 @@ class TestFileVariables(StubFlowTestCase):
         ]:
             self.assertIn(name, files)
 
-    def test_exclude_platform_leaves_out_platform_variables(self):
-        files = self.files(EXCLUDE_PLATFORM="1", LIB_FILES="a.lib", SDC_FILE="d.sdc")
-        self.assertNotIn("a.lib", files)
-        self.assertIn("d.sdc", files)
+    def test_exclude_platform_leaves_out_the_platform_files(self):
+        """By where a file is, not by which variable names it: a design
+        variable may name a platform file and a platform variable a file
+        of the design's own."""
+        platform_lib = os.path.join(self.stub.platform_dir, "cells.lib")
+        platform_dff = os.path.join(self.stub.platform_dir, "dff.lib")
+        macro_lef = os.path.join(self.stub.design_dir, "macro.lef")
+        sdc = os.path.join(self.stub.design_dir, "constraint.sdc")
+        files = self.files(
+            EXCLUDE_PLATFORM="1",
+            LIB_FILES=platform_lib,
+            DFF_LIB_FILE=platform_dff,
+            ADDITIONAL_LEFS=macro_lef,
+            SDC_FILE=sdc,
+        )
+        self.assertNotIn(platform_lib, files)
+        self.assertNotIn(platform_dff, files)
+        self.assertIn(macro_lef, files)
+        self.assertIn(sdc, files)
+        self.assertFalse([f for f in files if f.startswith(self.stub.platform_dir)])
 
     def test_archived_end_to_end(self):
         lib = os.path.join(self.stub.platform_dir, "dff.lib")
@@ -304,14 +334,17 @@ class TestFileVariables(StubFlowTestCase):
 
 
 class TestFileVariableNames(unittest.TestCase):
-    """The file variables makeIssue archives are variables the flow reads.
-    A flow variable that is renamed or retired takes makeIssue's list with
-    it (SYNTH_NETLIST_FILES #2899, PRE_GLOBAL_ROUTE_TCL #3333,
+    """Which flow variables name files is said once, in variables.yaml
+    (`type: file`), and each of them is a variable the flow reads. A flow
+    variable that is renamed or retired takes its entry with it
+    (SYNTH_NETLIST_FILES #2899, PRE_GLOBAL_ROUTE_TCL #3333,
     MACRO_PLACEMENT_TCL #3469, GLOBAL_CONNECT_TCL #4785); a name left
     behind silently archives nothing."""
 
     FLOW = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
     SOURCES = [".tcl", ".mk", ".py", ".sh", ".yaml", ".cfg"]
+    # where the names are listed rather than read
+    LISTS = ["makeIssue.py", "variables.yaml"]
 
     def flow_text(self):
         texts = []
@@ -323,7 +356,7 @@ class TestFileVariableNames(unittest.TestCase):
                 else [os.path.join(d, f) for d, _, fs in os.walk(top) for f in fs]
             )
             for path in paths:
-                if os.path.basename(path) == "makeIssue.py":
+                if os.path.basename(path) in self.LISTS:
                     continue
                 if path != top and os.path.splitext(path)[1] not in self.SOURCES:
                     continue
@@ -331,12 +364,25 @@ class TestFileVariableNames(unittest.TestCase):
                     texts.append(f.read())
         return "\n".join(texts)
 
-    def test_every_file_variable_is_read_by_the_flow(self):
+    def test_there_are_file_variables(self):
+        self.assertIn("VERILOG_FILES", makeIssue.file_variables())
+
+    def read_names(self):
+        """The names the flow reads: those its sources spell out, the
+        hooks `source_step_tcl PRE CTS` composes (PRE_CTS_TCL), and
+        ADDITIONAL_FILES, which only make issue reads."""
         text = self.flow_text()
+        hooks = re.findall(r"source_step_tcl\s+(\w+)\s+(\w+)", text)
+        return text, {f"{kind}_{step}_TCL" for kind, step in hooks} | {
+            "ADDITIONAL_FILES"
+        }
+
+    def test_every_file_variable_is_read_by_the_flow(self):
+        text, names = self.read_names()
         unread = [
             name
-            for name in makeIssue.DESIGN_FILE_VARS + makeIssue.PLATFORM_FILE_VARS
-            if not re.search(r"\b" + name + r"\b", text)
+            for name in makeIssue.file_variables()
+            if name not in names and not re.search(r"\b" + name + r"\b", text)
         ]
         self.assertEqual(unread, [])
 

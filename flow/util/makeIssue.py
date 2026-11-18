@@ -21,49 +21,15 @@ import shutil
 import subprocess
 import sys
 
+import yaml
+
 import generate_vars
 
 UTILS_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Variables that name design files the step may read.
-DESIGN_FILE_VARS = [
-    "SDC_FILE",
-    "VERILOG_FILES",
-    "SYNTH_NETLIST_FILES",
-    "FOOTPRINT_TCL",
-    "FOOTPRINT",
-    "SIG_MAP_FILE",
-    "IO_CONSTRAINTS",
-    "MACRO_PLACEMENT_TCL",
-    "MACRO_WRAPPERS",
-    "DFF_LIB_FILE",
-]
-
-# Variables that name platform files, left out with EXCLUDE_PLATFORM.
-PLATFORM_FILE_VARS = [
-    "LIB_FILES",
-    "SC_LEF",
-    "TECH_LEF",
-    "ADDITIONAL_FILES",
-    "ADDITIONAL_LEFS",
-    "CLKGATE_MAP_FILE",
-    "ADDER_MAP_FILE",
-    "LATCH_MAP_FILE",
-    "CDL_FILE",
-    "MAKE_TRACKS",
-    "POST_FLOORPLAN_TCL",
-    "TAPCELL_TCL",
-    "PDN_CFG",
-    "GLOBAL_CONNECT_TCL",
-    "PDN_TCL",
-    "POST_PDN_TCL",
-    "POST_CTS_TCL",
-    "PRE_GLOBAL_ROUTE_TCL",
-    "FASTROUTE_TCL",
-    "POST_DETAIL_ROUTE_TCL",
-    "RCX_RULES",
-    "FILL_CONFIG",
-]
+# variables.yaml describes every flow variable; `type: file` marks the
+# ones that name files a step may read.
+VARIABLES_YAML = os.path.join(UTILS_DIR, "..", "scripts", "variables.yaml")
 
 # Platform files dropped from the archive with EXCLUDE_PLATFORM: a name
 # that ends in lib, lef or tlef after any character.
@@ -91,17 +57,32 @@ def platform_globs(platform_dir):
     return globs
 
 
+def file_variables():
+    """The flow variables that name files: `type: file` in
+    variables.yaml."""
+    with open(VARIABLES_YAML) as f:
+        variables = yaml.safe_load(f)
+    return sorted(
+        name for name, variable in variables.items() if variable.get("type") == "file"
+    )
+
+
+def in_platform(path, platform_dir):
+    """Whether the file lies under the platform directory."""
+    platform = os.path.realpath(platform_dir)
+    return os.path.realpath(path).startswith(platform + os.sep)
+
+
 def issue_files(env, vars_basename, run_me_script):
     """The files the flow variables name, the platform's scripts and the
-    issue's own vars and run-me files, sorted and without duplicates."""
-    file_vars = list(DESIGN_FILE_VARS)
+    issue's own vars and run-me files, sorted and without duplicates.
+    EXCLUDE_PLATFORM leaves out the files under the platform directory,
+    whichever variable names them."""
+    files = expand(" ".join(env[name] for name in file_variables() if name in env))
     words = []
-    if "EXCLUDE_PLATFORM" not in env:
-        file_vars += PLATFORM_FILE_VARS
-    for name in file_vars:
-        if name in env:
-            words.append(env[name])
-    if "EXCLUDE_PLATFORM" not in env:
+    if "EXCLUDE_PLATFORM" in env:
+        files = [f for f in files if not in_platform(f, env["PLATFORM_DIR"])]
+    else:
         words += platform_globs(env["PLATFORM_DIR"])
     words += [
         f"{env['UTILS_DIR']}/def2stream.py",
@@ -110,7 +91,7 @@ def issue_files(env, vars_basename, run_me_script):
         f"{vars_basename}.tcl",
         f"{vars_basename}.gdb",
     ]
-    return sorted(set(expand(" ".join(words))))
+    return sorted(set(files + expand(" ".join(words))))
 
 
 def is_yosys_step(script):
