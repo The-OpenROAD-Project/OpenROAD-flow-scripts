@@ -19,7 +19,9 @@ trap 'rm -rf "${tmp}" "${workspace_fixture}" "${home_fixture}"' EXIT
 export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null
 export GIT_AUTHOR_NAME=test GIT_AUTHOR_EMAIL=test@example.invalid
 export GIT_COMMITTER_NAME=test GIT_COMMITTER_EMAIL=test@example.invalid
-export TEST_ENGINE="${CONTAINER_ENGINE:-docker}"
+# Resolve the real engine before adding the test shim to PATH.
+TEST_ENGINE=$(command -v "${CONTAINER_ENGINE:-docker}")
+export TEST_ENGINE
 export TEST_ENGINE_HOME="${HOME}"
 export TEST_ENTRYPOINT="${SCRIPT_DIR}/claude-entrypoint.sh"
 export TEST_SETUP="${tmp}/entrypoint"
@@ -35,7 +37,7 @@ SH
 cat > "${tmp}/bin/docker" <<'SH'
 #!/usr/bin/env bash
 engine_args=()
-if [[ "${TEST_ENGINE}" == podman ]]; then
+if [[ "${TEST_ENGINE##*/}" == podman ]]; then
     export HOME="${TEST_ENGINE_HOME}"
     engine_args+=(--userns keep-id --security-opt label=disable)
 fi
