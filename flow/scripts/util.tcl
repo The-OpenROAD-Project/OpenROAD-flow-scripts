@@ -115,14 +115,8 @@ proc env_var_exists_and_non_empty { env_var } {
 # AUTO_MEMORIES: do-auto-memories writes into $RESULTS_DIR/memories the
 # lists below, and every later step reads the files they name, never
 # what a directory happens to hold. gen_memories.py writes each list
-# whole, after every view exists. The stages after synthesis read them
-# from AUTO_MEMORIES_DIR, as a stage reads its input from
-# INPUT_RESULTS_DIR; synthesis reads what it wrote.
-#
-# Called by every synthesis step before it reads the lists or the views.
-proc auto_memories_synthesis { } {
-  set ::env(AUTO_MEMORIES_DIR) $::env(RESULTS_DIR)/memories
-}
+# whole, after every view exists. Every step reads them from
+# AUTO_MEMORIES_DIR, synthesis included.
 
 # The words of one of those lists; none without AUTO_MEMORIES.
 proc auto_memories_words { list } {

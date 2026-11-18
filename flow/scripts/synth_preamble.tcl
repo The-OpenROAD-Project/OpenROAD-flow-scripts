@@ -2,7 +2,6 @@ yosys -import
 
 source $::env(SCRIPTS_DIR)/util.tcl
 erase_non_stage_variables synth
-auto_memories_synthesis
 
 # If using a cached, gate level netlist, then copy over to the results dir with
 # preserve timestamps flag set. If you don't, subsequent runs will cause the

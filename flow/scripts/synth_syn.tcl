@@ -2,7 +2,6 @@ utl::set_metrics_stage "synth__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 source $::env(SCRIPTS_DIR)/formal_check.tcl
 erase_non_stage_variables synth
-auto_memories_synthesis
 
 source_env_var_if_exists PLATFORM_TCL
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
