@@ -1510,6 +1510,17 @@ GLOBAL_ROUTE_USE_CUGR:
   stages:
     - grt
   default: 0
+GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE:
+  description: >
+    Multiplies every routing layer's global routing adjustment, from
+    ROUTING_LAYER_ADJUSTMENT or FASTROUTE_TCL, when CUGR is the global
+    router, from 0 (no adjustment) to 1 (unchanged). CUGR charges via demand
+    and follows the design rules more closely than FastRoute, so it may need
+    less capacity held back. The scaled adjustments are saved in the global
+    routing database, so antenna repair after detailed routing uses them too.
+  stages:
+    - grt
+  default: 0.5
 ENABLE_RESISTANCE_AWARE:
   description: >
     Passed as -resistance_aware to global_route.

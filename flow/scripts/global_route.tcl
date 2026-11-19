@@ -27,6 +27,22 @@ proc set_grt_seed { } {
   }
 }
 
+# Multiply every routing layer's adjustment by scale. The scaled adjustments
+# are written to the database, so antenna repair after detailed routing uses
+# them too.
+proc scale_layer_adjustments { scale } {
+  if { $scale == 1 } {
+    return
+  }
+  foreach layer [[ord::get_db_tech] getLayers] {
+    set adjustment [$layer getLayerAdjustment]
+    if { $adjustment != 0 } {
+      log_cmd set_global_routing_layer_adjustment [$layer getName] \
+        [expr { $adjustment * $scale }]
+    }
+  }
+}
+
 proc do_global_route { res_aware use_cugr } {
   set_grt_seed
   # CUGR runs a full 3D maze pass per iteration; use a tighter default.
@@ -47,6 +63,12 @@ append_env_var additional_args VIA_IN_PIN_MAX_LAYER -via_in_pin_top_layer 1
 
 log_cmd pin_access {*}$additional_args
 
+# CUGR charges via demand and follows the design rules more closely than
+# FastRoute, so it may need less of the capacity the layer adjustments hold
+# back.
+if { $::env(GLOBAL_ROUTE_USE_CUGR) } {
+  scale_layer_adjustments $::env(GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE)
+}
 do_global_route $res_aware $use_cugr
 
 use_ccs_delay_calculator

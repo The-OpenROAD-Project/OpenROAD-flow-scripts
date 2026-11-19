@@ -162,6 +162,7 @@ configuration file.
 | <a name="GLOBAL_CONNECT_TCL"></a>GLOBAL_CONNECT_TCL| File path to the add_global_connection rules that connect the supply pins of the instances to the supply nets. Sourced at floorplan right after the netlist is loaded, before any step can mark an instance dont_touch; the rules are kept in the database. The platform's file by default; a design whose PDN_TCL names other supply nets sets its own. PDN_TCL defines the grids.| |
 | <a name="GLOBAL_PLACEMENT_ARGS"></a>GLOBAL_PLACEMENT_ARGS| Use additional tuning parameters during global placement other than default args defined in global_place.tcl.| |
 | <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Replaces default arguments for global route. The -congestion_iterations default is set by the flow (30 for FastRoute, 10 for CUGR); add -congestion_iterations here to override it.| -congestion_report_iter_step 5 -verbose|
+| <a name="GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE"></a>GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE| Multiplies every routing layer's global routing adjustment, from ROUTING_LAYER_ADJUSTMENT or FASTROUTE_TCL, when CUGR is the global router, from 0 (no adjustment) to 1 (unchanged). CUGR charges via demand and follows the design rules more closely than FastRoute, so it may need less capacity held back. The scaled adjustments are saved in the global routing database, so antenna repair after detailed routing uses them too.| 0.5|
 | <a name="GLOBAL_ROUTE_USE_CUGR"></a>GLOBAL_ROUTE_USE_CUGR| Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.| 0|
 | <a name="GND_NETS_VOLTAGES"></a>GND_NETS_VOLTAGES| Used for IR Drop calculation.| |
 | <a name="GPL_KEEP_OVERFLOW"></a>GPL_KEEP_OVERFLOW| Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.| |
@@ -585,6 +586,7 @@ configuration file.
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
 - [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
+- [GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE](#GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE)
 - [GLOBAL_ROUTE_USE_CUGR](#GLOBAL_ROUTE_USE_CUGR)
 - [GRT_SEED](#GRT_SEED)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
