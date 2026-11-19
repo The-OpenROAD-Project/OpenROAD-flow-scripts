@@ -9,8 +9,8 @@ proc check_clock_tree_paths { lib_file } {
   set stream [open $lib_file r]
   set text [read $stream]
   close $stream
-  set pins [regexp -all -inline -indices {pin\("([^"]+)"\)} $text]
-  set re {timing_type : (min|max)_clock_tree_path;\s*}
+  set pins [regexp -all -inline -indices {pin\s*\(\s*"([^"]+)"\s*\)} $text]
+  set re {timing_type\s*:\s*(min|max)_clock_tree_path;\s*}
   append re {cell_rise\(scalar\) \{\s*values\("([^"]+)"\);\s*\}\s*}
   append re {cell_fall\(scalar\) \{\s*values\("([^"]+)"\);}
   array set tree {}
@@ -25,12 +25,16 @@ proc check_clock_tree_paths { lib_file } {
       }
       set pin [string range $text {*}$name]
     }
+    if { $pin eq "" } {
+      utl::error FLW 32 "[file tail $lib_file]: a clock tree path is in no\
+        pin group check_clock_tree_paths.tcl can read."
+    }
     set tree($pin,[string range $text {*}$min_max]) \
       [list [string range $text {*}$rise] [string range $text {*}$fall]]
   }
   # A model written in a form the expression does not read would pass
   # unchecked; stop on it instead.
-  set written [regexp -all {timing_type : (min|max)_clock_tree_path;} $text]
+  set written [regexp -all {(min|max)_clock_tree_path} $text]
   if { $parsed != $written } {
     utl::error FLW 31 "[file tail $lib_file]: read $parsed of its $written\
       clock tree paths; check_clock_tree_paths.tcl does not know the form\
