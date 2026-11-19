@@ -135,10 +135,12 @@ TECH_LEF:
     A technology LEF file of the PDK that includes all relevant information
     regarding metal layers, vias, and spacing requirements.
   type: file
+  platform: true
 SC_LEF:
   description: |
     Path to technology standard cell LEF file.
   type: file
+  platform: true
 GDS_FILES:
   description: |
     Path to platform GDS files.
@@ -148,6 +150,7 @@ LIB_FILES:
     input and output characteristics, timing and power definitions for each
     cell.
   type: file
+  platform: true
 LIB_MODEL:
   description: >
     Selects between NLDM and CCS timing models for the ASAP7 platform.
@@ -455,18 +458,21 @@ LATCH_MAP_FILE:
   stages:
     - synth
   type: file
+  platform: true
 CLKGATE_MAP_FILE:
   description: |
     Optional mapping file supplied to Yosys to map clock gating cells
   stages:
     - synth
   type: file
+  platform: true
 ADDER_MAP_FILE:
   description: |
     Optional mapping file supplied to Yosys to map adders
   stages:
     - synth
   type: file
+  platform: true
 INFER_CLKGATES:
   description: >
     Enables Yosys clock gate inference. By default, it uses the Liberty cell
@@ -642,6 +648,7 @@ TAPCELL_TCL:
   stages:
     - floorplan
   type: file
+  platform: true
 MACRO_PLACEMENT_TCL:
   description: |
     Specifies the path of a TCL file on how to place macros manually.
@@ -663,6 +670,7 @@ PDN_TCL:
   stages:
     - floorplan
   type: file
+  platform: true
 GLOBAL_CONNECT_TCL:
   description: >
     File path to the add_global_connection rules that connect the supply pins
@@ -674,12 +682,14 @@ GLOBAL_CONNECT_TCL:
   stages:
     - floorplan
   type: file
+  platform: true
 MAKE_TRACKS:
   description: |
     Tcl file that defines add routing tracks to a floorplan.
   stages:
     - floorplan
   type: file
+  platform: true
 IO_CONSTRAINTS:
   description: |
     File path to the IO constraints .tcl file. Also used for manual placement.
@@ -1082,10 +1092,12 @@ RCX_RULES:
   description: |
     RC Extraction rules file path.
   type: file
+  platform: true
 FILL_CONFIG:
   description: |
     JSON rule file for metal fill during chip finishing.
   type: file
+  platform: true
 KLAYOUT_TECH_FILE:
   description: |
     A mapping from LEF/DEF to GDS using the KLayout tool.
@@ -1139,6 +1151,7 @@ ADDITIONAL_FILES:
   description: |
     Additional files to be added to `make issue` archive.
   type: file
+  platform: true
 ADDITIONAL_LEFS:
   description: >
     Hardened macro LEF view files listed here. The LEF information of the
@@ -1346,6 +1359,7 @@ POST_CTS_TCL:
   stages:
     - cts
   type: file
+  platform: true
 POST_DENSITY_FILL_TCL:
   description: |
     Specifies a Tcl script with commands to run after density fill.
@@ -1362,6 +1376,7 @@ POST_DETAIL_ROUTE_TCL:
   stages:
     - route
   type: file
+  platform: true
 POST_FILLCELL_TCL:
   description: |
     Specifies a Tcl script with commands to run after fillcell insertion.
@@ -1378,6 +1393,7 @@ POST_FLOORPLAN_TCL:
   stages:
     - floorplan
   type: file
+  platform: true
 POST_GLOBAL_PLACE_SKIP_IO_TCL:
   description: |
     Specifies a Tcl script with commands to run after global placement (skip IO).
@@ -1409,6 +1425,7 @@ POST_PDN_TCL:
   stages:
     - floorplan
   type: file
+  platform: true
 POST_RESIZE_TCL:
   description: |
     Specifies a Tcl script with commands to run after resize.
@@ -1503,6 +1520,7 @@ FASTROUTE_TCL:
   description: |
     Specifies a Tcl script with commands to run before FastRoute.
   type: file
+  platform: true
 USE_FILL:
   description: >
     Whether to perform metal density filling.
@@ -1521,6 +1539,7 @@ PRE_GLOBAL_ROUTE_TCL:
   stages:
     - grt
   type: file
+  platform: true
 GLOBAL_ROUTE_ARGS:
   description: >
     Replaces default arguments for global route. The -congestion_iterations
@@ -1873,6 +1892,7 @@ CDL_FILE:
   stages:
     - final
   type: file
+  platform: true
 OPT_POST_GRT_WNS:
   default: 1
   description: >

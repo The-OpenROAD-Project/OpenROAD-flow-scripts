@@ -57,33 +57,56 @@ def platform_globs(platform_dir):
     return globs
 
 
+def flow_variables():
+    with open(VARIABLES_YAML) as f:
+        return yaml.safe_load(f)
+
+
 def file_variables():
     """The flow variables that name files: `type: file` in
     variables.yaml."""
-    with open(VARIABLES_YAML) as f:
-        variables = yaml.safe_load(f)
     return sorted(
-        name for name, variable in variables.items() if variable.get("type") == "file"
+        name
+        for name, variable in flow_variables().items()
+        if variable.get("type") == "file"
+    )
+
+
+def platform_file_variables():
+    """The file variables that name the platform's files, wherever the
+    platform keeps them: `platform: true` in variables.yaml."""
+    return sorted(
+        name
+        for name, variable in flow_variables().items()
+        if variable.get("type") == "file" and variable.get("platform")
     )
 
 
 def in_platform(path, platform_dir):
-    """Whether the file lies under the platform directory."""
-    platform = os.path.realpath(platform_dir)
-    return os.path.realpath(path).startswith(platform + os.sep)
+    """Whether the file lies under the platform directory, as it is
+    named or through a symlink."""
+    return any(
+        resolve(path).startswith(resolve(platform_dir) + os.sep)
+        for resolve in [os.path.abspath, os.path.realpath]
+    )
 
 
 def issue_files(env, vars_basename, run_me_script):
     """The files the flow variables name, the platform's scripts and the
     issue's own vars and run-me files, sorted and without duplicates.
-    EXCLUDE_PLATFORM leaves out the files under the platform directory,
-    whichever variable names them."""
-    files = expand(" ".join(env[name] for name in file_variables() if name in env))
+    EXCLUDE_PLATFORM leaves out the files the platform's variables name
+    and the files under the platform directory, whichever variable names
+    them."""
+    names = file_variables()
     words = []
     if "EXCLUDE_PLATFORM" in env:
-        files = [f for f in files if not in_platform(f, env["PLATFORM_DIR"])]
+        platform = platform_file_variables()
+        names = [name for name in names if name not in platform]
     else:
         words += platform_globs(env["PLATFORM_DIR"])
+    files = expand(" ".join(env[name] for name in names if name in env))
+    if "EXCLUDE_PLATFORM" in env:
+        files = [f for f in files if not in_platform(f, env["PLATFORM_DIR"])]
     words += [
         f"{env['UTILS_DIR']}/def2stream.py",
         run_me_script,

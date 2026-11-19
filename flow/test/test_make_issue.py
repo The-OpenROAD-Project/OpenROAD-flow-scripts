@@ -321,6 +321,70 @@ class TestFileVariables(StubFlowTestCase):
         self.assertIn(sdc, files)
         self.assertFalse([f for f in files if f.startswith(self.stub.platform_dir)])
 
+    def outside_platform(self):
+        """The platform's files where a PDK installed outside PLATFORM_DIR
+        has them, and a link to one of them inside it."""
+        pdk = os.path.join(self.stub.tmp, "pdk")
+        files = {
+            name: os.path.join(pdk, name)
+            for name in ["cells.lib.gz", "cells.cdl", "rcx.rules", "pdk.sdc"]
+        }
+        for path in files.values():
+            self.stub.write(path, "\n")
+        link = os.path.join(self.stub.platform_dir, "link.sdc")
+        os.symlink(files["pdk.sdc"], link)
+        return files, link
+
+    def test_exclude_platform_leaves_out_the_platform_variables(self):
+        """By name: a PDK may be installed outside PLATFORM_DIR, where
+        only the variable says a file is the platform's."""
+        outside, _ = self.outside_platform()
+        files = self.files(
+            EXCLUDE_PLATFORM="1",
+            LIB_FILES=outside["cells.lib.gz"],
+            CDL_FILE=outside["cells.cdl"],
+            RCX_RULES=outside["rcx.rules"],
+        )
+        for path in outside.values():
+            self.assertNotIn(path, files)
+
+    def test_exclude_platform_leaves_out_a_link_in_the_platform(self):
+        """A file in PLATFORM_DIR that is a link to somewhere else is
+        the platform's, as much as a link from elsewhere into it."""
+        outside, link = self.outside_platform()
+        into = os.path.join(self.stub.design_dir, "into.sdc")
+        self.stub.write(os.path.join(self.stub.platform_dir, "platform.sdc"), "\n")
+        os.symlink(os.path.join(self.stub.platform_dir, "platform.sdc"), into)
+        for sdc in [link, into]:
+            self.assertEqual(
+                [f for f in self.files(EXCLUDE_PLATFORM="1", SDC_FILE=sdc) if f == sdc],
+                [],
+            )
+
+    def test_the_platform_variables_are_file_variables(self):
+        platform = makeIssue.platform_file_variables()
+        self.assertIn("LIB_FILES", platform)
+        self.assertNotIn("SDC_FILE", platform)
+        self.assertLessEqual(set(platform), set(makeIssue.file_variables()))
+
+    def test_exclude_platform_end_to_end(self):
+        outside, link = self.outside_platform()
+        sdc = os.path.join(self.stub.design_dir, "constraint.sdc")
+        self.stub.write(sdc, "\n")
+        archive = self.stub.make_issue(
+            ".",
+            EXCLUDE_PLATFORM="1",
+            LIB_FILES=outside["cells.lib.gz"],
+            CDL_FILE=outside["cells.cdl"],
+            RCX_RULES=outside["rcx.rules"],
+            IO_CONSTRAINTS=link,
+            SDC_FILE=sdc,
+        )
+        names = [os.path.basename(m) for m in self.stub.members(archive)]
+        for name in list(outside) + ["link.sdc"]:
+            self.assertNotIn(name, names)
+        self.assertIn("constraint.sdc", names)
+
     def test_archived_end_to_end(self):
         lib = os.path.join(self.stub.platform_dir, "dff.lib")
         cells = os.path.join(self.stub.platform_dir, "cells.lib")
