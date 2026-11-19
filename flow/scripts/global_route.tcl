@@ -167,6 +167,12 @@ if {
   check_antennas -report_file $::env(REPORTS_DIR)/grt_antennas.log
 }
 
+# CUGR, unlike FastRoute, can end the incremental routes and antenna repair
+# with congestion; report it once global routing is final.
+if { $::env(GLOBAL_ROUTE_USE_CUGR) && [has_congestion] } {
+  log_cmd report_congestion
+}
+
 puts "Estimate parasitics..."
 log_cmd estimate_parasitics
 
