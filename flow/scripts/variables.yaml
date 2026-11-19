@@ -1505,8 +1505,8 @@ GLOBAL_ROUTE_ARGS:
 GLOBAL_ROUTE_USE_CUGR:
   description: >
     Passed as -use_cugr to global_route. Uses CUGR as the global routing
-    solver instead of the default FastRoute solver. NOTE: CUGR is not ready
-    for production.
+    solver instead of FastRoute. FastRoute is the default; the sky130hd and
+    sky130hs platforms use CUGR.
   stages:
     - grt
   default: 0

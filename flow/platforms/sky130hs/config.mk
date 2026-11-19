@@ -82,6 +82,7 @@ export MIN_CLK_ROUTING_LAYER = met3
 export MAX_ROUTING_LAYER = met5
 
 export OPT_POST_GRT_WNS ?= 0
+export GLOBAL_ROUTE_USE_CUGR ?= 1
 
 #
 # Define fastRoute tcl
