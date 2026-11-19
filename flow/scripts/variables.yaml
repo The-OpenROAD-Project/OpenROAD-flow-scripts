@@ -1215,6 +1215,7 @@ DFF_LIB_FILE:
   stages:
     - synth
   type: file
+  platform: true
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.

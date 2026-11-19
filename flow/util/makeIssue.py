@@ -228,8 +228,10 @@ def tar_command(env, tar_name, issue_name, files):
     )
 
 
-def exclude_platform_library(tar_name):
-    """Drops the liberty and LEF files from the archive."""
+def exclude_platform_library(tar_name, transforms, design_library):
+    """Drops the liberty and LEF files from the archive: the platform's
+    own, and the copies the flow keeps of them among its objects and
+    results. The design's, which a file variable names, are put back."""
     tar = tar_name[: -len(".gz")]
     subprocess.run(["gunzip", "-f", tar_name], check=True)
     members = subprocess.run(
@@ -238,9 +240,14 @@ def exclude_platform_library(tar_name):
         stdout=subprocess.PIPE,
         universal_newlines=True,
     ).stdout.splitlines()
-    library = [m for m in members if PLATFORM_LIBRARY.search(m)]
+    library = sorted({m for m in members if PLATFORM_LIBRARY.search(m)})
     if library:
         subprocess.run(["tar", "--delete", "--file", tar] + library, check=True)
+    if design_library:
+        subprocess.run(
+            ["tar", "--ignore-failed-read", "-rhf", tar] + transforms + design_library,
+            check=True,
+        )
     subprocess.run(["gzip", tar], check=True)
 
 
@@ -273,7 +280,11 @@ def make_issue(target, env):
     subprocess.run(tar_command(env, tar_name, issue_name, files), check=True)
 
     if "EXCLUDE_PLATFORM" in env:
-        exclude_platform_library(tar_name)
+        exclude_platform_library(
+            tar_name,
+            tar_transforms(issue_name, env["FLOW_HOME"], env.get("WORK_HOME") or "."),
+            [f for f in files if PLATFORM_LIBRARY.search(f)],
+        )
 
     if "COPY_ISSUE" in env:
         os.makedirs(env["COPY_ISSUE"], exist_ok=True)

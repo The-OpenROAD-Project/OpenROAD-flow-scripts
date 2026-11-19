@@ -385,6 +385,37 @@ class TestFileVariables(StubFlowTestCase):
             self.assertNotIn(name, names)
         self.assertIn("constraint.sdc", names)
 
+    def test_exclude_platform_keeps_the_design_lef(self):
+        """In the finished archive: the platform's liberty and LEF files
+        are dropped from it after it is written, the design's stay."""
+        macro_lef = os.path.join(self.stub.design_dir, "macro.lef")
+        platform_lef = os.path.join(self.stub.platform_dir, "cells.lef")
+        merged_lib = os.path.join(
+            self.stub.flow, self.stub.flow_dirs(".")["OBJECTS_DIR"], "lib", "merged.lib"
+        )
+        for path in [macro_lef, platform_lef, merged_lib]:
+            self.stub.write(path, "\n")
+        archive = self.stub.make_issue(
+            ".",
+            EXCLUDE_PLATFORM="1",
+            FULL_ISSUE="1",
+            ADDITIONAL_LEFS=f"{macro_lef} {platform_lef}",
+        )
+        members = self.stub.members(archive)
+        self.assertEqual(
+            [m for m in members if m.endswith((".lef", ".lib"))],
+            [f"{STEP}_{TAG}/designs/{PLATFORM}/{NICKNAME}/macro.lef"],
+        )
+
+    def test_exclude_platform_leaves_out_the_flip_flop_liberty(self):
+        """DFF_LIB_FILE names a liberty file of the platform's, wherever
+        the platform keeps it."""
+        dff = os.path.join(self.stub.tmp, "pdk", "dff.lib")
+        self.stub.write(dff, "\n")
+        archive = self.stub.make_issue(".", EXCLUDE_PLATFORM="1", DFF_LIB_FILE=dff)
+        names = [os.path.basename(m) for m in self.stub.members(archive)]
+        self.assertNotIn("dff.lib", names)
+
     def test_archived_end_to_end(self):
         lib = os.path.join(self.stub.platform_dir, "dff.lib")
         cells = os.path.join(self.stub.platform_dir, "cells.lib")
