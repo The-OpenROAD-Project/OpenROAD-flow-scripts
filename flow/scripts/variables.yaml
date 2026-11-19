@@ -412,6 +412,9 @@ SYNTH_RETIME_MODULES:
     List of modules to apply automatic retiming to. These modules must not get
     dissolved and as such they should either be the top module or be included
     in SYNTH_KEEP_MODULES.
+    Each entry is a glob over the modules left after flattening, and an entry
+    that matches none of them is an error. The slang frontend names a kept
+    module `Name$<path>`, which `Name*` matches.
     The main use case is to quickly identify if performance can be improved by
     manually retiming the input RTL.
     Retiming will treat module ports like register endpoints/startpoints.
