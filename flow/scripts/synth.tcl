@@ -189,13 +189,37 @@ if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
 write_json /dev/null
 
 if { [env_var_exists_and_non_empty SYNTH_RETIME_MODULES] } {
-  select {*}$::env(SYNTH_RETIME_MODULES)
-  opt -fast -full
-  memory_map
-  opt -full
-  techmap
-  abc -dff -script $::env(SCRIPTS_DIR)/abc_retime.script
-  select -clear
+  # Each entry is a glob over the modules flattening left: the top and the
+  # kept modules. In a partition (SYNTH_CHECKPOINT set) a module of another
+  # partition is not in this partition's checkpoint, so there an entry
+  # that matches nothing is skipped, as for SYNTH_KEEP_MODULES above.
+  set modules [split [string trim [tee -q -s result.string select -list-mod *]] "\n"]
+  set retime [list]
+  set unmatched [list]
+  foreach pattern $::env(SYNTH_RETIME_MODULES) {
+    if { [lsearch -glob $modules $pattern] >= 0 } {
+      lappend retime $pattern
+    } else {
+      lappend unmatched $pattern
+    }
+  }
+  if {
+    [llength $unmatched] > 0
+    && ![env_var_exists_and_non_empty SYNTH_CHECKPOINT]
+  } {
+    error "SYNTH_RETIME_MODULES: no module left after flattening (the top\
+      and the kept modules) matches [join $unmatched {, }]; the slang\
+      frontend names a kept module Name\$<path>, matched by Name*"
+  }
+  if { [llength $retime] > 0 } {
+    select {*}$retime
+    opt -fast -full
+    memory_map
+    opt -full
+    techmap
+    abc -dff -script $::env(SCRIPTS_DIR)/abc_retime.script
+    select -clear
+  }
 }
 
 if {
