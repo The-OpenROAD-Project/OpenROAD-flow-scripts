@@ -275,7 +275,7 @@ do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file)) \
 	  $(foreach file,$(AUTO_MEMORIES_REGFILES),--regfile-spec $(file)) \
 	  $(foreach m,$(AUTO_MEMORIES_MACRO_PLACE),--macro-place $(m)) \
-	  $(if $(AUTO_MEMORIES_REGFILES),--openroad $(OPENROAD_EXE)) \
+	  $(if $(AUTO_MEMORIES_REGFILES),--openroad '$(subst ','\'',$(OPENROAD_EXE))') \
 	  $(foreach file,$(TECH_LEF) $(SC_LEF),--lef $(file))
 
 $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \

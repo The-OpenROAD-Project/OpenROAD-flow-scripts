@@ -25,6 +25,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import shlex
 import subprocess
 from pathlib import Path
 
@@ -593,7 +594,9 @@ def generate(
             + 'puts $f "[$die dx] [$die dy] [[ord::get_db_tech] getDbUnitsPerMicron]"\n'
             + "close $f\n"
         )
-        subprocess.check_call([openroad, "-exit", "-no_init", "-no_splash", str(gen)])
+        subprocess.check_call(
+            [*shlex.split(openroad), "-exit", "-no_init", "-no_splash", str(gen)]
+        )
         width, height, _ = outline.read_text().split()
         return float(width), float(height)
 
@@ -662,7 +665,9 @@ def generate(
     else:
         tcl += _MACRO_TCL.format(out=out_dir, block=block)
     views.write_text(tcl)
-    subprocess.check_call([openroad, "-exit", "-no_init", "-no_splash", str(views)])
+    subprocess.check_call(
+        [*shlex.split(openroad), "-exit", "-no_init", "-no_splash", str(views)]
+    )
     core_ports = _buses((out_dir / f"{block}.ports").read_text().splitlines())
     ram_ports = core_ports
     periphery = ""
