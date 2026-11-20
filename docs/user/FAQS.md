@@ -48,6 +48,32 @@ For development purposes, it is a good practice to work on branches and leave ma
 
 See how to update using the Metrics [guide](../contrib/Metrics.md).
 
+## How do I run OpenROAD under gdb, valgrind or perf?
+
+Put the tool in front of the binary in `OPENROAD_EXE`. Every rule runs
+`OPENROAD_EXE` as a command, sub-makes included, so it reaches every
+stage and the `open_*`, `gui_*` and `web_*` targets. Below, `openroad`
+stands for the binary the flow would run otherwise.
+
+```shell
+# a backtrace when OpenROAD crashes, its own exit code otherwise
+make DESIGN_CONFIG=./designs/nangate45/gcd/config.mk OPENROAD_EXE="gdb -batch -return-child-result -ex run -ex 'thread apply all bt' --args openroad" floorplan
+
+# memory errors
+make DESIGN_CONFIG=./designs/nangate45/gcd/config.mk OPENROAD_EXE="valgrind openroad" floorplan
+
+# a profile, written to perf.data
+make DESIGN_CONFIG=./designs/nangate45/gcd/config.mk OPENROAD_EXE="perf record -g -- openroad" floorplan
+
+# an interactive debugger on a result
+make DESIGN_CONFIG=./designs/nangate45/gcd/config.mk OPENROAD_EXE="gdb --args openroad" open_floorplan
+```
+
+A stage logs OpenROAD's output through a pipe, so use gdb in batch mode
+for a stage, as in the first example; an interactive session suits
+`open_*`, `gui_*` and `command`. `OPENROAD_EXE` can also come from the
+environment.
+
 ## How do I get better search results?
 
 As quoted from [ReadTheDocs](https://docs.readthedocs.io/en/stable/server-side-search/syntax.html#special-queries), this documentation is powered by [Simple Query String](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#) from [Elasticsearch](https://www.elastic.co/elasticsearch/). Here are some helpful patterns:

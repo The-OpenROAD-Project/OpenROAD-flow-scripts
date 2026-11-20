@@ -6,6 +6,7 @@ or a profiler goes in front of the binary in it, as in
 The wrapped command passes the flow's check, and every rule runs it as
 given: at the top level, through a sub-make, and in the generated
 open_/gui_/web_ rules. The wrapper runs once per call, never twice.
+GDB and VALGRIND are not switches: a debugger goes in OPENROAD_EXE.
 
 The tools are stubbed: `openroad` and the wrapper only log their argv, so
 make runs in well under a second and needs nothing installed.
@@ -148,6 +149,21 @@ class TestOpenroadExe(unittest.TestCase):
                 )
                 self.assertIn(flag, call.split())
                 self.assertTrue(call.endswith("open.tcl"), call)
+
+    def test_gdb_and_valgrind_are_not_switches(self):
+        # a debugger or valgrind goes in OPENROAD_EXE; GDB and VALGRIND
+        # set to anything leave the command as it is
+        env = {"OPENROAD_EXE": self.openroad}
+        for target in ("command", "test-unset-and-make-command"):
+            expected, expected_calls = self.make(target, env=env)
+            self.assertEqual(expected.returncode, 0, expected.stderr)
+            self.assertEqual(len(expected_calls), 1, expected_calls)
+            for switch in ("GDB=1", "VALGRIND=1"):
+                with self.subTest(target=target, switch=switch):
+                    result, calls = self.make(target, switch, env=env)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(result.stdout, expected.stdout)
+                    self.assertEqual(calls, expected_calls)
 
 
 if __name__ == "__main__":
