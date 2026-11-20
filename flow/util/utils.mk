@@ -136,21 +136,6 @@ correlate_platform_rc:
 	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
 	    -segments_rc_file $$(find results/$(PLATFORM)/*/base -name 6_segments_rc.csv)
 
-# Run test using gnu parallel
-#-------------------------------------------------------------------------------
-TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
-.PHONY: run_test
-run_test:
-	parallel --sshloginfile $(TEST_DIR)/nodes.txt \
-	         --timeout 21600 \
-	         --workdir `pwd` < $(TEST_SCRIPT) \
-	         --joblog $(TEST_DIR)/parallel.log
-
-.PHONY: clean_test
-clean_test:
-	rm -rf $(TEST_DIR)/logs
-	rm -rf $(TEST_DIR)/parallel.log
-
 # Utility to create issues
 #-------------------------------------------------------------------------------
 # Run "make {script}_issue" where script is wildcarded from the scripts folder
