@@ -121,6 +121,7 @@ def make_mock_item(values, is_visited=False, tags_str="", comment=None):
 def make_mock_category(name, description, rdb_id, num_items, items):
     cat = MagicMock()
     cat.name.return_value = name
+    cat.path.return_value = name
     cat.description = description
     cat.rdb_id.return_value = rdb_id
     cat.num_items.return_value = num_items
@@ -128,6 +129,75 @@ def make_mock_category(name, description, rdb_id, num_items, items):
 
 
 class TestConvertDrc(unittest.TestCase):
+    def test_nested_categories_keep_rules_with_the_same_name(self):
+        metal1, _ = make_mock_category("metal1", "Metal 1", 1, 1, [])
+        metal2, _ = make_mock_category("metal2", "Metal 2", 2, 1, [])
+        width1, _ = make_mock_category("width", "Metal 1 width", 3, 1, [])
+        width2, _ = make_mock_category("width", "Metal 2 width", 4, 1, [])
+        width1.path.return_value = "metal1.width"
+        width2.path.return_value = "metal2.width"
+        metal1.each_sub_category.return_value = iter([width1])
+        metal2.each_sub_category.return_value = iter([width2])
+        items = {
+            3: [make_mock_item([make_box_value(0, 0, 1, 1)])],
+            4: [make_mock_item([make_box_value(2, 2, 3, 3)])],
+        }
+        rdb = MagicMock()
+        rdb.each_category.return_value = iter([metal1, metal2])
+        rdb.each_item_per_category.side_effect = lambda category_id: iter(
+            items.get(category_id, [])
+        )
+
+        categories = convert_drc(rdb)["category"]
+
+        self.assertEqual(len(categories["metal1.width"]["violations"]), 1)
+        self.assertEqual(len(categories["metal2.width"]["violations"]), 1)
+        self.assertEqual(categories["metal2.width"]["description"], "Metal 2 width")
+        self.assertEqual(
+            categories["metal2.width"]["violations"][0]["shape"][0]["points"],
+            [{"x": 2, "y": 2}, {"x": 3, "y": 3}],
+        )
+
+    def test_categories_are_traversed_beyond_one_child_level(self):
+        metal, _ = make_mock_category("metal1", "Metal 1", 1, 1, [])
+        width, _ = make_mock_category("width", "Width", 2, 1, [])
+        minimum, _ = make_mock_category("minimum", "Minimum width", 3, 1, [])
+        minimum.path.return_value = "metal1.width.minimum"
+        metal.each_sub_category.return_value = iter([width])
+        width.each_sub_category.return_value = iter([minimum])
+        item = make_mock_item([make_box_value(0, 0, 1, 1)])
+        rdb = MagicMock()
+        rdb.each_category.return_value = iter([metal])
+        rdb.each_item_per_category.side_effect = lambda category_id: iter(
+            [item] if category_id == 3 else []
+        )
+
+        categories = convert_drc(rdb)["category"]
+
+        self.assertEqual(len(categories["metal1.width.minimum"]["violations"]), 1)
+
+    def test_literal_dotted_name_does_not_overwrite_a_category_path(self):
+        metal, _ = make_mock_category("metal1", "Metal 1", 1, 1, [])
+        width, _ = make_mock_category("width", "Nested rule", 2, 1, [])
+        literal, _ = make_mock_category("metal1.width", "Flat rule", 3, 1, [])
+        width.path.return_value = "metal1.width"
+        literal.path.return_value = "'metal1.width'"
+        metal.each_sub_category.return_value = iter([width])
+        items = {
+            2: [make_mock_item([make_box_value(0, 0, 1, 1)])],
+            3: [make_mock_item([make_box_value(2, 2, 3, 3)])],
+        }
+        rdb = MagicMock()
+        rdb.each_category.return_value = iter([metal, literal])
+        rdb.each_item_per_category.side_effect = lambda category_id: iter(
+            items.get(category_id, [])
+        )
+
+        categories = convert_drc(rdb)["category"]
+
+        self.assertEqual(categories["metal1.width"]["description"], "Nested rule")
+        self.assertEqual(categories["'metal1.width'"]["description"], "Flat rule")
+
     def test_empty_rdb(self):
         rdb = MagicMock()
         rdb.each_category.return_value = iter([])
@@ -153,6 +223,7 @@ class TestConvertDrc(unittest.TestCase):
 
         cat = MagicMock()
         cat.name.return_value = "metal1.min_width"
+        cat.path.return_value = "'metal1.min_width'"
         cat.description = "Minimum width violation"
         cat.rdb_id.return_value = 1
         cat.num_items.return_value = 1
@@ -163,7 +234,7 @@ class TestConvertDrc(unittest.TestCase):
 
         result = convert_drc(rdb)
 
-        violations = result["category"]["metal1.min_width"]["violations"]
+        violations = result["category"]["'metal1.min_width'"]["violations"]
         self.assertEqual(len(violations), 1)
         self.assertEqual(len(violations[0]["shape"]), 1)
         shape = violations[0]["shape"][0]
@@ -177,6 +248,7 @@ class TestConvertDrc(unittest.TestCase):
 
         cat = MagicMock()
         cat.name.return_value = "metal1.spacing"
+        cat.path.return_value = "'metal1.spacing'"
         cat.description = "Spacing violation"
         cat.rdb_id.return_value = 2
         cat.num_items.return_value = 1
@@ -187,7 +259,7 @@ class TestConvertDrc(unittest.TestCase):
 
         result = convert_drc(rdb)
 
-        violations = result["category"]["metal1.spacing"]["violations"]
+        violations = result["category"]["'metal1.spacing'"]["violations"]
         shape = violations[0]["shape"][0]
         self.assertEqual(shape["type"], "line")
         self.assertEqual(shape["points"][0], {"x": 10, "y": 20})
@@ -199,6 +271,7 @@ class TestConvertDrc(unittest.TestCase):
 
         cat = MagicMock()
         cat.name.return_value = "rule1"
+        cat.path.return_value = "rule1"
         cat.description = "Rule 1"
         cat.rdb_id.return_value = 1
         cat.num_items.return_value = 1
@@ -218,6 +291,7 @@ class TestConvertDrc(unittest.TestCase):
 
         cat = MagicMock()
         cat.name.return_value = "rule1"
+        cat.path.return_value = "rule1"
         cat.description = "Rule 1"
         cat.rdb_id.return_value = 1
         cat.num_items.return_value = 1
@@ -237,6 +311,7 @@ class TestConvertDrc(unittest.TestCase):
 
         cat = MagicMock()
         cat.name.return_value = "rule1"
+        cat.path.return_value = "rule1"
         cat.description = "Rule 1"
         cat.rdb_id.return_value = 1
         cat.num_items.return_value = 1
