@@ -53,7 +53,9 @@ See how to update using the Metrics [guide](../contrib/Metrics.md).
 Put the tool in front of the binary in `OPENROAD_EXE`. Every rule runs
 `OPENROAD_EXE` as a command, sub-makes included, so it reaches every
 stage and the `open_*`, `gui_*` and `web_*` targets. Below, `openroad`
-stands for the binary the flow would run otherwise.
+stands for the binary the flow would run otherwise. The binary is the
+last word of `OPENROAD_EXE`: the flow asks it alone for its version when
+it writes the metrics, so the tool in front is not run for that.
 
 ```shell
 # a backtrace when OpenROAD crashes, its own exit code otherwise

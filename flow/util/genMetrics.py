@@ -215,6 +215,16 @@ def merge_jsons(root_path, output, files):
         output.update(data)
 
 
+def openroad_binary():
+    """The binary OPENROAD_EXE runs: its last word.
+
+    OPENROAD_EXE is a command, and a wrapper such as gdb, valgrind or perf
+    comes first in it. The version is asked of the binary alone: through
+    the wrapper, gdb's banner would be read as the version, and perf
+    record would overwrite perf.data with a profile of the query."""
+    return shlex.split(os.environ.get("OPENROAD_EXE", "openroad"))[-1]
+
+
 def extract_metrics(
     cwd, platform, design, flow_variant, output, hier_json, logPath, rptPath, resultPath
 ):
@@ -223,9 +233,7 @@ def extract_metrics(
     metrics_dict = defaultdict(dict)
     metrics_dict["run__flow__generate_date"] = datetime.now().strftime("%Y-%m-%d %H:%M")
     metrics_dict["run__flow__metrics_version"] = "Metrics_2.1.2"
-    # OPENROAD_EXE is a command: a wrapper such as valgrind can come first
-    openroad = shlex.split(os.environ.get("OPENROAD_EXE", "openroad"))
-    cmdOutput = check_output(openroad + ["-version"])
+    cmdOutput = check_output([openroad_binary(), "-version"])
     cmdFields = [x.decode("utf-8") for x in cmdOutput.split()]
     metrics_dict["run__flow__openroad_version"] = str(cmdFields[0])
     if len(cmdFields) > 1:

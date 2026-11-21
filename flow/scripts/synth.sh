@@ -2,9 +2,12 @@
 set -u -eo pipefail
 mkdir -p $RESULTS_DIR $LOG_DIR $REPORTS_DIR $OBJECTS_DIR
 touch $2
-$YOSYS_EXE -V > $(realpath $2)
-$PYTHON_EXE "$SCRIPTS_DIR/run_command.py" --log "$(realpath $2)" --append --tee -- \
-  $YOSYS_EXE $YOSYS_FLAGS -c $1
+# YOSYS_EXE is a command line, quotes included: a wrapper in it can have
+# a quoted argument of its own. The shell parses it, as it does in a make
+# recipe.
+eval "$YOSYS_EXE -V" > "$(realpath $2)"
+eval '$PYTHON_EXE "$SCRIPTS_DIR/run_command.py" --log "$(realpath $2)" --append --tee --' \
+  "$YOSYS_EXE $YOSYS_FLAGS" '-c "$1"'
 
 # Log result hash, mirroring flow.sh's epilogue for OpenROAD stages.
 # genElapsedTime.py understands .odb/.rtlil/.v so it hashes the yosys

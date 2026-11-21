@@ -130,7 +130,7 @@ export OPENSTA_EXE  ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 # OPENROAD_EXE and YOSYS_EXE are commands, not only paths: a wrapper can
 # come first, as in OPENROAD_EXE="gdb --args openroad" or
 # OPENROAD_EXE="valgrind openroad". The check is on the program the command
-# starts with, a path or a name on PATH.
+# starts with, a path or a name on PATH. The binary is the last word.
 OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell command -v $(firstword $(OPENROAD_EXE)) >/dev/null && echo "true"),)
 
 export OPENROAD_ARGS = -no_init -threads $(NUM_CORES) $(OR_ARGS)

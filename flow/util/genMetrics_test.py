@@ -11,6 +11,41 @@ sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import genMetrics
 
 
+class OpenroadBinaryTests(unittest.TestCase):
+    """The version is asked of the binary, not of a wrapper in front of
+    it: gdb's banner is not a version, and perf record would overwrite
+    perf.data with a profile of the query."""
+
+    def binary(self, openroad_exe):
+        saved = os.environ.get("OPENROAD_EXE")
+        try:
+            if openroad_exe is None:
+                os.environ.pop("OPENROAD_EXE", None)
+            else:
+                os.environ["OPENROAD_EXE"] = openroad_exe
+            return genMetrics.openroad_binary()
+        finally:
+            if saved is None:
+                os.environ.pop("OPENROAD_EXE", None)
+            else:
+                os.environ["OPENROAD_EXE"] = saved
+
+    def test_a_path_is_the_binary(self):
+        self.assertEqual(self.binary("/opt/or/bin/openroad"), "/opt/or/bin/openroad")
+
+    def test_unset_is_openroad_on_path(self):
+        self.assertEqual(self.binary(None), "openroad")
+
+    def test_the_binary_is_the_last_word_after_a_wrapper(self):
+        for wrapped in (
+            "valgrind /opt/or/bin/openroad",
+            "perf record -g -- /opt/or/bin/openroad",
+            "gdb -batch -ex run -ex 'thread apply all bt' --args /opt/or/bin/openroad",
+        ):
+            with self.subTest(wrapped):
+                self.assertEqual(self.binary(wrapped), "/opt/or/bin/openroad")
+
+
 class GitHeadCommitTests(unittest.TestCase):
     """Tests git_head_commit()'s fallback behavior so commit metadata
     extraction degrades gracefully instead of raising."""

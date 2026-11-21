@@ -14,8 +14,8 @@ make runs in well under a second and needs nothing installed.
 
 import os
 import subprocess
+import sys
 import tempfile
-import textwrap
 import unittest
 
 FLOW_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -149,6 +149,46 @@ class TestOpenroadExe(unittest.TestCase):
                 )
                 self.assertIn(flag, call.split())
                 self.assertTrue(call.endswith("open.tcl"), call)
+
+    def test_synth_sh_keeps_a_quoted_wrapper_argument_whole(self):
+        # YOSYS_EXE="wrapper -ex 'two words' yosys": synth.sh hands the
+        # wrapper the quoted argument as one argument, both times it runs it.
+        tmp = self.tmp_dir.name
+        wrapper = self.script(
+            "argv", 'printf "%s|" "$@" >> "$ARGV_LOG"\necho >> "$ARGV_LOG"\n'
+        )
+        scripts = os.path.join(FLOW_DIR, "scripts")
+        env = dict(
+            self.env,
+            RESULTS_DIR=os.path.join(tmp, "results"),
+            LOG_DIR=os.path.join(tmp, "logs"),
+            REPORTS_DIR=os.path.join(tmp, "reports"),
+            OBJECTS_DIR=os.path.join(tmp, "objects"),
+            SCRIPTS_DIR=scripts,
+            UTILS_DIR=os.path.join(FLOW_DIR, "util"),
+            PYTHON_EXE=sys.executable,
+            YOSYS_EXE=f"{wrapper} -ex 'two words' yosys",
+            YOSYS_FLAGS="-v 3",
+        )
+        result = subprocess.run(
+            [
+                "bash",
+                os.path.join(scripts, "synth.sh"),
+                "synth.tcl",
+                os.path.join(tmp, "logs", "1_2_yosys.log"),
+            ],
+            cwd=tmp,
+            env=env,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        with open(self.log) as f:
+            calls = f.read().splitlines()
+        self.assertEqual(
+            calls,
+            ["-ex|two words|yosys|-V|", "-ex|two words|yosys|-v|3|-c|synth.tcl|"],
+        )
 
     def test_gdb_and_valgrind_are_not_switches(self):
         # a debugger or valgrind goes in OPENROAD_EXE; GDB and VALGRIND

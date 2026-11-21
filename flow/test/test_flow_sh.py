@@ -95,6 +95,32 @@ class TestFlowSh(unittest.TestCase):
         self.assertIn("Elapsed time:", log)
         self.assert_summary(log)
 
+    def test_quoted_wrapper_argument_stays_one_argument(self):
+        # OPENROAD_EXE="gdb -ex 'thread apply all bt' --args openroad": the
+        # quoted argument reaches the wrapper whole, not split with its quotes.
+        argv_log = os.path.join(self.tmp_dir.name, "argv.log")
+        wrapper = os.path.join(self.tmp_dir.name, "wrapper")
+        with open(wrapper, "w") as f:
+            f.write("#!/usr/bin/env bash\n" 'printf "%s\\n" "$@" > "$ARGV_LOG"\n')
+        os.chmod(wrapper, 0o755)
+        self.env["ARGV_LOG"] = argv_log
+        self.env["OPENROAD_EXE"] = "true"
+        self.env["OPENROAD_CMD"] = (
+            f"{wrapper} -ex 'thread apply all bt' --args openroad -exit"
+        )
+
+        self.run_stage()
+
+        with open(argv_log) as f:
+            argv = f.read().splitlines()
+        self.assertEqual(
+            argv[:5],
+            ["-ex", "thread apply all bt", "--args", "openroad", "-exit"],
+            argv,
+        )
+        self.assertEqual(argv[5], "-no_splash", argv)
+        self.assertEqual(argv[7], "-metrics", argv)
+
 
 if __name__ == "__main__":
     unittest.main()
