@@ -104,6 +104,7 @@ configuration file.
 | <a name="ADDITIONAL_SITES"></a>ADDITIONAL_SITES| Passed as -additional_sites to initialize_floorplan.| |
 | <a name="ASAP7_USE_VT"></a>ASAP7_USE_VT| A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.| RVT|
 | <a name="AUTO_MEMORIES"></a>AUTO_MEMORIES| Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM macro — given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.| 0|
+| <a name="AUTO_MEMORIES_DIR"></a>AUTO_MEMORIES_DIR| Directory every step reads AUTO_MEMORIES' generated views and lists from, synthesis included. Synthesis writes them to its own $(RESULTS_DIR)/memories, the default; with make, leave it there. For a build system that runs a stage of one variant on another variant's synthesis (e.g. bazel-orfs), which sets it for each step it runs, synthesis included, to the memories of the variant that synthesised them. Like AUTO_MEMORIES, not tied to stages: every step that reads the views needs it, the abstract among them.| |
 | <a name="AUTO_MEMORIES_MACRO_PLACE"></a>AUTO_MEMORIES_MACRO_PLACE| Experimental. Space-separated list of module names of AUTO_MEMORIES_REGFILES register files to place as macros, blackboxed in synthesis and placed by the macro placer (and, in `mode netlist`, dissolved after macro placement). A register file not listed is inlined: its generated netlist of standard cells replaces the module's body in synthesis, and its cells are placed, sized and buffered with the rest of the design -- the better shape for a small design, where a macro's outline and channels cost more core than the array saves. A name no spec builds stops the build. Requires AUTO_MEMORIES=1.| |
 | <a name="AUTO_MEMORIES_REGFILES"></a>AUTO_MEMORIES_REGFILES| Experimental. Space-separated list of register-file spec files, one per RTL module to build as a register file of placed standard cells rather than synthesise to flops. Each spec names its module, words, bits, read and write ports by the RTL's own port names, and the cells. memories/regfile_ram.py checks the spec against the module's ports and has OpenROAD's generate_ram build it as `<module>_ram`, under `$(RESULTS_DIR)/memories/`, with a wrapper in the module's place. A module named in AUTO_MEMORIES_MACRO_PLACE is blackboxed like an AUTO_MEMORIES macro and placed as one; any other is inlined as its generated netlist. A placed spec in `mode netlist` then dissolves into its cells after macro placement: its core FIRM where the macro was placed, in the macro's orientation, its periphery left to placement. Every register file appears in memories.json with kind `regfile`. Requires AUTO_MEMORIES=1.| |
 | <a name="BALANCE_ROWS"></a>BALANCE_ROWS| Balance rows during placement.| 0|
@@ -130,7 +131,7 @@ configuration file.
 | <a name="CTS_CLUSTER_DIAMETER"></a>CTS_CLUSTER_DIAMETER| Maximum diameter (in microns) of sink cluster.| |
 | <a name="CTS_CLUSTER_SIZE"></a>CTS_CLUSTER_SIZE| Maximum number of sinks per cluster.| |
 | <a name="CTS_LIB_NAME"></a>CTS_LIB_NAME| Name of the Liberty library to use in selecting the clock buffers.| |
-| <a name="CTS_SNAPSHOTS"></a>CTS_SNAPSHOTS| Create ODB/SDC files at different stages of CTS.| 0|
+| <a name="CTS_USEFUL_SKEW"></a>CTS_USEFUL_SKEW| Enable useful skew during the CTS balancing phase.| 0|
 | <a name="DESIGN_NAME"></a>DESIGN_NAME| The name of the top-level module of the design.| |
 | <a name="DESIGN_NICKNAME"></a>DESIGN_NICKNAME| DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a different design.| |
 | <a name="DETAILED_METRICS"></a>DETAILED_METRICS| If set, then calls report_metrics prior to repair operations in the CTS and global route stages| 0|
@@ -152,12 +153,12 @@ configuration file.
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| |
 | <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
+| <a name="FLOW_INPUT_VARIANT"></a>FLOW_INPUT_VARIANT| Flow variant a stage reads the previous stage's result from, the .odb and the .sdc beside it. Defaults to FLOW_VARIANT. A variant forked off another sets it to that variant for the first stage it runs, then leaves it at the default: the shared stages run once, and the fork writes only its own results. A stage's later steps read the stage's own results. A stage stops when its input is in both variants. With AUTO_MEMORIES=1, AUTO_MEMORIES_DIR names the memories of the variant that synthesised them, for every stage the fork runs.| |
 | <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base|
 | <a name="FOOTPRINT"></a>FOOTPRINT| Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
 | <a name="FOOTPRINT_TCL"></a>FOOTPRINT_TCL| Specifies a Tcl script with custom footprint-related commands for floorplan setup.| |
 | <a name="GDS_ALLOW_EMPTY"></a>GDS_ALLOW_EMPTY| Single regular expression of module names of macros that have no .gds file| |
 | <a name="GDS_FILES"></a>GDS_FILES| Path to platform GDS files.| |
-| <a name="GENERATE_ARTIFACTS_ON_FAILURE"></a>GENERATE_ARTIFACTS_ON_FAILURE| For instance Bazel needs artifacts (.odb and .rpt files) on a failure to allow the user to save hours on re-running the failed step locally, but when working with a Makefile flow, it is more natural to fail the step and leave the user to manually inspect the logs and artifacts directly via the file system. Set to 1 to change the behavior to generate artifacts upon failure to e.g. do a global route. The exit code will still be non-zero on all other failures that aren't covered by the "useful to inspect the artifacts on failure" use-case. Example: just like detailed routing, a global route that fails with congestion, is not a build failure(as in exit code non-zero), it is a successful(as in zero exit code) global route that produce reports detailing the problem. Detailed route will not proceed, if there is global routing congestion This allows build systems, such as bazel, to create artifacts for global and detailed route, even if the operation had problems, without having know about the semantics between global and detailed route. Considering that global and detailed route can run for a long time and use a lot of memory, this allows inspecting results on a laptop for a build that ran on a server.| 0|
 | <a name="GLOBAL_CONNECT_TCL"></a>GLOBAL_CONNECT_TCL| File path to the add_global_connection rules that connect the supply pins of the instances to the supply nets. Sourced at floorplan right after the netlist is loaded, before any step can mark an instance dont_touch; the rules are kept in the database. The platform's file by default; a design whose PDN_TCL names other supply nets sets its own. PDN_TCL defines the grids.| |
 | <a name="GLOBAL_PLACEMENT_ARGS"></a>GLOBAL_PLACEMENT_ARGS| Use additional tuning parameters during global placement other than default args defined in global_place.tcl.| |
 | <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Replaces default arguments for global route. The -congestion_iterations default is set by the flow (30 for FastRoute, 10 for CUGR); add -congestion_iterations here to override it.| -congestion_report_iter_step 5 -verbose|
@@ -171,19 +172,23 @@ configuration file.
 | <a name="GRT_SEED"></a>GRT_SEED| Specifies a random seed for global routing.  Useful for perturbation studies.| |
 | <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.| 1|
 | <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix (negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period.| 0|
-| <a name="INFER_CLKGATES"></a>INFER_CLKGATES| Enables Yosys clock gate inference. By default, it uses the Liberty cell definitions to determine clock gating cell. The selection can be overridden using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables.| 0|
+| <a name="INFER_CLKGATES"></a>INFER_CLKGATES| Enables Yosys clock gate inference. By default, it uses the Liberty cell definitions to determine clock gating cell. The selection can be overridden using the POS_CLKGATE_AND_PORTS and/or NEG_CLKGATE_AND_PORTS variables. Every stage reads it: a platform may make the clock gating cells it inserts usable for OpenROAD through DONT_USE_CELLS, as asap7 does.| 0|
+| <a name="INFER_CLKGATES_EXCLUDE"></a>INFER_CLKGATES_EXCLUDE| Space-separated Yosys module name patterns whose flip-flops INFER_CLKGATES leaves ungated, e.g. a module whose enable logic is timing-critical. Only modules that still exist at clock gate inference can be excluded, see SYNTH_HIERARCHICAL and SYNTH_KEEP_MODULES.| |
+| <a name="INFER_CLKGATES_MIN_NET_SIZE"></a>INFER_CLKGATES_MIN_NET_SIZE| Minimum number of flip-flops sharing a clock and enable for INFER_CLKGATES to replace their enable with a clock gating cell. Smaller groups keep their enable flip-flops. Unset gates every group.| |
 | <a name="IO_CONSTRAINTS"></a>IO_CONSTRAINTS| File path to the IO constraints .tcl file. Also used for manual placement.| |
 | <a name="IO_PLACER_H"></a>IO_PLACER_H| A list of metal layers on which the I/O pins are placed horizontally (top and bottom of the die).| |
 | <a name="IO_PLACER_V"></a>IO_PLACER_V| A list of metal layers on which the I/O pins are placed vertically (sides of the die).| |
 | <a name="IR_DROP_LAYER"></a>IR_DROP_LAYER| Default metal layer to report IR drop.| |
 | <a name="KEEP_VARS"></a>KEEP_VARS| Feature toggle to keep intermediate variables during the flow. This is useful for the single-run flow, where all stages of the flow are run in a single OpenROAD instance.| 0|
+| <a name="KLAYOUT_DRC_FILE"></a>KLAYOUT_DRC_FILE| The KLayout DRC deck `make drc` runs. A `.py` deck runs with the klayout Python module; a Ruby deck (`.lydrc`) is deprecated and needs the KLayout application. Empty when the platform has no deck.| |
+| <a name="KLAYOUT_LVS_FILE"></a>KLAYOUT_LVS_FILE| The KLayout LVS deck `make lvs` runs. A `.py` deck runs with the klayout Python module; a Ruby deck (`.lylvs`) is deprecated and needs the KLayout application. Empty when the platform has no deck.| |
 | <a name="KLAYOUT_TECH_FILE"></a>KLAYOUT_TECH_FILE| A mapping from LEF/DEF to GDS using the KLayout tool.| |
 | <a name="LATCH_MAP_FILE"></a>LATCH_MAP_FILE| Optional mapping file supplied to Yosys to map latches| |
 | <a name="LAYER_PARASITICS_FILE"></a>LAYER_PARASITICS_FILE| Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.| |
 | <a name="LEC_AUX_VERILOG_FILES"></a>LEC_AUX_VERILOG_FILES| Additional Verilog files (e.g. blackbox stubs) to include in generated netlists for formal equivalence checks.| |
 | <a name="LEC_CHECK"></a>LEC_CHECK| Perform formal equivalence checks between before and after netlists. This checks CTS repair timing and the initial synthesis netlist against the final netlist. If this fails, report an issue to OpenROAD.| $(if $(wildcard $(KEPLER_FORMAL_EXE)),1,0)|
 | <a name="LIB_FILES"></a>LIB_FILES| A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.| |
-| <a name="LIB_MODEL"></a>LIB_MODEL| Selects between NLDM and CCS timing models for the ASAP7 platform. Valid values: NLDM (default), CCS. Used in flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list, and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.| NLDM|
+| <a name="LIB_MODEL"></a>LIB_MODEL| Selects between NLDM and CCS timing models for the ASAP7 platform. Valid values: NLDM (default), CCS. Used in flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list. With CCS the prima delay calculator is used from the global routing stage on, where the parasitics come from global routing; placement and CTS use the table delay calculator on their estimates.| NLDM|
 | <a name="MACRO_PLACEMENT_TCL"></a>MACRO_PLACEMENT_TCL| Specifies the path of a TCL file on how to place macros manually. The user may choose to place just some of the macros in the design. The macro placer will handle the remaining unplaced macros. Note that using the macro placement file generated by the macro placer will not result in the same global placement as actually running the macro placer: the macro placement file does not contain the locations that the macro placer generates for the standard cells, and those locations impact global placement.| |
 | <a name="MACRO_ROWS_HALO_X"></a>MACRO_ROWS_HALO_X| Horizontal distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.| |
 | <a name="MACRO_ROWS_HALO_Y"></a>MACRO_ROWS_HALO_Y| Vertical distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.| |
@@ -302,6 +307,7 @@ configuration file.
 | <a name="SWAP_ARITH_OPERATORS"></a>SWAP_ARITH_OPERATORS| Improve timing QoR by swapping ALU and MULT arithmetic operators.| 0|
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| |
 | <a name="SYNTH_BLACKBOXES"></a>SYNTH_BLACKBOXES| List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design. Non-existant modules are ignored silently, useful when listing modules statically, even if modules come and go dynamically.| |
+| <a name="SYNTH_BLACKBOXES_FILE"></a>SYNTH_BLACKBOXES_FILE| Path to a file with more modules to treat as black boxes, one name per line, added to SYNTH_BLACKBOXES. For a parallel synthesis whose list is too long for one environment variable: Linux caps one at 128 KiB.| |
 | <a name="SYNTH_CANONICALIZE_TCL"></a>SYNTH_CANONICALIZE_TCL| Specifies a Tcl script with commands to run as part of the synth canonicalize step.| |
 | <a name="SYNTH_CHECKPOINT"></a>SYNTH_CHECKPOINT| Path to a Yosys RTLIL checkpoint to read in place of the default canonicalization checkpoint at the start of synth.tcl. Intended for parallel synthesis flows that reuse a checkpoint taken after coarse synthesis and `keep_hierarchy` have already been decided, so each partition skips that common prefix. Leave unset for the normal flow.| |
 | <a name="SYNTH_GUT"></a>SYNTH_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| 0|
@@ -310,7 +316,7 @@ configuration file.
 | <a name="SYNTH_HIER_SEPARATOR"></a>SYNTH_HIER_SEPARATOR| Separator used for the synthesis flatten stage.| .|
 | <a name="SYNTH_INSBUF"></a>SYNTH_INSBUF| Insert input buffers on top-level input ports during synthesis. Useful to disable when doing parallel synthesis and concatenating netlists later as we're generating netlists of submodules.| 1|
 | <a name="SYNTH_KEEP_MOCKED_MEMORIES"></a>SYNTH_KEEP_MOCKED_MEMORIES| When `SYNTH_MOCK_LARGE_MEMORIES=1`, setting this to 1, will keep mocked memories (not flattening them). This preserves some of the access logic complexity and avoids optimizations outside of the mocked memory.| 1|
-| <a name="SYNTH_KEEP_MODULES"></a>SYNTH_KEEP_MODULES| Mark modules to keep from getting removed in flattening. A name that matches no module of the design stops synthesis.| |
+| <a name="SYNTH_KEEP_MODULES"></a>SYNTH_KEEP_MODULES| Mark modules to keep from getting removed in flattening. When the whole design is synthesized, a name that matches no module of the design stops synthesis. In a partition of a parallel synthesis (SYNTH_CHECKPOINT set) a kept module of another partition is not in the partition's checkpoint, and its name is skipped.| |
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis. Ideally, real RAM or realistic fakeram should be used for RAMs much larger than 1024 bits. To temporarily ignore the RAM concerns and investigate other aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`, or adjusting `SYNTH_MEMORY_MAX_BITS`. ROMs, inferred memories with no write port, are not counted: a ROM holds constants that synthesis maps to logic like any other, and it goes through the normal flow. The limit is there so that a read/write memory, which belongs in a macro (`AUTO_MEMORIES`, fakeram) or a mock, does not go undetected into flip-flops; raising it to admit a large ROM would let read/write memories of that size through too.| 4096|
 | <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| 0|
 | <a name="SYNTH_MOCK_LARGE_MEMORIES"></a>SYNTH_MOCK_LARGE_MEMORIES| Reduce Yosys inferred memories larger than SYNTH_MEMORY_MAX_BITS to 1 row. Yosys will generally infer memories from behavioral Verilog code, whether the memories are in standalone modules or instantiated within some larger module. fakeram and empty Verilog memories(blackboxes) of memories will not be inferred memories by Yosys and are therefore not affected by this variable. This is useful and convenient to separate the concern of instantiating and placing memories from investigating other issues with a design, though it comes at the expense of the increased accuracy that using realistic fakemem would provide. Memories with a single 1 row will of course have unrealistically good timing and area characteristics, but timing will still correctly terminate in a register. Large port memories, typically register files, will still have the retain a lot of the port logic that can be useful to investigate issues. This can be especially useful during development of designs where the behavioral model comes first and suitable memories are matched up when the design RTL is stable. A typical use case would be Chisel which will generate a behavioral model for a memories with the required clocks, ports, etc. in addition to a computer readable file with the specification of the memories that is used to [automatically](https://chipyard.readthedocs.io/en/stable/Tools/Barstools.html/) match up suitable memory macros later in the flow. During an architectural screening study, a large range of memory configurations can be investigated quickly with this option, without getting bogged down in the concern of how to realize the memories in silicon for emphemral RTL configurations that exist only long enough to run through the ORFS flow to create a table of some characteristics of a design configuration.| 0|
@@ -318,7 +324,7 @@ configuration file.
 | <a name="SYNTH_OPERATIONS_ARGS"></a>SYNTH_OPERATIONS_ARGS| Extra arguments appended to the Yosys synth command operations list. When set, replaces the default Kogge-Stone adder extra-map.| |
 | <a name="SYNTH_OPT_HIER"></a>SYNTH_OPT_HIER| Optimize constants across hierarchical boundaries.| 0|
 | <a name="SYNTH_REPEATABLE_BUILD"></a>SYNTH_REPEATABLE_BUILD| License to prune anything that makes builds less repeatable, typically used with Bazel to ensure that builds are bit-for-bit identical so that caching works optimally. Removes debug information that encodes paths, timestamps, etc.| 0|
-| <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| *This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.* List of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. The main use case is to quickly identify if performance can be improved by manually retiming the input RTL. Retiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion  # 8080.| |
+| <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| *This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.* List of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. Each entry is a glob over the modules left after flattening, and an entry that matches none of them is an error. The slang frontend names a kept module `Name$<path>`, which `Name*` matches. The main use case is to quickly identify if performance can be improved by manually retiming the input RTL. Retiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion  # 8080.| |
 | <a name="SYNTH_SKIP_KEEP"></a>SYNTH_SKIP_KEEP| Only meaningful together with SYNTH_CHECKPOINT. When set, signals that the supplied checkpoint is still canonical RTLIL (coarse synth and `keep_hierarchy` have not been run yet), so synth.tcl runs the full coarse+fine synthesis flattened. When unset and SYNTH_CHECKPOINT is used, synth.tcl assumes the checkpoint already has coarse synth + `keep_hierarchy` done and resumes from `coarse:fine`.| 0|
 | <a name="SYNTH_SLANG_ARGS"></a>SYNTH_SLANG_ARGS| Additional arguments passed to the slang frontend during synthesis.| |
 | <a name="SYNTH_USE_SYN"></a>SYNTH_USE_SYN| If set to 1, run synthesis using the "syn" tool built into OpenROAD (the synth_syn.tcl flow) instead of the default Yosys-based flow. Defaults to 0 (Yosys flow).| 0|
@@ -345,6 +351,7 @@ configuration file.
 | <a name="VIA_IN_PIN_MIN_LAYER"></a>VIA_IN_PIN_MIN_LAYER| Passed as -via_in_pin_bottom_layer to pin_access and detailed_route.| |
 | <a name="WIRE_LOAD_MODEL"></a>WIRE_LOAD_MODEL| Name of a Liberty wire_load group applied with set_wire_load_model whenever open.tcl reads timing. OpenSTA applies a wire-load model only to nets without parasitics, so it gives wire delay to timing read before placement and leaves placed and routed timing unaffected. An unknown name is an error. Empty, the default, applies none. A platform whose libraries define no wire_load group can supply one in a Liberty file listed in ADDITIONAL_LIBS.| |
 | <a name="WRITE_ODB_AND_SDC_EACH_STAGE"></a>WRITE_ODB_AND_SDC_EACH_STAGE| Save out .sdc and .odb file after each stage, useful to disable when using a single OpenROAD instance to run all stages of the flow.| 1|
+| <a name="WRITE_ON_FAILURE"></a>WRITE_ON_FAILURE| If set to 1, a step that fails writes the design as it was at the failure to $RESULTS_DIR/<step>-failed.odb and .sdc, then fails with the original error. `make web_<step>-failed.odb` opens it, e.g. `make web_3_3_place_gp-failed.odb`. Set to 0 where writing a large design on failure costs too much time or disk.| 1|
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3|
 ## synth variables
 
@@ -356,11 +363,13 @@ configuration file.
 - [ADDITIONAL_MEMORIES](#ADDITIONAL_MEMORIES)
 - [AUTO_MEMORIES_MACRO_PLACE](#AUTO_MEMORIES_MACRO_PLACE)
 - [AUTO_MEMORIES_REGFILES](#AUTO_MEMORIES_REGFILES)
+- [BLOCKS](#BLOCKS)
 - [CACHED_REPORTS](#CACHED_REPORTS)
 - [CLKGATE_MAP_FILE](#CLKGATE_MAP_FILE)
 - [DFF_LIB_FILE](#DFF_LIB_FILE)
 - [DFF_MAP_FILE](#DFF_MAP_FILE)
-- [INFER_CLKGATES](#INFER_CLKGATES)
+- [INFER_CLKGATES_EXCLUDE](#INFER_CLKGATES_EXCLUDE)
+- [INFER_CLKGATES_MIN_NET_SIZE](#INFER_CLKGATES_MIN_NET_SIZE)
 - [LATCH_MAP_FILE](#LATCH_MAP_FILE)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
@@ -375,6 +384,7 @@ configuration file.
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SYNTH_ARGS](#SYNTH_ARGS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
+- [SYNTH_BLACKBOXES_FILE](#SYNTH_BLACKBOXES_FILE)
 - [SYNTH_CANONICALIZE_TCL](#SYNTH_CANONICALIZE_TCL)
 - [SYNTH_CHECKPOINT](#SYNTH_CHECKPOINT)
 - [SYNTH_GUT](#SYNTH_GUT)
@@ -419,6 +429,7 @@ configuration file.
 - [CORE_UTILIZATION](#CORE_UTILIZATION)
 - [DIE_AREA](#DIE_AREA)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [FOOTPRINT](#FOOTPRINT)
 - [FOOTPRINT_TCL](#FOOTPRINT_TCL)
 - [GLOBAL_CONNECT_TCL](#GLOBAL_CONNECT_TCL)
@@ -499,6 +510,7 @@ configuration file.
 - [ENABLE_DPO](#ENABLE_DPO)
 - [ENABLE_PLACE_REPAIR_TIMING](#ENABLE_PLACE_REPAIR_TIMING)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GPL_KEEP_OVERFLOW](#GPL_KEEP_OVERFLOW)
 - [GPL_PLACE_IOS](#GPL_PLACE_IOS)
@@ -540,9 +552,10 @@ configuration file.
 - [CTS_CLUSTER_DIAMETER](#CTS_CLUSTER_DIAMETER)
 - [CTS_CLUSTER_SIZE](#CTS_CLUSTER_SIZE)
 - [CTS_LIB_NAME](#CTS_LIB_NAME)
-- [CTS_SNAPSHOTS](#CTS_SNAPSHOTS)
+- [CTS_USEFUL_SKEW](#CTS_USEFUL_SKEW)
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
@@ -570,6 +583,7 @@ configuration file.
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
 - [GLOBAL_ROUTE_USE_CUGR](#GLOBAL_ROUTE_USE_CUGR)
 - [GRT_SEED](#GRT_SEED)
@@ -605,6 +619,7 @@ configuration file.
 - [DETAILED_ROUTE_END_ITERATION](#DETAILED_ROUTE_END_ITERATION)
 - [DISABLE_VIA_GEN](#DISABLE_VIA_GEN)
 - [FILL_CELLS](#FILL_CELLS)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_REPAIR_ANTENNAS_ITER_DRT](#MAX_REPAIR_ANTENNAS_ITER_DRT)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
@@ -628,8 +643,11 @@ configuration file.
 
 - [ADDITIONAL_GDS](#ADDITIONAL_GDS)
 - [CDL_FILE](#CDL_FILE)
+- [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [GDS_ALLOW_EMPTY](#GDS_ALLOW_EMPTY)
 - [GND_NETS_VOLTAGES](#GND_NETS_VOLTAGES)
+- [KLAYOUT_DRC_FILE](#KLAYOUT_DRC_FILE)
+- [KLAYOUT_LVS_FILE](#KLAYOUT_LVS_FILE)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
@@ -650,12 +668,14 @@ configuration file.
 
 - [ASAP7_USE_VT](#ASAP7_USE_VT)
 - [CORNERS](#CORNERS)
+- [INFER_CLKGATES](#INFER_CLKGATES)
 - [KEEP_VARS](#KEEP_VARS)
 - [NUM_CORES](#NUM_CORES)
 - [OPENROAD_HIERARCHICAL](#OPENROAD_HIERARCHICAL)
 - [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
 - [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [WRITE_ODB_AND_SDC_EACH_STAGE](#WRITE_ODB_AND_SDC_EACH_STAGE)
+- [WRITE_ON_FAILURE](#WRITE_ON_FAILURE)
 
 ## generate_abstract variables
 
@@ -668,7 +688,7 @@ configuration file.
 - [ADDITIONAL_LEFS](#ADDITIONAL_LEFS)
 - [ADDITIONAL_LIBS](#ADDITIONAL_LIBS)
 - [AUTO_MEMORIES](#AUTO_MEMORIES)
-- [BLOCKS](#BLOCKS)
+- [AUTO_MEMORIES_DIR](#AUTO_MEMORIES_DIR)
 - [CAP_MARGIN](#CAP_MARGIN)
 - [CDL_FILES](#CDL_FILES)
 - [CORNER](#CORNER)
@@ -679,7 +699,6 @@ configuration file.
 - [FILL_CONFIG](#FILL_CONFIG)
 - [FLOW_VARIANT](#FLOW_VARIANT)
 - [GDS_FILES](#GDS_FILES)
-- [GENERATE_ARTIFACTS_ON_FAILURE](#GENERATE_ARTIFACTS_ON_FAILURE)
 - [GUI_TIMING](#GUI_TIMING)
 - [IR_DROP_LAYER](#IR_DROP_LAYER)
 - [KLAYOUT_TECH_FILE](#KLAYOUT_TECH_FILE)

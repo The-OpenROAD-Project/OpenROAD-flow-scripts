@@ -4,6 +4,13 @@
 # inside the container have the correct ownership on the host volume.
 set -e
 
+# claude.sh starts a git worktree in its host path. env.sh sets paths from
+# its own location, so source the copy there to keep the paths the same.
+ENV_SH=/workspace/env.sh
+if [ -f "${PWD}/env.sh" ]; then
+    ENV_SH="${PWD}/env.sh"
+fi
+
 if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
     USER_NAME="claude-user"
     USER_HOME="/home/${USER_NAME}"
@@ -16,7 +23,6 @@ if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
 
     # Create user (reuse existing if UID is taken)
     if ! getent passwd "${HOST_UID}" > /dev/null 2>&1; then
-        mkdir -p "${USER_HOME}"
         useradd \
             --uid "${HOST_UID}" \
             --gid "${HOST_GID}" \
@@ -27,22 +33,25 @@ if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
             "${USER_NAME}"
     else
         USER_NAME=$(getent passwd "${HOST_UID}" | cut -d: -f1)
-        USER_HOME=$(getent passwd "${HOST_UID}" | cut -d: -f6)
+        usermod --home "${USER_HOME}" "${USER_NAME}"
     fi
 
     # Passwordless sudo
     echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/claude-user
     chmod 0440 /etc/sudoers.d/claude-user
 
+    # The engine creates .cache as root when it mounts .cache/bazel.
+    # Bazelisk writes to .cache/bazelisk, so the user owns .cache too.
+    mkdir -p "${USER_HOME}/.cache"
     export HOME="${USER_HOME}"
-    chown "${HOST_UID}:${HOST_GID}" "${USER_HOME}"
+    chown "${HOST_UID}:${HOST_GID}" "${USER_HOME}" "${USER_HOME}/.cache"
     touch "${USER_HOME}/.hushlogin"
 
     # Set up ORFS environment (PATH to tools, FLOW_HOME, etc.)
     # Sourced here; inherited through setpriv into all child processes.
-    if [ -f /workspace/env.sh ]; then
+    if [ -f "${ENV_SH}" ]; then
         set +e
-        . /workspace/env.sh > /dev/null
+        . "${ENV_SH}" > /dev/null
         set -e
     fi
 
@@ -53,9 +62,9 @@ if [ -n "${HOST_UID}" ] && [ -n "${HOST_GID}" ]; then
         -- "$@"
 else
     # No UID/GID mapping requested; run as root
-    if [ -f /workspace/env.sh ]; then
+    if [ -f "${ENV_SH}" ]; then
         set +e
-        . /workspace/env.sh > /dev/null
+        . "${ENV_SH}" > /dev/null
         set -e
     fi
     exec "$@"

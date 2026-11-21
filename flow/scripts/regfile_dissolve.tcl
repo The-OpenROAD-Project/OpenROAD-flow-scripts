@@ -72,14 +72,7 @@ proc regfile_internal_net { net placed } {
   return 1
 }
 
-set regfile_list "$::env(RESULTS_DIR)/memories/regfiles.txt"
-set regfile_modules {}
-if { [env_var_equals AUTO_MEMORIES 1] && [file exists $regfile_list] } {
-  set f [open $regfile_list r]
-  set regfile_modules [split [string trim [read $f]] "\n"]
-  close $f
-  set regfile_modules [lsearch -all -inline -not -exact $regfile_modules ""]
-}
+set regfile_modules [auto_memories_names regfiles.txt]
 if { [llength $regfile_modules] > 0 } {
   set block [ord::get_db_block]
   set db [ord::get_db]
@@ -106,8 +99,8 @@ if { [llength $regfile_modules] > 0 } {
       utl::info FLW 9 "register file $module: no instance in the design (removed as dead logic)"
       continue
     }
-    set cells [regfile_netlist "$::env(RESULTS_DIR)/memories/$module.v"]
-    set place [regfile_place_file "$::env(RESULTS_DIR)/memories/$module.place"]
+    set cells [regfile_netlist "$::env(AUTO_MEMORIES_DIR)/$module.v"]
+    set place [regfile_place_file "$::env(AUTO_MEMORIES_DIR)/$module.place"]
     foreach macro $macros {
       set path [$macro getName]
       set parent [$macro getModule]

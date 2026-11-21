@@ -29,12 +29,22 @@ into `$(RESULTS_DIR)/memories_inferred.json`, and
 
 Synthesis (canonicalization) blackboxes the converted modules so the
 liberty view wins over their behavioral bodies; floorplan through final
-read the generated `.lib`/`.lef` alongside `ADDITIONAL_LIBS`/
-`ADDITIONAL_LEFS`. Everything downstream keys off the files above —
-nothing else passes between the generator and the flow. That file-based
-handoff is what lets build systems (e.g. bazel-orfs) declare the
-generated artifacts as ordinary stage outputs and transitive
-dependencies of the remaining stages.
+read the `<m>.lib`/`<m>.lef` of each module `blackboxes.txt` lists,
+alongside `ADDITIONAL_LIBS`/`ADDITIONAL_LEFS`. Everything downstream keys
+off the files above, by the names the lists give: a file in `memories/`
+that no list names is not read, and a list that is missing stops the
+step that reads it. Nothing else passes between the generator and the
+flow. That file-based handoff is what lets build systems (e.g.
+bazel-orfs) declare the generated artifacts as ordinary stage outputs
+and transitive dependencies of the remaining stages.
+
+Synthesis writes the views and lists to its own
+`$(RESULTS_DIR)/memories`. Every step reads them from
+`AUTO_MEMORIES_DIR`, synthesis included, which defaults to that
+directory; with make, leave it there. `AUTO_MEMORIES_DIR` is for a build
+system that runs a stage of one variant on another variant's synthesis
+(e.g. bazel-orfs): it sets it for each step it runs, synthesis included,
+to the memories of the variant that synthesised them.
 
 Memories that are *not* converted stay in the netlist and synthesize to
 flip-flops, like any other RTL.
@@ -182,6 +192,10 @@ write io_w0_addr io_w0_data io_w0_en
 cell flop DFFHQNx1_ASAP7_75t_R
 ...
 ```
+
+A listed module is a register file even where the idiomatic gate would
+convert it: FakeRAM builds no view for it, and `memories.json` records
+it once, as a register file.
 
 `memories/regfile_ram.py` translates the spec to `generate_ram_netlist`
 options (ports, banks, folds, the zero word, reset, read latency, write

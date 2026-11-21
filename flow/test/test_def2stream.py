@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import io
 import unittest
 from unittest.mock import MagicMock, patch, call
 import sys
@@ -355,19 +356,18 @@ class TestMissingCells(unittest.TestCase):
 class TestAutoMemoriesCells(unittest.TestCase):
     def test_off_reads_nothing(self):
         self.assertEqual(
-            def2stream.auto_memories_cells({"RESULTS_DIR": "/nonexistent"}),
+            def2stream.auto_memories_cells({"AUTO_MEMORIES_DIR": "/nonexistent"}),
             frozenset(),
         )
 
     def test_names_from_blackboxes_txt(self):
-        with tempfile.TemporaryDirectory() as results:
-            os.mkdir(os.path.join(results, "memories"))
-            with open(os.path.join(results, "memories", "blackboxes.txt"), "w") as f:
+        with tempfile.TemporaryDirectory() as memories:
+            with open(os.path.join(memories, "blackboxes.txt"), "w") as f:
                 # a name per line, optionally followed by more columns
                 f.write("tage_entry_sram\nmbtb_entry_sram 491.400000\n\n")
             self.assertEqual(
                 def2stream.auto_memories_cells(
-                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                    {"AUTO_MEMORIES": "1", "AUTO_MEMORIES_DIR": memories}
                 ),
                 frozenset(["tage_entry_sram", "mbtb_entry_sram"]),
             )
@@ -375,23 +375,25 @@ class TestAutoMemoriesCells(unittest.TestCase):
     def test_missing_list_is_an_error(self):
         # the flow always writes it; a missing list is a broken flow, not
         # a design without generated macros
-        with tempfile.TemporaryDirectory() as results:
+        with tempfile.TemporaryDirectory() as memories:
             with self.assertRaisesRegex(RuntimeError, "blackboxes.txt is missing"):
                 def2stream.auto_memories_cells(
-                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                    {"AUTO_MEMORIES": "1", "AUTO_MEMORIES_DIR": memories}
                 )
 
-    def test_missing_results_dir_is_an_error(self):
-        with self.assertRaisesRegex(RuntimeError, "RESULTS_DIR is not set"):
-            def2stream.auto_memories_cells({"AUTO_MEMORIES": "1"})
+    def test_missing_auto_memories_dir_is_an_error(self):
+        # RESULTS_DIR is no stand-in: the memories may be another variant's
+        with self.assertRaisesRegex(RuntimeError, "AUTO_MEMORIES_DIR is not set"):
+            def2stream.auto_memories_cells(
+                {"AUTO_MEMORIES": "1", "RESULTS_DIR": "/nonexistent"}
+            )
 
     def test_empty_list_allows_nothing(self):
-        with tempfile.TemporaryDirectory() as results:
-            os.mkdir(os.path.join(results, "memories"))
-            open(os.path.join(results, "memories", "blackboxes.txt"), "w").close()
+        with tempfile.TemporaryDirectory() as memories:
+            open(os.path.join(memories, "blackboxes.txt"), "w").close()
             self.assertEqual(
                 def2stream.auto_memories_cells(
-                    {"AUTO_MEMORIES": "1", "RESULTS_DIR": results}
+                    {"AUTO_MEMORIES": "1", "AUTO_MEMORIES_DIR": memories}
                 ),
                 frozenset(),
             )
@@ -537,6 +539,50 @@ class TestGdsFileMerging(unittest.TestCase):
         # read is called for DEF + 3 GDS files = 4 total
         read_calls = main_layout.read.call_args_list
         self.assertEqual(len(read_calls), 4)  # 1 DEF + 3 GDS
+
+
+class TestMain(unittest.TestCase):
+    """The stream file is written by the klayout Python module, and
+    without it the merge stops with an error."""
+
+    def setUp(self):
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.out_file = os.path.join(self.tmp_dir.name, "6_1_merged.gds")
+        self.argv = [
+            "--design-name=gcd",
+            "--in-def=6_final.def",
+            "--in-files=a.gds b.gds",
+            f"--out-file={self.out_file}",
+            "--tech-file=klayout.lyt",
+        ]
+
+    def tearDown(self):
+        self.tmp_dir.cleanup()
+
+    def test_python_module_merges(self):
+        pya_mod = MagicMock()
+        with patch.object(def2stream, "pya", pya_mod), patch.object(
+            def2stream, "merge_gds", return_value=0
+        ) as merge_gds:
+            self.assertEqual(def2stream.main(self.argv, environ={}), 0)
+        kwargs = merge_gds.call_args.kwargs
+        self.assertIs(kwargs["pya_mod"], pya_mod)
+        self.assertEqual(kwargs["design_name"], "gcd")
+        self.assertEqual(kwargs["in_files"], "a.gds b.gds")
+        self.assertEqual(kwargs["out_file"], self.out_file)
+        self.assertEqual(kwargs["seal_file"], "")
+        self.assertEqual(kwargs["layer_map"], "")
+
+    def test_without_the_python_module_is_an_error(self):
+        with patch.object(def2stream, "pya", None), patch(
+            "sys.stdout", new_callable=io.StringIO
+        ) as stdout:
+            self.assertEqual(def2stream.main(self.argv, environ={}), 1)
+        self.assertIn(
+            "ERROR: the klayout Python module is not installed, pip install klayout",
+            stdout.getvalue(),
+        )
+        self.assertFalse(os.path.exists(self.out_file))
 
 
 if __name__ == "__main__":

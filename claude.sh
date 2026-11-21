@@ -84,6 +84,61 @@ fi
 # The entrypoint creates /home/claude-user for the mapped user.
 CONTAINER_HOME="/home/claude-user"
 
+# --- Git data of a worktree ---
+# A worktree's .git file, and the .git files of its submodules, point to the
+# main checkout's git directory by absolute or relative paths. Keep their
+# relative layout so links from submodules resolve in the container.
+HOST_DIR=$(cd "${SCRIPT_DIR}" && pwd -P)
+CONTAINER_WORKDIR=/workspace
+GIT_TOP=""
+GIT_COMMON_DIR=""
+if git_top=$(git -C "${HOST_DIR}" rev-parse --show-toplevel 2> /dev/null) &&
+    git_common=$(git -C "${HOST_DIR}" rev-parse --git-common-dir 2> /dev/null); then
+    GIT_TOP=$(cd "${git_top}" 2> /dev/null && pwd -P) || GIT_TOP=""
+    GIT_COMMON_DIR=$(cd "${HOST_DIR}" && cd "${git_common}" 2> /dev/null && pwd -P) ||
+        GIT_COMMON_DIR=""
+fi
+
+# True when host path $1 does not overlap a path that the container already uses.
+outside_container_paths() {
+    [[ "$1/" != /workspace/* && "$1/" != "${CONTAINER_HOME}/"* ]]
+}
+
+GIT_MOUNTS=()
+GIT_LINK_DIR=""
+mount_prefix=""
+# The existing checkout mount already preserves an exact /workspace path.
+if { [[ "${HOST_DIR}" != /workspace ]] && ! outside_container_paths "${HOST_DIR}"; } ||
+    ! outside_container_paths "${GIT_COMMON_DIR}"; then
+    mount_prefix=/tmp/claude-worktree
+fi
+
+# Only for the top of a checkout: a plain folder inside another repository
+# must not get that repository's .git. A gitfile also needs relocation when
+# it points inside the checkout but the /workspace mount hides the host path.
+if [[ "${GIT_TOP}" == "${HOST_DIR}" && -n "${GIT_COMMON_DIR}" &&
+    ( "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ||
+      ( -n "${mount_prefix}" && "${HOST_DIR}" != /workspace && -f "${HOST_DIR}/.git" ) ) ]]; then
+    CONTAINER_WORKDIR="${mount_prefix}${HOST_DIR}"
+    if [[ "${CONTAINER_WORKDIR}" != /workspace ]]; then
+        GIT_MOUNTS+=(-v "${HOST_DIR}:${CONTAINER_WORKDIR}")
+    fi
+    if [[ "${GIT_COMMON_DIR}/" != "${HOST_DIR}/"* ]]; then
+        GIT_MOUNTS+=(-v "${GIT_COMMON_DIR}:${mount_prefix}${GIT_COMMON_DIR}")
+    fi
+    if [[ -n "${mount_prefix}" && -f "${HOST_DIR}/.git" ]]; then
+        # Overlay the gitfile so its absolute target uses the new prefix.
+        # Git still writes to the shared metadata through the directory mount.
+        git_dir=$(git -C "${HOST_DIR}" rev-parse --absolute-git-dir)
+        git_dir=$(cd "${git_dir}" && pwd -P)
+        # Keep the source on a path already shared with the container engine.
+        GIT_LINK_DIR=$(mktemp -d "${git_dir}/claude-link.XXXXXX")
+        trap 'rm -rf -- "${GIT_LINK_DIR}"' EXIT
+        printf 'gitdir: %s%s\n' "${mount_prefix}" "${git_dir}" > "${GIT_LINK_DIR}/gitfile"
+        GIT_MOUNTS+=(-v "${GIT_LINK_DIR}/gitfile:${CONTAINER_WORKDIR}/.git:ro")
+    fi
+fi
+
 # --- Assemble docker run arguments ---
 DOCKER_RUN_ARGS=(
     --rm
@@ -91,7 +146,18 @@ DOCKER_RUN_ARGS=(
     -v "${SCRIPT_DIR}:/workspace"
     -e "HOST_UID=$(id -u)"
     -e "HOST_GID=$(id -g)"
-    -w /workspace
+    -w "${CONTAINER_WORKDIR}"
+)
+if [[ ${#GIT_MOUNTS[@]} -gt 0 ]]; then
+    DOCKER_RUN_ARGS+=("${GIT_MOUNTS[@]}")
+fi
+
+# The host paths of other worktrees do not exist in the container, so git gc
+# there would prune their records from the shared .git directory. Stop that.
+DOCKER_RUN_ARGS+=(
+    -e GIT_CONFIG_COUNT=1
+    -e GIT_CONFIG_KEY_0=gc.worktreePruneExpire
+    -e GIT_CONFIG_VALUE_0=never
 )
 
 # TTY/stdin handling for interactive, CI, and piped-input cases:
@@ -146,13 +212,24 @@ DOCKER_RUN_ARGS+=(-v "${BAZEL_CACHE_DIR}:${CONTAINER_HOME}/.cache/bazel")
 
 # --- Run ---
 if [[ "${SHELL_MODE}" -eq 1 ]]; then
-    exec docker run \
-        "${DOCKER_RUN_ARGS[@]}" \
-        "${CLAUDE_IMAGE}" \
-        bash
+    command=(bash)
 else
-    exec docker run \
-        "${DOCKER_RUN_ARGS[@]}" \
-        "${CLAUDE_IMAGE}" \
-        claude --dangerously-skip-permissions "${CLAUDE_ARGS[@]}"
+    command=(claude --dangerously-skip-permissions "${CLAUDE_ARGS[@]}")
 fi
+
+if [[ -z "${GIT_LINK_DIR}" ]]; then
+    exec docker run "${DOCKER_RUN_ARGS[@]}" "${CLAUDE_IMAGE}" "${command[@]}"
+fi
+
+# Wait for Docker before removing the temporary bind source. Keep stdin open
+# and pass signals sent to the wrapper through to the Docker client.
+docker run "${DOCKER_RUN_ARGS[@]}" "${CLAUDE_IMAGE}" "${command[@]}" <&0 &
+docker_pid=$!
+forward_signal() {
+    kill -s "$1" "${docker_pid}" 2>/dev/null || return 0
+    wait "${docker_pid}" || true
+}
+trap 'forward_signal HUP' HUP
+trap 'forward_signal INT' INT
+trap 'forward_signal TERM' TERM
+wait "${docker_pid}"

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 function __setpaths() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    DIR="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]:-${(%):-%x}}"))"
+    DIR="$(dirname "$(perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]:-${(%):-%x}}")")"
   else
-    DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}"))"
+    DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")"
   fi
 
   export OPENROAD=${DIR}/tools/OpenROAD
@@ -14,9 +14,10 @@ function __setpaths() {
   export PATH=${DIR}/tools/install/OpenROAD/bin:$PATH
   export PATH=${DIR}/tools/install/yosys/bin:$PATH
   export PATH=${DIR}/tools/install/kepler-formal/bin:$PATH
+  # The Python packages setup.sh installs, the klayout module among them
+  export PATH=${DIR}/.venv/bin:$PATH
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    export PATH="/Applications/KLayout/klayout.app/Contents/MacOS:$PATH"
     export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk@8)/bin:$PATH"
     export QT_QPA_PLATFORM=cocoa
   fi

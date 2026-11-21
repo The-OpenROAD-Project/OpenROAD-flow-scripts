@@ -43,84 +43,14 @@ proc read_checkpoint { file } {
   }
 }
 
-# AUTO_MEMORIES: memory modules whose generated liberty view replaces
-# their behavioral body during synthesis, each with that view's area in
-# um^2. The list is produced by scripts/memories/gen_memories.py before
-# canonicalization, one `<module> <area>` per line; see
-# docs/user/AutoMemories.md.
+# AUTO_MEMORIES: what synthesis does to the modules util.tcl's
+# auto_memories_blackboxes names; see docs/user/AutoMemories.md.
 source $::env(SCRIPTS_DIR)/memories/check_blackboxed.tcl
 source $::env(SCRIPTS_DIR)/memories/max_bits.tcl
 source $::env(SCRIPTS_DIR)/memories/drop_parameters.tcl
 
-proc auto_memories_areas { } {
-  if { ![env_var_equals AUTO_MEMORIES 1] } {
-    return {}
-  }
-  set f "$::env(RESULTS_DIR)/memories/blackboxes.txt"
-  if { ![file exists $f] } {
-    error "AUTO_MEMORIES=1 but $f is missing;\
-      the do-auto-memories step must run before synthesis"
-  }
-  set fh [open $f r]
-  set content [string map {\r ""} [read $fh]]
-  close $fh
-  set areas [dict create]
-  foreach line [split $content "\n"] {
-    if { [string trim $line] == "" } {
-      continue
-    }
-    set fields [regexp -all -inline {\S+} $line]
-    if {
-      [llength $fields] != 2
-      || ![string is double -strict [lindex $fields 1]]
-    } {
-      error "$f: expected `<module> <area>`, got `$line`"
-    }
-    dict set areas {*}$fields
-  }
-  return $areas
-}
-
-proc auto_memories_blackboxes { } {
-  return [dict keys [auto_memories_areas]]
-}
-
-# AUTO_MEMORIES: register files inlined (AUTO_MEMORIES_REGFILES not in
-# AUTO_MEMORIES_MACRO_PLACE): the RTL module is read as a blackbox and its
-# generated netlist of standard cells is read in its place.
-proc auto_memories_inline { } {
-  if { ![env_var_equals AUTO_MEMORIES 1] } {
-    return {}
-  }
-  set f "$::env(RESULTS_DIR)/memories/inline.txt"
-  if { ![file exists $f] } {
-    return {}
-  }
-  set fh [open $f r]
-  set content [read $fh]
-  close $fh
-  return [regexp -all -inline {\S+} $content]
-}
-
-# AUTO_MEMORIES: the RAMs the register file wrappers instantiate as
-# macros. They are in blackboxes.txt but are no module of the sources:
-# they arrive with the wrappers' netlists, after read_slang.
-proc auto_memories_regfile_cores { } {
-  if { ![env_var_equals AUTO_MEMORIES 1] } {
-    return {}
-  }
-  set f "$::env(RESULTS_DIR)/memories/regfile_cores.txt"
-  if { ![file exists $f] } {
-    return {}
-  }
-  set fh [open $f r]
-  set content [read $fh]
-  close $fh
-  return [regexp -all -inline {\S+} $content]
-}
-
 proc read_auto_memories_inline { } {
-  foreach m [auto_memories_inline] {
+  foreach m [auto_memories_names inline.txt] {
     # A parameterized RTL module (ibex_register_file_ff #(...)) is
     # instantiated with parameters the generated netlist has no
     # declaration for, which hierarchy refuses. The netlist is that module
@@ -130,7 +60,7 @@ proc read_auto_memories_inline { } {
     foreach {- name} [regexp -all -inline -- {parameter \\(\S+)} $dump] {
       setparam -unset $name t:$m
     }
-    read_verilog -overwrite "$::env(RESULTS_DIR)/memories/$m.v"
+    read_verilog -overwrite "$::env(AUTO_MEMORIES_DIR)/$m.v"
   }
 }
 
@@ -148,7 +78,14 @@ proc read_design_sources { } {
   }
 
   if { [env_var_equals SYNTH_HDL_FRONTEND slang] } {
-    # read_slang is built into Yosys (>=0.67); no plugin load needed.
+    # read_slang is built into Yosys >= 0.67, which vendors the frontend
+    # under frontends/slang. Older Yosys needs the same code loaded as an
+    # out-of-tree plugin; `plugin -i` finds it on YOSYS_PLUGIN_PATH. The
+    # guard makes this a no-op on a Yosys that has the frontend built in,
+    # so a build system is free to supply either one.
+    if { [info commands read_slang] eq "" } {
+      plugin -i slang
+    }
     set slang_args [list \
       -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions --top $::env(DESIGN_NAME) \
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
@@ -187,7 +124,7 @@ proc read_design_sources { } {
 
     # Blackbox AUTO_MEMORIES-detected memory modules so their generated
     # liberty view wins over their behavioral bodies.
-    foreach m [concat [auto_memories_blackboxes] [auto_memories_inline]] {
+    foreach m [concat [auto_memories_blackboxes] [auto_memories_names inline.txt]] {
       lappend slang_args --blackboxed-module "$m"
     }
 
@@ -195,7 +132,7 @@ proc read_design_sources { } {
     lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
 
     yosys read_slang {*}$slang_args
-    set cores [auto_memories_regfile_cores]
+    set cores [auto_memories_names regfile_cores.txt]
     set sourced {}
     foreach m [auto_memories_blackboxes] {
       if { [lsearch -exact $cores $m] < 0 } {
@@ -226,7 +163,7 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
       error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
     }
-    if { [llength [concat [auto_memories_blackboxes] [auto_memories_inline]]] > 0 } {
+    if { [llength [concat [auto_memories_blackboxes] [auto_memories_names inline.txt]]] > 0 } {
       error "AUTO_MEMORIES unsupported with HDL frontend \"$::env(SYNTH_HDL_FRONTEND)\""
     }
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
@@ -262,7 +199,7 @@ proc read_design_sources { } {
       }
       hierarchy -check -top $::env(DESIGN_NAME)
     }
-    if { [llength [auto_memories_inline]] > 0 } {
+    if { [llength [auto_memories_names inline.txt]] > 0 } {
       read_auto_memories_inline
       hierarchy -check -top $::env(DESIGN_NAME)
     }
@@ -300,6 +237,13 @@ set lib_dont_use_args ""
 if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
   foreach cell $::env(DONT_USE_CELLS) {
     lappend lib_dont_use_args -dont_use $cell
+  }
+}
+# Never map logic onto a hardened block. A block's timing model gives a
+# constant output a function, and ABC would take the block for a gate.
+if { [env_var_exists_and_non_empty BLOCKS] } {
+  foreach block $::env(BLOCKS) {
+    lappend lib_dont_use_args -dont_use $block
   }
 }
 

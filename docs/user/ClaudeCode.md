@@ -52,7 +52,7 @@ Arguments after `--` are passed directly to `claude`.
 ./claude.sh
 
 # Pass a prompt to Claude Code
-./claude.sh -- -p "fix the failing test in src/drt"
+./claude.sh -- -p "fix the failing test in openroad/drt"
 
 # Interactive bash shell (for manual builds)
 ./claude.sh --shell
@@ -93,6 +93,7 @@ are mounted so their contents survive:
 | `~/.claude/` | `~/.claude/` | Credentials, settings, conversation history |
 | `~/.cache/bazel-claude/` | `~/.cache/bazel/` | Bazel external dependencies |
 | `~/.gitconfig` | `~/.gitconfig` | Git identity (read-only) |
+| Worktree and main `.git` (worktree only) | Host paths, or paths under `/tmp/claude-worktree` if they overlap a container mount | Git refs, objects, hooks, config |
 | `$SSH_AUTH_SOCK` | forwarded | SSH agent for git over SSH |
 
 ## Environment variables
@@ -116,7 +117,7 @@ The setup consists of three files:
 
 ### `docker/Dockerfile.claude`
 
-Extends the `openroad/flow-ubuntu22.04-dev` base image (which has all
+Extends the `openroad/flow-ubuntu26.04-dev` base image (which has all
 OpenROAD build dependencies) with:
 
 - Java 21 and Bazelisk (for Bazel 8.x builds)
@@ -131,17 +132,65 @@ volume mount.
 Handles UID/GID mapping so files created inside the container have the
 correct ownership on the host. The entrypoint:
 
-1. Creates a user matching the host UID/GID
-2. Sources `env.sh` to set up tool paths
+1. Reuses the account with the host UID if that UID already exists in the container.
+   Otherwise, it creates an account with the host UID/GID.
+2. Sources `env.sh` to set up tool paths, from the start directory if it has one, else from `/workspace`
 3. Drops privileges via `setpriv` before running the command
 
-This follows the same pattern as `tools/OpenROAD/etc/docker-entrypoint.sh`
-and the `--user` mode in `flow/util/docker_shell`.
+The mapped user's account record and `HOME` both use `/home/claude-user`.
+This keeps the settings and cache mounts visible when the base image already has an account with the host UID.
+
+Run the entrypoint regression check in disposable containers:
+
+```shell
+bash docker/test-claude-entrypoint.sh
+```
+
+With Podman:
+
+```shell
+CONTAINER_ENGINE=podman bash docker/test-claude-entrypoint.sh
+```
+
+The check covers an existing UID and a new UID.
+It verifies that the launched command can read and write fixture settings through `HOME`.
+It also checks that the account's recorded home matches `HOME`.
+It also checks that the user can create `~/.cache/bazelisk` beside the mounted Bazel cache.
 
 ### `claude.sh`
 
 Wrapper script that assembles the `docker run` command with the correct
 volume mounts, environment variables, and entrypoint arguments.
+
+When you run `claude.sh` from the top of a git worktree, it also mounts the worktree and the main checkout's `.git` directory at their host paths.
+The shell starts in the worktree's host path.
+The worktree's `.git` file and the `.git` files of its submodules point to these paths, so git works in the container.
+The entrypoint sources `env.sh` from there, so `OPENROAD`, `FLOW_HOME` and `PATH` use the host path too.
+Rebuild the image with `./claude.sh --build` to get this entrypoint.
+The worktree is also at `/workspace`.
+Use the start path for Git commands in submodules when `/workspace` is an alias for the worktree.
+If a host path would overlap `/workspace` or `/home/claude-user`, the wrapper adds `/tmp/claude-worktree` before both host paths.
+It starts Claude Code or the shell at the resulting worktree path and uses a temporary Git pointer there.
+Submodules in a relocated worktree use the relative Git links that Git creates during normal initialization.
+A worktree at exactly `/workspace` can use the existing checkout mount if its Git data is outside the reserved paths.
+
+The paths of the other worktrees do not exist in the container, so git sees them as stale.
+The wrapper sets `gc.worktreePruneExpire=never` in the container, so `git gc` keeps their records.
+`git gc` still removes the record of a worktree that has no index file.
+Do not run `git worktree prune` or `git worktree repair` in the container: they change the records of the other worktrees.
+
+The start directory is part of some keys and caches.
+Claude Code stores the history of a worktree session under its start path, so changing that path changes which sessions can resume.
+Bazel uses a new output base, and a CMake build directory that you configured under `/workspace` must be configured again.
+
+Check the mounts with a stub `docker` command, without a container engine:
+
+```shell
+bash docker/test-claude-sh.sh
+```
+
+The Claude Docker CI workflow also runs `docker/test-claude-worktree-paths.sh` on a disposable Linux runner.
+It checks Git in the launched shell, including the initialized submodule and writes to the original checkout.
 
 ## Security model
 
@@ -149,7 +198,9 @@ Claude Code runs with `--dangerously-skip-permissions` **inside** the
 container, meaning it can execute any shell command without confirmation.
 The Docker container provides the isolation:
 
-- File access is limited to the mounted repository
+- File access is limited to the mounted repository.
+  From a git worktree, this includes the main checkout's `.git` directory, with the refs and objects of all its worktrees.
+  It also holds git hooks and config, which run on the host at the next git command, so code in the container can run code on the host.
 - No access to host system packages, services, or other projects
 - No access to host network services bound to localhost
 - `docker kill claude-orfs` stops everything instantly

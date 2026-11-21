@@ -97,31 +97,11 @@ proc extract_stage { input_file } {
   }
 }
 
-proc find_sdc_file { input_file } {
-  # canonicalize input file, sometimes it is called with an input
-  # file relative to $::env(RESULTS_DIR), other times with
-  # an absolute path
-  if { ![file exists $input_file] } {
-    set input_file [file join $::env(RESULTS_DIR) $input_file]
-  }
-  set input_file [file normalize $input_file]
-
-  set stage [extract_stage $input_file]
-  set design_stage [lindex $stage 0]
-  set sdc_file ""
-
-  set exact_sdc [string map {.odb .sdc} $input_file]
-  set sdc_files \
-    [glob -nocomplain -directory $::env(RESULTS_DIR) -types f "\[1-9+\]_\[1-9_A-Za-z\]*\.sdc"]
-  set sdc_files [lsort -decreasing -dictionary $sdc_files]
-  set sdc_files [lmap file $sdc_files { file normalize $file }]
-  foreach name $sdc_files {
-    if { [lindex [lsort -decreasing -dictionary [list $name $exact_sdc]] 0] == $exact_sdc } {
-      set sdc_file $name
-      break
-    }
-  }
-  return [list $design_stage $sdc_file]
+# The stem ends at the first dot of the file name, so 4_cts.odb,
+# 4_cts.odb.def and 4_cts.odb.v all have 4_cts.sdc
+proc sdc_file_of { design_file } {
+  regsub {\.[^/]*$} $design_file .sdc sdc_file
+  return $sdc_file
 }
 
 proc env_var_equals { env_var value } {
@@ -130,6 +110,53 @@ proc env_var_equals { env_var value } {
 
 proc env_var_exists_and_non_empty { env_var } {
   return [expr { [info exists ::env($env_var)] && ![string equal $::env($env_var) ""] }]
+}
+
+# AUTO_MEMORIES: do-auto-memories writes into $RESULTS_DIR/memories the
+# lists below, and every later step reads the files they name, never
+# what a directory happens to hold. gen_memories.py writes each list
+# whole, after every view exists. Every step reads them from
+# AUTO_MEMORIES_DIR, synthesis included.
+
+# The words of one of those lists; none without AUTO_MEMORIES.
+proc auto_memories_words { list } {
+  if { ![env_var_equals AUTO_MEMORIES 1] } {
+    return {}
+  }
+  set fh [open "$::env(AUTO_MEMORIES_DIR)/$list" r]
+  set content [read $fh]
+  close $fh
+  return [regexp -all -inline {\S+} $content]
+}
+
+# blackboxes.txt, `<module> <area>` a line: the macros, each with its
+# <module>.lib and <module>.lef, and the area synthesis costs it by. Its
+# words are a dict of the area of each module.
+proc auto_memories_areas { } {
+  return [auto_memories_words blackboxes.txt]
+}
+
+# The modules synthesis blackboxes, the macros of blackboxes.txt.
+proc auto_memories_blackboxes { } {
+  return [dict keys [auto_memories_areas]]
+}
+
+# A list of module names, one a line:
+# - inline.txt: register files whose generated netlist (<module>.v)
+#   replaces the RTL module's body in synthesis.
+# - regfile_cores.txt: the RAMs the register file wrappers instantiate
+#   as macros; in blackboxes.txt, but no module of the sources.
+# - regfiles.txt: register files that dissolve into their cells after
+#   macro placement (<module>.v, <module>.place).
+proc auto_memories_names { list } {
+  return [auto_memories_words $list]
+}
+
+# The view of every macro in blackboxes.txt, by extension (.lib, .lef).
+proc auto_memories_views { ext } {
+  return [lmap m [auto_memories_blackboxes] {
+    file join $::env(AUTO_MEMORIES_DIR) $m$ext
+  }]
 }
 
 proc append_env_var { list_name var_name prefix has_arg } {
@@ -161,9 +188,9 @@ proc pins_fixed_in_floorplan { } {
   }]
 }
 
-# set_place_config arguments for global_placement -place_ios, from the
+# set_placer_config arguments for global_placement -place_ios, from the
 # place_pins settings.
-proc place_pins_args_to_place_config { } {
+proc place_pins_args_to_placer_config { } {
   set config_args [list \
     -io_pin_hor_layers $::env(IO_PLACER_H) \
     -io_pin_ver_layers $::env(IO_PLACER_V)]
@@ -355,6 +382,18 @@ proc final_extracts_parasitics { } {
   }]
 }
 
+# LIB_MODEL=CCS reads CCS libraries. The prima delay calculator simulates
+# the driver waveform on the RC network and costs tens of table lookups
+# per net, so it is used only once the design has global routes, which is
+# when estimate_parasitics switches from placement estimates to global
+# routing parasitics. Call it after the design is loaded or routed.
+proc use_ccs_delay_calculator { } {
+  if { $::env(LIB_MODEL) eq "CCS" && [grt::have_routes] } {
+    puts "Using CCS delay calculation"
+    log_cmd set_delay_calculator prima
+  }
+}
+
 # Load the parasitics that step is timed with and return where they came
 # from: the extracted 6_final.spef when final writes one, else, once the
 # design is placed, what OpenROAD estimates (global routes if there are
@@ -453,6 +492,7 @@ proc orfs_write_db { output_file { endpoint_slack 1 } } {
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
+  orfs_write_sdc [sdc_file_of $output_file]
   log_cmd write_db $output_file
 }
 
@@ -464,8 +504,8 @@ proc orfs_write_sdc { output_file } {
 }
 
 # For a stage that leaves the design unchanged, copying the input .odb
-# forward is much faster than serializing the in-memory database again
-# with write_db. Gated like orfs_write_db: in a single-process flow
+# and .sdc forward is much faster than serializing the in-memory database
+# again with write_db. Gated like orfs_write_db: in a single-process flow
 # (WRITE_ODB_AND_SDC_EACH_STAGE=0) the input file may not exist and no
 # stage file should be produced.
 #
@@ -477,6 +517,7 @@ proc orfs_copy_db { input_file output_file } {
   if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
+  log_cmd exec cp [sdc_file_of $input_file] [sdc_file_of $output_file]
   log_cmd exec cp $input_file $output_file
 }
 

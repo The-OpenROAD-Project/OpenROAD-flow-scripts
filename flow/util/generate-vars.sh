@@ -16,6 +16,9 @@ EXCLUDED_VARS+='|COMMAND_LINE_ARGS'
 EXCLUDED_PATTERNS="_EXE$|PATH$|_CMD$|\."
 
 echo 'export FLOW_HOME=${FLOW_HOME:-$(pwd)}' > $1.sh
+# *_EXE paths are machine specific and excluded below; default to PATH lookup.
+echo 'export PYTHON_EXE=${PYTHON_EXE:-python3}' >> $1.sh
+echo 'if { ![info exists env(PYTHON_EXE)] } { set env(PYTHON_EXE) python3 }' > $1.tcl
 
 while read -r VAR; do
     if [[ ${VAR} != *"="* ]] ; then

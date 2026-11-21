@@ -26,8 +26,8 @@ to follow.
 
 - **A script never writes its own version of an idiom `util.tcl` already
   has.** An optional flag is added with `append_env_var`, a command that does
-  real work runs through `log_cmd`, a result is written with `orfs_write_db`
-  and `orfs_write_sdc`. An idiom a change needs in two places becomes a proc
+  real work runs through `log_cmd`, a result is written with `orfs_write_db`,
+  which writes the `.odb` and its `.sdc`. An idiom a change needs in two places becomes a proc
   in `util.tcl`.
   *Breaks:* each copy grows its own small bug, and nobody can grep for the
   places that do the same thing.
@@ -70,8 +70,8 @@ to follow.
   *Breaks:* the guard is a code path no CI run exercises, and a missing
   variable or file shows up later, somewhere else, as a wrong result.
 - **A failing step never writes the file a successful step writes.** It
-  writes `<step>-failed.odb` and calls `error`, as
-  `flow/scripts/global_place.tcl` does.
+  calls `error`, and `flow/scripts/run_step.tcl` writes
+  `<step>-failed.odb` and `.sdc` (`WRITE_ON_FAILURE`).
   *Breaks:* make, and any flow built on it, takes the file as proof that the
   step succeeded.
 - **A script never adds error numbers or checks that belong in OpenROAD.**
