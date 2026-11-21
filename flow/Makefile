@@ -861,7 +861,7 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 	rm -f $(LOG_DIR)/write_binary_libs*.log
 
 .PHONY: nuke
-nuke: clean_test clean_issues
+nuke: clean_issues
 	rm -rf $(WORK_HOME)/results $(WORK_HOME)/logs $(WORK_HOME)/reports $(WORK_HOME)/objects
 	rm -f $(OBJECTS_DIR)/copyright.txt
 
