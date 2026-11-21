@@ -326,7 +326,6 @@ _installCI() {
         gnupg \
         jq \
         lsb-release \
-        parallel \
         python3 \
         software-properties-common \
         zip
