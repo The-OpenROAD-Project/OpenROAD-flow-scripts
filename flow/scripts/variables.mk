@@ -207,7 +207,7 @@ export COMMAND_LINE_ARGS := $(foreach V,$(.VARIABLES),$(if $(filter command% lin
 .PHONY: vars
 vars:
 	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/generate-vars.sh $(OBJECTS_DIR)/vars
+	$(PYTHON_EXE) $(UTILS_DIR)/generate_vars.py $(OBJECTS_DIR)/vars
 
 .PHONY: print-%
 print-%:

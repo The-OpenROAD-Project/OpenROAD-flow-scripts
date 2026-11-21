@@ -166,7 +166,7 @@ endef
 .PHONY: $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue)
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue :
-	$(UTILS_DIR)/makeIssue.sh $(WORK_HOME)/$*
+	$(PYTHON_EXE) $(UTILS_DIR)/makeIssue.py $(WORK_HOME)/$*
 
 .PHONY: clean_issues
 clean_issues:
