@@ -929,10 +929,6 @@ handoff : all_defs all_verilog
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 
-.phony: klayout
-klayout:
-	$(SCRIPTS_DIR)/klayout.sh
-
 .phony: run
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
