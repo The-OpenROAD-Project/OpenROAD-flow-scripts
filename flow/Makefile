@@ -918,7 +918,7 @@ test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 klayout:
 	$(SCRIPTS_DIR)/klayout.sh
 
-.phony: run
+.PHONY: run
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/$(RUN_LOG_NAME_STEM).log) --tee -- $(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT)
