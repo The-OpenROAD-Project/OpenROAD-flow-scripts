@@ -127,7 +127,11 @@ export RUN_CMD = $(PYTHON_EXE) $(FLOW_HOME)/scripts/run_command.py
 export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
 export OPENSTA_EXE  ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 
-OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && echo "true"),)
+# OPENROAD_EXE and YOSYS_EXE are commands, not only paths: a wrapper can
+# come first, as in OPENROAD_EXE="gdb --args openroad" or
+# OPENROAD_EXE="valgrind openroad". The check is on the program the command
+# starts with, a path or a name on PATH.
+OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell command -v $(firstword $(OPENROAD_EXE)) >/dev/null && echo "true"),)
 
 export OPENROAD_ARGS = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 export OPENROAD_CMD = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
@@ -137,7 +141,7 @@ export OPENROAD_WEB_CMD = $(OPENROAD_EXE) -web -threads $(NUM_CORES) $(OR_ARGS)
 
 export YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
-YOSYS_IS_VALID := $(if $(YOSYS_EXE),$(shell test -x $(YOSYS_EXE) && echo "true"),)
+YOSYS_IS_VALID := $(if $(YOSYS_EXE),$(shell command -v $(firstword $(YOSYS_EXE)) >/dev/null && echo "true"),)
 
 KEPLER_FORMAL_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/kepler-formal/bin/kepler-formal)
 export KEPLER_FORMAL_EXE

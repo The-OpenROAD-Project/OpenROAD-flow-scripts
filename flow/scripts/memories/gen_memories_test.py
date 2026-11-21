@@ -404,7 +404,14 @@ class GenMemoriesTest(unittest.TestCase):
         # never an empty fold: 3 bits fold at most in two
         self.assertEqual(folds(600, 17.6, 600, 3), 2)
 
-    def _generate(self, bit_folds, outline):
+    def test_openroad_is_a_command(self):
+        # OPENROAD_EXE can start with a wrapper; generate_ram runs under it
+        self._generate(8, "140000 140000 1000\n", "valgrind -q /opt/bin/openroad")
+        self.assertEqual(len(self.argvs), 2)
+        for argv in self.argvs:
+            self.assertEqual(argv[:4], ["valgrind", "-q", "/opt/bin/openroad", "-exit"])
+
+    def _generate(self, bit_folds, outline, command="openroad"):
         # generate() with generate_ram stubbed: the generate script writes
         # the outline (dx dy dbu), the views script stops the run
         d = Path(self.tmp.name)
@@ -418,8 +425,10 @@ class GenMemoriesTest(unittest.TestCase):
             pass
 
         scripts = []
+        self.argvs = []
 
         def openroad(cmd):
+            self.argvs.append(cmd)
             script = Path(cmd[-1])
             scripts.append(script.name)
             if script.name.endswith(".generate.tcl"):
@@ -433,7 +442,7 @@ class GenMemoriesTest(unittest.TestCase):
             ):
                 with self.assertRaises((Views, SystemExit)) as stop:
                     gen_memories.regfile_ram.generate(
-                        spec, "rf", "inline", "openroad", [], d
+                        spec, "rf", "inline", command, [], d
                     )
         return stop.exception, scripts
 
