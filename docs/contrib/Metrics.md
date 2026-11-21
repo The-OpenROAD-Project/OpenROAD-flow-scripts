@@ -36,8 +36,9 @@ make [clean_metadata] metadata
 `make metadata` runs three steps in order: `finish` (the full flow),
 `metadata-generate` (write `metadata.json`), and `metadata-check` (send it to
 the dashboard). The check log is written to
-`$(REPORTS_DIR)/metadata-check.log`. It lists every failed rule with the
-baseline value, the current value, the limit, and the delta, and ends with a
+`$(REPORTS_DIR)/metadata-check.log`. It has a table of every evaluated rule
+with the baseline value, the current value, the limit, the delta and a
+`PASS`/`FAIL` status, lists the failed rules again below it, and ends with a
 `QoR check: PASS`, `FAIL`, `INCONCLUSIVE`, or `ERROR` line.
 
 A `FAIL` verdict fails the target. So does `ERROR`, which means
@@ -109,7 +110,7 @@ To check every run under `reports/` at once, call the script directly:
 cd OpenROAD-flow-scripts/flow
 ./util/checkQorMetrics.py                     # sweep, log in reports/inline-check.log
 ./util/checkQorMetrics.py --base-commit <sha> # pin the baseline build
-./util/checkQorMetrics.py --verbose           # show passing rules and absent metrics
+./util/checkQorMetrics.py --quiet             # leave out the per-metric table
 ```
 
 If the check reports a failed rule, review it to make sure the change in
