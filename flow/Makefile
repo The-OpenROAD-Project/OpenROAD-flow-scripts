@@ -647,21 +647,6 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
-.PHONY: klayout_tr_rpt
-klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	$(SCRIPTS_DIR)/klayout.sh -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
-	        -rd in_def="$<" \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/viewDrc.py
-
-.PHONY: klayout_guides
-klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	$(SCRIPTS_DIR)/klayout.sh -rd in_guide="$(RESULTS_DIR)/route.guide" \
-	        -rd in_def="$<" \
-	        -rd net_name=$(GUIDE_NET) \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/viewGuide.py
-
 # ==============================================================================
 #  _____ ___ _   _ ___ ____  _   _ ___ _   _  ____
 # |  ___|_ _| \ | |_ _/ ___|| | | |_ _| \ | |/ ___|
