@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+source $::env(SCRIPTS_DIR)/check_clock_tree_paths.tcl
 erase_non_stage_variables generate_abstract
 
 set stem [expr {
@@ -22,9 +23,11 @@ puts "Generating abstract views"
 if { [env_var_exists_and_non_empty CORNERS] } {
   foreach corner $::env(CORNERS) {
     log_cmd write_timing_model -scene $corner $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_$corner.lib
+    check_clock_tree_paths $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_$corner.lib
   }
 } else {
   log_cmd write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_typ.lib
+  check_clock_tree_paths $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_typ.lib
 }
 log_cmd write_abstract_lef -bloat_occupied_layers $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lef
 
