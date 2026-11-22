@@ -96,12 +96,15 @@ configuration file.
 | <a name="ABC_SCRIPT"></a>ABC_SCRIPT| Replaces the ABC script synthesis runs, so that a design can vendor and change it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS is set: abc_new then maps each arithmetic operator with its own script.| |
 | <a name="ABSTRACT_SOURCE"></a>ABSTRACT_SOURCE| Which .odb file to use to create abstract| |
 | <a name="ADDER_MAP_FILE"></a>ADDER_MAP_FILE| Optional mapping file supplied to Yosys to map adders| |
+| <a name="ADDITIONAL_FAST_LIBS"></a>ADDITIONAL_FAST_LIBS| Hardened macro library files for the fast corner, on a platform that keeps one liberty list per corner (see CORNERS). The platform config adds them to its FAST_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the fast corner timing model of each block is appended.| |
 | <a name="ADDITIONAL_FILES"></a>ADDITIONAL_FILES| Additional files to be added to `make issue` archive.| |
 | <a name="ADDITIONAL_GDS"></a>ADDITIONAL_GDS| Hardened macro GDS files listed here.| |
 | <a name="ADDITIONAL_LEFS"></a>ADDITIONAL_LEFS| Hardened macro LEF view files listed here. The LEF information of the macros is immutable and used throughout all stages. Stored in the .odb file.| |
 | <a name="ADDITIONAL_LIBS"></a>ADDITIONAL_LIBS| Hardened macro library files listed here. The library information is immutable and used throughout all stages. Not stored in the .odb file.| |
 | <a name="ADDITIONAL_MEMORIES"></a>ADDITIONAL_MEMORIES| Experimental. Space-separated list of user-supplied `.memories` files (the memories.json JSON schema) merged onto the set AUTO_MEMORIES detects — to force-convert a memory the idiomatic gate rejects, or to describe one the scanner cannot find. See docs/user/AutoMemories.md.| |
 | <a name="ADDITIONAL_SITES"></a>ADDITIONAL_SITES| Passed as -additional_sites to initialize_floorplan.| |
+| <a name="ADDITIONAL_SLOW_LIBS"></a>ADDITIONAL_SLOW_LIBS| Hardened macro library files for the slow corner, on a platform that keeps one liberty list per corner (see CORNERS). The platform config adds them to its SLOW_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the slow corner timing model of each block is appended.| |
+| <a name="ADDITIONAL_TYP_LIBS"></a>ADDITIONAL_TYP_LIBS| Hardened macro library files for the typical corner, on a platform that keeps one liberty list per corner (see CORNERS). The platform config adds them to its TYP_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the typical corner timing model of each block is appended.| |
 | <a name="ASAP7_USE_VT"></a>ASAP7_USE_VT| A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.| RVT|
 | <a name="AUTO_MEMORIES"></a>AUTO_MEMORIES| Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM macro — given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.| 0|
 | <a name="AUTO_MEMORIES_DIR"></a>AUTO_MEMORIES_DIR| Directory every step reads AUTO_MEMORIES' generated views and lists from, synthesis included. Synthesis writes them to its own $(RESULTS_DIR)/memories, the default; with make, leave it there. For a build system that runs a stage of one variant on another variant's synthesis (e.g. bazel-orfs), which sets it for each step it runs, synthesis included, to the memories of the variant that synthesised them. Like AUTO_MEMORIES, not tied to stages: every step that reads the views needs it, the abstract among them.| |
@@ -684,9 +687,12 @@ configuration file.
 
 ## Uncategorized variables
 
+- [ADDITIONAL_FAST_LIBS](#ADDITIONAL_FAST_LIBS)
 - [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [ADDITIONAL_LEFS](#ADDITIONAL_LEFS)
 - [ADDITIONAL_LIBS](#ADDITIONAL_LIBS)
+- [ADDITIONAL_SLOW_LIBS](#ADDITIONAL_SLOW_LIBS)
+- [ADDITIONAL_TYP_LIBS](#ADDITIONAL_TYP_LIBS)
 - [AUTO_MEMORIES](#AUTO_MEMORIES)
 - [AUTO_MEMORIES_DIR](#AUTO_MEMORIES_DIR)
 - [CAP_MARGIN](#CAP_MARGIN)
