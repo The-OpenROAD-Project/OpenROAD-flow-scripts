@@ -33,7 +33,9 @@ metadata-generate:
 # dashboard's rule configs. An unpushed commit's merge base is computed
 # locally against DASHBOARD_MERGE_BASE (default upstream/master if it exists,
 # else origin/master); without a build there the latest master build is used,
-# with a warning. Set DASHBOARD_BASE_COMMIT
+# with a warning. A default ref that gives no merge base only warns; a ref set
+# in DASHBOARD_MERGE_BASE that does not exist or shares no history with the
+# commit fails the target. Set DASHBOARD_BASE_COMMIT
 # to pin the baseline, DASHBOARD_API_KEY for a private platform and
 # DASHBOARD_JOB_NAME to check as a build of one pipeline instead. A failed
 # rule fails the target; an unreachable dashboard or a design without a

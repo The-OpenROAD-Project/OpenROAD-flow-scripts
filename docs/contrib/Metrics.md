@@ -41,7 +41,8 @@ baseline value, the current value, the limit, and the delta, and ends with a
 `QoR check: PASS`, `FAIL`, `INCONCLUSIVE`, or `ERROR` line.
 
 A `FAIL` verdict fails the target. So does `ERROR`, which means
-`metadata.json` was missing, malformed, or held no numeric metric. An
+`metadata.json` was missing, malformed, or held no numeric metric, or that a
+`DASHBOARD_MERGE_BASE` ref gave no merge base (see below). An
 `INCONCLUSIVE` verdict does not fail the target: the dashboard had no
 baseline for the design, evaluated nothing, or could not be reached, so the
 check did not run. Read the `[WARN]` lines to see which. Pass `--strict` to
@@ -61,8 +62,14 @@ remote branch in your checkout contains the commit, it computes
 is no `upstream` remote) and pins the baseline to that build. The report warns
 with the merge base and the ref it came from, because an outdated ref moves
 the baseline. A commit that is on a remote, or that is not in your checkout at
-all, is left to the dashboard. So is a commit with no merge base with the ref,
-with a warning.
+all, is left to the dashboard.
+
+When the ref gives no merge base, because the ref does not exist or shares no
+history with the commit, the result depends on who chose the ref. For the
+default ref, the report warns and the commit is left to the dashboard. For a
+ref that you set in `DASHBOARD_MERGE_BASE` or `--merge-base`, the check stops
+with `ERROR` and sends nothing: a typo in the ref must not change the baseline
+without a failure.
 
 When the pinned merge base has no build of the design, the check is sent again
 without the pin. When the dashboard has no `master` build at the merge base, or
@@ -92,9 +99,9 @@ These environment variables shape the comparison:
 - `DASHBOARD_MERGE_BASE` (`--merge-base`) names the ref an unpushed commit's
   merge base is computed against. The default is `upstream/master` when that
   ref exists, else `origin/master`. Set it if your project remote has another
-  name, or to `none` to leave unpushed commits to the dashboard. It does not
-  apply together with
-  `DASHBOARD_BASE_COMMIT` or `DASHBOARD_JOB_NAME`.
+  name, or to `none` to leave unpushed commits to the dashboard. A ref that
+  does not exist, or that shares no history with the commit, is an error. It
+  does not apply together with `DASHBOARD_BASE_COMMIT` or `DASHBOARD_JOB_NAME`.
 - `DASHBOARD_BASE_COMMIT` (`--base-commit`) pins the baseline to the build of
   that commit. Nothing else is tried: if that commit has no build of the
   design, the check is inconclusive.

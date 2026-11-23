@@ -319,13 +319,49 @@ class MergeBaseTest(CheckQorMetricsTest):
         )
         self.assertIn("QoR check: PASS", output)
 
-    def test_missing_ref_warns_and_sends_no_pin(self):
+    def test_missing_automatic_ref_warns_and_sends_no_pin(self):
+        repository, _, unpushed = self.repository()
+        git(repository, "update-ref", "-d", "refs/remotes/origin/master")
+        self.enter(repository)
+        code, output, payloads = self.check(unpushed)
+        self.assertEqual(code, 0)
+        self.assertNotIn("BaseCommitSha", payloads[0])
+        self.assertIn("[WARN] origin/master does not exist here", output)
+
+    def test_explicit_missing_ref_is_an_error(self):
         repository, _, unpushed = self.repository()
         self.enter(repository)
         code, output, payloads = self.check(unpushed, "--merge-base", "upstrem/master")
-        self.assertEqual(code, 0)
-        self.assertNotIn("BaseCommitSha", payloads[0])
-        self.assertIn("[WARN] upstrem/master does not exist here", output)
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        self.assertIn("[ERROR] --merge-base upstrem/master does not exist here", output)
+
+    def test_explicit_ref_from_the_environment_is_an_error_too(self):
+        repository, _, unpushed = self.repository()
+        os.environ["DASHBOARD_MERGE_BASE"] = "upstrem/master"
+        self.enter(repository)
+        code, output, payloads = self.check(unpushed)
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        self.assertIn(
+            "[ERROR] DASHBOARD_MERGE_BASE upstrem/master does not exist here", output
+        )
+
+    def test_explicit_ref_without_shared_history_is_an_error(self):
+        repository, _, unpushed = self.repository()
+        git(repository, "checkout", "-q", "--orphan", "unrelated")
+        git(repository, "commit", "-q", "--allow-empty", "-m", "unrelated")
+        git(repository, "branch", "-q", "trunk", "HEAD")
+        self.enter(repository)
+        code, output, payloads = self.check(unpushed, "--merge-base", "trunk")
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        self.assertIn(
+            f"[ERROR] asap7/gcd/base: {unpushed[:12]} has no merge base with "
+            "trunk (--merge-base)",
+            output,
+        )
+        self.assertIn("QoR check: ERROR", output)
 
     def test_failed_remote_lookup_sends_no_pin(self):
         repository, _, unpushed = self.repository()
