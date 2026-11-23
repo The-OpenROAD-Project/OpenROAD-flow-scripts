@@ -323,6 +323,14 @@ class MergeBaseTest(CheckQorMetricsTest):
                 _, _, payloads = self.check(unpushed)
                 self.assertEqual(payloads[0]["BaseCommitSha"], master)
 
+    def test_upstream_tracking_ref_without_a_commit_falls_back_to_origin(self):
+        repository, master, unpushed = self.repository()
+        tree = git(repository, "rev-parse", "HEAD^{tree}")
+        git(repository, "update-ref", "refs/remotes/upstream/master", tree)
+        self.enter(repository)
+        _, _, payloads = self.check(unpushed)
+        self.assertEqual(payloads[0]["BaseCommitSha"], master)
+
     def test_no_merge_base_warns_and_sends_no_pin(self):
         repository, _, unpushed = self.repository()
         git(repository, "checkout", "-q", "--orphan", "unrelated")
@@ -412,6 +420,13 @@ class MergeBaseTest(CheckQorMetricsTest):
         self.enter(repository)
         _, _, payloads = self.check(unpushed)
         self.assertEqual(payloads[0]["BaseCommitSha"], unpushed)
+
+    def test_explicit_ref_can_search_commit_messages(self):
+        repository, master, unpushed = self.repository()
+        self.enter(repository)
+        code, _, payloads = self.check(unpushed, "--merge-base", ":/master")
+        self.assertEqual(code, 0)
+        self.assertEqual(payloads[0]["BaseCommitSha"], master)
 
     def test_none_turns_it_off(self):
         repository, _, unpushed = self.repository()

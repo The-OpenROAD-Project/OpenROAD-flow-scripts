@@ -30,12 +30,13 @@ metadata-generate:
 # The QoR gate: metadata.json against the QoR dashboard's baseline for the
 # commit it records (the master build at its merge base, from the first of
 # the dashboard's default pipelines that has the design), using the
-# dashboard's rule configs. For an unpushed local commit, compute the merge
-# base against DASHBOARD_MERGE_BASE (default refs/remotes/upstream/master if
-# that ref exists, else refs/remotes/origin/master). If the pinned build is
-# missing, warn and send the run unpinned. When a local pin is needed and the
-# ref gives no merge base, warn for a default ref and fail for an explicit ref.
-# Set DASHBOARD_BASE_COMMIT
+# dashboard's rule configs. If no local remote-tracking ref contains the local
+# commit, compute its merge base against DASHBOARD_MERGE_BASE (default
+# refs/remotes/upstream/master if it names a commit, else
+# refs/remotes/origin/master).
+# If the pinned build is missing, warn and send the run unpinned. When local
+# pinning applies, warn for a default ref that gives no merge base and fail
+# for an explicit ref that gives no merge base. Set DASHBOARD_BASE_COMMIT
 # to pin the baseline, DASHBOARD_API_KEY for a private platform and
 # DASHBOARD_JOB_NAME to check as a build of one pipeline instead. A failed
 # rule fails the target; an unreachable dashboard or a design without a

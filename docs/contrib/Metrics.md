@@ -56,11 +56,12 @@ is its own merge base, so a run of a `master` commit, such as a downloaded CI
 artifact, is compared against that commit's own build.
 
 The dashboard finds the merge base through GitHub.
-When the commit is in your checkout and no remote branch contains it, the check computes the merge base locally and pins the baseline to that build.
-By default, it uses `refs/remotes/upstream/master` if that ref exists, else `refs/remotes/origin/master`.
+When the commit is in your checkout and no local remote-tracking ref contains it, the check computes the merge base locally and pins the baseline to that build.
+By default, it uses `refs/remotes/upstream/master` if that ref names a commit, else `refs/remotes/origin/master`.
 The report warns with the merge base and its ref because an outdated ref can move the baseline.
-For a pushed commit, a commit absent from your checkout, or a run without a commit, the dashboard selects the baseline.
-If Git cannot check whether a remote branch contains the commit, the checker warns and sends the run unpinned.
+If a local remote-tracking ref contains the commit, the dashboard selects the baseline.
+The dashboard also selects the baseline if the checkout lacks the commit or the run has no commit.
+If Git cannot check remote containment, the checker warns and sends the run unpinned.
 
 If the default ref has no merge base with the commit, the checker warns and sends the run unpinned.
 If a run needs a local pin and the ref you set with `DASHBOARD_MERGE_BASE` or `--merge-base` does not exist or shares no history with the commit, the checker reports `ERROR` and skips that run's request.
@@ -91,8 +92,8 @@ These environment variables shape the comparison:
   that holds a private platform's baseline; that is no longer needed, so leave
   it unset for a local run, private or not. With it set, an unpushed commit is
   not pinned to its local merge base.
-- `DASHBOARD_MERGE_BASE` (`--merge-base`) names the ref used to compute the merge base of an unpushed local commit.
-  The default is `refs/remotes/upstream/master` when that ref exists, else `refs/remotes/origin/master`.
+- `DASHBOARD_MERGE_BASE` (`--merge-base`) names the ref used to compute the merge base of a local commit that no remote-tracking ref contains.
+  The default is `refs/remotes/upstream/master` when that ref names a commit, else `refs/remotes/origin/master`.
   Set it if your project remote has another name, or set it to `none` to leave unpushed commits to the dashboard.
   `DASHBOARD_BASE_COMMIT` or `DASHBOARD_JOB_NAME` disables local pinning.
 - `DASHBOARD_BASE_COMMIT` (`--base-commit`) pins the baseline to the build of

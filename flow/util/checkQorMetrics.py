@@ -26,9 +26,9 @@ it). The dashboard searches its default baseline pipelines in order and takes
 a master build that has the design: the one at the commit's merge base with
 master. A commit on master is its own merge base, so a master run is compared
 against that commit's own build. When the commit is in this checkout and no
-remote branch contains it, the script computes the merge base locally and pins
-the baseline to it. The default is refs/remotes/upstream/master when that ref
-exists, else refs/remotes/origin/master. If the pinned build does not exist,
+local remote-tracking ref contains it, the script computes the merge base and
+pins the baseline to it. The default is refs/remotes/upstream/master if it
+names a commit, else refs/remotes/origin/master. If the pinned build is absent,
 the run is sent again without the pin. If Git cannot check remote containment
 or the default ref gives no merge base, the run is sent unpinned with a warning.
 If an explicit --merge-base or DASHBOARD_MERGE_BASE ref gives no merge base
@@ -282,10 +282,24 @@ def git(*args):
         return None
 
 
+def merge_base_target(ref, *, exact=False):
+    """Resolve a Git revision or an exact ref to its commit."""
+    if exact:
+        # Revision lookup can fall back to a tag even when the name starts
+        # with refs/remotes/.
+        oid = git("show-ref", "--verify", "--hash", ref)
+    elif ref.startswith("-"):
+        return None
+    else:
+        oid = git("rev-parse", "--verify", "--quiet", ref)
+    # Peel after resolution so :/message searches keep their original pattern.
+    return git("rev-parse", "--verify", "--quiet", f"{oid}^{{commit}}") if oid else None
+
+
 def default_merge_base_ref():
-    """Use the upstream tracking ref if present, else the origin tracking ref."""
+    """Use the upstream tracking ref if it names a commit, else origin."""
     upstream, origin = DEFAULT_MERGE_BASE_REFS
-    if git("show-ref", "--verify", "--hash", upstream):
+    if merge_base_target(upstream, exact=True):
         return upstream
     return origin
 
@@ -321,14 +335,7 @@ def local_merge_base(commit, ref, source=None):
         )
     if remotes:
         return None, None, None
-    if source:
-        target = git(
-            "rev-parse", "--verify", "--quiet", "--end-of-options", f"{ref}^{{commit}}"
-        )
-    else:
-        # Match the exact tracking ref. Revision lookup can fall back to a tag
-        # even when the supplied name starts with refs/remotes/.
-        target = git("show-ref", "--verify", "--hash", ref)
+    target = merge_base_target(ref, exact=source is None)
     if not target:
         if source:
             return (
@@ -808,9 +815,10 @@ def parse_args(argv):
         # name the source of a bad ref.
         default=None,
         metavar="REF",
-        help="Pin an unpushed local commit to its merge base with REF. "
-        "Default: the upstream/master remote-tracking ref if it exists, else "
-        "origin/master. Set to none to turn off local pinning. When local "
+        help="Pin a local commit to its merge base with REF if no local "
+        "remote-tracking ref contains the commit. "
+        "Default: the upstream/master remote-tracking ref if it names a commit, "
+        "else origin/master. Set to none to turn off local pinning. When local "
         "pinning applies, an explicit REF with no merge base is an error. "
         "Ignored with --base-commit or --job-name. Env: DASHBOARD_MERGE_BASE.",
     )
