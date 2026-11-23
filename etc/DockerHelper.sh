@@ -69,14 +69,14 @@ _setup() {
             buildArgs+=" --build-arg numThreads=${numThreads}"
             # Git can otherwise find the ORFS repository above a tool directory.
             local or_version yosys_commit
-            if [[ -e tools/OpenROAD/.git ]]; then
+            if [[ -e tools/OpenROAD/.git ]] &&
                 or_version=$(git -C tools/OpenROAD describe --tags \
-                    --match '[0-9][0-9]Q[0-9]' --always --dirty)
+                    --match '[0-9][0-9]Q[0-9]' --always --dirty 2>/dev/null); then
                 echo "OpenROAD version: ${or_version}"
                 buildArgs+=" --build-arg openroadVersion=${or_version}"
             fi
-            if [[ -e tools/yosys/.git ]]; then
-                yosys_commit=$(git -C tools/yosys rev-parse --short=9 HEAD)
+            if [[ -e tools/yosys/.git ]] &&
+                yosys_commit=$(git -C tools/yosys rev-parse --short=9 HEAD 2>/dev/null); then
                 if ! git -C tools/yosys diff --quiet HEAD --; then
                     yosys_commit+="-dirty"
                 fi
