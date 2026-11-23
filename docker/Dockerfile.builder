@@ -33,15 +33,15 @@ COPY --link --exclude=OpenROAD --exclude=AutoTuner --exclude=install tools tools
 COPY --link etc/kepler-formal etc/kepler-formal
 ARG numThreads=$(nproc)
 ARG verificPath=""
-# The build context has no git metadata for the submodules, so the callers
-# (etc/DockerHelper.sh and CI) pass the Yosys commit. Yosys reads .gitcommit
-# when it has no git checkout, and reports UNKNOWN when it is unset.
+# Pass the Yosys commit when the copied sources have no usable Git checkout.
 ARG yosysCommit=""
 
 RUN <<EOF
 set -e
 echo "" > tools/yosys/abc/.gitcommit
 if [ -n "${yosysCommit}" ]; then
+    # Yosys prefers Git metadata over .gitcommit when both are available.
+    rm -rf tools/yosys/.git
     echo "${yosysCommit}" > tools/yosys/.gitcommit
 fi
 if [ -n "${verificPath}" ]; then
