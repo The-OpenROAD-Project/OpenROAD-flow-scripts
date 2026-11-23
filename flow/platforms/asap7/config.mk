@@ -180,20 +180,20 @@ ifeq ($(CLUSTER_FLOPS),1)
 endif
 
 ### Add additional files to the variables based on the OTHER_VT list
-$(foreach vt_type,$(OTHER_VT),\
-  $(eval OTHER_VT_TAG = $(strip $(patsubst %VT, %, $(vt_type)))) \
-  $(eval ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/asap7sc7p5t_28_$(OTHER_VT_TAG)_1x_220121a.lef) \
-  $(eval BC_NLDM_DFF_LIB_FILE += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(BC_NLDM_DFF_LIB_FILE_T))) \
-  $(eval BC_CCS_DFF_LIB_FILE += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(BC_CCS_DFF_LIB_FILE_T))) \
-  $(eval WC_NLDM_DFF_LIB_FILE += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(WC_NLDM_DFF_LIB_FILE_T))) \
-  $(eval TC_NLDM_DFF_LIB_FILE += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(TC_NLDM_DFF_LIB_FILE_T))) \
-  $(eval BC_NLDM_LIB_FILES += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(BC_NLDM_LIB_FILES_T))) \
-  $(eval BC_CCS_LIB_FILES += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(BC_CCS_LIB_FILES_T))) \
-  $(eval WC_NLDM_LIB_FILES += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(WC_NLDM_LIB_FILES_T))) \
-  $(eval TC_NLDM_LIB_FILES += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(TC_NLDM_LIB_FILES_T))) \
-  $(eval GDS_FILES += $(PLATFORM_DIR)/gds/asap7sc7p5t_28_$(OTHER_VT_TAG)_220121a.gds) \
-  $(eval FILL_CELLS += $(addsuffix $(OTHER_VT_TAG), $(FILL_CELLS_T))) \
-)
+ifneq ($(strip $(OTHER_VT)),)
+OTHER_VT_TAGS := $(patsubst %VT,%,$(OTHER_VT))
+ADDITIONAL_LEFS += $(foreach tag,$(OTHER_VT_TAGS),$(PLATFORM_DIR)/lef/asap7sc7p5t_28_$(tag)_1x_220121a.lef)
+BC_NLDM_DFF_LIB_FILE += $(foreach tag,$(OTHER_VT_TAGS),$(subst PLACEHOLDER,$(tag),$(BC_NLDM_DFF_LIB_FILE_T)))
+BC_CCS_DFF_LIB_FILE += $(foreach tag,$(OTHER_VT_TAGS),$(subst PLACEHOLDER,$(tag),$(BC_CCS_DFF_LIB_FILE_T)))
+WC_NLDM_DFF_LIB_FILE += $(foreach tag,$(OTHER_VT_TAGS),$(subst PLACEHOLDER,$(tag),$(WC_NLDM_DFF_LIB_FILE_T)))
+TC_NLDM_DFF_LIB_FILE += $(foreach tag,$(OTHER_VT_TAGS),$(subst PLACEHOLDER,$(tag),$(TC_NLDM_DFF_LIB_FILE_T)))
+BC_NLDM_LIB_FILES += $(foreach tag,$(OTHER_VT_TAGS),$(subst PLACEHOLDER,$(tag),$(BC_NLDM_LIB_FILES_T)))
+BC_CCS_LIB_FILES += $(foreach tag,$(OTHER_VT_TAGS),$(subst PLACEHOLDER,$(tag),$(BC_CCS_LIB_FILES_T)))
+WC_NLDM_LIB_FILES += $(foreach tag,$(OTHER_VT_TAGS),$(subst PLACEHOLDER,$(tag),$(WC_NLDM_LIB_FILES_T)))
+TC_NLDM_LIB_FILES += $(foreach tag,$(OTHER_VT_TAGS),$(subst PLACEHOLDER,$(tag),$(TC_NLDM_LIB_FILES_T)))
+GDS_FILES += $(foreach tag,$(OTHER_VT_TAGS),$(PLATFORM_DIR)/gds/asap7sc7p5t_28_$(tag)_220121a.gds)
+FILL_CELLS += $(foreach tag,$(OTHER_VT_TAGS),$(addsuffix $(tag),$(FILL_CELLS_T)))
+endif
 
 # Dont use SC library based on CORNER selection
 #
