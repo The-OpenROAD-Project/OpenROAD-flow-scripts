@@ -375,9 +375,7 @@ class MergeBaseTest(CheckQorMetricsTest):
         code, output, payloads = self.check(unpushed)
         self.assertEqual(code, 1)
         self.assertEqual(payloads, [])
-        self.assertIn(
-            "DASHBOARD_MERGE_BASE upstrem/master does not exist here", output
-        )
+        self.assertIn("DASHBOARD_MERGE_BASE upstrem/master does not exist here", output)
         self.assertTrue(output.rstrip().endswith("QoR check: ERROR"))
 
     def test_explicit_ref_without_shared_history_is_an_error(self):
