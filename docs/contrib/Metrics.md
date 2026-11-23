@@ -55,21 +55,16 @@ design: the one at the commit's merge base with `master`. A commit on `master`
 is its own merge base, so a run of a `master` commit, such as a downloaded CI
 artifact, is compared against that commit's own build.
 
-The dashboard finds the merge base through GitHub, so it cannot find one for a
-commit that was never pushed. The check handles that commit itself: when no
-remote branch in your checkout contains the commit, it computes
-`git merge-base <commit> upstream/master` locally (`origin/master` when there
-is no `upstream` remote) and pins the baseline to that build. The report warns
-with the merge base and the ref it came from, because an outdated ref moves
-the baseline. A commit that is on a remote, or that is not in your checkout at
-all, is left to the dashboard.
+The dashboard finds the merge base through GitHub.
+When the commit is in your checkout and no remote branch contains it, the check computes the merge base locally and pins the baseline to that build.
+By default, it uses `refs/remotes/upstream/master` if that ref exists, else `refs/remotes/origin/master`.
+The report warns with the merge base and its ref because an outdated ref can move the baseline.
+For a pushed commit, a commit absent from your checkout, or a run without a commit, the dashboard selects the baseline.
+If Git cannot check whether a remote branch contains the commit, the checker warns and sends the run unpinned.
 
-When the ref gives no merge base, because the ref does not exist or shares no
-history with the commit, the result depends on who chose the ref. For the
-default ref, the report warns and the commit is left to the dashboard. For a
-ref that you set in `DASHBOARD_MERGE_BASE` or `--merge-base`, the check stops
-with `ERROR` and sends nothing: a typo in the ref must not change the baseline
-without a failure.
+If the default ref has no merge base with the commit, the checker warns and sends the run unpinned.
+If a run needs a local pin and the ref you set with `DASHBOARD_MERGE_BASE` or `--merge-base` does not exist or shares no history with the commit, the checker reports `ERROR` and skips that run's request.
+In a sweep, the other runs are still checked and the final verdict is `ERROR`.
 
 When the pinned merge base has no build of the design, the check is sent again
 without the pin. When the dashboard has no `master` build at the merge base, or
@@ -96,12 +91,10 @@ These environment variables shape the comparison:
   that holds a private platform's baseline; that is no longer needed, so leave
   it unset for a local run, private or not. With it set, an unpushed commit is
   not pinned to its local merge base.
-- `DASHBOARD_MERGE_BASE` (`--merge-base`) names the ref an unpushed commit's
-  merge base is computed against. The default is `upstream/master` when that
-  ref exists, else `origin/master`. Set it if your project remote has another
-  name, or to `none` to leave unpushed commits to the dashboard. A ref that
-  does not exist, or that shares no history with the commit, is an error. It
-  does not apply together with `DASHBOARD_BASE_COMMIT` or `DASHBOARD_JOB_NAME`.
+- `DASHBOARD_MERGE_BASE` (`--merge-base`) names the ref used to compute the merge base of an unpushed local commit.
+  The default is `refs/remotes/upstream/master` when that ref exists, else `refs/remotes/origin/master`.
+  Set it if your project remote has another name, or set it to `none` to leave unpushed commits to the dashboard.
+  `DASHBOARD_BASE_COMMIT` or `DASHBOARD_JOB_NAME` disables local pinning.
 - `DASHBOARD_BASE_COMMIT` (`--base-commit`) pins the baseline to the build of
   that commit. Nothing else is tried: if that commit has no build of the
   design, the check is inconclusive.

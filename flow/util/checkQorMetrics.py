@@ -25,17 +25,17 @@ Each run is checked as the commit metadata.json records (--commit overrides
 it). The dashboard searches its default baseline pipelines in order and takes
 a master build that has the design: the one at the commit's merge base with
 master. A commit on master is its own merge base, so a master run is compared
-against that commit's own build. The dashboard finds the merge base through
-GitHub, so for a commit that no remote branch here contains, the script
-computes it locally against --merge-base (upstream/master if it exists, else
-origin/master) and pins the baseline to it. When that build does not exist,
-the run is sent again without the pin. When the default ref gives no merge
-base, the run is sent unpinned with a warning. When a ref set with
---merge-base or DASHBOARD_MERGE_BASE does not exist or shares no history with
-the commit, the run is an error: that ref is the user's intent, and a typo
-must not change the baseline silently. Without a merge base build, or without
-a commit, the run is compared against the latest master build, which may be
-newer than the commit's base; the report warns when that happens.
+against that commit's own build. When the commit is in this checkout and no
+remote branch contains it, the script computes the merge base locally and pins
+the baseline to it. The default is refs/remotes/upstream/master when that ref
+exists, else refs/remotes/origin/master. If the pinned build does not exist,
+the run is sent again without the pin. If Git cannot check remote containment
+or the default ref gives no merge base, the run is sent unpinned with a warning.
+If an explicit --merge-base or DASHBOARD_MERGE_BASE ref gives no merge base
+for a run that needs a local pin, that run reports ERROR and sends no request.
+Without a merge base build or a commit, the dashboard uses the latest master
+build, which may be newer than the commit's base. The report warns when that
+happens.
 
 --job-name (DASHBOARD_JOB_NAME) checks as a build of that pipeline instead, with
 its CI rules for the branch checked out here (--branch overrides it): the
@@ -100,7 +100,7 @@ COMMIT_KEY = "run__flow__scripts_commit"
 # Tried in order when --merge-base is not set. In a fork clone (gh repo fork
 # --clone), origin is the fork, whose master can be far behind the project's,
 # and upstream is the project.
-DEFAULT_MERGE_BASE_REFS = ("upstream/master", "origin/master")
+DEFAULT_MERGE_BASE_REFS = ("refs/remotes/upstream/master", "refs/remotes/origin/master")
 
 # NAME_W must match the first field width in ROW_FMT.
 NAME_W = 46
@@ -329,19 +329,26 @@ def local_merge_base(commit, ref, source=None):
     sha = git("merge-base", commit, ref)
     if sha:
         return sha, None, None
+    if not ref_exists(ref):
+        if source:
+            return (
+                None,
+                None,
+                f"{source} {ref} does not exist here. "
+                f"Set {source} to an existing ref, or to none.",
+            )
+        return (
+            None,
+            f"{ref} does not exist here, so the baseline of {commit[:12]} was not "
+            "pinned. Set DASHBOARD_MERGE_BASE to an existing ref, or to none.",
+            None,
+        )
     if source:
         return (
             None,
             None,
             f"{commit[:12]} has no merge base with {ref} ({source}). Set {source} "
             "to a ref that shares history with it, or to none.",
-        )
-    if not ref_exists(ref):
-        return (
-            None,
-            f"{ref} does not exist here, so the baseline of {commit[:12]} was not "
-            "pinned. Set DASHBOARD_MERGE_BASE to an existing ref, or to none.",
-            None,
         )
     return (
         None,
@@ -562,6 +569,7 @@ def render_run(result, verbose):
         # design. An unreachable service does not fail the check, so it must
         # not read as one.
         lines.append(f"[WARN] {identity}: dashboard not reached: {result['error']}")
+        lines.extend(pin_lines(result))
         return lines
 
     response = result["response"]
@@ -797,10 +805,10 @@ def parse_args(argv):
         # name the source of a bad ref.
         default=None,
         metavar="REF",
-        help="Pin a commit that is on no remote branch to its merge base with "
-        "REF, since the dashboard cannot find one. Default: upstream/master if "
-        "it exists, else origin/master; none turns it off. A REF that does not "
-        "exist, or that shares no history with the commit, is an error. "
+        help="Pin an unpushed local commit to its merge base with REF. "
+        "Default: the upstream/master remote-tracking ref if it exists, else "
+        "origin/master. Set to none to turn off local pinning. When local "
+        "pinning applies, an explicit REF with no merge base is an error. "
         "Ignored with --base-commit or --job-name. Env: DASHBOARD_MERGE_BASE.",
     )
     parser.add_argument(
@@ -963,17 +971,6 @@ def run_check(argv=None):
         merge_base_ref = merge_base_source = None
     elif not merge_base_ref:
         merge_base_ref = default_merge_base_ref()
-    elif not ref_exists(merge_base_ref):
-        # A ref the user set is their intent. Sent unpinned instead, a typo
-        # would compare against the latest master build with no failure.
-        line = (
-            f"[ERROR] {merge_base_source} {merge_base_ref} does not exist here. "
-            f"Set {merge_base_source} to an existing ref, or to none."
-        )
-        print(line)
-        if not args.metadata and os.path.isdir(REPORTS_FOLDER):
-            write_log([line])
-        return 1
     # Only a pipeline run uses the branch; a checkout is resolved from the commit.
     branch = ""
     if args.job_name:
