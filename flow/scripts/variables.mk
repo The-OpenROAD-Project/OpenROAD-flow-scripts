@@ -155,17 +155,17 @@ export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 # Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
 STREAM_SYSTEM ?= GDS
 ifneq ($(findstring GDS,$(shell echo $(STREAM_SYSTEM) | tr '[:lower:]' '[:upper:]')),)
-	export STREAM_SYSTEM_EXT := gds
+	STREAM_SYSTEM_EXT := gds
 	GDSOAS_FILES = $(GDS_FILES)
 	ADDITIONAL_GDSOAS = $(ADDITIONAL_GDS)
 	SEAL_GDSOAS = $(SEAL_GDS)
 else
-	export STREAM_SYSTEM_EXT := oas
+	STREAM_SYSTEM_EXT := oas
 	GDSOAS_FILES = $(OAS_FILES)
 	ADDITIONAL_GDSOAS = $(ADDITIONAL_OAS)
 	SEAL_GDSOAS = $(SEAL_OAS)
 endif
-export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
+WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
 
 # If we are running headless use offscreen rendering for save_image
 ifeq ($(DISPLAY),)
@@ -173,7 +173,7 @@ export QT_QPA_PLATFORM ?= offscreen
 endif
 
 # Create Macro wrappers (if necessary)
-export WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
+WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
 
 export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
 
@@ -181,13 +181,13 @@ export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
 export YOSYS_DEPENDENCIES=$(LIB_FILES) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 
-export GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
+GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 export RESULTS_ODB = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.odb)))
-export RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
-export RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
-export RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
-export RESULTS_V = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.v)))
-export GDS_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
+RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
+RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
+RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
+RESULTS_V = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.v)))
+GDS_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
 
 define get_variables
 $(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% KLAYOUT% OPENROAD_EXE OPENROAD_ARGS OPENROAD_CMD OPENROAD_NO_EXIT_CMD OPENROAD_GUI_CMD OPENROAD_WEB_CMD OPENROAD_IS_VALID OPENSTA% PYTHON% YOSYS% GENERATE_ABSTRACT_RULE% do-step% do-copy% OPEN_GUI% OPEN_GUI_SHORTCUT% SUB_MAKE% UNSET_VARS% export%, $(V)), $V$ )))
