@@ -316,10 +316,12 @@ class MergeBaseTest(CheckQorMetricsTest):
 
     def test_missing_upstream_tracking_ref_falls_back_past_local_tag(self):
         repository, master, unpushed = self.repository()
-        git(repository, "tag", "upstream/master", unpushed)
         self.enter(repository)
-        _, _, payloads = self.check(unpushed)
-        self.assertEqual(payloads[0]["BaseCommitSha"], master)
+        for tag in ("upstream/master", "refs/remotes/upstream/master"):
+            with self.subTest(tag=tag):
+                git(repository, "tag", tag, unpushed)
+                _, _, payloads = self.check(unpushed)
+                self.assertEqual(payloads[0]["BaseCommitSha"], master)
 
     def test_no_merge_base_warns_and_sends_no_pin(self):
         repository, _, unpushed = self.repository()
@@ -342,6 +344,7 @@ class MergeBaseTest(CheckQorMetricsTest):
     def test_missing_automatic_ref_warns_and_sends_no_pin(self):
         repository, _, unpushed = self.repository()
         git(repository, "update-ref", "-d", "refs/remotes/origin/master")
+        git(repository, "tag", "refs/remotes/origin/master", unpushed)
         self.enter(repository)
         code, output, payloads = self.check(unpushed)
         self.assertEqual(code, 0)

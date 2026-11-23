@@ -282,17 +282,12 @@ def git(*args):
         return None
 
 
-def ref_exists(ref):
-    """Whether ref names a commit in this repository."""
-    return bool(git("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"))
-
-
 def default_merge_base_ref():
-    """The first of DEFAULT_MERGE_BASE_REFS that exists here, else the last one."""
-    for ref in DEFAULT_MERGE_BASE_REFS:
-        if ref_exists(ref):
-            return ref
-    return DEFAULT_MERGE_BASE_REFS[-1]
+    """Use the upstream tracking ref if present, else the origin tracking ref."""
+    upstream, origin = DEFAULT_MERGE_BASE_REFS
+    if git("show-ref", "--verify", "--hash", upstream):
+        return upstream
+    return origin
 
 
 @functools.lru_cache(maxsize=None)
@@ -326,10 +321,15 @@ def local_merge_base(commit, ref, source=None):
         )
     if remotes:
         return None, None, None
-    sha = git("merge-base", commit, ref)
-    if sha:
-        return sha, None, None
-    if not ref_exists(ref):
+    if source:
+        target = git(
+            "rev-parse", "--verify", "--quiet", "--end-of-options", f"{ref}^{{commit}}"
+        )
+    else:
+        # Match the exact tracking ref. Revision lookup can fall back to a tag
+        # even when the supplied name starts with refs/remotes/.
+        target = git("show-ref", "--verify", "--hash", ref)
+    if not target:
         if source:
             return (
                 None,
@@ -343,6 +343,9 @@ def local_merge_base(commit, ref, source=None):
             "pinned. Set DASHBOARD_MERGE_BASE to an existing ref, or to none.",
             None,
         )
+    sha = git("merge-base", commit, target)
+    if sha:
+        return sha, None, None
     if source:
         return (
             None,
