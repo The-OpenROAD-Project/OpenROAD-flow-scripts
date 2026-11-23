@@ -40,9 +40,9 @@ RUN <<EOF
 set -e
 echo "" > tools/yosys/abc/.gitcommit
 if [ -n "${yosysCommit}" ]; then
-    # Yosys prefers Git metadata over .gitcommit when both are available.
-    rm -rf tools/yosys/.git
     echo "${yosysCommit}" > tools/yosys/.gitcommit
+    # Override the commit even when Yosys can read Git metadata.
+    set -- --yosys-args '-DYOSYS_CHECKOUT_INFO="${yosysCommit}"'
 fi
 if [ -n "${verificPath}" ]; then
     verificArgs="--with-verific ${verificPath}"
@@ -53,7 +53,7 @@ fi
                     --local \
                     --skip_openroad \
                     --threads ${numThreads} \
-                    ${verificArgs}
+                    ${verificArgs} "$@"
 if [ -n "${verificPath}" ]; then
     rm -rf "${verificPath}"
 fi
