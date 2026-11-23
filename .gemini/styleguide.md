@@ -47,9 +47,8 @@ names it.
 
 - Do not comment on code moved verbatim, vendored PDK files or files copied
   from upstream projects; they are kept identical to their source.
-- `rules-base.json` limits, QoR trade-offs and constraint choices are the
-  maintainers' decision. Do not lecture on a degradation the PR description
-  explains.
+- QoR trade-offs and constraint choices are the maintainers' decision. Do
+  not lecture on a degradation the PR description explains.
 - Do not suggest one-off cleanups (encoding arguments, wording, extra file
   extensions) that belong in a sweep of their own.
 - Do not repeat resolved findings, or a finding the author answered in an

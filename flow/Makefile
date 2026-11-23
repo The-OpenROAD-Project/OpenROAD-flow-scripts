@@ -647,21 +647,6 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
-.PHONY: klayout_tr_rpt
-klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	$(SCRIPTS_DIR)/klayout.sh -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
-	        -rd in_def="$<" \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/viewDrc.py
-
-.PHONY: klayout_guides
-klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	$(SCRIPTS_DIR)/klayout.sh -rd in_guide="$(RESULTS_DIR)/route.guide" \
-	        -rd in_def="$<" \
-	        -rd net_name=$(GUIDE_NET) \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/viewGuide.py
-
 # ==============================================================================
 #  _____ ___ _   _ ___ ____  _   _ ___ _   _  ____
 # |  ___|_ _| \ | |_ _/ ___|| | | |_ _| \ | |/ ___|
@@ -876,7 +861,7 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 	rm -f $(LOG_DIR)/write_binary_libs*.log
 
 .PHONY: nuke
-nuke: clean_test clean_issues
+nuke: clean_issues
 	rm -rf $(WORK_HOME)/results $(WORK_HOME)/logs $(WORK_HOME)/reports $(WORK_HOME)/objects
 	rm -f $(OBJECTS_DIR)/copyright.txt
 
@@ -933,15 +918,10 @@ test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 klayout:
 	$(SCRIPTS_DIR)/klayout.sh
 
-.phony: run
+.PHONY: run
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/$(RUN_LOG_NAME_STEM).log) --tee -- $(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT)
-
-export RUN_YOSYS_ARGS ?= -c $(SCRIPTS_DIR)/yosys_keep.tcl
-.phony: run-yosys
-run-yosys:
-	$(YOSYS_EXE) $(RUN_YOSYS_ARGS)
 
 # Utilities
 #-------------------------------------------------------------------------------

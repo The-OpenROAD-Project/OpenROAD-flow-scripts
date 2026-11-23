@@ -188,9 +188,9 @@ proc pins_fixed_in_floorplan { } {
   }]
 }
 
-# set_place_config arguments for global_placement -place_ios, from the
+# set_placer_config arguments for global_placement -place_ios, from the
 # place_pins settings.
-proc place_pins_args_to_place_config { } {
+proc place_pins_args_to_placer_config { } {
   set config_args [list \
     -io_pin_hor_layers $::env(IO_PLACER_H) \
     -io_pin_ver_layers $::env(IO_PLACER_V)]

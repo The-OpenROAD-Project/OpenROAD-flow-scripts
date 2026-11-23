@@ -54,27 +54,6 @@ metadata-check-synth:
 	    --only-prefix synth__ constraints__ 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
 
-# The rules-file check (checkMetadata.py against a committed
-# designs/<platform>/<design>/rules-<variant>.json) was removed. The QoR
-# dashboard holds the rules now. These stubs warn callers that still use
-# the old targets or RULES_JSON, and exit 0 so a wrapper script keeps
-# running; drop them once bazel-orfs and the CI scripts have moved.
-ifdef RULES_JSON
-$(warning [WARN] RULES_JSON is deprecated and ignored. The QoR gate is the \
-  dashboard check in `make metadata`; rules files are no longer read.)
-endif
-
-LEGACY_RULES_TARGETS := metadata-check-rules update_ok update_rules \
-                        update_rules_force do-update_rules \
-                        do-update_rules_force do-copy_update_rules
-.PHONY: $(LEGACY_RULES_TARGETS)
-$(LEGACY_RULES_TARGETS):
-	@echo "[WARN] make $@ is deprecated and does nothing. The rules files" \
-	      "(rules-<variant>.json), checkMetadata.py, and genRuleFile.py" \
-	      "were removed. The QoR gate is now the dashboard check in" \
-	      "\`make metadata\` (see docs/contrib/Metrics.md). Rule tolerances" \
-	      "live in the dashboard, so there is nothing to update locally."
-
 .PHONY: clean_metadata
 clean_metadata:
 	rm -f $(REPORTS_DIR)/design-dir.txt
@@ -135,21 +114,6 @@ correlate_platform_rc:
 	done
 	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
 	    -segments_rc_file $$(find results/$(PLATFORM)/*/base -name 6_segments_rc.csv)
-
-# Run test using gnu parallel
-#-------------------------------------------------------------------------------
-TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
-.PHONY: run_test
-run_test:
-	parallel --sshloginfile $(TEST_DIR)/nodes.txt \
-	         --timeout 21600 \
-	         --workdir `pwd` < $(TEST_SCRIPT) \
-	         --joblog $(TEST_DIR)/parallel.log
-
-.PHONY: clean_test
-clean_test:
-	rm -rf $(TEST_DIR)/logs
-	rm -rf $(TEST_DIR)/parallel.log
 
 # Utility to create issues
 #-------------------------------------------------------------------------------

@@ -7,6 +7,10 @@ BASE=$DIR/../..
 
 cd $DIR
 
+MOCK_ALU_WIDTH=${MOCK_ALU_WIDTH:-64}
+MOCK_ALU_OPERATIONS=${MOCK_ALU_OPERATIONS:-ADD,SUB,AND,OR,XOR,SHL,SHR,SRA,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE,MULT}
+PLATFORM=${PLATFORM:-asap7}
+
 rm -f *.v
 
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \

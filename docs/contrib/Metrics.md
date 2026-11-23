@@ -124,11 +124,10 @@ Before the dashboard check, each design directory held a
 `rules-<variant>.json` file with absolute limits, and
 `flow/util/checkMetadata.py` compared `metadata.json` against it. Those
 files, that script, `flow/util/genRuleFile.py`, and the `RULES_JSON`
-variable were removed. The make targets `update_ok`, `update_rules`, and
-`update_rules_force` still exist as stubs that print a deprecation warning
-and do nothing, so an old wrapper script does not break. Rule tolerances
-live in the dashboard, so there is nothing to regenerate locally after an
-accepted QoR change.
+variable were removed, and so were the make targets `update_ok`,
+`update_rules`, and `update_rules_force`. Rule tolerances live in the
+dashboard, so there is nothing to regenerate locally after an accepted QoR
+change.
 
 ## Removed: golden metadata (`metadata-<variant>-ok.json`)
 
