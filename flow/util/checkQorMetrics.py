@@ -25,12 +25,17 @@ Each run is checked as the commit metadata.json records (--commit overrides
 it). The dashboard searches its default baseline pipelines in order and takes
 a master build that has the design: the one at the commit's merge base with
 master. A commit on master is its own merge base, so a master run is compared
-against that commit's own build. The dashboard finds the merge base through
-GitHub, so for a commit that no remote branch here contains, the script
-computes it locally against --merge-base (origin/master) and pins the
-baseline to it. Without a merge base build, or without a commit, the run is
-compared against the latest master build, which may be newer than the
-commit's base; the report warns when that happens.
+against that commit's own build. When the commit is in this checkout and no
+local remote-tracking ref contains it, the script computes the merge base and
+pins the baseline to it. The default is refs/remotes/upstream/master if it
+names a commit, else refs/remotes/origin/master. If the pinned build is absent,
+the run is sent again without the pin. If Git cannot check remote containment
+or the default ref gives no merge base, the run is sent unpinned with a warning.
+If an explicit --merge-base or DASHBOARD_MERGE_BASE ref gives no merge base
+for a run that needs a local pin, that run reports ERROR and sends no request.
+Without a merge base build or a commit, the dashboard uses the latest master
+build, which may be newer than the commit's base. The report warns when that
+happens.
 
 --job-name (DASHBOARD_JOB_NAME) checks as a build of that pipeline instead, with
 its CI rules for the branch checked out here (--branch overrides it): the
@@ -40,10 +45,11 @@ its checkout has no branch. A local run of a private platform does not need it:
 DASHBOARD_API_KEY alone lets the default pipelines resolve it.
 
 Exit status: 1 when the dashboard reports a failed rule for any checked run,
-or when a metadata.json is missing, malformed, or holds no numeric metric.
-0 otherwise. A run the dashboard could not judge -- no baseline, nothing
-evaluated, or the service unreachable -- is reported as a warning and does not
-fail the check: the check did not run, which is not the same as failing it.
+when a metadata.json is missing, malformed, or holds no numeric metric, or
+when a --merge-base ref gives no merge base. 0 otherwise. A run the dashboard
+could not judge -- no baseline, nothing evaluated, or the service unreachable
+-- is reported as a warning and does not fail the check: the check did not
+run, which is not the same as failing it.
 --strict turns those into exit 2 (inconclusive) and 3 (unreachable) for a CI
 caller that wants to tell them apart. The last line of the report is
 `QoR check: PASS`, `FAIL`, `INCONCLUSIVE`, or `ERROR`.
@@ -91,7 +97,10 @@ RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 COMMIT_KEY = "run__flow__scripts_commit"
 
-DEFAULT_MERGE_BASE_REF = "origin/master"
+# Tried in order when --merge-base is not set. In a fork clone (gh repo fork
+# --clone), origin is the fork, whose master can be far behind the project's,
+# and upstream is the project.
+DEFAULT_MERGE_BASE_REFS = ("refs/remotes/upstream/master", "refs/remotes/origin/master")
 
 # NAME_W must match the first field width in ROW_FMT.
 NAME_W = 46
@@ -273,29 +282,91 @@ def git(*args):
         return None
 
 
+def merge_base_target(ref, *, exact=False):
+    """Resolve a Git revision or an exact ref to its commit."""
+    if exact:
+        # Revision lookup can fall back to a tag even when the name starts
+        # with refs/remotes/.
+        oid = git("show-ref", "--verify", "--hash", ref)
+    elif ref.startswith("-"):
+        return None
+    else:
+        oid = git("rev-parse", "--verify", "--quiet", ref)
+    # Peel after resolution so :/message searches keep their original pattern.
+    return git("rev-parse", "--verify", "--quiet", f"{oid}^{{commit}}") if oid else None
+
+
+def default_merge_base_ref():
+    """Use the upstream tracking ref if it names a commit, else origin."""
+    upstream, origin = DEFAULT_MERGE_BASE_REFS
+    if merge_base_target(upstream, exact=True):
+        return upstream
+    return origin
+
+
 @functools.lru_cache(maxsize=None)
-def local_merge_base(commit, ref):
-    """Returns (sha, error) for pinning a commit that no remote has.
+def local_merge_base(commit, ref, source=None):
+    """Returns (sha, warning, error) for pinning a commit that no remote has.
 
     The dashboard finds a merge base through GitHub, so a commit that was never
     pushed falls back to the latest master build, which may be newer than the
-    commit's base. Both are None when the dashboard can resolve the commit
+    commit's base. All three are None when the dashboard can resolve the commit
     itself: it is on a remote branch, or it is not in this repository (a
-    downloaded CI artifact). error is set when the commit is local but has no
-    merge base with ref.
+    downloaded CI artifact).
+
+    source names the flag or variable that set ref, or is None when ref is the
+    default. A default ref that gives no pin is a warning, and the commit is
+    sent unpinned, like a pushed one. A ref the user set is their intent, so a
+    ref with no merge base is an error: sent unpinned, the run would silently
+    compare against a different baseline.
     """
     if git("cat-file", "-e", f"{commit}^{{commit}}") is None:
-        return None, None
-    if git("for-each-ref", "--count=1", "--contains", commit, "refs/remotes"):
-        return None, None
-    sha = git("merge-base", commit, ref)
-    if not sha:
-        return None, (
-            f"commit {commit[:12]} is on no remote and has no merge base with "
-            f"{ref}. Set DASHBOARD_MERGE_BASE to another ref, or to none to "
-            "compare against the latest master build."
+        return None, None, None
+    # Empty output means no remote branch has the commit. None means git
+    # failed, so it is not known, and a pin could hide a valid baseline. That
+    # is a git fault, not the user's input, so it stays a warning.
+    remotes = git("for-each-ref", "--count=1", "--contains", commit, "refs/remotes")
+    if remotes is None:
+        return (
+            None,
+            f"git could not tell whether {commit[:12]} is on a remote, so the "
+            "baseline was not pinned to its local merge base.",
+            None,
         )
-    return sha, None
+    if remotes:
+        return None, None, None
+    target = merge_base_target(ref, exact=source is None)
+    if not target:
+        if source:
+            return (
+                None,
+                None,
+                f"{source} {ref} does not exist here. "
+                f"Set {source} to an existing ref, or to none.",
+            )
+        return (
+            None,
+            f"{ref} does not exist here, so the baseline of {commit[:12]} was not "
+            "pinned. Set DASHBOARD_MERGE_BASE to an existing ref, or to none.",
+            None,
+        )
+    sha = git("merge-base", commit, target)
+    if sha:
+        return sha, None, None
+    if source:
+        return (
+            None,
+            None,
+            f"{commit[:12]} has no merge base with {ref} ({source}). Set {source} "
+            "to a ref that shares history with it, or to none.",
+        )
+    return (
+        None,
+        f"{commit[:12]} is on no remote and has no merge base with {ref}, so the "
+        "baseline was not pinned. Set DASHBOARD_MERGE_BASE to a ref that shares "
+        "history with it.",
+        None,
+    )
 
 
 def post_check(endpoint, api_key, payload):
@@ -348,13 +419,15 @@ def check_run(
     commit="",
     branch="",
     merge_base_ref=None,
+    merge_base_source=None,
 ):
     """Checks one (platform, design, variant) and returns a result dict.
 
     commit replaces the one metadata.json records. branch is sent only with a
     job_name: without one the dashboard ignores it and resolves the baseline
     from the commit alone. merge_base_ref, when set, pins a commit that no
-    remote has to its merge base with that ref.
+    remote has to its merge base with that ref. merge_base_source names the
+    flag or variable that set it, or is None for the default ref.
     """
     platform, design, variant, metadata_path = run
     result = {
@@ -366,8 +439,22 @@ def check_run(
         "error": None,
         "metric_count": 0,
         "dropped": [],
+        # How an automatic merge-base pin went: the pinned sha and its ref, the
+        # pin dropped because it had no build, or why no pin was made.
         "merge_base": None,
+        "merge_base_ref": None,
+        "unbuilt_merge_base": None,
+        "pin_warning": None,
     }
+
+    def ask(payload):
+        response, error = post_check(endpoint, api_key, payload)
+        # render_run reads the response as a mapping. A well-formed endpoint
+        # always sends one, but a proxy error page or a bare JSON list would
+        # not, so reject it here instead of raising a level up.
+        if error is None and not isinstance(response, dict):
+            error = f"unexpected response type: {type(response).__name__}"
+        return response, error
 
     # One run's surprise must not take down the sweep: this is called from a
     # thread pool, so an escaping exception would surface out of pool.map and
@@ -389,13 +476,18 @@ def check_run(
         commit = commit or recorded_commit
         result["commit"] = commit
 
+        automatic_pin = None
         if merge_base_ref and commit and not base_commit:
-            base_commit, error = local_merge_base(commit, merge_base_ref)
+            automatic_pin, result["pin_warning"], error = local_merge_base(
+                commit, merge_base_ref, merge_base_source
+            )
             if error:
                 result["status"] = "invalid"
                 result["error"] = error
                 return result
-            result["merge_base"] = base_commit
+            result["merge_base"] = automatic_pin
+            result["merge_base_ref"] = merge_base_ref
+            base_commit = automatic_pin
 
         # No JobName and no PipelineId makes this a checkout to the dashboard:
         # it picks the pipeline itself, the first of its default baseline
@@ -415,16 +507,18 @@ def check_run(
         if base_commit:
             payload["BaseCommitSha"] = base_commit
 
-        response, error = post_check(endpoint, api_key, payload)
+        response, error = ask(payload)
+        # An automatic pin is a guess, and the merge base often has no build of
+        # the design. Ask again without it, so the dashboard falls back to the
+        # latest master build as it does for any commit. An explicit
+        # --base-commit stays exact.
+        if automatic_pin and error is None and response.get("status") == "no_baseline":
+            del payload["BaseCommitSha"]
+            result["merge_base"] = None
+            result["unbuilt_merge_base"] = automatic_pin
+            response, error = ask(payload)
         if error is not None:
             result["error"] = error
-            return result
-
-        # render_run reads the response as a mapping. A well-formed endpoint
-        # always sends one, but a proxy error page or a bare JSON list would
-        # not, so reject it here instead of raising a level up.
-        if not isinstance(response, dict):
-            result["error"] = f"unexpected response type: {type(response).__name__}"
             return result
 
         result["response"] = response
@@ -446,6 +540,31 @@ def dropped_lines(result):
     ]
 
 
+def pin_lines(result):
+    """The warning that says how an automatic merge-base pin went, if one was tried.
+
+    A warning, not information: the merge base comes from a local ref, and a
+    stale one silently moves the baseline.
+    """
+    if result["pin_warning"]:
+        return [f"[WARN] {result['pin_warning']}"]
+    commit = (result.get("commit") or "")[:12]
+    ref = result["merge_base_ref"]
+    if result["unbuilt_merge_base"]:
+        return [
+            f"[WARN] {commit} is on no remote, and its local merge base "
+            f"{result['unbuilt_merge_base'][:12]} with {ref} has no build of "
+            "this design, so the check was sent again without that pin."
+        ]
+    if result["merge_base"]:
+        return [
+            f"[WARN] {commit} is on no remote, so the baseline was pinned to its "
+            f"local merge base {result['merge_base'][:12]} with {ref}. Set "
+            f"DASHBOARD_MERGE_BASE if {ref} is out of date."
+        ]
+    return []
+
+
 def render_run(result, verbose):
     """Builds the report lines for one run."""
     identity = f"{result['platform']}/{result['design']}/{result['variant']}"
@@ -460,6 +579,7 @@ def render_run(result, verbose):
         # design. An unreachable service does not fail the check, so it must
         # not read as one.
         lines.append(f"[WARN] {identity}: dashboard not reached: {result['error']}")
+        lines.extend(pin_lines(result))
         return lines
 
     response = result["response"]
@@ -470,13 +590,7 @@ def render_run(result, verbose):
             f"[WARN] {identity}: no baseline to compare against "
             f"(strategy={strategy}). Nothing was checked."
         )
-        if result["merge_base"]:
-            lines.append(
-                f"[WARN] The baseline was pinned to {result['merge_base'][:12]}, "
-                "the local merge base, which has no build of this design. Set "
-                "DASHBOARD_MERGE_BASE=none to compare against the latest master "
-                "build instead."
-            )
+        lines.extend(pin_lines(result))
         lines.extend(dropped_lines(result))
         return lines
 
@@ -497,11 +611,7 @@ def render_run(result, verbose):
         f"({(response.get('baseCommitSha') or '?')[:12]}, {strategy}"
         f"{', ' + pipeline if pipeline else ''})"
     )
-    if result["merge_base"]:
-        lines.append(
-            f"[INFO] {result['commit'][:12]} is on no remote, so the baseline "
-            f"was pinned to its local merge base {result['merge_base'][:12]}"
-        )
+    lines.extend(pin_lines(result))
     # The latest master build may be newer than the commit's base, so upstream
     # changes since then would read as this run's regressions, and the result
     # moves with master.
@@ -614,7 +724,7 @@ def summarize(results):
         f"{counts.get('inconclusive', 0)} inconclusive, "
         f"{counts.get('no_baseline', 0)} without a baseline, "
         f"{counts.get('error', 0)} not reached, "
-        f"{counts.get('invalid', 0)} with unusable metadata"
+        f"{counts.get('invalid', 0)} with unusable input"
     )
     if failing:
         lines.append(f"[ERROR] Failing runs: {', '.join(sorted(failing))}")
@@ -630,12 +740,12 @@ def summarize(results):
 def verdict(results):
     """Overall verdict for a set of runs: ERROR, FAIL, PASS, or INCONCLUSIVE.
 
-    ERROR means a metadata.json could not be used, so the check could not even
-    be attempted for that run. FAIL wins over the rest: one failed rule is a
-    regression no matter how the other runs did. PASS needs every run to have
-    passed. Anything else -- no baseline, nothing evaluated, a request that
-    never got an answer -- is INCONCLUSIVE: the check did not run for at least
-    one run.
+    ERROR means a metadata.json or a --merge-base ref could not be used, so the
+    check could not even be attempted for that run. FAIL wins over the rest:
+    one failed rule is a regression no matter how the other runs did. PASS
+    needs every run to have passed. Anything else -- no baseline, nothing
+    evaluated, a request that never got an answer -- is INCONCLUSIVE: the
+    check did not run for at least one run.
     """
     statuses = {result["status"] for result in results}
     if "invalid" in statuses:
@@ -701,12 +811,16 @@ def parse_args(argv):
     )
     parser.add_argument(
         "--merge-base",
-        default=os.environ.get("DASHBOARD_MERGE_BASE") or DEFAULT_MERGE_BASE_REF,
+        # No env default here: run_check reads DASHBOARD_MERGE_BASE itself, to
+        # name the source of a bad ref.
+        default=None,
         metavar="REF",
-        help="Pin a commit that is on no remote branch to its merge base with "
-        f"REF, since the dashboard cannot find one. Default: "
-        f"{DEFAULT_MERGE_BASE_REF}; none turns it off. Ignored with --base-commit "
-        "or --job-name. Env: DASHBOARD_MERGE_BASE.",
+        help="Pin a local commit to its merge base with REF if no local "
+        "remote-tracking ref contains the commit. "
+        "Default: the upstream/master remote-tracking ref if it names a commit, "
+        "else origin/master. Set to none to turn off local pinning. When local "
+        "pinning applies, an explicit REF with no merge base is an error. "
+        "Ignored with --base-commit or --job-name. Env: DASHBOARD_MERGE_BASE.",
     )
     parser.add_argument(
         "--api-url",
@@ -854,9 +968,20 @@ def run_check(argv=None):
             return 1
     # A pipeline run follows its CI branch rules, and CI checkouts often fetch
     # no remote branches, so every commit there would look unpushed.
+    # The flag and the variable are read apart so an error can name the one the
+    # user set.
     merge_base_ref = None
-    if not (base_commit or args.job_name) and args.merge_base.lower() != "none":
-        merge_base_ref = args.merge_base
+    merge_base_source = None
+    if args.merge_base:
+        merge_base_ref, merge_base_source = args.merge_base, "--merge-base"
+    elif os.environ.get("DASHBOARD_MERGE_BASE"):
+        merge_base_ref = os.environ["DASHBOARD_MERGE_BASE"]
+        merge_base_source = "DASHBOARD_MERGE_BASE"
+    pin_off = (merge_base_ref or "").lower() == "none"
+    if base_commit or args.job_name or pin_off:
+        merge_base_ref = merge_base_source = None
+    elif not merge_base_ref:
+        merge_base_ref = default_merge_base_ref()
     # Only a pipeline run uses the branch; a checkout is resolved from the commit.
     branch = ""
     if args.job_name:
@@ -941,6 +1066,7 @@ def run_check(argv=None):
                     commit,
                     branch,
                     merge_base_ref,
+                    merge_base_source,
                 ),
                 runs,
             )
