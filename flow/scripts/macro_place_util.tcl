@@ -52,6 +52,8 @@ if { [find_macros] != "" } {
   append_env_var additional_rtlmp_args RTLMP_RPT_DIR -report_directory 1
   append_env_var additional_rtlmp_args RTLMP_KEEP_CLUSTERING \
     -keep_clustering_data 0
+  append_env_var additional_rtlmp_args RTLMP_SNAP_TO_SITE_GRID \
+    -snap_to_site_grid 0
   append_env_var additional_rtlmp_args RTLMP_FENCE_LX -fence_lx 1
   append_env_var additional_rtlmp_args RTLMP_FENCE_LY -fence_ly 1
   append_env_var additional_rtlmp_args RTLMP_FENCE_UX -fence_ux 1

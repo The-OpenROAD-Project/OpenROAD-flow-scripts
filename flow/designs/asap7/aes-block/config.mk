@@ -37,5 +37,8 @@ export PWR_NETS_VOLTAGES      =
 # The macros are very small so use a smaller halo
 export RTLMP_MIN_CHANNEL_SIZE  ?= 6 6
 
+# Keep the hardened aes_rcon/aes_sbox blocks on the fin/gate grid
+export RTLMP_SNAP_TO_SITE_GRID ?= 1
+
 export ROUTING_LAYER_ADJUSTMENT = 0.3
 export HOLD_SLACK_MARGIN        = -30

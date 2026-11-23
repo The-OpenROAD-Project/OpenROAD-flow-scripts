@@ -278,6 +278,7 @@ configuration file.
 | <a name="RTLMP_OUTLINE_WT"></a>RTLMP_OUTLINE_WT| Weight for violating the fixed outline constraint, meaning that all clusters should be placed within the shape of their parent cluster.| 100.0|
 | <a name="RTLMP_PIN_AWARE_CHANNELS"></a>RTLMP_PIN_AWARE_CHANNELS| Set to 1 to trim macro channels based on the pin locations of macros, instead of using full channels. Requires RTLMP_MIN_CHANNEL_SIZE to also be set. Defaults to 1 whenever RTLMP_MIN_CHANNEL_SIZE is set and this variable is not explicitly set to 0.| 1|
 | <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR| Path to the directory where reports are saved.| |
+| <a name="RTLMP_SNAP_TO_SITE_GRID"></a>RTLMP_SNAP_TO_SITE_GRID| Set to 1 to snap macros to the site/row grid instead of the routing track grid of their lowest signal pin layer, so that hardened blocks land on the fin/gate grid while their pins stay on track. Only single-height rows are supported; the placer falls back to track snapping otherwise.| 0|
 | <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0|
 | <a name="RUN_LOG_NAME_STEM"></a>RUN_LOG_NAME_STEM| Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.| run|
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
@@ -476,6 +477,7 @@ configuration file.
 - [RTLMP_OUTLINE_WT](#RTLMP_OUTLINE_WT)
 - [RTLMP_PIN_AWARE_CHANNELS](#RTLMP_PIN_AWARE_CHANNELS)
 - [RTLMP_RPT_DIR](#RTLMP_RPT_DIR)
+- [RTLMP_SNAP_TO_SITE_GRID](#RTLMP_SNAP_TO_SITE_GRID)
 - [RTLMP_WIRELENGTH_WT](#RTLMP_WIRELENGTH_WT)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_REPAIR_PHASES](#SETUP_REPAIR_PHASES)
