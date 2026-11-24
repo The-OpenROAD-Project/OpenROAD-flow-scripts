@@ -776,7 +776,7 @@ ifneq ($(KLAYOUT_DRC_FILE),)
 	        --deck=$(KLAYOUT_DRC_FILE) \
 	        --in-gds=$< \
 	        --report-file=$(abspath $@), \
-	        $(SCRIPTS_DIR)/klayout.sh -zz -rd in_gds="$<" \
+	        $(or $(KLAYOUT_CMD),$(error KLayout not found. Install KLayout or set KLAYOUT_CMD)) -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_DRC_FILE))
 	# Hacky way of getting DRV count (don't error on no matches)
@@ -805,7 +805,7 @@ ifneq ($(KLAYOUT_LVS_FILE),)
 	        --cdl-file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        --top-cell=$(DESIGN_NAME) \
 	        --report-file=$(abspath $@), \
-	        $(SCRIPTS_DIR)/klayout.sh -b -rd in_gds="$<" \
+	        $(or $(KLAYOUT_CMD),$(error KLayout not found. Install KLayout or set KLAYOUT_CMD)) -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd top_cell="$(DESIGN_NAME)" \
 	        -rd report_file=$(abspath $@) \
@@ -869,7 +869,7 @@ nuke: clean_issues
 #-------------------------------------------------------------------------------
 .PHONY: $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: check-klayout $(OBJECTS_DIR)/klayout.lyt
-	$(SCRIPTS_DIR)/klayout.sh -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 $(eval $(call OPEN_GUI_SHORTCUT,synth,1_synth.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
@@ -913,10 +913,6 @@ handoff : all_defs all_verilog
 
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
-
-.phony: klayout
-klayout:
-	$(SCRIPTS_DIR)/klayout.sh
 
 .PHONY: run
 run:
