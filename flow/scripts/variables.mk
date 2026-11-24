@@ -131,7 +131,10 @@ export OPENSTA_EXE  ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 # come first, as in OPENROAD_EXE="gdb --args openroad" or
 # OPENROAD_EXE="valgrind openroad". The check is on the program the command
 # starts with, a path or a name on PATH. The binary is the last word.
-OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell command -v $(firstword $(OPENROAD_EXE)) >/dev/null && echo "true"),)
+# The shell splits the command, as a recipe does, so a quoted path with
+# spaces in it is one program: OPENROAD_EXE="'/opt/my tools/openroad'".
+command_is_valid = $(if $(1),$(shell set -- $(1) && command -v "$$1" >/dev/null && echo "true"),)
+OPENROAD_IS_VALID := $(call command_is_valid,$(OPENROAD_EXE))
 
 export OPENROAD_ARGS = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 export OPENROAD_CMD = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
@@ -141,7 +144,7 @@ export OPENROAD_WEB_CMD = $(OPENROAD_EXE) -web -threads $(NUM_CORES) $(OR_ARGS)
 
 export YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
-YOSYS_IS_VALID := $(if $(YOSYS_EXE),$(shell command -v $(firstword $(YOSYS_EXE)) >/dev/null && echo "true"),)
+YOSYS_IS_VALID := $(call command_is_valid,$(YOSYS_EXE))
 
 KEPLER_FORMAL_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/kepler-formal/bin/kepler-formal)
 export KEPLER_FORMAL_EXE

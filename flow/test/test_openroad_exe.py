@@ -110,6 +110,42 @@ class TestOpenroadExe(unittest.TestCase):
         result, _ = self.make("check-yosys", f"YOSYS_EXE={self.wrapper} {yosys}")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_quoted_paths_pass_the_check(self):
+        # the shell splits the command, so a quoted path with spaces in it
+        # is one program, as the executable or as the wrapper
+        spaced = os.path.join(self.tmp_dir.name, "with space")
+        os.makedirs(spaced)
+        openroad = os.path.join(spaced, "openroad")
+        yosys = os.path.join(spaced, "yosys")
+        wrapper = os.path.join(spaced, "wrapper")
+        for link, target in ((openroad, self.openroad), (wrapper, self.wrapper)):
+            os.symlink(target, link)
+        os.symlink(self.script("yosys", "true\n"), yosys)
+        for check, variable, binary in (
+            ("check-openroad", "OPENROAD_EXE", openroad),
+            ("check-yosys", "YOSYS_EXE", yosys),
+        ):
+            for command in (f"'{binary}'", f"'{wrapper}' '{binary}'"):
+                with self.subTest(check=check, command=command):
+                    result, _ = self.make(check, f"{variable}={command}")
+                    self.assertEqual(
+                        result.returncode, 0, result.stdout + result.stderr
+                    )
+                    missing = command.replace("with space", "no such")
+                    result, _ = self.make(check, f"{variable}={missing}")
+                    self.assertNotEqual(result.returncode, 0)
+
+    def test_quoted_path_runs(self):
+        # the recipe runs the quoted path the check accepted
+        spaced = os.path.join(self.tmp_dir.name, "with space")
+        os.makedirs(spaced)
+        wrapper = os.path.join(spaced, "wrapper")
+        os.symlink(self.wrapper, wrapper)
+        result, calls = self.make(
+            "command", f"OPENROAD_EXE='{wrapper}' {self.openroad}"
+        )
+        self.assert_wrapped_once(result, calls)
+
     def test_top_level_rule_runs_the_command_once(self):
         for how in ("command line", "environment"):
             with self.subTest(how):
