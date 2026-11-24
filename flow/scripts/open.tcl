@@ -56,8 +56,10 @@ proc read_timing { input_file } {
   orfs_load_parasitics [file rootname [file tail $input_file]]
 
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster
-  set _tmp [log_cmd sta::find_timing]
-  set _tmp [log_cmd sta::find_requireds]
+  if { [gui::enabled] } {
+    set _tmp [log_cmd sta::find_timing]
+    set _tmp [log_cmd sta::find_requireds]
+  }
 }
 
 if { [ord::openroad_gui_compiled] } {
