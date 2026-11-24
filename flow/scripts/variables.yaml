@@ -1164,6 +1164,24 @@ ADDITIONAL_LIBS:
   description: >
     Hardened macro library files listed here. The library information is
     immutable and used throughout all stages. Not stored in the .odb file.
+ADDITIONAL_TYP_LIBS:
+  description: >
+    Hardened macro library files for the typical corner, on a platform that keeps
+    one liberty list per corner (see CORNERS). The platform config adds them
+    to its TYP_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the typical corner
+    timing model of each block is appended.
+ADDITIONAL_FAST_LIBS:
+  description: >
+    Hardened macro library files for the fast corner, on a platform that keeps
+    one liberty list per corner (see CORNERS). The platform config adds them
+    to its FAST_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the fast corner
+    timing model of each block is appended.
+ADDITIONAL_SLOW_LIBS:
+  description: >
+    Hardened macro library files for the slow corner, on a platform that keeps
+    one liberty list per corner (see CORNERS). The platform config adds them
+    to its SLOW_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the slow corner
+    timing model of each block is appended.
 ADDITIONAL_GDS:
   description: |
     Hardened macro GDS files listed here.
