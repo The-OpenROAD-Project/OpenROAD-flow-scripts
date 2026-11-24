@@ -999,6 +999,14 @@ ENABLE_PLACE_REPAIR_TIMING:
   stages:
     - place
   default: 0
+SKIP_PLACE_REPAIR_DESIGN:
+  description: >
+    Skip repair_design during the placement resize stage (3_4_place_resized).
+    Useful during early floorplan or hierarchical exploration with abstract
+    macros where boundary budgets are placeholders.
+  stages:
+    - place
+  default: 0
 SKIP_REPAIR_TIE_FANOUT:
   description: >
     Skip repair_tie_fanout at floorplan step.

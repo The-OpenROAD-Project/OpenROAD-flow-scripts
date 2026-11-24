@@ -23,7 +23,9 @@ if { [env_var_equals SWAP_ARITH_OPERATORS 1] } {
   log_cmd global_placement -incremental -density $density
 }
 
-repair_design_helper
+if { !$::env(SKIP_PLACE_REPAIR_DESIGN) } {
+  repair_design_helper
+}
 
 if { $::env(ENABLE_PLACE_REPAIR_TIMING) } {
   # Repair timing using placement parasitics.

@@ -301,6 +301,7 @@ configuration file.
 | <a name="SKIP_INCREMENTAL_REPAIR"></a>SKIP_INCREMENTAL_REPAIR| Skip incremental repair in global route.| 0|
 | <a name="SKIP_LAST_GASP"></a>SKIP_LAST_GASP| Do not use last gasp optimization to fix timing violations (default: use gate last gasp).| |
 | <a name="SKIP_PIN_SWAP"></a>SKIP_PIN_SWAP| Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).| |
+| <a name="SKIP_PLACE_REPAIR_DESIGN"></a>SKIP_PLACE_REPAIR_DESIGN| Skip repair_design during the placement resize stage (3_4_place_resized). Useful during early floorplan or hierarchical exploration with abstract macros where boundary budgets are placeholders.| 0|
 | <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT| Skip repair_tie_fanout at floorplan step.| 0|
 | <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.| 0|
 | <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP| Do not perform VT swap to improve QoR (default: do VT swap).| |
@@ -541,6 +542,7 @@ configuration file.
 - [REPORT_ENDPOINT_SLACK](#REPORT_ENDPOINT_SLACK)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SETUP_REPAIR_PHASES](#SETUP_REPAIR_PHASES)
+- [SKIP_PLACE_REPAIR_DESIGN](#SKIP_PLACE_REPAIR_DESIGN)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
