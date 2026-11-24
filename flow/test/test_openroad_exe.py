@@ -241,6 +241,20 @@ class TestOpenroadExe(unittest.TestCase):
                     self.assertEqual(result.stdout, expected.stdout)
                     self.assertEqual(calls, expected_calls)
 
+    def test_vars_leave_out_the_check_function(self):
+        # command_is_valid is a make function the check uses, not a flow
+        # variable: make vars writes no entry for it
+        result, _ = self.make("vars", env={"OPENROAD_EXE": self.openroad})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        objects = os.path.join(
+            self.work_home, "objects", "nangate45", "gcd", "openroad_exe"
+        )
+        for ext in ("sh", "tcl", "gdb"):
+            with self.subTest(ext=ext):
+                with open(os.path.join(objects, f"vars.{ext}")) as f:
+                    found = "command_is_valid" in f.read()
+                self.assertFalse(found, f"vars.{ext} has a command_is_valid entry")
+
 
 if __name__ == "__main__":
     unittest.main()
