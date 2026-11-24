@@ -204,6 +204,13 @@ class TestRunMe(StubFlowTestCase):
     def test_work_home_relative(self):
         self.assert_runs("work/stub")
 
+    def test_work_home_relative_through_a_symlink(self):
+        """tar keeps WORK_HOME's spelling in the member names, so run-me
+        follows the spelling, not the directory the link resolves to."""
+        os.makedirs(os.path.join(self.stub.flow, "work", "real"))
+        os.symlink(os.path.join("work", "real"), os.path.join(self.stub.flow, "link"))
+        self.assert_runs("link")
+
 
 class TestOptions(StubFlowTestCase):
     def test_copy_issue_copies_the_archive(self):

@@ -127,13 +127,14 @@ def archive_root_from_run_me(work_home, vars_basename):
     file's path from there: the archive's root, where the vars' paths
     start. run-me is at the root when WORK_HOME is absolute (its path is
     stripped from the members) or the flow directory; a relative WORK_HOME
-    keeps its place under the root, and run-me climbs back from it."""
-    here = os.path.realpath(".")
-    if work_home.startswith("/") or os.path.realpath(work_home) == here:
+    keeps its place under the root, spelled as tar was given it, and
+    run-me climbs back from it. Both paths follow that spelling, not the
+    directory a symlink in it resolves to, as the member names do."""
+    work = os.path.normpath(work_home)
+    if os.path.isabs(work) or work == ".":
         return None, f"./{os.path.basename(vars_basename)}.sh"
-    root = os.path.relpath(here, os.path.realpath(work_home))
-    vars_path = os.path.relpath(os.path.realpath(vars_basename), here)
-    return root, f"./{vars_path}.sh"
+    root = os.path.join(*[".."] * len(work.split(os.sep)))
+    return root, f"./{os.path.normpath(vars_basename)}.sh"
 
 
 def run_me_text(env, issue_target, vars_basename, yosys):
