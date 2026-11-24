@@ -18,9 +18,9 @@ attrs==26.1.0 \
     # via
     #   cattrs
     #   lsprotocol
-cachecontrol==0.14.4 \
-    --hash=sha256:b7ac014ff72ee199b5f8af1de29d60239954f223e948196fa3d84adaffc71d2b \
-    --hash=sha256:e6220afafa4c22a47dd0badb319f84475d79108100d04e26e8542ef7d3ab05a1
+cachecontrol==0.15.0 \
+    --hash=sha256:10b7ab4387355ad9361d5b89bc0f6758e48099017be173241c4e0f20d9e1dad2 \
+    --hash=sha256:52157b539eb64d85c8c793660e86cf05cf95fad7b98c8ef6846e4a0ddffdb193
     # via firebase-admin
 cattrs==26.2.1 \
     --hash=sha256:679132bfdc225c5ee40c024fc42519954767c387f950dc6751946c586bccdc6d \
@@ -376,15 +376,16 @@ cryptography==50.0.2 \
     --hash=sha256:fa8f5efb344d6908a1ce62f4a24e2e5780f825d6f53f5f50ec5ffacac72936cb \
     --hash=sha256:fdd28f912fccfec1846a94e2e1e8f9b0012f557f0c46fe4f3eb0d7a87afcf90b
     # via
+    #   firebase-admin
     #   google-auth
     #   pyjwt
 distro==1.9.0 \
     --hash=sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed \
     --hash=sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2
     # via ruyaml
-firebase-admin==7.7.0 \
-    --hash=sha256:0a341ebbd1f80301fa11034f5e86ab0d0f00dde19253d2ee50cf98be2a7a2f33 \
-    --hash=sha256:2e823cc1d2c8b74f41346fb33298b2e01fc8ad208ea144cd099938c32367f169
+firebase-admin==7.8.0 \
+    --hash=sha256:1cb353371ad14c3233a2ddf86c85b665341123b6c5df73b3cb84e7def45397dc \
+    --hash=sha256:3560733698619f1d77e2e0babc20fc24d9dcedbb96823d0f03cf1f2d21a30868
     # via -r .github/requirements/requirements.in
 google-api-core==2.44.0 \
     --hash=sha256:5ab9a396965c1227d7dea4581e562b7018aa2bca96d2de0be5eb70dc9c8ab3a1 \
