@@ -169,16 +169,6 @@ view_cells_web:
 command:
 	$(OPENROAD_NO_EXIT_CMD)
 
-## Provide easy access to debugging
-ifdef GDB
-export OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
-endif
-
-## Provide easy way to run valgrind
-ifdef VALGRIND
-export OPENROAD_EXE := valgrind $(VALGRIND_ARGS) $(OPENROAD_EXE)
-endif
-
 ## Convert RVE DRC database to JSON
 .PHONY: convert_rve
 convert_rve: $(REPORTS_DIR)/drc.json

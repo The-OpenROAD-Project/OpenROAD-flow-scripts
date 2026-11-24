@@ -351,7 +351,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument(
         "--openroad",
         default=None,
-        help="The openroad that runs generate_ram (OPENROAD_EXE).",
+        help="The openroad command that runs generate_ram (OPENROAD_EXE), "
+        "a wrapper first if any: gdb --args openroad.",
     )
     p.add_argument(
         "--lef",
