@@ -35,7 +35,6 @@ updates:
       - "/"
       - "/docker"
       - "/tools/codespace"
-      - "/tools/yosys_util"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 5
