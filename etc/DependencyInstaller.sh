@@ -113,6 +113,18 @@ _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS} -yosys-ver="${YOSYS_VER}"
 }
 
+# Succeeds only if the Python interpreter $1 is 3.12 or newer. The lock files
+# are compiled with Python 3.12, and older versions cannot install some of
+# their pins.
+_checkPython() {
+    "$1" -c '
+import sys
+if sys.version_info < (3, 12):
+    sys.exit("ERROR: etc/requirements-common_lock.txt needs Python 3.12"
+             " or newer; %s is %s." % (sys.executable, sys.version.split()[0]))
+'
+}
+
 _installPipCommon() {
     local lockfile piplock
     lockfile="${_script_dir}/requirements-common_lock.txt"
@@ -120,8 +132,12 @@ _installPipCommon() {
     if [[ -n "${VIRTUAL_ENV:-}" ]]; then
         # The lock goes into the virtual environment, created if it does
         # not exist yet; the Docker images name one with ENV VIRTUAL_ENV.
-        if [[ ! -x "${VIRTUAL_ENV}/bin/python3" ]]; then
+        if [[ ! -e "${VIRTUAL_ENV}/bin/python3" && ! -L "${VIRTUAL_ENV}/bin/python3" ]]; then
+            _checkPython python3 || exit 1
             python3 -m venv "${VIRTUAL_ENV}"
+        elif [[ ! -x "${VIRTUAL_ENV}/bin/python3" ]] || ! _checkPython "${VIRTUAL_ENV}/bin/python3"; then
+            echo "Move ${VIRTUAL_ENV} aside and recreate it with Python 3.12 or newer." >&2
+            exit 1
         fi
         "${VIRTUAL_ENV}/bin/python3" -m pip install --no-cache-dir --upgrade --require-hashes -r "$piplock"
         "${VIRTUAL_ENV}/bin/python3" -m pip install --no-cache-dir -r "$lockfile"
@@ -133,6 +149,7 @@ _installPipCommon() {
         echo "Error: Activate a virtual environment on macOS."
         exit 1
     else
+        _checkPython python3 || exit 1
         # pip before 23.3 fails --require-hashes on requirements-common_lock.txt:
         # it does not match an extras-bearing pin such as
         # googleapis-common-protos[grpc]==X against a plain request for the same
@@ -194,7 +211,7 @@ _install_EL8_EL9_Packages() {
         wget \
         zlib-devel
 
-    # The pip lock files need Python 3.10 or newer, which
+    # The pip lock files need Python 3.12 or newer, which
     # is newer than the EL8 and EL9 defaults.
     dnf -y install python3.12 python3.12-devel python3.12-pip
     update-alternatives --install /usr/bin/python3 python3 "$(command -v python3.12)" 50
@@ -551,30 +568,26 @@ case "${os}" in
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCmake
         fi
-        if [[ $version != "rodete" ]] && _versionCompare ${version} -lt 23.04 ; then
-            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                _installPipCommon
+        # From Ubuntu 23.04 the system Python is externally managed
+        # (PEP 668): its packages come from apt, in -base with the other
+        # system packages.
+        if [[ $version != "rodete" ]] && _versionCompare ${version} -ge 23.04 \
+            && [[ "${option}" == "base" || "${option}" == "all" ]]; then
+            _installPipSystem
+        fi
+        # The lock, which also has packages apt does not carry, among them
+        # the klayout module the flow writes GDS with, goes into the
+        # virtual environment VIRTUAL_ENV names; setup.sh names the
+        # checkout's .venv. The lock needs Python 3.12, so on Ubuntu 22.04
+        # (Python 3.10) the virtual environment needs a newer Python.
+        if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            if [[ -z "${VIRTUAL_ENV:-}" ]]; then
+                echo "ERROR: set VIRTUAL_ENV to the virtual environment to" \
+                    "install etc/requirements-common_lock.txt into," \
+                    "or run setup.sh, which installs it into .venv." >&2
+                exit 1
             fi
-        else
-            # The system Python is externally managed (PEP 668): its
-            # packages come from apt, in -base with the other system
-            # packages. The lock, which also has packages apt does not
-            # carry, among them the klayout module the flow writes GDS
-            # with, goes into the virtual environment VIRTUAL_ENV names;
-            # setup.sh names the checkout's .venv.
-            if [[ $version != "rodete" ]] && [[ "${option}" == "base" || "${option}" == "all" ]]; then
-                _installPipSystem
-            fi
-            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-                if [[ -z "${VIRTUAL_ENV:-}" ]]; then
-                    echo "ERROR: the system Python is externally managed;" \
-                        "set VIRTUAL_ENV to the virtual environment to" \
-                        "install etc/requirements-common_lock.txt into," \
-                        "or run setup.sh, which installs it into .venv." >&2
-                    exit 1
-                fi
-                _installPipCommon
-            fi
+            _installPipCommon
         fi
         ;;
     "Darwin" )
