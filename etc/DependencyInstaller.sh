@@ -122,7 +122,7 @@ import sys
 if sys.version_info < (3, 12):
     sys.exit("ERROR: etc/requirements-common_lock.txt needs Python 3.12"
              " or newer; %s is %s." % (sys.executable, sys.version.split()[0]))
-' || exit 1
+'
 }
 
 _installPipCommon() {
@@ -133,10 +133,11 @@ _installPipCommon() {
         # The lock goes into the virtual environment, created if it does
         # not exist yet; the Docker images name one with ENV VIRTUAL_ENV.
         if [[ ! -x "${VIRTUAL_ENV}/bin/python3" ]]; then
-            _checkPython python3
+            _checkPython python3 || exit 1
             python3 -m venv "${VIRTUAL_ENV}"
-        else
-            _checkPython "${VIRTUAL_ENV}/bin/python3"
+        elif ! _checkPython "${VIRTUAL_ENV}/bin/python3"; then
+            echo "Move ${VIRTUAL_ENV} aside and recreate it with Python 3.12 or newer." >&2
+            exit 1
         fi
         "${VIRTUAL_ENV}/bin/python3" -m pip install --no-cache-dir --upgrade --require-hashes -r "$piplock"
         "${VIRTUAL_ENV}/bin/python3" -m pip install --no-cache-dir -r "$lockfile"
@@ -148,7 +149,7 @@ _installPipCommon() {
         echo "Error: Activate a virtual environment on macOS."
         exit 1
     else
-        _checkPython python3
+        _checkPython python3 || exit 1
         # pip before 23.3 fails --require-hashes on requirements-common_lock.txt:
         # it does not match an extras-bearing pin such as
         # googleapis-common-protos[grpc]==X against a plain request for the same
