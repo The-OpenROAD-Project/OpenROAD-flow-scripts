@@ -113,7 +113,7 @@ _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS} -yosys-ver="${YOSYS_VER}"
 }
 
-# Stops unless the Python interpreter $1 is 3.12 or newer. The lock files
+# Succeeds only if the Python interpreter $1 is 3.12 or newer. The lock files
 # are compiled with Python 3.12, and older versions cannot install some of
 # their pins.
 _checkPython() {
@@ -132,7 +132,7 @@ _installPipCommon() {
     if [[ -n "${VIRTUAL_ENV:-}" ]]; then
         # The lock goes into the virtual environment, created if it does
         # not exist yet; the Docker images name one with ENV VIRTUAL_ENV.
-        if [[ ! -x "${VIRTUAL_ENV}/bin/python3" ]]; then
+        if [[ ! -e "${VIRTUAL_ENV}/bin/python3" && ! -L "${VIRTUAL_ENV}/bin/python3" ]]; then
             _checkPython python3 || exit 1
             python3 -m venv "${VIRTUAL_ENV}"
         elif ! _checkPython "${VIRTUAL_ENV}/bin/python3"; then
