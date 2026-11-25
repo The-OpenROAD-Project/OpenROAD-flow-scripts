@@ -135,7 +135,7 @@ _installPipCommon() {
         if [[ ! -e "${VIRTUAL_ENV}/bin/python3" && ! -L "${VIRTUAL_ENV}/bin/python3" ]]; then
             _checkPython python3 || exit 1
             python3 -m venv "${VIRTUAL_ENV}"
-        elif ! _checkPython "${VIRTUAL_ENV}/bin/python3"; then
+        elif [[ ! -x "${VIRTUAL_ENV}/bin/python3" ]] || ! _checkPython "${VIRTUAL_ENV}/bin/python3"; then
             echo "Move ${VIRTUAL_ENV} aside and recreate it with Python 3.12 or newer." >&2
             exit 1
         fi
