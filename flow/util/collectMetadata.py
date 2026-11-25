@@ -121,16 +121,30 @@ def read_logs(log_dir):
     return facts
 
 
+def subdirs(path):
+    """The names of the directories directly under ``path``, sorted."""
+    try:
+        names = os.listdir(path)
+    except OSError:
+        return []
+    return sorted(n for n in names if os.path.isdir(os.path.join(path, n)))
+
+
+def run_dirs(reports):
+    """(platform, design, variant) of every run directory under ``reports``."""
+    for platform in subdirs(reports):
+        for design in subdirs(os.path.join(reports, platform)):
+            for variant in subdirs(os.path.join(reports, platform, design)):
+                yield platform, design, variant
+
+
 def collect(flow_dir):
     """The summary of every run under ``flow_dir``, as a dict."""
     designs = []
     skipped = []
     reports = os.path.join(flow_dir, "reports")
-    for report_dir, _, _ in sorted(os.walk(reports, topdown=False)):
-        parts = os.path.relpath(report_dir, reports).split(os.sep)
-        if len(parts) != 3:
-            continue
-        platform, design, variant = parts
+    for platform, design, variant in run_dirs(reports):
+        report_dir = os.path.join(reports, platform, design, variant)
         names = {"platform": platform, "design": design, "variant": variant}
 
         metrics = None
