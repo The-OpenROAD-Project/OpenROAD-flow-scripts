@@ -27,8 +27,14 @@ if { [env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS] } {
 }
 
 set elaborate_args [list \
-  -D SYNTHESIS --compat=vcs --ignore-assertions --no-implicit-memories --top $::env(DESIGN_NAME) \
-  {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
+  -D SYNTHESIS \
+  --compat=vcs \
+  --ignore-assertions \
+  --no-implicit-memories \
+  --top $::env(DESIGN_NAME) \
+  --ignore-timing \
+  {*}$vIdirsArgs \
+  {*}[env_var_or_empty VERILOG_DEFINES]]
 
 set verilog_files [synth_verilog_files]
 lappend elaborate_args {*}$verilog_files
