@@ -33,10 +33,17 @@ COPY --link --exclude=OpenROAD --exclude=AutoTuner --exclude=install tools tools
 COPY --link etc/kepler-formal etc/kepler-formal
 ARG numThreads=$(nproc)
 ARG verificPath=""
+# Pass the Yosys commit when the copied sources have no usable Git checkout.
+ARG yosysCommit=""
 
 RUN <<EOF
 set -e
 echo "" > tools/yosys/abc/.gitcommit
+if [ -n "${yosysCommit}" ]; then
+    echo "${yosysCommit}" > tools/yosys/.gitcommit
+    # Override the commit even when Yosys can read Git metadata.
+    set -- --yosys-args '-DYOSYS_CHECKOUT_INFO="${yosysCommit}"'
+fi
 if [ -n "${verificPath}" ]; then
     verificArgs="--with-verific ${verificPath}"
 else
@@ -46,7 +53,7 @@ fi
                     --local \
                     --skip_openroad \
                     --threads ${numThreads} \
-                    ${verificArgs}
+                    ${verificArgs} "$@"
 if [ -n "${verificPath}" ]; then
     rm -rf "${verificPath}"
 fi
@@ -74,9 +81,13 @@ FROM orfs-builder-base AS orfs-openroad-builder
 COPY --link --from=tools /OpenROAD-flow-scripts/tools/install tools/install
 COPY --link tools/OpenROAD tools/OpenROAD
 ARG numThreads=$(nproc)
+# The OpenROAD version, e.g. 26Q4-1798-g6932b6296c. Without git metadata,
+# OpenROAD reports "unknown" unless this is set.
+ARG openroadVersion=""
 
 RUN <<EOF
 set -e
+OPENROAD_VERSION="${openroadVersion}" \
 ./build_openroad.sh --no_init \
                     --local \
                     --openroad_only \

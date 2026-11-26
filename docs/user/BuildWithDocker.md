@@ -157,3 +157,6 @@ cd OpenROAD-flow-scripts
 ```
 
 Valid values for `$OS_NAME` are `ubuntu26.04` and `ubuntu24.04`.
+
+`DockerHelper.sh` passes the OpenROAD version and the Yosys commit from the tool checkouts to the builder.
+It appends `-dirty` when a checkout has changes to tracked files.
