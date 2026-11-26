@@ -169,7 +169,7 @@ export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/sg13g2_minimal_drc.py
 export CDL_FILE ?= $(PLATFORM_DIR)/cdl/sg13g2_stdcell.cdl
 export KLAYOUT_LVS_FILE ?= $(PLATFORM_DIR)/lvs/sg13g2_lvs.py
 
-export REMOVE_CELLS_FOR_LEC ?= "bondpad_70* sg13g2*"
+export REMOVE_CELLS_FOR_LEC ?= "bondpad_70*"
 
 # ---------------------------------------------------------
 #  Final

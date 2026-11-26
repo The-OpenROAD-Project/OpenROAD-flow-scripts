@@ -51,3 +51,7 @@ export TNS_END_PERCENT    = 100
 export SETUP_REPAIR_PHASES = PARALLEL_EVAL
 
 export RTLMP_MIN_CHANNEL_SIZE = 70 70
+
+# Temporary disabling: the hard macros carry no logic in their Liberty, which
+# leaves no output for the sequential check to verify.
+export SEC_CHECK = 0
