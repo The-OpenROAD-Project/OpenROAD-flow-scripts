@@ -144,7 +144,7 @@ if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
   }
 }
 
-if { !$::env(OPT_POST_GRT_WNS) } {
+if { !$::env(OPT_POST_GRT_WNS) && $::env(RECOVER_POWER) != 0 } {
   utl::push_metrics_stage "globalroute__recover_power__{}"
   log_cmd global_route -start_incremental {*}$allow_congestion
   recover_power_helper
