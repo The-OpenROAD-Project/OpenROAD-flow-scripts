@@ -169,7 +169,7 @@ def drc(deck):
     )
     gate.space(nm(100), projection).polygons().not_(fin).without_bbox_width(
         nm(34)
-    ).sized(0, nm(10)).output(
+    ).without_bbox_height(0, nm(10)).sized(0, nm(10)).output(
         "GATE.S.1", "GATE.S.1 : Exact horizontal GATE pitch : 54nm"
     )
     gate.space(nm(34), projection).with_angle(90).output(
