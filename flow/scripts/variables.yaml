@@ -1016,9 +1016,9 @@ SKIP_FLOORPLAN_REPAIR_TIMING:
   default: 0
 ENABLE_PLACE_REPAIR_TIMING:
   description: >
-    Run repair_timing during the placement resize stage using placement
-    parasitics. Disabled by default; pre-CTS setup/hold repair is skipped
-    unless this is set to 1.
+    Run setup repair_timing (without the last-gasp phase) during the
+    placement resize stage using placement parasitics. Disabled by default;
+    the repair also runs when SWAP_ARITH_OPERATORS swaps a module.
   stages:
     - place
   default: 0
