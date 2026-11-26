@@ -9,7 +9,7 @@ export LIB_DIR                ?= $(PLATFORM_DIR)/lib/$(LIB_MODEL)
 export PLATFORM_TCL            = $(PLATFORM_DIR)/liberty_suppressions.tcl
 
 #Library Setup variable
-export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_1x_201209.lef
+export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_1x_260907.lef
 
 export BC_TEMPERATURE          = 25C
 export TC_TEMPERATURE          = 0C
