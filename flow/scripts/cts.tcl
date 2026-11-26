@@ -10,26 +10,28 @@ source_step_tcl PRE CTS
 repair_clock_inverters
 
 # Run CTS
-set cts_args [list \
-  -sink_clustering_enable \
-  -repair_clock_nets]
+set deprecated {}
+append_env_var deprecated CTS_BUF_DISTANCE -distance_between_buffers 1
+append_env_var deprecated CTS_CLUSTER_SIZE -sink_clustering_size 1
+append_env_var deprecated CTS_CLUSTER_DIAMETER -sink_clustering_max_diameter 1
+append_env_var deprecated CTS_BUF_LIST -buf_list 1
+append_env_var deprecated CTS_LIB_NAME -library 1
+append_env_var deprecated CTS_USEFUL_SKEW -useful_skew 0
+set cts_args [list -sink_clustering_enable -repair_clock_nets {*}$deprecated]
 
-append_env_var cts_args CTS_BUF_DISTANCE -distance_between_buffers 1
-append_env_var cts_args CTS_CLUSTER_SIZE -sink_clustering_size 1
-append_env_var cts_args CTS_CLUSTER_DIAMETER -sink_clustering_max_diameter 1
-append_env_var cts_args CTS_BUF_LIST -buf_list 1
-append_env_var cts_args CTS_LIB_NAME -library 1
-append_env_var cts_args CTS_USEFUL_SKEW -useful_skew 0
-
+# CTS_ARGS, deprecated, replaces the flow's arguments.
 if { [env_var_exists_and_non_empty CTS_ARGS] } {
   set cts_args $::env(CTS_ARGS)
+  set deprecated $cts_args
 }
 
 set_dont_use $::env(DONT_USE_CELLS)
 
-log_cmd clock_tree_synthesis {*}$cts_args
+log_cmd clock_tree_synthesis \
+  {*}[command_args clock_tree_synthesis cts.main $cts_args $deprecated]
 
-if { $::env(DETAILED_METRICS) } {
+# The estimate before detailed placement feeds only this report.
+if { [command_runs report_metrics cts.cts_pre_repair_timing $::env(DETAILED_METRICS)] } {
   utl::push_metrics_stage "cts__{}__pre_repair_timing"
   log_cmd estimate_parasitics
   report_metrics 4 "cts pre-repair-timing"
@@ -40,24 +42,24 @@ set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
-detailed_placement_helper -quiet
+detailed_placement_helper cts.main -quiet
 
 log_cmd estimate_parasitics
 
-if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
+if { [command_runs repair_timing cts.main [expr { !$::env(SKIP_CTS_REPAIR_TIMING) }]] } {
   set lec_enabled [lec_check_enabled]
   if { $lec_enabled } {
     write_lec_verilog 4_before_rsz_lec.v
   }
 
-  repair_timing_helper
+  repair_timing_helper cts.main
 
   if { $lec_enabled } {
     write_lec_verilog 4_after_rsz_lec.v
     run_lec_test 4_rsz 4_before_rsz_lec.v 4_after_rsz_lec.v
   }
 
-  detailed_placement_helper -quiet
+  detailed_placement_helper cts.repair_timing -quiet
 
   log_cmd check_placement -placeable -verbose
 
