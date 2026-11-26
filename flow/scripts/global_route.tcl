@@ -36,6 +36,22 @@ proc set_grt_seed { } {
   }
 }
 
+# Multiply every routing layer's adjustment by scale. The scaled adjustments
+# are written to the database, so antenna repair after detailed routing uses
+# them too.
+proc scale_layer_adjustments { scale } {
+  if { $scale == 1 } {
+    return
+  }
+  foreach layer [[ord::get_db_tech] getLayers] {
+    set adjustment [$layer getLayerAdjustment]
+    if { $adjustment != 0 } {
+      log_cmd set_global_routing_layer_adjustment [$layer getName] \
+        [expr { $adjustment * $scale }]
+    }
+  }
+}
+
 proc do_global_route { grt_args } {
   set_grt_seed
   log_cmd global_route {*}$grt_args
@@ -47,6 +63,12 @@ append_env_var additional_args VIA_IN_PIN_MAX_LAYER -via_in_pin_top_layer 1
 
 log_cmd pin_access {*}$additional_args
 
+# CUGR charges via demand and follows the design rules more closely than
+# FastRoute, so it may need less of the capacity the layer adjustments hold
+# back.
+if { $::env(GLOBAL_ROUTE_USE_CUGR) } {
+  scale_layer_adjustments $::env(GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE)
+}
 do_global_route $grt_args
 
 use_ccs_delay_calculator
@@ -142,6 +164,12 @@ if { [command_runs repair_antennas grt.main $run] } {
   # repair antennas calls DPL internally
   log_cmd check_placement -placeable -verbose
   check_antennas -report_file $::env(REPORTS_DIR)/grt_antennas.log
+}
+
+# CUGR, unlike FastRoute, can end the incremental routes and antenna repair
+# with congestion; report it once global routing is final.
+if { $::env(GLOBAL_ROUTE_USE_CUGR) && [has_congestion] } {
+  log_cmd report_congestion
 }
 
 puts "Estimate parasitics..."

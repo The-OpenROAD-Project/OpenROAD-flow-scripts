@@ -103,6 +103,13 @@ Several of the rules exist for them.
   unsets it before the sub-make, and the fallback fires there with an in-tree
   path that a flow supplying its own tools does not have (the "HERE BE
   DRAGONS" comment in `flow/scripts/variables.mk`).
+- **`OPENROAD_EXE` and `YOSYS_EXE` are commands, never assumed to be a
+  single path.** A wrapper can come first: `OPENROAD_EXE="gdb --args
+  openroad"`. A recipe or shell script runs the value as the shell splits
+  it, Python splits it with `shlex.split`, and a check looks at its first
+  word.
+  *Breaks:* running a tool under a debugger, valgrind or perf needs a
+  switch of its own for each tool.
 - **Only the Makefile sets `RESULTS_DIR`, `LOG_DIR`, `REPORTS_DIR` and
   `OBJECTS_DIR`.** It derives them from `WORK_HOME`, which a flow sets. A
   variable a flow adds never reuses one of these names.

@@ -276,13 +276,140 @@ class MergeBaseTest(CheckQorMetricsTest):
         _, _, payloads = self.check(COMMIT)
         self.assertNotIn("BaseCommitSha", payloads[0])
 
-    def test_unknown_ref_is_an_error(self):
+    def test_missing_explicit_ref_is_ignored_when_no_pin_applies(self):
+        repository, pushed, _ = self.repository()
+        self.enter(repository)
+        os.environ["DASHBOARD_MERGE_BASE"] = "missing/ref"
+        for commit in (pushed, COMMIT, "N/A"):
+            with self.subTest(commit=commit):
+                code, output, payloads = self.check(commit)
+                self.assertEqual(code, 0)
+                self.assertTrue(output.rstrip().endswith("QoR check: PASS"))
+                self.assertEqual(len(payloads), 1)
+                self.assertNotIn("BaseCommitSha", payloads[0])
+
+    def test_pin_warns_with_the_ref(self):
+        repository, master, unpushed = self.repository()
+        self.enter(repository)
+        _, output, _ = self.check(unpushed)
+        self.assertIn(
+            f"[WARN] {unpushed[:12]} is on no remote, so the baseline was pinned "
+            f"to its local merge base {master[:12]} with refs/remotes/origin/master",
+            output,
+        )
+
+    def test_upstream_master_is_the_default_when_it_exists(self):
+        # A fork clone: origin/master is the fork's old master, upstream/master
+        # the project's, and the local commit is on the project's.
+        repository, old_master, _ = self.repository()
+        git(repository, "reset", "-q", "--hard", old_master)
+        git(repository, "commit", "-q", "--allow-empty", "-m", "upstream")
+        upstream = git(repository, "rev-parse", "HEAD")
+        git(repository, "update-ref", "refs/remotes/upstream/master", upstream)
+        git(repository, "branch", "upstream/master", old_master)
+        git(repository, "commit", "-q", "--allow-empty", "-m", "local")
+        unpushed = git(repository, "rev-parse", "HEAD")
+        self.enter(repository)
+        _, output, payloads = self.check(unpushed)
+        self.assertEqual(payloads[0]["BaseCommitSha"], upstream)
+        self.assertIn(f"{upstream[:12]} with refs/remotes/upstream/master", output)
+
+    def test_missing_upstream_tracking_ref_falls_back_past_local_tag(self):
+        repository, master, unpushed = self.repository()
+        self.enter(repository)
+        for tag in ("upstream/master", "refs/remotes/upstream/master"):
+            with self.subTest(tag=tag):
+                git(repository, "tag", tag, unpushed)
+                _, _, payloads = self.check(unpushed)
+                self.assertEqual(payloads[0]["BaseCommitSha"], master)
+
+    def test_upstream_tracking_ref_without_a_commit_falls_back_to_origin(self):
+        repository, master, unpushed = self.repository()
+        tree = git(repository, "rev-parse", "HEAD^{tree}")
+        git(repository, "update-ref", "refs/remotes/upstream/master", tree)
+        self.enter(repository)
+        _, _, payloads = self.check(unpushed)
+        self.assertEqual(payloads[0]["BaseCommitSha"], master)
+
+    def test_no_merge_base_warns_and_sends_no_pin(self):
+        repository, _, unpushed = self.repository()
+        git(repository, "checkout", "-q", "--orphan", "unrelated")
+        git(repository, "commit", "-q", "--allow-empty", "-m", "unrelated")
+        unrelated = git(repository, "rev-parse", "HEAD")
+        git(repository, "update-ref", "refs/remotes/upstream/master", unrelated)
+        self.enter(repository)
+        code, output, payloads = self.check(unpushed)
+        self.assertEqual(code, 0)
+        self.assertEqual(len(payloads), 1)
+        self.assertNotIn("BaseCommitSha", payloads[0])
+        self.assertIn(
+            "[WARN] " + unpushed[:12] + " is on no remote and has no merge base "
+            "with refs/remotes/upstream/master, so the baseline was not pinned",
+            output,
+        )
+        self.assertIn("QoR check: PASS", output)
+
+    def test_missing_automatic_ref_warns_and_sends_no_pin(self):
+        repository, _, unpushed = self.repository()
+        git(repository, "update-ref", "-d", "refs/remotes/origin/master")
+        git(repository, "tag", "refs/remotes/origin/master", unpushed)
+        self.enter(repository)
+        code, output, payloads = self.check(unpushed)
+        self.assertEqual(code, 0)
+        self.assertNotIn("BaseCommitSha", payloads[0])
+        self.assertIn("[WARN] refs/remotes/origin/master does not exist here", output)
+
+    def test_explicit_missing_ref_is_an_error(self):
         repository, _, unpushed = self.repository()
         self.enter(repository)
-        code, output, payloads = self.check(unpushed, "--merge-base", "upstream/master")
+        code, output, payloads = self.check(unpushed, "--merge-base", "upstrem/master")
         self.assertEqual(code, 1)
         self.assertEqual(payloads, [])
-        self.assertIn("has no merge base with upstream/master", output)
+        self.assertIn("--merge-base upstrem/master does not exist here", output)
+        self.assertTrue(output.rstrip().endswith("QoR check: ERROR"))
+
+    def test_explicit_ref_from_the_environment_is_an_error_too(self):
+        repository, _, unpushed = self.repository()
+        os.environ["DASHBOARD_MERGE_BASE"] = "upstrem/master"
+        self.enter(repository)
+        code, output, payloads = self.check(unpushed)
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        self.assertIn("DASHBOARD_MERGE_BASE upstrem/master does not exist here", output)
+        self.assertTrue(output.rstrip().endswith("QoR check: ERROR"))
+
+    def test_explicit_ref_without_shared_history_is_an_error(self):
+        repository, _, unpushed = self.repository()
+        git(repository, "checkout", "-q", "--orphan", "unrelated")
+        git(repository, "commit", "-q", "--allow-empty", "-m", "unrelated")
+        git(repository, "branch", "-q", "trunk", "HEAD")
+        self.enter(repository)
+        code, output, payloads = self.check(unpushed, "--merge-base", "trunk")
+        self.assertEqual(code, 1)
+        self.assertEqual(payloads, [])
+        self.assertIn(
+            f"[ERROR] asap7/gcd/base: {unpushed[:12]} has no merge base with "
+            "trunk (--merge-base)",
+            output,
+        )
+        self.assertIn("QoR check: ERROR", output)
+
+    def test_failed_remote_lookup_sends_no_pin(self):
+        repository, _, unpushed = self.repository()
+        self.enter(repository)
+        real_git = checkQorMetrics.git
+
+        def git_without_for_each_ref(*args):
+            return None if args[0] == "for-each-ref" else real_git(*args)
+
+        for args in ((), ("--merge-base", "missing/ref")):
+            with self.subTest(args=args), patch.object(
+                checkQorMetrics, "git", git_without_for_each_ref
+            ):
+                code, output, payloads = self.check(unpushed, *args)
+                self.assertEqual(code, 0)
+                self.assertNotIn("BaseCommitSha", payloads[0])
+                self.assertIn(f"git could not tell whether {unpushed[:12]}", output)
 
     def test_ref_from_the_environment(self):
         repository, _, unpushed = self.repository()
@@ -292,33 +419,91 @@ class MergeBaseTest(CheckQorMetricsTest):
         _, _, payloads = self.check(unpushed)
         self.assertEqual(payloads[0]["BaseCommitSha"], unpushed)
 
+    def test_explicit_ref_can_search_commit_messages(self):
+        repository, master, unpushed = self.repository()
+        self.enter(repository)
+        code, _, payloads = self.check(unpushed, "--merge-base", ":/master")
+        self.assertEqual(code, 0)
+        self.assertEqual(payloads[0]["BaseCommitSha"], master)
+
     def test_none_turns_it_off(self):
         repository, _, unpushed = self.repository()
         self.enter(repository)
+        os.environ["DASHBOARD_MERGE_BASE"] = "missing/ref"
         _, _, payloads = self.check(unpushed, "--merge-base", "none")
         self.assertNotIn("BaseCommitSha", payloads[0])
 
     def test_base_commit_wins(self):
         repository, _, unpushed = self.repository()
         self.enter(repository)
-        _, _, payloads = self.check(unpushed, "--base-commit", BASE)
+        _, _, payloads = self.check(
+            unpushed, "--base-commit", BASE, "--merge-base", "missing/ref"
+        )
         self.assertEqual(payloads[0]["BaseCommitSha"], BASE)
 
     def test_job_name_skips_it(self):
         repository, _, unpushed = self.repository()
         self.enter(repository)
+        os.environ["DASHBOARD_MERGE_BASE"] = "missing/ref"
         _, _, payloads = self.check(unpushed, "--job-name", "orfs-ci")
         self.assertNotIn("BaseCommitSha", payloads[0])
 
-    def test_pinned_merge_base_without_a_build_suggests_turning_it_off(self):
+    def test_merge_base_without_a_build_is_sent_again_unpinned(self):
+        repository, master, unpushed = self.repository()
+        self.enter(repository)
+        code, output, payloads = self.run_check(
+            metadata=self.metadata(commit=unpushed),
+            dashboard=Dashboard(
+                response(status="no_baseline", strategy="none"),
+                response(strategy="latest-master"),
+            ),
+        )
+        self.assertEqual(code, 0)
+        self.assertEqual(len(payloads), 2)
+        self.assertEqual(payloads[0]["BaseCommitSha"], master)
+        self.assertNotIn("BaseCommitSha", payloads[1])
+        self.assertIn(
+            f"merge base {master[:12]} with refs/remotes/origin/master has no "
+            "build of this design, so the check was sent again without that pin",
+            output,
+        )
+        self.assertIn("compared against the latest master build", output)
+        self.assertIn("QoR check: PASS", output)
+
+    def test_unpinned_retry_keeps_the_pin_warning_and_final_verdict(self):
+        repository, master, unpushed = self.repository()
+        self.enter(repository)
+        no_baseline = response(status="no_baseline", strategy="none")
+        for retry, exit_code, verdict in (
+            (no_baseline, 2, "INCONCLUSIVE"),
+            (response(status="fail", failed=1), 1, "FAIL"),
+            ([], 3, "INCONCLUSIVE"),
+        ):
+            with self.subTest(exit_code=exit_code):
+                code, output, payloads = self.run_check(
+                    "--strict",
+                    metadata=self.metadata(commit=unpushed),
+                    dashboard=Dashboard(no_baseline, retry),
+                )
+                self.assertEqual(code, exit_code)
+                self.assertEqual(len(payloads), 2)
+                self.assertEqual(payloads[0]["BaseCommitSha"], master)
+                self.assertNotIn("BaseCommitSha", payloads[1])
+                self.assertIn("the check was sent again without that pin", output)
+                self.assertTrue(output.rstrip().endswith(f"QoR check: {verdict}"))
+
+    def test_explicit_base_commit_without_a_build_is_not_sent_again(self):
         repository, _, unpushed = self.repository()
         self.enter(repository)
-        code, output, _ = self.run_check(
+        code, output, payloads = self.run_check(
+            "--base-commit",
+            BASE,
             metadata=self.metadata(commit=unpushed),
             dashboard=Dashboard(response(status="no_baseline", strategy="none")),
         )
         self.assertEqual(code, 0)
-        self.assertIn("DASHBOARD_MERGE_BASE=none", output)
+        self.assertEqual(len(payloads), 1)
+        self.assertIn("QoR check: INCONCLUSIVE", output)
 
 
 class MetricFilterTest(CheckQorMetricsTest):
@@ -411,17 +596,22 @@ class ReportTest(CheckQorMetricsTest):
         failed = {
             "metricName": "finish__timing__setup__ws",
             "status": "fail",
-            "baselineValue": 2,
-            "currentValue": 1.5,
-            "limit": 1.9,
+            "baseValue": 2,
+            "targetValue": 1.5,
+            "thresholdValue": 1.9,
             "deltaPct": -25,
         }
         code, output, _ = self.run_check(
             dashboard=Dashboard(response(status="fail", failed=1, metrics=[failed]))
         )
         self.assertEqual(code, 1)
-        self.assertIn("finish__timing__setup__ws", output)
-        self.assertIn("-25.00", output)
+        self.assertIn(
+            checkQorMetrics.ROW_FMT.format(
+                "finish__timing__setup__ws", "2", "1.5000", "1.9000", "-25.00"
+            ),
+            output,
+        )
+        self.assertIn("finish__timing__setup__ws 1.5 (base 2, limit 1.9)", output)
         self.assertIn("QoR check: FAIL", output)
 
     def test_latest_master_warns_with_a_commit(self):
@@ -518,6 +708,18 @@ class SweepTest(CheckQorMetricsTest):
             log = log_file.read()
         self.assertIn("is not a full 40-character SHA", log)
         self.assertNotIn("QoR check: PASS", log)
+
+    def test_missing_explicit_ref_fails_only_runs_that_need_a_pin(self):
+        repository, pushed, unpushed = self.repository()
+        self.metadata("repo/reports/asap7/gcd/base/metadata.json", commit=pushed)
+        self.metadata("repo/reports/asap7/aes/base/metadata.json", commit=unpushed)
+        self.enter(repository)
+        code, output, payloads = self.run_sweep("--merge-base", "missing/ref")
+        self.assertEqual(code, 1)
+        self.assertEqual([p["DesignName"] for p in payloads], ["gcd"])
+        self.assertIn("[ERROR] asap7/aes/base:", output)
+        with open(checkQorMetrics.LOG_FILENAME, encoding="utf-8") as log_file:
+            self.assertTrue(log_file.read().rstrip().endswith("QoR check: ERROR"))
 
     def test_bad_commit_without_reports_writes_no_log(self):
         code, _, _ = self.run_sweep("--commit", "abc1234")

@@ -3,6 +3,9 @@ tools/OpenROAD/build/
 # A checkout from before kepler-formal moved to etc/kepler-formal keeps
 # the old submodule tree; keep it out of the image and its licenses.
 tools/kepler-formal/
+# A checkout from before OpenROAD renamed src/ to openroad/ keeps the old
+# OpenSTA submodule tree; keep it out of the image and its licenses.
+tools/OpenROAD/src/
 # Local Bazel outputs; the image builds its own.
 etc/kepler-formal/bazel-*
 etc/kepler-formal/MODULE.bazel.lock

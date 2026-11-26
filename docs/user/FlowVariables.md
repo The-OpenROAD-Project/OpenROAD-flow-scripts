@@ -99,14 +99,18 @@ configuration file.
 | <a name="ABC_SCRIPT"></a>ABC_SCRIPT| Replaces the ABC script synthesis runs, so that a design can vendor and change it. Ignored when SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS is set: abc_new then maps each arithmetic operator with its own script.| |
 | <a name="ABSTRACT_SOURCE"></a>ABSTRACT_SOURCE| Which .odb file to use to create abstract| |
 | <a name="ADDER_MAP_FILE"></a>ADDER_MAP_FILE| Optional mapping file supplied to Yosys to map adders| |
+| <a name="ADDITIONAL_FAST_LIBS"></a>ADDITIONAL_FAST_LIBS| Hardened macro library files for the fast corner, on a platform that keeps one liberty list per corner (see CORNERS). The platform config adds them to its FAST_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the fast corner timing model of each block is appended.| |
 | <a name="ADDITIONAL_FILES"></a>ADDITIONAL_FILES| Additional files to be added to `make issue` archive.| |
 | <a name="ADDITIONAL_GDS"></a>ADDITIONAL_GDS| Hardened macro GDS files listed here.| |
 | <a name="ADDITIONAL_LEFS"></a>ADDITIONAL_LEFS| Hardened macro LEF view files listed here. The LEF information of the macros is immutable and used throughout all stages. Stored in the .odb file.| |
 | <a name="ADDITIONAL_LIBS"></a>ADDITIONAL_LIBS| Hardened macro library files listed here. The library information is immutable and used throughout all stages. Not stored in the .odb file.| |
 | <a name="ADDITIONAL_MEMORIES"></a>ADDITIONAL_MEMORIES| Experimental. Space-separated list of user-supplied `.memories` files (the memories.json JSON schema) merged onto the set AUTO_MEMORIES detects — to force-convert a memory the idiomatic gate rejects, or to describe one the scanner cannot find. See docs/user/AutoMemories.md.| |
 | <a name="ADDITIONAL_SITES"></a>ADDITIONAL_SITES| Passed as -additional_sites to initialize_floorplan.| |
+| <a name="ADDITIONAL_SLOW_LIBS"></a>ADDITIONAL_SLOW_LIBS| Hardened macro library files for the slow corner, on a platform that keeps one liberty list per corner (see CORNERS). The platform config adds them to its SLOW_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the slow corner timing model of each block is appended.| |
+| <a name="ADDITIONAL_TYP_LIBS"></a>ADDITIONAL_TYP_LIBS| Hardened macro library files for the typical corner, on a platform that keeps one liberty list per corner (see CORNERS). The platform config adds them to its TYP_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the typical corner timing model of each block is appended.| |
 | <a name="ASAP7_USE_VT"></a>ASAP7_USE_VT| A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.| RVT|
 | <a name="AUTO_MEMORIES"></a>AUTO_MEMORIES| Experimental. When set to 1, memories that yosys infers in the RTL (`$mem_v2` cells, module boundary only) are detected pre-synthesis, inventoried in `$(RESULTS_DIR)/memories.json`, and — when idiomatic as an SRAM macro — given generated .lib/.lef views under `$(RESULTS_DIR)/memories/`. Synthesis blackboxes those modules and all later stages read the generated views, so an existing design gets macro-based results without a memory compiler. Supported for the asap7 platform only. See docs/user/AutoMemories.md.| 0|
+| <a name="AUTO_MEMORIES_DIR"></a>AUTO_MEMORIES_DIR| Directory every step reads AUTO_MEMORIES' generated views and lists from, synthesis included. Synthesis writes them to its own $(RESULTS_DIR)/memories, the default; with make, leave it there. For a build system that runs a stage of one variant on another variant's synthesis (e.g. bazel-orfs), which sets it for each step it runs, synthesis included, to the memories of the variant that synthesised them. Like AUTO_MEMORIES, not tied to stages: every step that reads the views needs it, the abstract among them.| |
 | <a name="AUTO_MEMORIES_MACRO_PLACE"></a>AUTO_MEMORIES_MACRO_PLACE| Experimental. Space-separated list of module names of AUTO_MEMORIES_REGFILES register files to place as macros, blackboxed in synthesis and placed by the macro placer (and, in `mode netlist`, dissolved after macro placement). A register file not listed is inlined: its generated netlist of standard cells replaces the module's body in synthesis, and its cells are placed, sized and buffered with the rest of the design -- the better shape for a small design, where a macro's outline and channels cost more core than the array saves. A name no spec builds stops the build. Requires AUTO_MEMORIES=1.| |
 | <a name="AUTO_MEMORIES_REGFILES"></a>AUTO_MEMORIES_REGFILES| Experimental. Space-separated list of register-file spec files, one per RTL module to build as a register file of placed standard cells rather than synthesise to flops. Each spec names its module, words, bits, read and write ports by the RTL's own port names, and the cells. memories/regfile_ram.py checks the spec against the module's ports and has OpenROAD's generate_ram build it as `<module>_ram`, under `$(RESULTS_DIR)/memories/`, with a wrapper in the module's place. A module named in AUTO_MEMORIES_MACRO_PLACE is blackboxed like an AUTO_MEMORIES macro and placed as one; any other is inlined as its generated netlist. A placed spec in `mode netlist` then dissolves into its cells after macro placement: its core FIRM where the macro was placed, in the macro's orientation, its periphery left to placement. Every register file appears in memories.json with kind `regfile`. Requires AUTO_MEMORIES=1.| |
 | <a name="BALANCE_ROWS"></a>BALANCE_ROWS (deprecated)| Balance rows during placement. Instead of BALANCE_ROWS=1, write `BALANCE_ROW_USAGE_ARGS = 1`.| 0|
@@ -158,7 +162,7 @@ configuration file.
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| |
 | <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
-| <a name="FLOW_INPUT_VARIANT"></a>FLOW_INPUT_VARIANT| Flow variant a stage reads the previous stage's result from, the .odb and the .sdc beside it. Defaults to FLOW_VARIANT. A variant forked off another sets it to that variant for the first stage it runs, then leaves it at the default: the shared stages run once, and the fork writes only its own results. A stage's later steps read the stage's own results. A stage stops when its input is in both variants. Not with AUTO_MEMORIES=1, whose memories are read from the variant that synthesised them.| |
+| <a name="FLOW_INPUT_VARIANT"></a>FLOW_INPUT_VARIANT| Flow variant a stage reads the previous stage's result from, the .odb and the .sdc beside it. Defaults to FLOW_VARIANT. A variant forked off another sets it to that variant for the first stage it runs, then leaves it at the default: the shared stages run once, and the fork writes only its own results. A stage's later steps read the stage's own results. A stage stops when its input is in both variants. With AUTO_MEMORIES=1, AUTO_MEMORIES_DIR names the memories of the variant that synthesised them, for every stage the fork runs.| |
 | <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base|
 | <a name="FOOTPRINT"></a>FOOTPRINT| Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
 | <a name="FOOTPRINT_TCL"></a>FOOTPRINT_TCL| Specifies a Tcl script with custom footprint-related commands for floorplan setup.| |
@@ -167,7 +171,8 @@ configuration file.
 | <a name="GLOBAL_CONNECT_TCL"></a>GLOBAL_CONNECT_TCL| File path to the add_global_connection rules that connect the supply pins of the instances to the supply nets. Sourced at floorplan right after the netlist is loaded, before any step can mark an instance dont_touch; the rules are kept in the database. The platform's file by default; a design whose PDN_TCL names other supply nets sets its own. PDN_TCL defines the grids.| |
 | <a name="GLOBAL_PLACEMENT_ARGS"></a>GLOBAL_PLACEMENT_ARGS| Edits to the arguments the flow passes to `global_placement`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `1`/`0`, each optionally scoped `stage:` or `stage.call:`.| |
 | <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Edits to the arguments the flow passes to `global_route`, in the grammar of docs/user/CommandArguments.md: `-option value`, `-flag`, `~-option`, `1`/`0`, each optionally scoped `stage:` or `stage.call:`. Edits the first global_route; the incremental ones after repair take -allow_congestion from it.| -congestion_report_iter_step 5 -verbose|
-| <a name="GLOBAL_ROUTE_USE_CUGR"></a>GLOBAL_ROUTE_USE_CUGR| Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.| 0|
+| <a name="GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE"></a>GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE| Multiplies every routing layer's global routing adjustment, from ROUTING_LAYER_ADJUSTMENT or FASTROUTE_TCL, when CUGR is the global router, from 0 (no adjustment) to 1 (unchanged). CUGR charges via demand and follows the design rules more closely than FastRoute, so it may need less capacity held back. The scaled adjustments are saved in the global routing database, so antenna repair after detailed routing uses them too.| 0.5|
+| <a name="GLOBAL_ROUTE_USE_CUGR"></a>GLOBAL_ROUTE_USE_CUGR| Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of FastRoute. FastRoute is the default; the sky130hd and sky130hs platforms use CUGR.| 0|
 | <a name="GND_NETS_VOLTAGES"></a>GND_NETS_VOLTAGES| Used for IR Drop calculation.| |
 | <a name="GPL_KEEP_OVERFLOW"></a>GPL_KEEP_OVERFLOW| Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.| |
 | <a name="GPL_PLACE_IOS"></a>GPL_PLACE_IOS| Place IO pins together with the cells in global placement (-place_ios).| 0|
@@ -302,6 +307,7 @@ configuration file.
 | <a name="SETUP_MOVE_SEQUENCE"></a>SETUP_MOVE_SEQUENCE (deprecated)| Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas. Instead, write `REPAIR_TIMING_ARGS = -sequence <value>`.| |
 | <a name="SETUP_REPAIR_PHASES"></a>SETUP_REPAIR_PHASES (deprecated)| Passed as -phases to repair_timing. This should be a string of setup repair phase names separated by spaces. Set to PARALLEL_EVAL to repair setup timing with the experimental parallel evaluation policy. When unset, repair_timing runs its default phases. Instead, write `REPAIR_TIMING_ARGS = -phases <value>`.| |
 | <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN (deprecated)| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). See HOLD_SLACK_MARGIN for more details. Instead, write `REPAIR_TIMING_ARGS = -setup_margin <value>`.| 0|
+| <a name="SIG_MAP_FILE"></a>SIG_MAP_FILE| Signal map file for ICeWall-based floorplan initialization: the signal each pad of the FOOTPRINT file connects to.| |
 | <a name="SKIP_ANTENNA_REPAIR"></a>SKIP_ANTENNA_REPAIR (deprecated)| Skips antenna repair entirely. Instead of SKIP_ANTENNA_REPAIR=1, write `REPAIR_ANTENNAS_ARGS = grt:0`.| 0|
 | <a name="SKIP_ANTENNA_REPAIR_POST_DRT"></a>SKIP_ANTENNA_REPAIR_POST_DRT (deprecated)| Skips antenna repair post-detailed routing. Instead of SKIP_ANTENNA_REPAIR_POST_DRT=1, write `REPAIR_ANTENNAS_ARGS = route:0`.| 0|
 | <a name="SKIP_BUFFER_REMOVAL"></a>SKIP_BUFFER_REMOVAL (deprecated)| Passed as -skip_buffer_removal to repair_timing. Do not remove buffers as a transform to fix timing violations (default: allow buffer removal). Instead of SKIP_BUFFER_REMOVAL=1, write `REPAIR_TIMING_ARGS = -skip_buffer_removal`.| |
@@ -337,7 +343,7 @@ configuration file.
 | <a name="SYNTH_OPERATIONS_ARGS"></a>SYNTH_OPERATIONS_ARGS| Extra arguments appended to the Yosys synth command operations list. When set, replaces the default Kogge-Stone adder extra-map.| |
 | <a name="SYNTH_OPT_HIER"></a>SYNTH_OPT_HIER| Optimize constants across hierarchical boundaries.| 0|
 | <a name="SYNTH_REPEATABLE_BUILD"></a>SYNTH_REPEATABLE_BUILD| License to prune anything that makes builds less repeatable, typically used with Bazel to ensure that builds are bit-for-bit identical so that caching works optimally. Removes debug information that encodes paths, timestamps, etc.| 0|
-| <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| *This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.* List of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. The main use case is to quickly identify if performance can be improved by manually retiming the input RTL. Retiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion  # 8080.| |
+| <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| *This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.* List of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. Each entry is a glob over the modules left after flattening, and an entry that matches none of them is an error. The slang frontend names a kept module `Name$<path>`, which `Name*` matches. The main use case is to quickly identify if performance can be improved by manually retiming the input RTL. Retiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion  # 8080.| |
 | <a name="SYNTH_SKIP_KEEP"></a>SYNTH_SKIP_KEEP| Only meaningful together with SYNTH_CHECKPOINT. When set, signals that the supplied checkpoint is still canonical RTLIL (coarse synth and `keep_hierarchy` have not been run yet), so synth.tcl runs the full coarse+fine synthesis flattened. When unset and SYNTH_CHECKPOINT is used, synth.tcl assumes the checkpoint already has coarse synth + `keep_hierarchy` done and resumes from `coarse:fine`.| 0|
 | <a name="SYNTH_SLANG_ARGS"></a>SYNTH_SLANG_ARGS| Additional arguments passed to the slang frontend during synthesis.| |
 | <a name="SYNTH_USE_SYN"></a>SYNTH_USE_SYN| If set to 1, run synthesis using the "syn" tool built into OpenROAD (the synth_syn.tcl flow) instead of the default Yosys-based flow. Defaults to 0 (Yosys flow).| 0|
@@ -498,6 +504,7 @@ configuration file.
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_REPAIR_PHASES](#SETUP_REPAIR_PHASES)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
+- [SIG_MAP_FILE](#SIG_MAP_FILE)
 - [SKIP_BUFFER_REMOVAL](#SKIP_BUFFER_REMOVAL)
 - [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
 - [SKIP_FLOORPLAN_REPAIR_TIMING](#SKIP_FLOORPLAN_REPAIR_TIMING)
@@ -614,6 +621,7 @@ configuration file.
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
 - [FLOW_INPUT_VARIANT](#FLOW_INPUT_VARIANT)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
+- [GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE](#GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE)
 - [GLOBAL_ROUTE_USE_CUGR](#GLOBAL_ROUTE_USE_CUGR)
 - [GRT_SEED](#GRT_SEED)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
@@ -721,10 +729,14 @@ configuration file.
 
 ## Uncategorized variables
 
+- [ADDITIONAL_FAST_LIBS](#ADDITIONAL_FAST_LIBS)
 - [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [ADDITIONAL_LEFS](#ADDITIONAL_LEFS)
 - [ADDITIONAL_LIBS](#ADDITIONAL_LIBS)
+- [ADDITIONAL_SLOW_LIBS](#ADDITIONAL_SLOW_LIBS)
+- [ADDITIONAL_TYP_LIBS](#ADDITIONAL_TYP_LIBS)
 - [AUTO_MEMORIES](#AUTO_MEMORIES)
+- [AUTO_MEMORIES_DIR](#AUTO_MEMORIES_DIR)
 - [CAP_MARGIN](#CAP_MARGIN)
 - [CDL_FILES](#CDL_FILES)
 - [CORNER](#CORNER)

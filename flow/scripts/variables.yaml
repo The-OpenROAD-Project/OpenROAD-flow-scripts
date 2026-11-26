@@ -142,9 +142,13 @@ TECH_LEF:
   description: >
     A technology LEF file of the PDK that includes all relevant information
     regarding metal layers, vias, and spacing requirements.
+  type: file
+  platform: true
 SC_LEF:
   description: |
     Path to technology standard cell LEF file.
+  type: file
+  platform: true
 GDS_FILES:
   description: |
     Path to platform GDS files.
@@ -153,6 +157,8 @@ LIB_FILES:
     A Liberty file of the standard cell library with PVT characterization,
     input and output characteristics, timing and power definitions for each
     cell.
+  type: file
+  platform: true
 LIB_MODEL:
   description: >
     Selects between NLDM and CCS timing models for the ASAP7 platform.
@@ -193,6 +199,16 @@ SYNTH_USE_SYN:
   stages:
     - synth
   default: 0
+AUTO_MEMORIES_DIR:
+  description: >
+    Directory every step reads AUTO_MEMORIES' generated views and lists
+    from, synthesis included. Synthesis writes them to its own
+    $(RESULTS_DIR)/memories, the default; with make, leave it there. For
+    a build system that runs a stage of one variant on another variant's
+    synthesis (e.g. bazel-orfs), which sets it for each step it runs,
+    synthesis included, to the memories of the variant that synthesised
+    them. Like AUTO_MEMORIES, not tied to stages: every step that reads
+    the views needs it, the abstract among them.
 AUTO_MEMORIES:
   description: >
     Experimental. When set to 1, memories that yosys infers in the RTL
@@ -396,6 +412,7 @@ SYNTH_NETLIST_FILES:
     subsequent modules are silently ignored and only the first module is used.
   stages:
     - synth
+  type: file
 SYNTH_CANONICALIZE_TCL:
   description: >
     Specifies a Tcl script with commands to run as part of the synth
@@ -410,6 +427,9 @@ SYNTH_RETIME_MODULES:
     List of modules to apply automatic retiming to. These modules must not get
     dissolved and as such they should either be the top module or be included
     in SYNTH_KEEP_MODULES.
+    Each entry is a glob over the modules left after flattening, and an entry
+    that matches none of them is an error. The slang frontend names a kept
+    module `Name$<path>`, which `Name*` matches.
     The main use case is to quickly identify if performance can be improved by
     manually retiming the input RTL.
     Retiming will treat module ports like register endpoints/startpoints.
@@ -448,16 +468,22 @@ LATCH_MAP_FILE:
     Optional mapping file supplied to Yosys to map latches
   stages:
     - synth
+  type: file
+  platform: true
 CLKGATE_MAP_FILE:
   description: |
     Optional mapping file supplied to Yosys to map clock gating cells
   stages:
     - synth
+  type: file
+  platform: true
 ADDER_MAP_FILE:
   description: |
     Optional mapping file supplied to Yosys to map adders
   stages:
     - synth
+  type: file
+  platform: true
 INFER_CLKGATES:
   description: >
     Enables Yosys clock gate inference. By default, it uses the Liberty cell
@@ -642,6 +668,8 @@ TAPCELL_TCL:
     Path to Endcap and Welltie cells file.
   stages:
     - floorplan
+  type: file
+  platform: true
 MACRO_PLACEMENT_TCL:
   description: |
     Specifies the path of a TCL file on how to place macros manually.
@@ -654,6 +682,7 @@ MACRO_PLACEMENT_TCL:
     and those locations impact global placement.
   stages:
     - floorplan
+  type: file
 PDN_TCL:
   description: >
     File path which has a set of power grid policies used by pdn to be applied
@@ -661,6 +690,8 @@ PDN_TCL:
     the actual metal straps.
   stages:
     - floorplan
+  type: file
+  platform: true
 GLOBAL_CONNECT_TCL:
   description: >
     File path to the add_global_connection rules that connect the supply pins
@@ -671,16 +702,21 @@ GLOBAL_CONNECT_TCL:
     grids.
   stages:
     - floorplan
+  type: file
+  platform: true
 MAKE_TRACKS:
   description: |
     Tcl file that defines add routing tracks to a floorplan.
   stages:
     - floorplan
+  type: file
+  platform: true
 IO_CONSTRAINTS:
   description: |
     File path to the IO constraints .tcl file. Also used for manual placement.
   stages:
     - floorplan
+  type: file
 IO_PLACER_H:
   description: >
     A list of metal layers on which the I/O pins are placed horizontally (top and
@@ -1151,9 +1187,13 @@ OR_SEED:
 RCX_RULES:
   description: |
     RC Extraction rules file path.
+  type: file
+  platform: true
 FILL_CONFIG:
   description: |
     JSON rule file for metal fill during chip finishing.
+  type: file
+  platform: true
 KLAYOUT_TECH_FILE:
   description: |
     A mapping from LEF/DEF to GDS using the KLayout tool.
@@ -1189,6 +1229,7 @@ VERILOG_FILES:
     of modules.
   stages:
     - synth
+  type: file
 VERILOG_DEFINES:
   description: >
     Preprocessor defines passed to the language frontend.
@@ -1201,17 +1242,39 @@ SDC_FILE:
     The path to design constraint (SDC) file.
   stages:
     - synth
+  type: file
 ADDITIONAL_FILES:
   description: |
     Additional files to be added to `make issue` archive.
+  type: file
+  platform: true
 ADDITIONAL_LEFS:
   description: >
     Hardened macro LEF view files listed here. The LEF information of the
     macros is immutable and used throughout all stages. Stored in the .odb file.
+  type: file
 ADDITIONAL_LIBS:
   description: >
     Hardened macro library files listed here. The library information is
     immutable and used throughout all stages. Not stored in the .odb file.
+ADDITIONAL_TYP_LIBS:
+  description: >
+    Hardened macro library files for the typical corner, on a platform that keeps
+    one liberty list per corner (see CORNERS). The platform config adds them
+    to its TYP_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the typical corner
+    timing model of each block is appended.
+ADDITIONAL_FAST_LIBS:
+  description: >
+    Hardened macro library files for the fast corner, on a platform that keeps
+    one liberty list per corner (see CORNERS). The platform config adds them
+    to its FAST_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the fast corner
+    timing model of each block is appended.
+ADDITIONAL_SLOW_LIBS:
+  description: >
+    Hardened macro library files for the slow corner, on a platform that keeps
+    one liberty list per corner (see CORNERS). The platform config adds them
+    to its SLOW_LIB_FILES, as ihp-sg13g2 does. With BLOCKS, the slow corner
+    timing model of each block is appended.
 ADDITIONAL_GDS:
   description: |
     Hardened macro GDS files listed here.
@@ -1265,6 +1328,8 @@ DFF_LIB_FILE:
     synthesis. Takes precedence over DFF_MAP_FILE when set.
   stages:
     - synth
+  type: file
+  platform: true
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
@@ -1351,6 +1416,7 @@ MACRO_WRAPPERS:
     The wrapper file that replaces existing macros with their wrapped version.
   stages:
     - floorplan
+  type: file
 CTS_BUF_DISTANCE:
   description: |
     Distance (in microns) between buffers.
@@ -1421,6 +1487,8 @@ POST_CTS_TCL:
     Specifies a Tcl script with commands to run after CTS is completed.
   stages:
     - cts
+  type: file
+  platform: true
 POST_DENSITY_FILL_TCL:
   description: |
     Specifies a Tcl script with commands to run after density fill.
@@ -1436,6 +1504,8 @@ POST_DETAIL_ROUTE_TCL:
     Specifies a Tcl script with commands to run after detailed route.
   stages:
     - route
+  type: file
+  platform: true
 POST_FILLCELL_TCL:
   description: |
     Specifies a Tcl script with commands to run after fillcell insertion.
@@ -1451,6 +1521,8 @@ POST_FLOORPLAN_TCL:
     Specifies a Tcl script with commands to run after floorplan is completed.
   stages:
     - floorplan
+  type: file
+  platform: true
 POST_GLOBAL_PLACE_SKIP_IO_TCL:
   description: |
     Specifies a Tcl script with commands to run after global placement (skip IO).
@@ -1481,6 +1553,8 @@ POST_PDN_TCL:
     Specifies a Tcl script with commands to run after PDN generation.
   stages:
     - floorplan
+  type: file
+  platform: true
 POST_RESIZE_TCL:
   description: |
     Specifies a Tcl script with commands to run after resize.
@@ -1574,6 +1648,8 @@ PRE_TAPCELL_TCL:
 FASTROUTE_TCL:
   description: |
     Specifies a Tcl script with commands to run before FastRoute.
+  type: file
+  platform: true
 USE_FILL:
   description: >
     Whether to perform metal density filling.
@@ -1591,6 +1667,8 @@ PRE_GLOBAL_ROUTE_TCL:
     Specifies a Tcl script with commands to run before global route.
   stages:
     - grt
+  type: file
+  platform: true
 GLOBAL_ROUTE_ARGS:
   description: >
     Edits to the arguments the flow passes to `global_route`, in the grammar of
@@ -1604,11 +1682,22 @@ GLOBAL_ROUTE_ARGS:
 GLOBAL_ROUTE_USE_CUGR:
   description: >
     Passed as -use_cugr to global_route. Uses CUGR as the global routing
-    solver instead of the default FastRoute solver. NOTE: CUGR is not ready
-    for production.
+    solver instead of FastRoute. FastRoute is the default; the sky130hd and
+    sky130hs platforms use CUGR.
   stages:
     - grt
   default: 0
+GLOBAL_ROUTE_CUGR_ADJUSTMENT_SCALE:
+  description: >
+    Multiplies every routing layer's global routing adjustment, from
+    ROUTING_LAYER_ADJUSTMENT or FASTROUTE_TCL, when CUGR is the global
+    router, from 0 (no adjustment) to 1 (unchanged). CUGR charges via demand
+    and follows the design rules more closely than FastRoute, so it may need
+    less capacity held back. The scaled adjustments are saved in the global
+    routing database, so antenna repair after detailed routing uses them too.
+  stages:
+    - grt
+  default: 0.5
 ENABLE_RESISTANCE_AWARE:
   description: >
     Passed as -resistance_aware to global_route.
@@ -1823,11 +1912,20 @@ FOOTPRINT:
     Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.
   stages:
     - floorplan
+  type: file
+SIG_MAP_FILE:
+  description: |
+    Signal map file for ICeWall-based floorplan initialization: the signal
+    each pad of the FOOTPRINT file connects to.
+  stages:
+    - floorplan
+  type: file
 FOOTPRINT_TCL:
   description: |
     Specifies a Tcl script with custom footprint-related commands for floorplan setup.
   stages:
     - floorplan
+  type: file
 FLOW_INPUT_VARIANT:
   description: >
     Flow variant a stage reads the previous stage's result from, the
@@ -1836,8 +1934,8 @@ FLOW_INPUT_VARIANT:
     runs, then leaves it at the default: the shared stages run once, and
     the fork writes only its own results. A stage's later steps read the
     stage's own results. A stage stops when its input is in both
-    variants. Not with AUTO_MEMORIES=1, whose memories are read from the
-    variant that synthesised them.
+    variants. With AUTO_MEMORIES=1, AUTO_MEMORIES_DIR names the memories
+    of the variant that synthesised them, for every stage the fork runs.
   stages:
     - floorplan
     - place
@@ -1988,6 +2086,8 @@ CDL_FILE:
     for generating Circuit Description Language output.
   stages:
     - final
+  type: file
+  platform: true
 OPT_POST_GRT_WNS:
   default: 1
   description: >

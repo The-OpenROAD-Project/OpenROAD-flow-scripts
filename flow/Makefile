@@ -205,7 +205,7 @@ do-klayout:
 		--output $(OBJECTS_DIR)/klayout.lyt \
 		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS) \
 		--map-files $(wildcard $(FLOW_HOME)/platforms/$(PLATFORM)/*map) \
-		$(if $(filter 1,$(AUTO_MEMORIES)),--blackboxes $(RESULTS_DIR)/memories/blackboxes.txt)
+		$(if $(filter 1,$(AUTO_MEMORIES)),--blackboxes $(AUTO_MEMORIES_DIR)/blackboxes.txt)
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
 	$(UNSET_AND_MAKE) do-klayout_wrap
@@ -275,7 +275,7 @@ do-auto-memories: $(RESULTS_DIR)/memories_inferred.json
 	  $(foreach file,$(ADDITIONAL_MEMORIES),--memories $(file)) \
 	  $(foreach file,$(AUTO_MEMORIES_REGFILES),--regfile-spec $(file)) \
 	  $(foreach m,$(AUTO_MEMORIES_MACRO_PLACE),--macro-place $(m)) \
-	  $(if $(AUTO_MEMORIES_REGFILES),--openroad $(OPENROAD_EXE)) \
+	  $(if $(AUTO_MEMORIES_REGFILES),--openroad '$(subst ','\'',$(OPENROAD_EXE))') \
 	  $(foreach file,$(TECH_LEF) $(SC_LEF),--lef $(file))
 
 $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL_MEMORIES) \
@@ -284,9 +284,13 @@ $(RESULTS_DIR)/memories.json: $(RESULTS_DIR)/memories_inferred.json $(ADDITIONAL
 
 yosys-dependencies: $(RESULTS_DIR)/memories.json
 $(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil: $(RESULTS_DIR)/memories.json
+$(RESULTS_DIR)/memories/blackboxes.txt: $(RESULTS_DIR)/memories.json ;
 # The generated LEFs are part of the KLayout technology the GDS merge
-# reads the final DEF with.
-$(OBJECTS_DIR)/klayout.lyt: $(RESULTS_DIR)/memories.json
+# reads the final DEF with. Synthesis writes its own memories;
+# AUTO_MEMORIES_DIR is where the stages after it read them, as
+# INPUT_RESULTS_DIR is where a stage reads its input, and another
+# variant's blackboxes.txt has no rule here.
+$(OBJECTS_DIR)/klayout.lyt: $(AUTO_MEMORIES_DIR)/blackboxes.txt
 endif
 
 # OpenROAD stages read binary liberty (.blib) files from a cache shared by
@@ -362,8 +366,15 @@ UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 # However, on some versions of make, MAKEFILE_LIST can be empty, so
 # don't expand it in that case.
 FILE_MAKEFILE ?= $(if $(firstword $(MAKEFILE_LIST)),--file=$(firstword $(MAKEFILE_LIST)),)
-SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory $(FILE_MAKEFILE) DESIGN_CONFIG=$(DESIGN_CONFIG)
-UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
+
+# UNSET_VARS clears MAKEFLAGS too, so the sub-make gets the command-line
+# variables from SUB_MAKE, as command-line variables again. Each one is a
+# single shell word holding the value this make sees: single-quoted, with
+# ' escaped for the shell and $ for the sub-make. Only the shell running
+# the recipe parses it, so quotes, $ and spaces reach the sub-make intact.
+SUB_MAKE_ARG = '$(subst ','\'',$1=$(subst $$,$$$$,$($1)))'
+SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS),$(call SUB_MAKE_ARG,$V)) --no-print-directory $(FILE_MAKEFILE) DESIGN_CONFIG=$(DESIGN_CONFIG)
+UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); "$$@"' -- $(SUB_MAKE)
 
 $(OBJECTS_DIR)/copyright.txt:
 	@$(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl
@@ -643,21 +654,6 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
-.PHONY: klayout_tr_rpt
-klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	$(SCRIPTS_DIR)/klayout.sh -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
-	        -rd in_def="$<" \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/viewDrc.py
-
-.PHONY: klayout_guides
-klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	$(SCRIPTS_DIR)/klayout.sh -rd in_guide="$(RESULTS_DIR)/route.guide" \
-	        -rd in_def="$<" \
-	        -rd net_name=$(GUIDE_NET) \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/viewGuide.py
-
 # ==============================================================================
 #  _____ ___ _   _ ___ ____  _   _ ___ _   _  ____
 # |  ___|_ _| \ | |_ _/ ___|| | | |_ _| \ | |/ ___|
@@ -787,7 +783,7 @@ ifneq ($(KLAYOUT_DRC_FILE),)
 	        --deck=$(KLAYOUT_DRC_FILE) \
 	        --in-gds=$< \
 	        --report-file=$(abspath $@), \
-	        $(SCRIPTS_DIR)/klayout.sh -zz -rd in_gds="$<" \
+	        $(or $(KLAYOUT_CMD),$(error KLayout not found. Install KLayout or set KLAYOUT_CMD)) -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_DRC_FILE))
 	# Hacky way of getting DRV count (don't error on no matches)
@@ -816,7 +812,7 @@ ifneq ($(KLAYOUT_LVS_FILE),)
 	        --cdl-file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        --top-cell=$(DESIGN_NAME) \
 	        --report-file=$(abspath $@), \
-	        $(SCRIPTS_DIR)/klayout.sh -b -rd in_gds="$<" \
+	        $(or $(KLAYOUT_CMD),$(error KLayout not found. Install KLayout or set KLAYOUT_CMD)) -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd top_cell="$(DESIGN_NAME)" \
 	        -rd report_file=$(abspath $@) \
@@ -872,7 +868,7 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 	rm -f $(LOG_DIR)/write_binary_libs*.log
 
 .PHONY: nuke
-nuke: clean_test clean_issues
+nuke: clean_issues
 	rm -rf $(WORK_HOME)/results $(WORK_HOME)/logs $(WORK_HOME)/reports $(WORK_HOME)/objects
 	rm -f $(OBJECTS_DIR)/copyright.txt
 
@@ -880,7 +876,7 @@ nuke: clean_test clean_issues
 #-------------------------------------------------------------------------------
 .PHONY: $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: check-klayout $(OBJECTS_DIR)/klayout.lyt
-	$(SCRIPTS_DIR)/klayout.sh -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 $(eval $(call OPEN_GUI_SHORTCUT,synth,1_synth.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
@@ -925,19 +921,10 @@ handoff : all_defs all_verilog
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 
-.phony: klayout
-klayout:
-	$(SCRIPTS_DIR)/klayout.sh
-
-.phony: run
+.PHONY: run
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	$(RUN_CMD) --log $(abspath $(LOG_DIR)/$(RUN_LOG_NAME_STEM).log) --tee -- $(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT)
-
-export RUN_YOSYS_ARGS ?= -c $(SCRIPTS_DIR)/yosys_keep.tcl
-.phony: run-yosys
-run-yosys:
-	$(YOSYS_EXE) $(RUN_YOSYS_ARGS)
 
 # Utilities
 #-------------------------------------------------------------------------------

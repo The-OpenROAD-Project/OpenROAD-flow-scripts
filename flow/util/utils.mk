@@ -30,9 +30,13 @@ metadata-generate:
 # The QoR gate: metadata.json against the QoR dashboard's baseline for the
 # commit it records (the master build at its merge base, from the first of
 # the dashboard's default pipelines that has the design), using the
-# dashboard's rule configs. An unpushed commit's merge base is computed
-# locally against DASHBOARD_MERGE_BASE (default origin/master); without one
-# the latest master build is used, with a warning. Set DASHBOARD_BASE_COMMIT
+# dashboard's rule configs. If no local remote-tracking ref contains the local
+# commit, compute its merge base against DASHBOARD_MERGE_BASE (default
+# refs/remotes/upstream/master if it names a commit, else
+# refs/remotes/origin/master).
+# If the pinned build is missing, warn and send the run unpinned. When local
+# pinning applies, warn for a default ref that gives no merge base and fail
+# for an explicit ref that gives no merge base. Set DASHBOARD_BASE_COMMIT
 # to pin the baseline, DASHBOARD_API_KEY for a private platform and
 # DASHBOARD_JOB_NAME to check as a build of one pipeline instead. A failed
 # rule fails the target; an unreachable dashboard or a design without a
@@ -53,27 +57,6 @@ metadata-check-synth:
 	    -p $(PLATFORM) -d $(DESIGN_NICKNAME) --variant $(FLOW_VARIANT) \
 	    --only-prefix synth__ constraints__ 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
-
-# The rules-file check (checkMetadata.py against a committed
-# designs/<platform>/<design>/rules-<variant>.json) was removed. The QoR
-# dashboard holds the rules now. These stubs warn callers that still use
-# the old targets or RULES_JSON, and exit 0 so a wrapper script keeps
-# running; drop them once bazel-orfs and the CI scripts have moved.
-ifdef RULES_JSON
-$(warning [WARN] RULES_JSON is deprecated and ignored. The QoR gate is the \
-  dashboard check in `make metadata`; rules files are no longer read.)
-endif
-
-LEGACY_RULES_TARGETS := metadata-check-rules update_ok update_rules \
-                        update_rules_force do-update_rules \
-                        do-update_rules_force do-copy_update_rules
-.PHONY: $(LEGACY_RULES_TARGETS)
-$(LEGACY_RULES_TARGETS):
-	@echo "[WARN] make $@ is deprecated and does nothing. The rules files" \
-	      "(rules-<variant>.json), checkMetadata.py, and genRuleFile.py" \
-	      "were removed. The QoR gate is now the dashboard check in" \
-	      "\`make metadata\` (see docs/contrib/Metrics.md). Rule tolerances" \
-	      "live in the dashboard, so there is nothing to update locally."
 
 .PHONY: clean_metadata
 clean_metadata:
@@ -136,21 +119,6 @@ correlate_platform_rc:
 	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py \
 	    -segments_rc_file $$(find results/$(PLATFORM)/*/base -name 6_segments_rc.csv)
 
-# Run test using gnu parallel
-#-------------------------------------------------------------------------------
-TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
-.PHONY: run_test
-run_test:
-	parallel --sshloginfile $(TEST_DIR)/nodes.txt \
-	         --timeout 21600 \
-	         --workdir `pwd` < $(TEST_SCRIPT) \
-	         --joblog $(TEST_DIR)/parallel.log
-
-.PHONY: clean_test
-clean_test:
-	rm -rf $(TEST_DIR)/logs
-	rm -rf $(TEST_DIR)/parallel.log
-
 # Utility to create issues
 #-------------------------------------------------------------------------------
 # Run "make {script}_issue" where script is wildcarded from the scripts folder
@@ -166,7 +134,7 @@ endef
 .PHONY: $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue)
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue :
-	$(UTILS_DIR)/makeIssue.sh $(WORK_HOME)/$*
+	$(PYTHON_EXE) $(UTILS_DIR)/makeIssue.py $(WORK_HOME)/$*
 
 .PHONY: clean_issues
 clean_issues:
@@ -200,16 +168,6 @@ view_cells_web:
 .PHONY: command
 command:
 	$(OPENROAD_NO_EXIT_CMD)
-
-## Provide easy access to debugging
-ifdef GDB
-export OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
-endif
-
-## Provide easy way to run valgrind
-ifdef VALGRIND
-export OPENROAD_EXE := valgrind $(VALGRIND_ARGS) $(OPENROAD_EXE)
-endif
 
 ## Convert RVE DRC database to JSON
 .PHONY: convert_rve

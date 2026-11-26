@@ -52,7 +52,7 @@ lappend global_placement_args -max_phi_coef $::env(MAX_PLACE_STEP_COEF)
 
 set place_ios [expr { $::env(GPL_PLACE_IOS) && ![pins_fixed_in_floorplan] }]
 if { $place_ios } {
-  log_cmd set_place_config {*}[place_pins_args_to_place_config]
+  log_cmd set_placer_config {*}[place_pins_args_to_placer_config]
   lappend global_placement_args -place_ios
 }
 
@@ -68,7 +68,7 @@ proc do_placement { global_placement_args deprecated } {
 
 do_placement $global_placement_args $deprecated
 if { $place_ios } {
-  log_cmd reset_place_config
+  log_cmd reset_placer_config
 }
 
 log_cmd estimate_parasitics

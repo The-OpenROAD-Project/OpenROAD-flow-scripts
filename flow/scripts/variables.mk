@@ -15,7 +15,6 @@ export PLATFORM_HOME ?= $(FLOW_HOME)/platforms
 
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
-export TEST_DIR      ?= $(FLOW_HOME)/test
 
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180 gt2n
 
@@ -57,6 +56,10 @@ export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 # Where a stage reads the previous stage's result.
 export FLOW_INPUT_VARIANT ?= $(FLOW_VARIANT)
 export INPUT_RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_INPUT_VARIANT)
+# Where every step reads AUTO_MEMORIES' generated views; synthesis writes
+# them to its own $(RESULTS_DIR)/memories. Set by a build system that
+# runs a stage of one variant on another variant's synthesis.
+export AUTO_MEMORIES_DIR ?= $(RESULTS_DIR)/memories
 
 #-------------------------------------------------------------------------------
 ifeq (,$(strip $(NUM_CORES)))
@@ -123,7 +126,14 @@ export RUN_CMD = $(PYTHON_EXE) $(FLOW_HOME)/scripts/run_command.py
 export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
 export OPENSTA_EXE  ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 
-OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && echo "true"),)
+# OPENROAD_EXE and YOSYS_EXE are commands, not only paths: a wrapper can
+# come first, as in OPENROAD_EXE="gdb --args openroad" or
+# OPENROAD_EXE="valgrind openroad". The check is on the program the command
+# starts with, a path or a name on PATH. The binary is the last word.
+# The shell splits the command, as a recipe does, so a quoted path with
+# spaces in it is one program: OPENROAD_EXE="'/opt/my tools/openroad'".
+command_is_valid = $(if $(1),$(shell set -- $(1) && command -v "$$1" >/dev/null && echo "true"),)
+OPENROAD_IS_VALID := $(call command_is_valid,$(OPENROAD_EXE))
 
 export OPENROAD_ARGS = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 export OPENROAD_CMD = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
@@ -133,7 +143,7 @@ export OPENROAD_WEB_CMD = $(OPENROAD_EXE) -web -threads $(NUM_CORES) $(OR_ARGS)
 
 export YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
-YOSYS_IS_VALID := $(if $(YOSYS_EXE),$(shell test -x $(YOSYS_EXE) && echo "true"),)
+YOSYS_IS_VALID := $(call command_is_valid,$(YOSYS_EXE))
 
 KEPLER_FORMAL_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/kepler-formal/bin/kepler-formal)
 export KEPLER_FORMAL_EXE
@@ -152,17 +162,17 @@ export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 # Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
 STREAM_SYSTEM ?= GDS
 ifneq ($(findstring GDS,$(shell echo $(STREAM_SYSTEM) | tr '[:lower:]' '[:upper:]')),)
-	export STREAM_SYSTEM_EXT := gds
+	STREAM_SYSTEM_EXT := gds
 	GDSOAS_FILES = $(GDS_FILES)
 	ADDITIONAL_GDSOAS = $(ADDITIONAL_GDS)
 	SEAL_GDSOAS = $(SEAL_GDS)
 else
-	export STREAM_SYSTEM_EXT := oas
+	STREAM_SYSTEM_EXT := oas
 	GDSOAS_FILES = $(OAS_FILES)
 	ADDITIONAL_GDSOAS = $(ADDITIONAL_OAS)
 	SEAL_GDSOAS = $(SEAL_OAS)
 endif
-export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
+WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
 
 # If we are running headless use offscreen rendering for save_image
 ifeq ($(DISPLAY),)
@@ -170,7 +180,7 @@ export QT_QPA_PLATFORM ?= offscreen
 endif
 
 # Create Macro wrappers (if necessary)
-export WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
+WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
 
 export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
 
@@ -178,16 +188,16 @@ export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
 export YOSYS_DEPENDENCIES=$(LIB_FILES) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 
-export GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
+GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 export RESULTS_ODB = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.odb)))
-export RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
-export RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
-export RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
-export RESULTS_V = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.v)))
-export GDS_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
+RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
+RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
+RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
+RESULTS_V = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.v)))
+GDS_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
 
 define get_variables
-$(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% KLAYOUT% OPENROAD_EXE OPENROAD_ARGS OPENROAD_CMD OPENROAD_NO_EXIT_CMD OPENROAD_GUI_CMD OPENROAD_WEB_CMD OPENROAD_IS_VALID OPENSTA% PYTHON% YOSYS% GENERATE_ABSTRACT_RULE% do-step% do-copy% OPEN_GUI% OPEN_GUI_SHORTCUT% SUB_MAKE% UNSET_VARS% export%, $(V)), $V$ )))
+$(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% KLAYOUT% OPENROAD_EXE OPENROAD_ARGS OPENROAD_CMD OPENROAD_NO_EXIT_CMD OPENROAD_GUI_CMD OPENROAD_WEB_CMD OPENROAD_IS_VALID command_is_valid OPENSTA% PYTHON% YOSYS% GENERATE_ABSTRACT_RULE% do-step% do-copy% OPEN_GUI% OPEN_GUI_SHORTCUT% SUB_MAKE% UNSET_VARS% export%, $(V)), $V$ )))
 endef
 
 export UNSET_VARIABLES_NAMES := $(call get_variables,command% line environment% default automatic)
@@ -203,7 +213,7 @@ export COMMAND_LINE_ARGS := $(foreach V,$(.VARIABLES),$(if $(filter command% lin
 .PHONY: vars
 vars:
 	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/generate-vars.sh $(OBJECTS_DIR)/vars
+	$(PYTHON_EXE) $(UTILS_DIR)/generate_vars.py $(OBJECTS_DIR)/vars
 
 .PHONY: print-%
 print-%:
