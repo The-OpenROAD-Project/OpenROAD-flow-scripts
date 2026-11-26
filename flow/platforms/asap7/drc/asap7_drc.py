@@ -167,9 +167,18 @@ def drc(deck):
     gate.width(nm(40), projection).with_angle(0).output(
         "GATE.W.2", "GATE.W.2 : Min. vertical width of GATE : 40nm"
     )
-    gate.space(nm(100), projection).polygons().not_(fin).without_bbox_width(
-        nm(34)
-    ).sized(0, nm(10)).output(
+    # Every gate centre on the 54 nm pitch, 27 nm past a multiple of 54: where every
+    # library cell draws its gates, and where they land on a design placed on the
+    # 54 nm site from an origin on that grid.  GATE.W.1 pins the width to 20 nm, so
+    # widening each side by 17 nm puts both edges of a gate on the pitch on multiples
+    # of 54 nm, and a vertex off that x grid is a gate off the pitch.
+    #
+    # Gate ends are not looked at.  Measuring the space between neighbouring gates
+    # instead flagged an 88 nm gap wherever a gate ended a fraction of a nm short of
+    # both neighbours (library gate ends differ by 0.5-1.5 nm) at a row end or a
+    # block edge, and it missed gates that were all off the pitch together, such as
+    # those of a macro placed off the site grid.
+    gate.sized(nm(17), 0).ongrid(nm(54), 0).output(
         "GATE.S.1", "GATE.S.1 : Exact horizontal GATE pitch : 54nm"
     )
     gate.space(nm(34), projection).with_angle(90).output(
