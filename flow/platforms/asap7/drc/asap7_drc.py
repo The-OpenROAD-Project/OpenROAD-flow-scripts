@@ -495,32 +495,32 @@ def drc(deck):
         "LISD.S.4-5 : Min. spacing between two LIG' edges, when both edge are =< 24 nm : 31nm",
     )
     lig.separation(lisd, nm(14), projection).output(
-        "LIG.LISD.S.6"
-        "LIG.LISD.S.6 : Min. spacing between LIG and LISD not on the same net : 14nm"
+        "LIG.LISD.S.6",
+        "LIG.LISD.S.6 : Min. spacing between LIG and LISD not on the same net : 14nm",
     )
     lig.separation(lisd, nm(15), euclidian).output(
-        "LIG.LISD.S.7"
-        "LIG.LISD.S.7 : Min. corner-to-corner spacing between LISD and LIG not on the same net : 15nm"
+        "LIG.LISD.S.7",
+        "LIG.LISD.S.7 : Min. corner-to-corner spacing between LISD and LIG not on the same net : 15nm",
     )
     lig.separation(sdt, nm(14), projection).output(
-        "LIG.SDT.S.8"
-        "LIG.SDT.S.8 : Min. spacing between LIG and SDT not on the same net : 14nm"
+        "LIG.SDT.S.8",
+        "LIG.SDT.S.8 : Min. spacing between LIG and SDT not on the same net : 14nm",
     )
     lig.separation(gatenogcut, nm(14), projection).with_angle(0).output(
-        "LIG.LISD.S.9A"
-        "LIG.LISD.S.9A : Min. vertical spacing between LIG and GATE (not cut using GCUT) : 14nm"
+        "LIG.LISD.S.9A",
+        "LIG.LISD.S.9A : Min. vertical spacing between LIG and GATE (not cut using GCUT) : 14nm",
     )
     lig.separation(gatenogcut, nm(17), projection).with_angle(90).output(
-        "LIG.LISD.S.9B"
-        "LIG.LISD.S.9B : Min. horizontal spacing between LIG and GATE (not cut using GCUT) : 17nm"
+        "LIG.LISD.S.9B",
+        "LIG.LISD.S.9B : Min. horizontal spacing between LIG and GATE (not cut using GCUT) : 17nm",
     )
     lig.separation(gatenogcut & active, nm(5), euclidian).output(
-        "LIG.GATE.S.10"
-        "LIG.GATE.S.10 : Min. spacing between LIG and GATE (not cut using GCUT) forming a channel : 5nm"
+        "LIG.GATE.S.10",
+        "LIG.GATE.S.10 : Min. spacing between LIG and GATE (not cut using GCUT) forming a channel : 5nm",
     )
     lig.separation(gcut, nm(5), euclidian).with_angle(0).output(
-        "LIG.GCUT.S.11"
-        "LIG.GCUT.S.11 : Min. vertical spacing between LIG and GCUT : 5nm"
+        "LIG.GCUT.S.11",
+        "LIG.GCUT.S.11 : Min. vertical spacing between LIG and GCUT : 5nm",
     )
     lig.with_area((0, 0.000324)).output(
         "LIG.A.1", "LIG.A.1 : Min. area of LIG : 324nm2"
@@ -625,7 +625,7 @@ def drc(deck):
         "V0.LIG.A.1 : Min. area of overlap between V0 (interacting with LIG and not inside LISD) and LIG : 288nm2",
     )
     ((v0 - m1) + (v0 - lig.sized(nm(1)) - lisd)).output(
-        "V0.AUX.1-2" "V0.AUX.1-2 : V0 must always interact with M1 and [LISD|LIG]"
+        "V0.AUX.1-2", "V0.AUX.1-2 : V0 must always interact with M1 and [LISD|LIG]"
     )
     v0.not_interacting(
         m1.enclosing(v0, 1 * deck.dbu, projection, two_opposite_sides_allowed).edges()
@@ -645,7 +645,7 @@ def drc(deck):
     m1.space(nm(25)).polygons().not_interacting(
         m1.edges().with_length((nm(36), mm(100)))
     ).output(
-        "  ",
+        "M1.S.2",
         "M1.S.2 : Min. spacing between two M1' edges, when one edge is > 36 nm : 25nm",
     )
     m1.space(nm(27)).polygons().not_interacting(
@@ -801,7 +801,7 @@ def drc(deck):
     )
     m1ovlp5v1.forget()
     m2ovlp5v1.forget()
-    ((v1 - m2) + (v1 - m1)).output("V1.AUX.1" "V1.AUX.1 : V1 must be inside M1 and M2")
+    ((v1 - m2) + (v1 - m1)).output("V1.AUX.1", "V1.AUX.1 : V1 must be inside M1 and M2")
     v1.not_interacting(
         m2.enclosing(v1, 1 * deck.dbu, projection, two_opposite_sides_allowed).edges()
     ).output(
@@ -851,7 +851,7 @@ def drc(deck):
         "V2.M3.EN.2", "V2.M3.EN.2 : enclosure of V2 by M3 on one side : 5nm"
     )
     m3ovlp5v2.forget()
-    ((v2 - m3) + (v2 - m2)).output("V2.AUX.1" "V2.AUX.1 : V2 must be inside M2 and M3")
+    ((v2 - m3) + (v2 - m2)).output("V2.AUX.1", "V2.AUX.1 : V2 must be inside M2 and M3")
     v2.not_interacting(
         m3.enclosing(v2, 1 * deck.dbu, projection, two_opposite_sides_allowed).edges()
     ).output(
@@ -905,7 +905,7 @@ def drc(deck):
         "V3.M4.EN.2",
         "V3.M4.EN.2 : Min. enclosure of V3 by M4 on at least two opposite sides  : 11nm",
     )
-    ((v3 - m4) + (v3 - m3)).output("V3.AUX.1" "V3.AUX.1 : V3 must be inside M3 and M4")
+    ((v3 - m4) + (v3 - m3)).output("V3.AUX.1", "V3.AUX.1 : V3 must be inside M3 and M4")
     v3.not_interacting(
         m4.enclosing(v3, 1 * deck.dbu, projection, two_opposite_sides_allowed)
         .edges()
@@ -1034,7 +1034,7 @@ def drc(deck):
         "V4.M4.EN.1",
         "V4.M4.EN.1 : Min. enclosure of V4 by M4 on at least two opposite sides  : 11nm",
     )
-    ((v4 - m4) + (v4 - m5)).output("V4.AUX.1" "V4.AUX.1 : V4 must be inside M4 and M5")
+    ((v4 - m4) + (v4 - m5)).output("V4.AUX.1", "V4.AUX.1 : V4 must be inside M4 and M5")
     v4.not_interacting(
         m5.enclosing(v4, 1 * deck.dbu, projection, two_opposite_sides_allowed)
         .edges()
@@ -1057,7 +1057,7 @@ def drc(deck):
         "V5.M5.EN.1",
         "V5.M5.EN.1 : Min. enclosure of V5 by M5 on at least two opposite sides  : 11nm",
     )
-    ((v5 - m5) + (v5 - m6)).output("V5.AUX.1" "V5.AUX.1 : V5 must be inside M5 and M6")
+    ((v5 - m5) + (v5 - m6)).output("V5.AUX.1", "V5.AUX.1 : V5 must be inside M5 and M6")
     v5.not_interacting(
         m6.enclosing(v5, 1 * deck.dbu, projection, two_opposite_sides_allowed)
         .edges()
@@ -1186,7 +1186,7 @@ def drc(deck):
         "V6.M6.EN.1",
         "V6.M6.EN.1 : Min. enclosure of V6 by M6 on at least two opposite sides  : 11nm",
     )
-    ((v6 - m6) + (v6 - m7)).output("V6.AUX.1" "V6.AUX.1 : V6 must be inside M6 and M7")
+    ((v6 - m6) + (v6 - m7)).output("V6.AUX.1", "V6.AUX.1 : V6 must be inside M6 and M7")
     v6.not_interacting(
         m7.enclosing(v6, 1 * deck.dbu, projection, two_opposite_sides_allowed)
         .edges()
@@ -1209,7 +1209,7 @@ def drc(deck):
         "V7.M7.EN.1",
         "V7.M7.EN.1 : Min. enclosure of V7 by M7 on at least two opposite sides  : 11nm",
     )
-    ((v7 - m7) + (v7 - m8)).output("V7.AUX.1" "V7.AUX.1 : V7 must be inside M7 and M8")
+    ((v7 - m7) + (v7 - m8)).output("V7.AUX.1", "V7.AUX.1 : V7 must be inside M7 and M8")
     v7.not_interacting(
         m8.enclosing(v7, 1 * deck.dbu, projection, two_opposite_sides_allowed)
         .edges()
@@ -1369,7 +1369,7 @@ def drc(deck):
         "V8.M9.EN.2",
         "V8.M9.EN.2 : Min. enclosure of V8 by M9 on at least two opposite sides  : 20nm",
     )
-    ((v8 - m8) + (v8 - m9)).output("V8.AUX.1" "V8.AUX.1 : V8 must be inside M8 and M9")
+    ((v8 - m8) + (v8 - m9)).output("V8.AUX.1", "V8.AUX.1 : V8 must be inside M8 and M9")
 
     ###   V9
     (
@@ -1392,7 +1392,7 @@ def drc(deck):
         "V9.PAD.EN.2 : Min. enclosure of V9 by PAD on at least two opposite sides  : 20nm",
     )
     ((v9 - m9) + (v9 - pad)).output(
-        "V9.AUX.1" "V9.AUX.1 : V9 must be inside M9 and PAD"
+        "V9.AUX.1", "V9.AUX.1 : V9 must be inside M9 and PAD"
     )
 
     #   ONGRID  defined in the paper :
