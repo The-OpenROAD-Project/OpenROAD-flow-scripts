@@ -1733,6 +1733,15 @@ RTLMP_KEEP_CLUSTERING:
   default: 0
   stages:
     - floorplan
+RTLMP_SNAP_TO_SITE_GRID:
+  description: >
+    Set to 1 to snap macros to the site/row grid instead of the routing
+    track grid of their lowest signal pin layer, so that hardened blocks
+    land on the fin/gate grid while their pins stay on track. Only single-height
+    rows are supported; the placer falls back to track snapping otherwise.
+  default: 0
+  stages:
+    - floorplan
 GDS_ALLOW_EMPTY:
   description: >
     Single regular expression of module names of macros that have no .gds file
