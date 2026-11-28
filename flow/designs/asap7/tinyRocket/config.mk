@@ -25,3 +25,8 @@ export RTLMP_MIN_CHANNEL_SIZE = 4 4
 
 export TNS_END_PERCENT = 100
 export GPL_PLACE_IOS = 1
+
+# Retiming moves registers, so the final netlist is not combinationally
+# equivalent to the synthesis netlist.
+export PLACE_RETIME = 1
+export LEC_CHECK = 0

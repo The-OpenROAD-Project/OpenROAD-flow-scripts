@@ -19,3 +19,8 @@ export SKIP_LAST_GASP ?= 1
 
 export SYNTH_USE_SYN = 1
 export SETUP_REPAIR_PHASES = PARALLEL_EVAL
+
+# Retiming moves registers, so the final netlist is not combinationally
+# equivalent to the synthesis netlist.
+export PLACE_RETIME = 1
+export LEC_CHECK = 0
