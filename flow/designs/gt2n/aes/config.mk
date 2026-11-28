@@ -22,3 +22,8 @@ export OPENROAD_HIERARCHICAL = 1
 # instead of the platform M13 top shrinks the detailed-route grid, vias, and
 # DRC. See platforms/gt2n/config.mk.
 export MAX_ROUTING_LAYER = M10
+
+# Retiming moves registers, so the final netlist is not combinationally
+# equivalent to the synthesis netlist.
+export PLACE_RETIME = 1
+export LEC_CHECK = 0

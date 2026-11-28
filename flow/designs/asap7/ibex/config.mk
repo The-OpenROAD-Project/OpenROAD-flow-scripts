@@ -32,3 +32,7 @@ export SETUP_REPAIR_PHASES = PARALLEL_EVAL
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
 
+# Retiming moves registers, so the final netlist is not combinationally
+# equivalent to the synthesis netlist.
+export PLACE_RETIME = 1
+export LEC_CHECK = 0

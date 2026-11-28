@@ -217,6 +217,7 @@ configuration file.
 | <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread. The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results. If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs. A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails. The default is platform specific.| |
 | <a name="PLACE_DENSITY_LB_ADDON"></a>PLACE_DENSITY_LB_ADDON| Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.| |
 | <a name="PLACE_PINS_ARGS"></a>PLACE_PINS_ARGS| Arguments to place_pins| |
+| <a name="PLACE_RETIME"></a>PLACE_RETIME| Run the retime command after global placement to move registers forward across gates. Set LEC_CHECK to 0 with it, since the retimed netlist is not combinationally equivalent to the synthesis netlist.| 0|
 | <a name="PLACE_SITE"></a>PLACE_SITE| Placement site for core cells defined in the technology LEF file.| |
 | <a name="PLATFORM"></a>PLATFORM| Specifies process design kit or technology node to be used.| |
 | <a name="PLATFORM_TCL"></a>PLATFORM_TCL| Specifies a Tcl script with commands to run before loading design.| |
@@ -533,6 +534,7 @@ configuration file.
 - [PLACE_DENSITY](#PLACE_DENSITY)
 - [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
 - [PLACE_PINS_ARGS](#PLACE_PINS_ARGS)
+- [PLACE_RETIME](#PLACE_RETIME)
 - [POST_DETAIL_PLACE_TCL](#POST_DETAIL_PLACE_TCL)
 - [POST_GLOBAL_PLACE_SKIP_IO_TCL](#POST_GLOBAL_PLACE_SKIP_IO_TCL)
 - [POST_GLOBAL_PLACE_TCL](#POST_GLOBAL_PLACE_TCL)

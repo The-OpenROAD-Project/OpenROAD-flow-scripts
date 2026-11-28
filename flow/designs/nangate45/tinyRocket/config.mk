@@ -22,3 +22,8 @@ export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.75
 export SETUP_REPAIR_PHASES = PARALLEL_EVAL
+
+# Retiming moves registers, so the final netlist is not combinationally
+# equivalent to the synthesis netlist.
+export PLACE_RETIME = 1
+export LEC_CHECK = 0
