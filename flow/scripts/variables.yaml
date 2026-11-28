@@ -838,6 +838,14 @@ GPL_KEEP_OVERFLOW:
     Only used when GPL_TIMING_DRIVEN is enabled.
   stages:
     - place
+PLACE_RETIME:
+  description: >
+    Run the retime command after global placement to move registers forward
+    across gates. Set LEC_CHECK to 0 with it, since the retimed netlist is not
+    combinationally equivalent to the synthesis netlist.
+  stages:
+    - place
+  default: 0
 MIN_PLACE_STEP_COEF:
   description: >
     Sets the minimum phi coefficient (pcof_min / µ_k Lower Bound) for global

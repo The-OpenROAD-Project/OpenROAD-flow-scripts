@@ -75,6 +75,10 @@ if { $place_ios } {
 
 log_cmd estimate_parasitics
 
+if { $::env(PLACE_RETIME) } {
+  log_cmd retime
+}
+
 if { $::env(CLUSTER_FLOPS) } {
   log_cmd cluster_flops {*}[env_var_or_empty CLUSTER_FLOPS_ARGS]
   log_cmd estimate_parasitics
